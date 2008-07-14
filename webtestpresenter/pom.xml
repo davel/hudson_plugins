@@ -7,6 +7,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   
+  <name>WebTest Presenter plugin</name>
   <artifactId>webtestpresenter</artifactId>
   <packaging>hpi</packaging>
   <version>0.23-SNAPSHOT</version>
