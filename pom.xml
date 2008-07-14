@@ -183,6 +183,7 @@
         <module>ruby</module>
         <module>promoted-builds</module>
         <module>sametime</module>
+        <module>sonar</module>
         <module>scp</module>
         <module>ssh-slaves</module>
         <!-- module>sfee</module --> <!--  not compiling currently  -->
