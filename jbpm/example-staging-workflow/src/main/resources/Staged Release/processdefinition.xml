@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns=""  name="Staged Release">
+
+
+	<swimlane name="release manager">
+		<assignment class="hudson.jbpm.workflow.ProjectMemberAssignmentHandler"></assignment>
+	</swimlane>
+
+
+	<start-state name="Start Staged Release">
+		<transition to="Get Release Information"></transition>
+	</start-state>
+
+
+	<task-node name="Get Release Information">
+		<task swimlane="release manager" name="Release Info"></task>
+		<event type="task-create">
+			<action class="hudson.jbpm.workflow.FormActionHandler">
+				<formClass>
+					hudson.stagingworkflow.ReleaseInformationForm
+				</formClass>
+			</action>
+		</event>
+		<transition to="Release to Staging Repository"></transition>
+	</task-node>
+
+	<task-node name="Release to Staging Repository">
+		<task name="Release Task" blocking="true">
+			<assignment actor-id="hudson"></assignment>
+			<controller>
+				<variable access="write,required" name="releaseBuildResult" mapped-name="result"></variable>
+				<variable access="write,required" name="releaseBuild" mapped-name="build"></variable>
+			</controller>
+		</task>
+		<event type="task-create">
+			<action class="hudson.stagingworkflow.StartReleaseProjectHandler">
+				<projectName>
+					release-build
+				</projectName>
+			</action>
+		</event>
+		<transition to="Send Vote E-Mail" name="success">
+			<condition>#{releaseBuildResult=="SUCCESS"}
+			</condition>
+		</transition>
+		<transition to="End" name="failure">
+			<condition>
+				#{releaseBuildResult!="SUCCESS"}
+			</condition>
+		</transition>
+	</task-node>
+
+	<mail-node name="Send Vote E-Mail" to="#{voteEmailAddress}">
+		<subject>
+			[VOTE] Release Maven XXX plugin version #{releaseVersion}
+		</subject>
+		<text><![CDATA[Hi,
+
+We solved N issues:
+http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=XXX&amp;styleName=Html&amp;version=#{releaseVersion}
+
+There are still a couple of issues left in JIRA:
+http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&amp;pid=XXX&amp;status=1
+
+Staging repo:
+#{hudson.rootUrl}#{releaseBuild.url}staging
+
+Staging site:
+http://maven.apache.org/plugins/maven-XXX-plugin-#{releaseVersion}/
+
+Guide to testing staged releases:
+http://maven.apache.org/guides/development/guide-testing-releases.html
+
+Vote open for 72 hours.
+
+Vote at #{hudson.rootUrl}#{build.url}
+]]>
+		</text>
+		<transition to="Vote"></transition>
+	</mail-node>
+
+	<task-node name="Vote" create-tasks="false" signal="never" end-tasks="true">
+		<task name="Vote" signalling="false"></task>
+		<task name="End Vote" swimlane="release manager"></task>
+		<event type="node-enter">
+			<action name="Create voting tasks" class="hudson.stagingworkflow.CreateVotingTasksHandler"></action>
+		</event>
+		<transition to="Send Vote Result E-Mail" name="completed"></transition>
+	</task-node>
+
+	<decision name="Vote Result" expression="#{voteResult}">
+		<transition to="Deploy Staged Release" name="positive"></transition>
+		<transition to="End" name="negative"></transition>
+	</decision>
+
+	<node name="Deploy Staged Release" async="true">
+		<action class="hudson.stagingworkflow.DeployStagedReleaseHandler" async="true"></action>
+		<transition to="Send Release Announcement"></transition>
+	</node>
+
+	<mail-node name="Send Release Announcement" to="#{releaseEmailAddress}">
+		<subject>
+			[ANN] Maven XXX Plugin Y.Z Released
+		</subject>
+		<text><![CDATA[From: YOUR_APACHE_EMAIL
+To: announce@maven.apache.org, users@maven.apache.org
+Cc: dev@maven.apache.org
+
+The Maven team is pleased to announce the release of the Maven XXX Plugin, version Y.Z
+
+This plugin (insert short description of the plugin's purpose).
+
+http://maven.apache.org/plugins/maven-XXX-plugin/
+
+You can run mvn -up to get the latest version of the plugin, or specify
+the version in your project's plugin configuration:	
+
+&lt;plugin&gt;
+ &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+ &lt;artifactId&gt;maven-XXX-plugin&lt;/artifactId&gt;
+ &lt;version&gt;#{releaseVersion}&lt;/version&gt;
+&lt;/plugin&gt;
+
+Release Notes - Maven 2.x XXX Plugin - Version #{releaseVersion}
+
+(TODO Automatically Get Release Notes in Text Format from Jira) 
+
+Enjoy,
+
+-The Maven team
+]]></text>
+		<transition to="End"></transition>
+	</mail-node>
+
+	<mail-node name="Send Vote Result E-Mail" to="#{voteEmailAddress}">
+		<subject>
+			[RESULTS] Release Maven XXX plugin version #{releaseVersion}
+		</subject>
+		<text><![CDATA[
+These are the results of the vote to release Maven XXX plugin version #{releaseVersion}
+
+#{voteResultText}
+]]>	</text>
+		<event type="node-enter">
+			<action name="VoteCountingHandler" class="hudson.stagingworkflow.VoteCountingActionHandler"></action>
+		</event>
+		<transition to="Vote Result"></transition>
+	</mail-node>
+
+
+	<end-state name="End"></end-state>
+
+
+</process-definition>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <l:layout title="JBPM">
+    <l:main-panel>
+      <h1>JBPM</h1>
+
+		<j:set var="definitions" value="${it.getProcessDefinitions()}"/>
+		<j:forEach var="definition" items="${definitions}">
+			<H2>Process <a href="${rootURL}/plugin/jbpm/processDefinitionImage?processDefinition=${definition.getId()}">${definition.getName()} ${definition.getVersion()}</a></H2>
+			
+			<ul>
+				<j:forEach var="processInstance" items="${it.getProcessInstances(definition)}">
+					<li>Instance <a href="${rootURL}/plugin/jbpm/processInstanceImage?processInstance=${processInstance.getId()}">${processInstance.getId()}</a></li>
+					
+		<ul>
+		<j:forEach var="taskInstance" items="${it.getOpenTasks(processInstance)}">
+			<li>Task ${taskInstance.getName()}
+			<ul>
+			<j:choose>
+				<j:when test="${taskInstance.getStart() == null}">
+					<li><a href="${rootURL}/plugin/jbpm/start?task=${taskInstance.getId()}">start</a></li>
+				</j:when>
+				<j:otherwise>
+					<j:forEach var="transition" items="${taskInstance.getAvailableTransitions()}">
+						<li>
+							<a href="${rootURL}/plugin/jbpm/triggerTransition?task=${taskInstance.getId()}&amp;transition=${transition.getName()}">
+								${transition.getName()}
+							</a>
+						</li> 
+					</j:forEach>
+				</j:otherwise>
+			</j:choose>
+			</ul>
+			</li>
+		</j:forEach>
+		</ul>
+				</j:forEach>
+			</ul>
+		</j:forEach>
+
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

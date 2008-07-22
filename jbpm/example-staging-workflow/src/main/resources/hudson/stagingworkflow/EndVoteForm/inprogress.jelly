@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt">
+	<f:form method="post"
+		action="/plugin/jbpm/taskInstance/${it.taskInstance.id}/form/submit">
+		<f:block>
+			<input type="submit" name="submit" value="Complete" class="submit-button" />
+		</f:block>
+	</f:form>
+</j:jelly>

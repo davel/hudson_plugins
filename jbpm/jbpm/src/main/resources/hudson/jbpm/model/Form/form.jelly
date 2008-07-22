@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<j:choose>
+		<j:when test="${taskInstance.taskInstance.start == null}">
+			<st:include page="start.jelly"/>
+		</j:when>
+		<j:otherwise>
+			<j:choose>
+				<j:when test="${taskInstance.taskInstance.end == null}">
+					<st:include page="inprogress.jelly"/>
+				</j:when>
+				<j:otherwise>
+					<st:include page="completed.jelly"/>
+				</j:otherwise>
+			</j:choose>
+		</j:otherwise>
+	</j:choose>
+</j:jelly>

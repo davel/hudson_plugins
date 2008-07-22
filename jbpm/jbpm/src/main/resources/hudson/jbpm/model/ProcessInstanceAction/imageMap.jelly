@@ -1,0 +1,11 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<MAP NAME="map">
+		<j:forEach var="node" items="${it.nodes}">
+			<area shape="rect"
+				coords="${node.x1},${node.y1},${node.x2},${node.y2}"
+				href="${rootURL}/${node.url}" alt="${node.name}" title="${node.name}" />
+		</j:forEach>
+	</MAP>
+	<img src="workflow/image" usemap="#map" />
+</j:jelly>

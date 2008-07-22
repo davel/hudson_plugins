@@ -1,0 +1,16 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	
+	<j:set var="tasks" value="${it.tasks}"/>
+	
+	<j:if test="${!tasks.isEmpty()}">
+	<l:pane width="2" title="Tasks">
+		<j:forEach var="task" items="${tasks}">
+			<tr class="build-row">
+				<td>${task.name}</td>
+			</tr>
+		</j:forEach>
+	</l:pane>
+
+	</j:if>
+</j:jelly>

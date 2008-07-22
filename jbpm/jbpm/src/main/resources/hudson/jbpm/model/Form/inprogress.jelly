@@ -1,0 +1,25 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt">
+	<j:set var="transitions"
+		value="${taskInstance.taskInstance.getAvailableTransitions()}" />
+	<ul>
+		<j:set var="transitions"
+			value="${taskInstance.taskInstance.getAvailableTransitions()}" />
+		<j:choose>
+			<j:when
+				test="${transitions.size() == 1 &amp;&amp; transitions.get(0).name == null}">
+				<a
+					href="${rootURL}/plugin/jbpm/taskInstance/${taskInstance.id}/triggerTransition"> (complete)</a>
+			</j:when>
+			<j:otherwise>
+				<j:forEach var="transition" items="${transitions}">
+					<li>
+						<a
+							href="${rootURL}/plugin/jbpm/taskInstance/${taskInstance.id}/triggerTransition?transition=${transition.name}"> ${transition.name}</a>
+					</li>
+				</j:forEach>
+			</j:otherwise>
+		</j:choose>
+	</ul>
+</j:jelly>

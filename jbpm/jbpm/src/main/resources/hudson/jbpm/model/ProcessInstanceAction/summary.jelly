@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<t:summary icon="package.gif">
+		<j:forEach var="taskInstance" items="${it.getMyTasks()}">
+			<f:entry title="Task: ${taskInstance.taskInstance.name}">
+				<j:set var="form" value="${taskInstance.form}" />
+				<st:include page="form.jelly" from="${form}" it="${form}" />
+			</f:entry>
+		</j:forEach>
+		<st:include page="imageMap.jelly"/>
+	</t:summary>
+</j:jelly>

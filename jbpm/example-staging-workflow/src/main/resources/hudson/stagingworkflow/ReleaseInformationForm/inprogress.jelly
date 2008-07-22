@@ -1,0 +1,19 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt">
+	<f:form method="post"
+		action="/plugin/jbpm/taskInstance/${it.taskInstance.id}/form/submit">
+		<f:entry title="Release version">
+			<f:textbox name="releaseVersion" value="${it.releaseVersion}" />
+		</f:entry>
+		<f:entry title="Email address for vote announcement">
+			<f:textbox name="voteEmailAddress" value="${it.voteEmailAddress}" />
+		</f:entry>
+		<f:entry title="Email address for release announcement">
+			<f:textbox name="releaseEmailAddress" value="${it.releaseEmailAddress}" />
+		</f:entry>
+		<f:block>
+			<input type="submit" name="submit" value="Complete" class="submit-button" />
+		</f:block>
+	</f:form>
+</j:jelly>

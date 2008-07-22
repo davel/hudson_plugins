@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="Staged Release" width="671" height="690">
+  <node name="Start Staged Release" x="252" y="24" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Get Release Information" x="250" y="100" width="189" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Release to Staging Repository" x="231" y="171" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="195" h1="3" w2="183" h2="-479"/>
+      <bendpoint w1="197" h1="482" w2="185" h2="0"/>
+    </edge>
+  </node>
+  <node name="Send Vote E-Mail" x="244" y="237" width="207" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Vote" x="283" y="310" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Vote Result" x="286" y="434" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-156" h1="0" w2="-161" h2="-219"/>
+      <bendpoint w1="-156" h1="217" w2="-161" h2="-2"/>
+    </edge>
+  </node>
+  <node name="Deploy Staged Release" x="268" y="502" width="174" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Send Release Announcement" x="245" y="580" width="218" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Send Vote Result E-Mail" x="256" y="375" width="185" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="End" x="291" y="653" width="132" height="36"/>
+</root-container>
