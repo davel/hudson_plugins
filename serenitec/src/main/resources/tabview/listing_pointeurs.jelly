@@ -1,0 +1,31 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+
+<table class="pane" id="summary">
+	<j:forEach var="entry" items="${it.Entries}">
+		<tr>
+			<td class="pane-header" style="width:20%;">${entry.Name}</td>
+			<td class="pane-header" style="width:70%; text-align:left">
+			<small>
+			<j:forEach var="description" items="${entry.Descriptions}">   
+				   		[${description.Language}] ${description.Description}<br />
+			</j:forEach>  
+			</small>
+			</td>
+			<td class="pane-header" style="width:10%;">${entry.Severity}</td>
+		</tr>
+		<j:forEach var="pointeur" items="${entry.Pointeurs}">	
+		<tr>
+			<td class="pane">
+                            <a href="source.${pointeur.key}/#${pointeur.LineNumber}">${pointeur.Filename}</a>
+                        </td>
+			<td class="pane">${pointeur.Fullpath}</td>
+			<td class="pane" style="text-align:right">${pointeur.Linenumber}</td>
+		</tr>
+		</j:forEach>
+    </j:forEach>				
+</table>	
+
+	
+</j:jelly>

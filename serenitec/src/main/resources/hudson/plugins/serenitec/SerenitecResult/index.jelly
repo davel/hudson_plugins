@@ -1,0 +1,235 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<l:layout norefresh="true">
+		<st:include it="${it.owner}" page="sidepanel.jelly" />
+		<l:main-panel>
+			<h1>Refactoring events summary</h1>
+			<h2>Refactoring trend</h2>
+			<table class="pane" id="summary">
+				<tr>
+					<td class="pane-header" style="width:20%;"><a href="testedRules">Number of tested rules</a></td>
+                                        <td class="pane" style="width:60%;">Number of detected rules in your repository</td>
+					<td class="pane" style="width:10%; text-align:right">${it.NumberOfRules}</td>
+					<td class="pane" style="width:10%;">
+					<j:if test="${it.NumberOfRulesBefore == it.NumberOfRules}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfRulesBefore lt it.NumberOfRules}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfRulesBefore gt it.NumberOfRules}">
+						DOWN
+					</j:if>					
+					(${it.NumberOfRulesBefore})</td>
+				</tr>
+                                <tr>
+					<td class="pane-header" style="width:20%;"><a href="errors">Number of errors</a></td>
+                                        <td class="pane" style="width:60%;">Number of detected errors in your project</td>
+					<td class="pane" style="width:10%; text-align:right">${it.NumberOfEntry}</td>
+					<td class="pane" style="width:10%;">
+					<j:if test="${it.NumberOfEntryBefore == it.NumberOfEntry}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfEntryBefore lt it.NumberOfEntry}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfEntryBefore gt it.NumberOfEntry}">
+						DOWN
+					</j:if>					
+					(${it.NumberOfEntryBefore})</td>
+				</tr>
+				<tr>
+					<td class="pane-header"><a href="newErrors">New errors</a></td>
+                                        <td class="pane" style="width:60%;">Number of errors which appeared since the last build</td>
+					<td class="pane" style="text-align:right">${it.NumberOfNewEntryPercent}% (${it.NumberOfNewEntry})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfNewEntryBefore == it.NumberOfNewEntry}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfNewEntryBefore lt it.NumberOfNewEntry}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfNewEntryBefore gt it.NumberOfNewEntry}">
+						DOWN
+					</j:if>					
+					(${it.NumberOfNewEntryBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header"><a href="fixedErrors">Fixed errors</a></td>
+					<td class="pane" style="width:60%;">Number of fixed errors in your project</td>
+                                        <td class="pane" style="text-align:right">${it.NumberOfFixedEntryPercent}% (${it.NumberOfFixedEntry})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfFixedEntryBefore == it.NumberOfFixedEntry}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfFixedEntryBefore lt it.NumberOfFixedEntry}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfFixedEntryBefore gt it.NumberOfFixedEntry}">
+						DOWN
+					</j:if>
+					(${it.NumberOfFixedEntryBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header"><a href="unfixedErrors">Not Fixed errors</a></td>
+                                        <td class="pane" style="width:60%;">Number of unfixed errors in your project</td>
+					<td class="pane" style="text-align:right">${it.NumberOfNotFixedEntryPercent}% (${it.NumberOfNotFixedEntry})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfNotFixedEntryBefore == it.NumberOfNotFixedEntry}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfNotFixedEntryBefore lt it.NumberOfNotFixedEntry}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfNotFixedEntryBefore gt it.NumberOfNotFixedEntry}">
+						DOWN
+					</j:if>
+					(${it.NumberOfNotFixedEntryBefore})</td>
+				</tr>
+				<tr>
+					<td class="pane-header"><a href="patterns">Number of pointeurs</a></td>
+                                        <td class="pane" style="width:60%;">Number of detected areas containning errors.</td>
+					<td class="pane" style="text-align:right">${it.NumberMoyenneOfPointeursPerEntry}/entry (${it.NumberOfPointeurs})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfPointeursBefore == it.NumberOfPointeurs}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfPointeursBefore lt it.NumberOfPointeurs}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfPointeursBefore gt it.NumberOfPointeurs}">
+						DOWN
+					</j:if>
+					(${it.NumberOfPointeursBefore})</td>
+				</tr>
+			</table>
+				
+			<h2>Refactoring Severity trend</h2>	
+			<table class="pane" id="summary">
+				<tr>
+					<td class="pane-header" style="width:20%;">Formating</td>
+                                        <td class="pane" style="width:60%">Description of this severity</td>
+					<td class="pane" style="width:10%; text-align:right">${it.NumberOfSeverityFormatagePercent}% (${it.NumberOfSeverityFormatage})</td>
+					<td class="pane" style="width:10%;">
+					<j:if test="${it.NumberOfSeverityFormatageBefore == it.NumberOfSeverityFormatage}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfSeverityFormatageBefore lt it.NumberOfSeverityFormatage}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfSeverityFormatageBefore gt it.NumberOfSeverityFormatage}">
+						DOWN
+					</j:if>
+					(${it.NumberOfSeverityFormatageBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header">Language evolution</td>
+                                        <td class="pane">Description of this severity</td>
+					<td class="pane" style="text-align:right">${it.NumberOfSeverityPerformancePercent}% (${it.NumberOfSeverityPerformance})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfSeverityPerformanceBefore == it.NumberOfSeverityPerformance}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfSeverityPerformanceBefore lt it.NumberOfSeverityPerformance}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfSeverityPerformanceBefore gt it.NumberOfSeverityPerformance}">
+						DOWN
+					</j:if>
+					(${it.NumberOfSeverityPerformanceBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header">Design</td>
+                                        <td class="pane">Description of this severity</td>
+					<td class="pane" style="text-align:right">${it.NumberOfSeverityDesignPercent}% (${it.NumberOfSeverityDesign})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfSeverityDesignBefore == it.NumberOfSeverityDesign}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfSeverityDesignBefore lt it.NumberOfSeverityDesign}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfSeverityDesignBefore gt it.NumberOfSeverityDesign}">
+						DOWN
+					</j:if>
+					(${it.NumberOfSeverityDesignBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header">Low security</td>
+                                        <td class="pane">Description of this severity</td>
+					<td class="pane" style="text-align:right">${it.NumberOfSeverityLowSecurityPercent}% (${it.NumberOfSeverityLowSecurity})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfSeverityLowSecurityBefore == it.NumberOfSeverityLowSecurity}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfSeverityLowSecurityBefore lt it.NumberOfSeverityLowSecurity}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfSeverityLowSecurityBefore gt it.NumberOfSeverityLowSecurity}">
+						DOWN
+					</j:if>
+					(${it.NumberOfSeverityLowSecurityBefore})
+					</td>
+				</tr>
+				<tr>
+					<td class="pane-header">High security</td>
+                                        <td class="pane">Description of this severity</td>
+					<td class="pane" style="text-align:right">${it.NumberOfSeverityHighSecurityPercent}% (${it.NumberOfSeverityHighSecurity})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfSeverityHighSecurityBefore == it.NumberOfSeverityHighSecurity}">
+						STABLE
+					</j:if>
+					<j:if test="${it.NumberOfSeverityHighSecurityBefore lt it.NumberOfSeverityHighSecurity}">
+						UP
+					</j:if>
+					<j:if test="${it.NumberOfSeverityHighSecurityBefore gt it.NumberOfSeverityHighSecurity}">
+						DOWN
+					</j:if>
+					(${it.NumberOfSeverityHighSecurityBefore})
+					</td>
+				</tr>
+			</table>	
+			
+			
+			<h2>TOP5 - Refactoring main entries</h2>	
+			<table class="pane" id="summary">
+				<j:forEach var="entry" items="${it.TopFiveEntries}">      
+		        <tr>
+		        	<td class="pane-header" style="width:20%;">${entry.Name}</td>
+		        	<td class="pane">
+		        	<j:forEach var="description" items="${entry.Descriptions}">   
+                                    [${description.Language}] ${description.Description}<br />
+		        	</j:forEach>  
+		        	</td>
+		        	<td class="pane" style="text-align:right; width:10%;">${entry.NumberOfPointeurs}</td>
+		        </tr>
+		        </j:forEach>				
+			</table>	
+
+                        <h2>PATCHS - Apply patchs to resolve your project errors</h2>
+
+                        <table class="pane" id="summary">
+                            <tr>
+                                <td class="pane-header" style="width:20%;">Rule</td>
+                                <td class="pane-header" style="width:70%;">Debug Mode</td>
+                                <td class="pane-header" style="width:20%;">Play all</td>
+                            </tr>
+                            <j:forEach var="entry" items="${it.Entries}">      
+                                <tr>
+                                    <td class="pane">${entry.Name}</td>
+                                    <td class="pane">
+                                        Patch1 | Pacth2 | Pacth3 | Patch4 | Patch5 | Patch6 | Patch7 | Patch8 | Patch9 | Patch10 | patch11
+                                    </td>
+                                    <td class="pane" style="text-align:right">Apply all</td>
+                                </tr>
+                            </j:forEach>	
+			</table>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

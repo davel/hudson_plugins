@@ -1,0 +1,26 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  <table class="pane sortable" id="fixed">
+    <tr>
+      <td class="pane-header">Entry</td>
+      <td class="pane-header">FileName</td>
+      <td class="pane-header">FilePath</td>
+      <td class="pane-header">LineNumber</td>      
+      <td class="pane-header">Severity</td>
+    </tr>
+    <tbody>
+      <j:forEach var="entry" items="${it.entriesnotfixed}">
+        <j:forEach var="pointeur" items="${entry.Pointeurs}">        
+        <tr>
+          <td class="pane">${entry.Name}</td>
+          <td class="pane">${pointeur.Filename}</td>
+          <td class="pane">${pointeur.Fullpath}</td>
+          <td class="pane">${pointeur.Linenumber}</td>
+          <td class="pane">${entry.Severity}</td>
+        </tr>
+      	</j:forEach>
+      </j:forEach>
+    </tbody>
+  </table>
+</j:jelly>

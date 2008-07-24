@@ -1,0 +1,141 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout norefresh="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <l:main-panel>
+        <style type="text/css">
+           .diff {
+                width:100%;
+            }
+           .ligne_entete {
+                text-align:center;
+                vertical-align:center;
+                background-color:#FFFFFF; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .ligne_normal {
+                text-align:center;
+                vertical-align:center;
+                background-color:#D1947B; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .ligne_added {
+                text-align:center;
+                vertical-align:center;
+                font-weight:bold;
+                background-color:#B1F392; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .ligne_deleted {
+                text-align:center;
+                vertical-align:center;
+                font-weight:bold;
+                background-color:#FC7256; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .ligne_modified {
+                text-align:center;
+                font-weight:bold;
+                vertical-align:center;
+                background-color:#F1F291; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .original_entete {
+                text-align:center;
+                vertical-align:center;
+                font-size:12px;
+                font-weight:bold;
+                background-color:#FFFFFF; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .original_normal {
+                text-align:left;
+                vertical-align:center;
+                background-color:#E8E3C5; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .original_added {
+                text-align:left;
+                vertical-align:center;
+                background-color:#E8E3C5;
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;	
+           }
+            .original_deleted {
+                text-align:left;
+                vertical-align:center;
+                background-color:#FC7256; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .original_modified {
+                text-align:left;
+                vertical-align:center;
+                background-color:#F1F291; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .refactored_entete {
+                text-align:center;
+                vertical-align:center;
+                font-size:12px;
+                font-weight:bold;
+                background-color:#FFFFFF; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .refactored_normal {
+                text-align:left;
+                vertical-align:center;
+                background-color:#E8E3C5; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .refactored_added {
+                text-align:left;
+                vertical-align:center;
+                background-color:#B1F392; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+            .refactored_deleted {
+                text-align:left;
+                vertical-align:center;
+                background-color:#E8E3C5; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+           }
+            .refactored_modified {
+                text-align:left;
+                vertical-align:center;
+                background-color:#F1F291; 
+                border-left:1px dotted #CCCCCC; 
+                border-right:1px dotted #CCCCCC;
+                border-bottom:1px solid #C8C8C8;	
+           }
+        </style>
+        <h1>Source code of your file</h1>
+	  ${it.sourceCode}
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

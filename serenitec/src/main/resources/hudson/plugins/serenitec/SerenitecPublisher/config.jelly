@@ -1,0 +1,48 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:advanced>
+	<f:entry title="Severity Max" description="If a detected error has a severity that exceeds this threshold the build is considered as unstable.">
+		<f:textbox name="threshold" value="${instance.severityMax}" />
+	</f:entry>
+	<f:entry title="Health interpolation" description="Configure health for a build in function of the number of detected error.">
+		<table>
+			<thead>
+				<tr>
+					<td width="40%"></td>
+					<td width="30%">
+						<img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%" title="Perfect" />
+					</td>
+					<td width="30%">
+						<img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%" title="Dangerous" />
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>Number of errors :</th>
+					<td>
+						<f:textbox name="healthy" value="${instance.healthy}" />
+					</td>
+					<td>
+						<f:textbox name="unHealthy" value="${instance.unHealthy}" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</f:entry>
+        <f:entry title="targetProjectPath" description="Default : workspace\src\">
+		<f:textbox name="targetProjectPath" value="${instance.targetProjectPath}" />
+	</f:entry>
+	<f:entry title="repositoryFileName" description="Please specify the absolute path to the repository you want to use for the refactoring">
+		<f:textbox name="repositoryFileName" value="${instance.repositoryFileName}" />
+	</f:entry>
+	<f:entry title="outputLog" description="Please specify the absolute path to the output log">
+		<f:textbox name="outputLog" value="${instance.outputLog}" />
+	</f:entry>
+    </f:advanced>	
+	
+
+	
+	
+  
+</j:jelly>

@@ -1,0 +1,67 @@
+<!-- JavaScript Dependencies for Tabview: -->
+                        <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+                        <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/element/element-beta-min.js"></script>
+
+                        <!-- Source file for TabView -->
+                        <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/tabview/tabview-min.js"></script>
+
+                        <script type="text/javascript">
+                          var myTabs = new YAHOO.widget.TabView("statistics");
+                        </script>	
+	
+                        <st:include page="/tabview/css.jelly" />
+			
+			<h2>Details</h2>
+			<div id="statistics" class="yui-navset">
+		      <ul class="yui-nav">	
+		      	  <j:set var="class" value="selected" />	        
+		          <li class="${class}">
+		            <a href="#tab_entry">
+		              <em>Rules</em>
+		            </a>
+		          </li>
+				  <j:set var="class" value="" />	        
+		          <li class="${class}">
+		            <a href="#tab_fixedentry">
+		              <em>Fixed Rules</em>
+		            </a>
+		          </li>
+				  <j:set var="class" value="" />		        
+		          <li class="${class}">
+		            <a href="#tab_notfixedentry">
+		              <em>Not Fixed Rules</em>
+		            </a>
+		          </li>
+				  <j:set var="class" value="" />	        
+		          <li class="${class}">
+		            <a href="#tab_pointeurs">
+		              <em>Pointeurs</em>
+		            </a>
+		          </li>
+				</ul>
+      			<div class="yui-content">
+         			<j:if test="${it.NumberOfEntry > 0}">
+			          <div id="tab_entry">
+			            <st:include page="/tabview/listing_entry.jelly" />
+			          </div>
+			        </j:if>
+			        
+			        <j:if test="${it.NumberOfFixedEntry > 0}">
+			          <div id="tab_fixedentry">
+			            <st:include page="/tabview/listing_fixedentry.jelly" />
+			          </div>
+			        </j:if>
+			        
+			        <j:if test="${it.NumberOfNotFixedEntry > 0}">
+			          <div id="tab_notfixedentry">
+			            <st:include page="/tabview/listing_notfixedentry.jelly" />
+			          </div>
+			        </j:if>
+			        
+			        <j:if test="${it.NumberOfPointeurs > 0}">
+			          <div id="tab_pointeurs">
+			            <st:include page="/tabview/listing_pointeurs.jelly" />
+			          </div>
+			        </j:if>
+      			</div>
+			</div>

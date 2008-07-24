@@ -1,0 +1,24 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	
+<table class="pane" id="summary">
+	<tr>
+		<td class="pane-header" style="width:20%;">Name</td>
+		<td class="pane-header" style="width:70%; text-align:left">Description</td>
+		<td class="pane-header" style="width:10%;">Severity</td>
+	</tr>
+	<j:forEach var="entry" items="${it.EntriesNotFixed}">      
+		<tr>
+		  	<td class="pane">${entry.Name}</td>
+		   	<td class="pane">
+			   	<j:forEach var="description" items="${entry.Descriptions}">   
+			   		[${description.Language}] ${description.Description}<br />
+			   	</j:forEach>  
+		   	</td>
+		   	<td class="pane" style="text-align:right">${entry.Severity}</td>
+		</tr>
+    </j:forEach>				
+</table>	
+
+</j:jelly>
