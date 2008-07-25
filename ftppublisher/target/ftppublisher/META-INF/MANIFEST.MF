@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Built-By: fit
+Created-By: Apache Maven
+Build-Jdk: 1.5.0_11
+Extension-Name: ftppublisher
+Implementation-Title: ftppublisher
+Implementation-Version: 1.0-SNAPSHOT
+Plugin-Class: com.zanox.hudson.plugins.PluginImpl
+Long-Name: Unnamed - ftppublisher:ftppublisher:hpi:1.0-SNAPSHOT
+Plugin-Version: 1.0-SNAPSHOT (private-04/22/2008 11:14-fit)
+

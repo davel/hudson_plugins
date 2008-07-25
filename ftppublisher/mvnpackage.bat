@@ -1,0 +1,1 @@
+D:\jzx\sodtware\maven-2.0.7-bin\maven-2.0.7\bin\mvn -e package
