@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import java.util.List;
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -93,7 +95,37 @@ public class SerenitecPublisher extends HealthAwarePublisher
     protected Project perform(final AbstractBuild<?, ?> build,
             final PrintStream logger) throws InterruptedException, IOException
     {
-        log(logger, "Opening xml event file...");
+        /**
+         * Detecting if it's a multi module project
+         */
+        log(logger, "Detecting reports fils :");
+        log(logger, "build.getRootDir() : " + build.getRootDir());
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /**
+         * If we have more then one module we concat reports
+         */
+        log(logger, "Concatenation of reports :");
+        
+        /**
+         * We open the report
+         */
+        log(logger, "Opening global report file :");
+        
+        /**
+         * We parse the report
+         */
+        log(logger, "Parsing results :");
+        
+        
+        log(logger, "Opening report file ...");
 
         // we search for the xml
         final String url_fichier_xml = build.getRootDir().getParentFile()

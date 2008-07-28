@@ -15,23 +15,6 @@
 		  <div>
 		    <img src="${from.urlName}/trend${trendQueryParameter}" lazymap="${from.urlName}/trendMap${trendQueryParameter}"/>
 		  </div>
-		  <div class="test-trend-caption">
-		    Serenitec Fixed Refactoring trend
-		  </div>
-	      <j:if test="${from.isHealthinessEnabled()}">
-		      <div style="text-align:right">
-		        <a href="${from.urlName}/flipTrend">
-		          <j:choose>
-		            <j:when test="${mode}">
-		              (${%show priorities})
-		            </j:when>
-		            <j:otherwise>
-		              (${%show healthiness})
-		            </j:otherwise>
-		          </j:choose>
-		        </a>
-		      </div>
-	      </j:if>
-	   	</div>
+	      </div>
 	</j:if>
 </j:jelly>

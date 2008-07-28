@@ -1,18 +1,19 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
 	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">	
 	<t:summary icon="/plugin/serenitec/icons/serenitec-48x48.png">	
         ${it.result.summary}
 		<ul>
-	    <j:if test="${it.result.hasError()}">
+	    <j:if test="${it.result.hasRules()}">
 	    	<li>
-	    		${%error.message}
+	    		<b><a href="SerenitecResult">Analyse de votre projet effectuee sur ${it.result.NumberOfRules} regles.</a></b>
 	    	</li>
 	    </j:if>
-            <j:if test="${it.result.hasPatterns()}">
+            <j:if test="${it.result.hasEntries()}">
 	    	<li>
-	    		${%error.patterns}
+	    		<a href="SerenitecResult/errors">${it.result.NumberOfEntry} erreurs</a>,
+                        <a href="SerenitecResult/newErrors">${it.result.NumberOfNewEntry} nouvelles erreurs</a>,
+                        <a href="SerenitecResult/unfixedErrors">${it.result.NumberOfNotFixedEntry} erreurs non refactorees</a>.
 	    	</li>
 	    </j:if>
 		</ul>

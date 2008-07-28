@@ -34,6 +34,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 855696821788264261L;
 
+    
+
     /** The hierarchy of a container. */
     public enum Hierarchy
     {
@@ -299,7 +301,18 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         }
         return null;
     }
-
+    public List<String> getModifiedFiles()
+    {
+        List<String> resultat = new ArrayList<String>();
+        for (ReportPointeur pointeur : pointeurs)
+        {
+            if (!resultat.contains(pointeur.getFilename()))
+            {
+                resultat.add(pointeur.getFilename());
+            }
+        }
+        return resultat;
+    }
     public final List<ReportEntry> getRules()
     {
         return rules;
@@ -558,6 +571,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** {@inheritDoc} */
     public final boolean hasAnnotations()
     {
+        System.out.println("******************************EntriesContainer.HASANNOTATION()**");
         return !entries.isEmpty();
     }
 

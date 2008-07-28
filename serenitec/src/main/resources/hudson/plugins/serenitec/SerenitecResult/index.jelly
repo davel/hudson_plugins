@@ -212,21 +212,21 @@
 		        </j:forEach>				
 			</table>	
 
-                        <h2>PATCHS - Apply patchs to resolve your project errors</h2>
+                        <h2>PATCHS - <a href="">Apply patchs to resolve your project errors</a></h2>
 
                         <table class="pane" id="summary">
                             <tr>
-                                <td class="pane-header" style="width:20%;">Rule</td>
-                                <td class="pane-header" style="width:70%;">Debug Mode</td>
-                                <td class="pane-header" style="width:20%;">Play all</td>
+                                <td class="pane-header" style="width:20%;">Files</td>
+                                <td class="pane-header" style="width:70%;">Generated patchs</td>
+                                <td class="pane-header" style="width:20%;">Apply patchs</td>
                             </tr>
-                            <j:forEach var="entry" items="${it.Entries}">      
+                            <j:forEach var="file" items="${it.ModifiedFiles}">      
                                 <tr>
-                                    <td class="pane">${entry.Name}</td>
+                                    <td class="pane">${file}</td>
                                     <td class="pane">
                                         Patch1 | Pacth2 | Pacth3 | Patch4 | Patch5 | Patch6 | Patch7 | Patch8 | Patch9 | Patch10 | patch11
                                     </td>
-                                    <td class="pane" style="text-align:right">Apply all</td>
+                                    <td class="pane" style="text-align:right"><a href="">Apply all</a></td>
                                 </tr>
                             </j:forEach>	
 			</table>

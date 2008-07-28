@@ -79,7 +79,9 @@ public class SerenitecResult implements ModelObject, Serializable,
     /** The new entries */
     private final List<ReportEntry>          newEntries;
     /** The pointeurs */
-    private final List<ReportPointeur>          pointeurs;
+    private final List<ReportPointeur>       pointeurs;
+    /** The modified files */
+    private final List<String>               modifiedFiles;
     /** The number of entry in this build */
     private final int                        numberOfEntry;
     /** the number of entry in the previous build */
@@ -182,7 +184,12 @@ public class SerenitecResult implements ModelObject, Serializable,
          */
         entries = project.getContainer().getEntries();
         numberOfEntry = project.getContainer().getNumberOfEntry();
-                
+          
+        /**
+         * Get all the modified files
+         */
+        modifiedFiles = project.getContainer().getModifiedFiles();
+        
         /**
          * Get the not fixed entries
          */
@@ -344,6 +351,11 @@ public class SerenitecResult implements ModelObject, Serializable,
         delta = numberOfEntry - numberOfEntryBefore;        
         numberOfModules = project.getModules().size();
         System.out.println("End of Serenitec Result");
+    }
+
+    public List<String> getModifiedFiles()
+    {
+        return modifiedFiles;
     }
 
     public EntriesContainer getContainer()
@@ -550,7 +562,7 @@ public class SerenitecResult implements ModelObject, Serializable,
     /**
      * @return the numberOfEntryBefore
      */
-    public int getNumberOfEntrybefore()
+    public int getNumberOfEntryBefore()
     {
         return numberOfEntryBefore;
     }
@@ -893,11 +905,18 @@ public class SerenitecResult implements ModelObject, Serializable,
     }
 
     /**
-     * @return if it has entries
+     * @return if it has rules
      */
-    public boolean hasEntry()
+    public boolean hasRules()
     {
         return rules.size() > 0;
+    }
+    /**
+     * @return if it has entries
+     */
+    public boolean hasEntries()
+    {
+        return entries.size() > 0;
     }
 
     /**

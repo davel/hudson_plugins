@@ -173,7 +173,7 @@ public abstract class HealthAwarePublisher extends Publisher
         }
         else
         {
-            log(logger, "No annotations have been found.");
+            log(logger, "No entry have been found.");
         }
     }
 
