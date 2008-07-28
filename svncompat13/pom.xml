@@ -8,13 +8,7 @@
   </parent>
   
   <artifactId>svncompat13</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson SVN 1.3 Compatibility plugin</name>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/svncompat13-1.1</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/svncompat13-1.1</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/svncompat13/tags/svncompat13-1.1</url>
-  </scm>
 </project>
