@@ -32,7 +32,7 @@ public class PluginImpl extends Plugin {
 						.hasNext();) {
 					SVNAdminAreaFactory factory = (SVNAdminAreaFactory) factoriesIter
 							.next();
-					if (factory.getSupportedVersion() == SVNAdminAreaFactory.WC_FORMAT_13) {
+					if (factory.getSupportedVersion() == WC_FORMAT_13) {
 						enabledFactories.add(factory);
 					}
 				}
@@ -42,4 +42,8 @@ public class PluginImpl extends Plugin {
 
 		System.out.println("SVNKit is now compatible with Subversion 1.3");
 	}
+
+    // taken from org.tmatesoft.svn.core.internal.wc.admin.SVNXMLAdminAreaFactory.WC_FORMAT
+    // as it's not public
+    private static final int WC_FORMAT_13 = 4;
 }
