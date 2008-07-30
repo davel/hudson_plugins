@@ -25,11 +25,5 @@
       <version>0.1.24</version>
     </dependency>
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/0_9_0</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/0_9_0</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/ftppublisher/tags/0_9_0</url>
-  </scm>
 </project>
 
