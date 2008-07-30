@@ -67,77 +67,77 @@ public class SerenitecResult implements ModelObject, Serializable,
     /** The parsed warnings result. */
     @SuppressWarnings("Se")
     private transient WeakReference<Project> projectSerenitec;
-    private final Project                    save_project;
+    private Project                    save_project;
     /** All the entries */
-    private final List<ReportEntry>          rules;
+    private List<ReportEntry>          rules;
     /** All the active entries */
-    private final List<ReportEntry>          entries;
+    private List<ReportEntry>          entries;
     /** The entries not fixed */
-    private final List<ReportEntry>          entriesnotfixed;
+    private List<ReportEntry>          entriesnotfixed;
     /** The fixed entries */
-    private final List<ReportEntry>          entriesfixed;
+    private List<ReportEntry>          entriesfixed;
     /** The new entries */
-    private final List<ReportEntry>          newEntries;
+    private List<ReportEntry>          newEntries;
     /** The pointeurs */
-    private final List<ReportPointeur>       pointeurs;
+    private List<ReportPointeur>       pointeurs;
     /** The modified files */
-    private final List<String>               modifiedFiles;
+    private List<String>               modifiedFiles;
     /** The number of entry in this build */
-    private final int                        numberOfEntry;
+    private int                        numberOfEntry;
     /** the number of entry in the previous build */
-    private final int                        numberOfEntryBefore;
+    private int                        numberOfEntryBefore;
     /** The top 5 most present entry */
     private List<ReportEntry>                topFiveEntries;
 
-    private final List<ReportEntry>          topFiveEntriesBefore;
+    private List<ReportEntry>          topFiveEntriesBefore;
     /** The number of new entry in this build. */
-    private final int                        numberOfNewEntry;
-    private final int                        numberOfNewEntryBefore;
-    private final float                      numberOfNewEntryPercent;
+    private  int                        numberOfNewEntry;
+    private int                        numberOfNewEntryBefore;
+    private float                      numberOfNewEntryPercent;
     /** The number of fixed warnings in this build. */
-    private final int                        numberOfFixedEntry;
-    private final int                        numberOfFixedEntryBefore;
-    private final float                      numberOfFixedEntryPercent;
+    private int                        numberOfFixedEntry;
+    private int                        numberOfFixedEntryBefore;
+    private float                      numberOfFixedEntryPercent;
     /** The number of not fixed warnings in this build */
-    private final int                        numberOfNotFixedEntry;
-    private final int                        numberOfNotFixedEntryBefore;
-    private final float                      numberOfNotFixedEntryPercent;
+    private int                        numberOfNotFixedEntry;
+    private  int                        numberOfNotFixedEntryBefore;
+    private float                      numberOfNotFixedEntryPercent;
     /** Difference between this and the previous build. */
-    private final int                        delta;
-    private final int                        numberOfSeverityFormatage;
-    private final float                      numberOfSeverityFormatagePercent;
-    private final int                        numberOfSeverityPerformance;
-    private final float                      numberOfSeverityPerformancePercent;
-    private final int                        numberOfSeverityDesign;
-    private final float                      numberOfSeverityDesignPercent;
-    private final int                        numberOfSeverityLowSecurity;
-    private final float                      numberOfSeverityLowSecurityPercent;
-    private final int                        numberOfSeverityHighSecurity;
-    private final float                      numberOfSeverityHighSecurityPercent;
-    private final int                        numberOfSeverityFormatageBefore;
-    private final int                        numberOfSeverityPerformanceBefore;
-    private final int                        numberOfSeverityDesignBefore;
-    private final int                        numberOfSeverityLowSecurityBefore;
+    private int                        delta;
+    private int                        numberOfSeverityFormatage;
+    private float                      numberOfSeverityFormatagePercent;
+    private int                        numberOfSeverityPerformance;
+    private float                      numberOfSeverityPerformancePercent;
+    private int                        numberOfSeverityDesign;
+    private  float                      numberOfSeverityDesignPercent;
+    private int                        numberOfSeverityLowSecurity;
+    private float                      numberOfSeverityLowSecurityPercent;
+    private  int                        numberOfSeverityHighSecurity;
+    private  float                      numberOfSeverityHighSecurityPercent;
+    private int                        numberOfSeverityFormatageBefore;
+    private int                        numberOfSeverityPerformanceBefore;
+    private int                        numberOfSeverityDesignBefore;
+    private int                        numberOfSeverityLowSecurityBefore;
 
-    private final int                        numberOfSeverityHighSecurityBefore;
+    private int                        numberOfSeverityHighSecurityBefore;
     /** Number of pointeur */
-    private final int                        numberOfPointeurs;
+    private int                        numberOfPointeurs;
 
-    private final float                      numberMoyenneOfPointeursPerEntry;
+    private float                      numberMoyenneOfPointeursPerEntry;
 
     /** Error messages. */
     @SuppressWarnings("Se")
-    private final List<String>               errors;
+    private List<String>               errors;
 
     /** Current build as owner of this action. */
     @SuppressWarnings("Se")
-    private final AbstractBuild<?, ?>        owner;
+    private AbstractBuild<?, ?>        owner;
     /** The modules with no warnings. */
     @SuppressWarnings("Se")
     /** The total number of modules with or without warnings. */
-    private final int                        numberOfModules;
+    private int                        numberOfModules;
 
-    private final int                        numberOfPointeursBefore;
+    private int                        numberOfPointeursBefore;
     private int numberOfRules;
     private int numberOfRulesBefore;
 
@@ -156,6 +156,25 @@ public class SerenitecResult implements ModelObject, Serializable,
     {
         this(build, project, new Project());
     }
+    /**
+     * Creates a new instance of <code>SerenitecResult</code>.
+     *
+     * @param build
+     *            the current build as owner of this action
+     * @param project
+     *            the parsed warnings result
+     * @param previous
+     *            the result of the previous build
+     */
+    public SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final SerenitecResult previous)
+    {
+               
+        EntriesContainer previousProject = previous.getProject();
+        System.out.println("Lancement de initialize() par SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final SerenitecResult previous)");
+        initialize(build, project, previousProject);
+        System.out.println("Fin du lancementy");
+        
+    }
 
     /**
      * Creates a new instance of <code>SerenitecResult</code>.
@@ -167,8 +186,15 @@ public class SerenitecResult implements ModelObject, Serializable,
      * @param previousProject
      *            the parsed warnings result of the previous build
      */
-    public SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final Project previousProject)
+    public SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject)
     {
+        System.out.println("Executing SerenitecResult.SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject)");
+        initialize(build, project, previousProject);
+    }
+    public void initialize(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject)
+    {
+        System.out.println("Executing SerenitecResult.initialize()");
+        
         owner = build;
         errors = new ArrayList<String>();
         
@@ -209,25 +235,13 @@ public class SerenitecResult implements ModelObject, Serializable,
          */
         topFiveEntries = project.getContainer().getTopFiveEntries();
                 
-        /**
-         * Get the new entries
-         */
-        newEntries = new ArrayList<ReportEntry>();
-        for (final ReportEntry entry : rules)
-        {
-            if (previousProject != project && previousProject.getContainer().getEntries().contains(entry.getName()))
-            {
-                newEntries.add(entry);
-            }
-        }
-        numberOfNewEntry = newEntries.size();
-        numberOfNewEntryPercent = doPercentage(numberOfNewEntry, numberOfEntry);                
+                  
         
         /**
-         * Get the number of errors
+         * Get the number of patterns
          */
         pointeurs = project.getContainer().getPointeurs();
-        numberOfPointeurs = pointeurs.size();
+        numberOfPointeurs = project.getContainer().getNumberOfPointeurs();
         numberMoyenneOfPointeursPerEntry = numberOfPointeurs / numberOfEntry;
         
         
@@ -287,31 +301,35 @@ public class SerenitecResult implements ModelObject, Serializable,
         /**
          * get stats from the last build
          */
+        System.out.println("if (previousProject.hasAnnotations())");
         if (previousProject.hasAnnotations())
         {
-            System.out.println("Il y a une build précédente donc on récupère ses valeurs");
             numberOfRulesBefore = previousProject.getContainer().getRules().size();
-            System.out.println("test de numberOfRulesBefore");
-            numberOfPointeursBefore = previousProject.getContainer().getPointeurs().size();
-            System.out.println("numberOfPointeursBefore");
+            numberOfPointeursBefore = previousProject.getContainer().getNumberOfPointeurs();
             numberOfEntryBefore = previousProject.getContainer().getNumberOfEntry();
-            numberOfNewEntryBefore = 0;
+            
             numberOfNotFixedEntryBefore = previousProject.getContainer().getEntriesNotFixed().size();
-            System.out.println("numberOfNotFixedEntryBefore");
             numberOfFixedEntryBefore = previousProject.getContainer().getEntriesFixed().size();
-            System.out.println("numberOfFixedEntryBefore");
             topFiveEntriesBefore = previousProject.getContainer().getTopFiveEntries();
-            System.out.println("topFiveEntriesBefore");
             numberOfSeverityFormatageBefore = previousProject.getContainer().getNumberOfSeverityFormatage();
-            System.out.println("numberOfSeverityFormatageBefore");
             numberOfSeverityPerformanceBefore = previousProject.getContainer().getNumberOfSeverityPerformance();
-            System.out.println("numberOfSeverityPerformanceBefore");
             numberOfSeverityDesignBefore = previousProject.getContainer().getNumberOfSeverityDesign();
-            System.out.println("numberOfSeverityDesignBefore");
             numberOfSeverityLowSecurityBefore = previousProject.getContainer().getNumberOfSeverityLowSecurity();
-            System.out.println("numberOfSeverityLowSecurityBefore");
             numberOfSeverityHighSecurityBefore = previousProject.getContainer().getNumberOfSeverityHighSecurity();
-            System.out.println("numberOfSeverityHighSecurityBefore");
+            /**
+             * Get the new entries
+             */
+            newEntries = new ArrayList<ReportEntry>();
+            for (final ReportEntry entry : rules)
+            {
+                if (previousProject != project && previousProject.getContainer().getEntries().contains(entry.getName()))
+                {
+                    newEntries.add(entry);
+                }
+            }
+            numberOfNewEntry = newEntries.size();
+            numberOfNewEntryPercent = doPercentage(numberOfNewEntry, numberOfEntry);  
+            numberOfNewEntryBefore = 0;
         }
         else
         {
@@ -320,6 +338,9 @@ public class SerenitecResult implements ModelObject, Serializable,
             numberOfPointeursBefore = 0;
             numberOfEntryBefore = 0;
             numberOfNewEntryBefore = 0;
+            numberOfNewEntryPercent = 0;
+            numberOfNewEntry = 0;
+            newEntries = new ArrayList<ReportEntry>();
             numberOfNotFixedEntryBefore = 0;
             numberOfFixedEntryBefore = 0;
             topFiveEntriesBefore = new ArrayList<ReportEntry>();
@@ -336,7 +357,8 @@ public class SerenitecResult implements ModelObject, Serializable,
         System.out.println("----------------------------------------------------");
         System.out.println("Nombre de rules dans le référentiel : " + numberOfRules);        
         System.out.println("Nombre d'entry : " + numberOfEntry);        
-        System.out.println("Nombre de pointeurs : " + numberOfPointeurs);        
+        System.out.println("Nombre de pointeurs : " + numberOfPointeurs);  
+        System.out.println("Nombre de pointeurs before : " + numberOfPointeursBefore);
         System.out.println("Nombre de fixed entry : " + numberOfFixedEntry);        
         System.out.println("Nombre de not fixed entry : " + numberOfNotFixedEntry);        
         System.out.println("numberOfSeverityFormatage  : " + numberOfSeverityFormatage);  
@@ -350,7 +372,7 @@ public class SerenitecResult implements ModelObject, Serializable,
         /** delta between this build and the one before */
         delta = numberOfEntry - numberOfEntryBefore;        
         numberOfModules = project.getModules().size();
-        System.out.println("End of Serenitec Result");
+        System.out.println("End of SerenitecResult");
     }
 
     public List<String> getModifiedFiles()
@@ -370,7 +392,7 @@ public class SerenitecResult implements ModelObject, Serializable,
      */
     private XmlFile getDataFile()
     {
-        return new XmlFile(XSTREAM, new File(getOwner().getRootDir(), "compiler-warnings.xml"));
+        return new XmlFile(XSTREAM, new File(getOwner().getRootDir(), "compiler-serenitec.xml"));
     }
 
     /**
@@ -455,9 +477,7 @@ public class SerenitecResult implements ModelObject, Serializable,
             System.out.println("******************************************" +
                     "***************");
         
-            resultat = new SourceDetail(getOwner(),
-                    "C:\\developpement-local\\JarClassLoader.java");
-            //return new SourceDetail(getOwner(), save_project.getContainer().getPointeur(Integer.parseInt(StringUtils.substringAfter(link, "source."))).getFullpath());    
+            resultat = new SourceDetail(getOwner(), "C:\\developpement-local\\JarClassLoader.java");
         }
         return resultat;
     }
@@ -871,16 +891,7 @@ public class SerenitecResult implements ModelObject, Serializable,
      */
     public Project getProject()
     {
-        if (projectSerenitec == null)
-        {
-            loadResult();
-        }
-        final Project result = projectSerenitec.get();
-        if (result == null)
-        {
-            loadResult();
-        }
-        return projectSerenitec.get();
+        return save_project;
     }
 
     public Project getProjectSerenitec()

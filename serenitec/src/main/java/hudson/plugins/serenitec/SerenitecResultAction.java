@@ -80,7 +80,7 @@ public class SerenitecResultAction extends AbstractResultAction<SerenitecResult>
     /** {@inheritDoc} */
     public String getMultipleItemsTooltip(final int numberOfItems)
     {
-        return "Nombre d'events détecté : " + numberOfItems;
+        return numberOfItems + " detected errors of ";
     }
 
     /**
@@ -105,6 +105,6 @@ public class SerenitecResultAction extends AbstractResultAction<SerenitecResult>
     /** {@inheritDoc} */
     public String getSingleItemTooltip()
     {
-        return "Le seul event détecté.";
+        return "1 detected error of ";
     }
 }

@@ -112,19 +112,14 @@ public abstract class AbstractResultAction<T extends EntriesProvider>
             if (current != null)
             {
                 List<Integer> series;
-                
-                    series = new ArrayList<Integer>();
-                    System.out.println("getNumberOfSeverityFormatage = "+current.getNumberOfSeverityFormatage());
-                    series.add(current.getNumberOfSeverityFormatage());
-                    System.out.println("getNumberOfSeverityPerformance = "+current.getNumberOfSeverityPerformance());
-                    series.add(current.getNumberOfSeverityPerformance());
-                    System.out.println("getNumberOfSeverityDesign = "+current.getNumberOfSeverityDesign());
-                    series.add(current.getNumberOfSeverityDesign());
-                    System.out.println("getNumberOfSeverityLowSecurity = "+current.getNumberOfSeverityLowSecurity());
-                    series.add(current.getNumberOfSeverityLowSecurity());
-                    System.out.println("getNumberOfSeverityHighSecurity = "+current.getNumberOfSeverityHighSecurity());
-                    series.add(current.getNumberOfSeverityHighSecurity());
-                
+
+                series = new ArrayList<Integer>();
+                series.add(current.getNumberOfSeverityFormatage());
+                series.add(current.getNumberOfSeverityPerformance());
+                series.add(current.getNumberOfSeverityDesign());
+                series.add(current.getNumberOfSeverityLowSecurity());
+                series.add(current.getNumberOfSeverityHighSecurity());
+
                 int level = 0;
                 for (final Integer integer : series)
                 {

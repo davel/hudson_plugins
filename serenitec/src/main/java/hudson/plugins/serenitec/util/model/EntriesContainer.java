@@ -440,6 +440,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
 
     public int getNumberOfPointeurs()
     {
+        System.out.println("EntriesContainer.getNumberOfPointeurs : " + pointeurs.size());
         return pointeurs.size();
     }
 
@@ -571,7 +572,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** {@inheritDoc} */
     public final boolean hasAnnotations()
     {
-        System.out.println("******************************EntriesContainer.HASANNOTATION()**");
+        System.out.println("EntriesContainer.HASANNOTATION()**");
         return !entries.isEmpty();
     }
 

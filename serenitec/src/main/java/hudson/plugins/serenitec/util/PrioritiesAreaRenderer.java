@@ -87,17 +87,24 @@ public class PrioritiesAreaRenderer extends StackedAreaRenderer2
         StringBuilder tooltip = new StringBuilder();
         tooltip.append(getToolTipBuilder().getTooltip(dataset.getValue(row, column).intValue()));
         tooltip.append(" ");
-        if (row == 2)
+        
+        switch(row)
         {
-            tooltip.append("Messages.Trend_PriorityHigh()");
-        }
-        else if (row == 1)
-        {
-            tooltip.append("Messages.Trend_PriorityNormal()");
-        }
-        else
-        {
-            tooltip.append("Messages.Trend_PriorityLow()");
+            case 1:
+                tooltip.append("Formating");
+            break;
+            case 2:
+                tooltip.append("Performance");
+            break;
+            case 3:
+                tooltip.append("Design");
+            break;
+            case 4:
+                tooltip.append("Low security");
+            break;
+            default:
+                tooltip.append("High Security");
+            break;
         }
         return tooltip.toString();
     }

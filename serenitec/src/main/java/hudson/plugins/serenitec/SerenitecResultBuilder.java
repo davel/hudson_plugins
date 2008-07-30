@@ -36,30 +36,26 @@ public class SerenitecResultBuilder
     public SerenitecResult build(final AbstractBuild < ?, ? > build,
             final Project project)
     {
-        SerenitecResult resultat = null;
         System.out.println("Executing Serenitec Result.");
         Object previous = build.getPreviousBuild();
         System.out.println("build.getPreviousBuild");
         while (previous != null && previous instanceof AbstractBuild< ?, ? >)
         {
-            System.out.println("While previous!=null && instanceof AbstractBuild");
-            AbstractBuild <?, ?> previousBuild =
-                    (AbstractBuild < ?, ? >) previous;
+            AbstractBuild <?, ?> previousBuild = (AbstractBuild < ?, ? >) previous;
             SerenitecResultAction previousAction = previousBuild.getAction(SerenitecResultAction.class);
+            
             if (previousAction != null)
             {
-                System.out.println("returning SerenitecResult with trend");
-                resultat = new SerenitecResult(build, project, project);
+                System.out.println("previousAction != null");
+                return new SerenitecResult(build, project, previousAction.getResult());
             }
             previous = previousBuild.getPreviousBuild();
+            
         }
         System.out.println("End of Executing Serenitec Result.");
         System.out.println("returning a Serenitec Result without trend");
-        if (resultat == null)
-        {
-            resultat = new SerenitecResult(build, project);
-        }
-        return resultat;
+        return new SerenitecResult(build, project);
+
     }
 }
 

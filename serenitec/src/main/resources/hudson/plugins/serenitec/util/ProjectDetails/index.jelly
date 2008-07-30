@@ -34,21 +34,12 @@
                         <td class="pane-header" style="width:20%;">File</td>
                         <td class="pane-header" style="width:60%; text-align:left">Absolute Path</td>
                         <td class="pane-header" style="width:10%;">Line Number</td>
-                        <td class="pane-header" style="width:10%;">Fixed ?</td>
                 </tr>
             <j:forEach var="pattern" items="${it.Data}">      
                 <tr>
                     <td class="pane">${pattern.Filename}</td>
                     <td class="pane">${pattern.Fullpath}</td>
-                    <td class="pane">${pattern.Linenumber}</td>
-                    <td class="pane" style="text-align:right">
-                    <j:if test="${pattern.IsFixed}"> 
-                        Fixed
-                    </j:if>
-                    <j:if test="${!pattern.IsFixed}"> 
-                        Not Fixed
-                    </j:if>
-                    </td>
+                    <td class="pane">${pattern.Linenumber}</td>                    
                 </tr>
             </j:forEach>
             </table>

@@ -66,7 +66,7 @@ public class SerenitecPublisher extends HealthAwarePublisher
     public SerenitecPublisher(final String threshold, final String healthy,
             final String unHealthy, final String height)
     {
-        super(threshold, healthy, unHealthy, height, "SERENITEC");
+        super(threshold, healthy, unHealthy, height, "Serenitec Hudson Plugin");
     }
 
     @Override
@@ -96,122 +96,62 @@ public class SerenitecPublisher extends HealthAwarePublisher
             final PrintStream logger) throws InterruptedException, IOException
     {
         /**
-         * Detecting if it's a multi module project
+         * Creating the project
          */
-        log(logger, "Detecting reports fils :");
-        log(logger, "build.getRootDir() : " + build.getRootDir());
-        
-        
-        
-        
-        
-        
-        
-        
+        Project projet = new Project();
         
         /**
-         * If we have more then one module we concat reports
+         * Scanning for the report
          */
-        log(logger, "Concatenation of reports :");
         
-        /**
-         * We open the report
-         */
-        log(logger, "Opening global report file :");
-        
-        /**
-         * We parse the report
-         */
-        log(logger, "Parsing results :");
-        
-        
-        log(logger, "Opening report file ...");
-
-        // we search for the xml
-        final String url_fichier_xml = build.getRootDir().getParentFile()
-                .getParentFile().toString() + "/workspace/serenitec-report.xml";
-
-        final File report_xml = new File(url_fichier_xml);
-
-        final Project projet = new Project();
-        
-        // we verify that the file exist
-        if (!report_xml.canRead())
+        String uri_report = build.getRootDir().getParentFile().getParentFile().getAbsolutePath() + "\\" + "serenitec-report.xml";
+        log(logger, "Scanning for the report in " + uri_report);
+        final File report = new File(uri_report);
+        if (!report.exists() || !report.canRead())
         {
-            log(logger, "Unable to read xml event report.");
+            log(logger, "Error : Unable to read xml event report.");
             build.setResult(Result.FAILURE);
         }
         else
         {
-            log(logger, "Analysing Serenitec report");
-            final Gettingxml parseur = new Gettingxml(url_fichier_xml);
-            ArrayList<ReportEntry> xml;
+            /**
+             * We parse the report
+             */
+            log(logger, "Opening report file and parsing results :");
+            final Gettingxml parseur = new Gettingxml(report.getAbsolutePath());            
             try
             {
                 parseur.parse();
             }
             catch (final Exception e)
             {
-                e.printStackTrace();
+                log(logger, "Error on parsing results : " + e.getLocalizedMessage());
+                build.setResult(Result.FAILURE);
             }
-            xml = parseur.result();
-            
+            ArrayList<ReportEntry> xml = parseur.result();
+           
             projet.addEntries(xml);
-            log(logger, "----------------------------------------------------" +
-                    "------------");
-            log(logger, "Number of events : " + projet.getNumberOfEntry());
-            log(logger, "----------------------------------------------------" +
-                    "------------");
-            for (final ReportEntry entry : projet.getEntries())
-            {
-                log(logger, entry.getName());
-                log(logger, "Severity : " +
-                        Integer.toString(entry.getSeverity()));
-                for (final ReportDescription description :
-                    entry.getDescriptions())
-                {
-                    log(logger, description.getLanguage() 
-                            + " : " + description.getDescription()
-                            + " (" + description.getHelpreference() + ")");
-                }
-                for (final ReportPointeur pointeur : entry.getPointeurs())
-                {
-                    log(logger, pointeur.getFullpath() + " : "
-                            + pointeur.getFilename()
-                            + " (" + pointeur.getLinenumber() + ") "
-                            + pointeur.isIsfixed());
-                }
-                log(logger, "------------------------------------------------" +
-                        "-----------------");
-            }
-            for (final ReportEntry entry : projet.getEntriesNotFixed())
-            {
-                log(logger, "Not Fixed : " + entry.getName() + " "
-                        + entry.getSeverity());
-            }
-            log(logger, "Implementing Serenitec Result Builder.");
-            SerenitecResultBuilder test = new SerenitecResultBuilder();
-            log(logger, "build()");
-            log(logger, "Nombre d'entry : "+test.build(build, projet).getNumberOfEntry());
             
+            log(logger, "-Repository-------------------------------------");
+            log(logger, " Number of Rules : " + projet.getNumberOfRules());
+            log(logger, " Number of Errors : " + projet.getNumberOfEntry());
+            log(logger, " Number of Patterns : " + projet.getNumberOfPointeurs());
+            log(logger, " Number of Fixed errors : " + projet.getNumberOfFixedEntry());
+            log(logger, " Number of Unfixed errors : " + projet.getNumberOfNotFixedEntry());
+            log(logger, "------------------------------------------------");
+            /**
+             * Implementing the Result Builder
+             */
             final SerenitecResult resultat = new SerenitecResultBuilder().build(build, projet);
-            
-            
-            
-            
-            System.out.println("Test ...");
-            log(logger, "Implementing Health Report Builder.");
+            /**
+             * Implementing the HealthReportBuilder
+             */
             final HealthReportBuilder healthReportBuilder =
-                    createHealthReporter("Messages.Warnings_ResultAction_" +
-                    "HealthReportSingleItem()",
-                    "Messages.Warnings_ResultAction_" +
-                    "HealthReportMultipleItem(\"%d\")");
+                    createHealthReporter("Serenitec Reports : 1 open task found.",
+                    "Serenitec Reports : {\"%d\"} open tasks found.");
             log(logger, "Adding new Serenitec Result Action into the build");
-            build.getActions().add(new SerenitecResultAction(
-                    build, healthReportBuilder, resultat));
+            build.getActions().add(new SerenitecResultAction(build, healthReportBuilder, resultat));
         }
-        System.out.println("Resultat du retour : ");
-        System.out.println(projet.getNumberOfEntry());
         return projet;
     }
 }

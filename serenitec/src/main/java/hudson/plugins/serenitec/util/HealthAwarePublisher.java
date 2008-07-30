@@ -156,15 +156,11 @@ public abstract class HealthAwarePublisher extends Publisher
      */
     private void evaluateBuildResult(final AbstractBuild<?, ?> build, final PrintStream logger, final Project project)
     {
-        System.out.println("Executing evaluate Build Result");
         final int numberOfEntry = project.getNumberOfEntry();
         final int severityMaxDiscovered = project.getMaxSeverityDiscovered();
-        System.out.println("Number of entry : " + numberOfEntry);
-        System.out.println("severityMaxDiscovered : " + severityMaxDiscovered);
         
         if (numberOfEntry > 0)
         {
-            log(logger, "A total of " + numberOfEntry + " rules have been found.");
             // We determines if should consider the build as unstable or "nuageux"
             if (isThresholdEnabled() && severityMaxDiscovered > Integer.parseInt(getseverityMax()) && !project.IsFixed())
             {
@@ -312,10 +308,7 @@ public abstract class HealthAwarePublisher extends Publisher
             try
             {
                 final Project project = perform(build, logger);
-                log(logger, "Executing evaluateBuildResult");
-                log(logger, "Project : "+project.getNumberOfEntry());
                 evaluateBuildResult(build, logger, project);
-                log(logger, "End of executinf evaluateBuildResult");
             }
             catch (final Exception exception)
             {
