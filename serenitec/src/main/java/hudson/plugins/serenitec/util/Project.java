@@ -8,8 +8,10 @@
  */
 package hudson.plugins.serenitec.util;
 
+
 import hudson.plugins.serenitec.util.model.EntriesContainer;
 import hudson.plugins.serenitec.util.model.MavenModule;
+
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,17 +23,17 @@ public class Project extends EntriesContainer
      * SERIAL UID
      */
     private static final long serialVersionUID = 771741031245139227L;
-    private String workspacePath;
+    private String            workspacePath;
     /** Determines whether a module with an error is part of this project. */
-    private boolean hasModuleError;
+    private boolean           hasModuleError;
     /** The error message that denotes that why project creation has been failed. */
-    private String error;
+    private String            error;
 
     /**
      * Creates a new instance of {@link JavaProject}.
      */
-    public Project()
-    {
+    public Project() {
+
         super(Hierarchy.PROJECT);
     }
 
@@ -41,15 +43,11 @@ public class Project extends EntriesContainer
      * @param additionalError
      *            the new error message to add
      */
-    public void addError(final String additionalError)
-    {
+    public void addError(final String additionalError) {
 
-        if (StringUtils.isEmpty(error))
-        {
+        if (StringUtils.isEmpty(error)) {
             error = additionalError;
-        }
-        else
-        {
+        } else {
             error = error + "\n" + additionalError;
         }
     }
@@ -60,12 +58,10 @@ public class Project extends EntriesContainer
      * @param module
      *            the module to add
      */
-    public void addModule(final MavenModule module)
-    {
+    public void addModule(final MavenModule module) {
 
         addEntries(module.getEntries());
-        if (module.hasError())
-        {
+        if (module.hasError()) {
             hasModuleError = true;
             addError(module.getError());
         }
@@ -77,19 +73,16 @@ public class Project extends EntriesContainer
      * @param modules
      *            the modules to add
      */
-    public void addModules(final Collection<MavenModule> modules)
-    {
+    public void addModules(final Collection<MavenModule> modules) {
 
-        for (final MavenModule mavenModule : modules)
-        {
+        for (final MavenModule mavenModule : modules) {
             addModule(mavenModule);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Collection<? extends EntriesContainer> getChildren()
-    {
+    protected Collection<? extends EntriesContainer> getChildren() {
 
         return getModules();
     }
@@ -99,8 +92,7 @@ public class Project extends EntriesContainer
      * 
      * @return the error message that denotes that why project creation has been failed.
      */
-    public String getError()
-    {
+    public String getError() {
 
         return error;
     }
@@ -110,8 +102,7 @@ public class Project extends EntriesContainer
      * 
      * @return the workspace path
      */
-    public String getWorkspacePath()
-    {
+    public String getWorkspacePath() {
 
         return workspacePath;
     }
@@ -121,8 +112,7 @@ public class Project extends EntriesContainer
      * 
      * @return <code>true</code> if at least one module has an error.
      */
-    public boolean hasError()
-    {
+    public boolean hasError() {
 
         return hasModuleError || error != null;
     }
@@ -132,8 +122,8 @@ public class Project extends EntriesContainer
      * 
      * @return the created object
      */
-    private Object readResolve()
-    {
+    private Object readResolve() {
+
         setHierarchy(Hierarchy.PROJECT);
         rebuildMappings();
         return this;
@@ -145,8 +135,7 @@ public class Project extends EntriesContainer
      * @param error
      *            the new error message
      */
-    public void setError(final String error)
-    {
+    public void setError(final String error) {
 
         this.error = error;
     }
@@ -157,8 +146,7 @@ public class Project extends EntriesContainer
      * @param workspacePath
      *            path to workspace
      */
-    public void setWorkspacePath(final String workspacePath)
-    {
+    public void setWorkspacePath(final String workspacePath) {
 
         this.workspacePath = workspacePath;
     }
@@ -166,4 +154,5 @@ public class Project extends EntriesContainer
      * 
      * 
      */
+
 }

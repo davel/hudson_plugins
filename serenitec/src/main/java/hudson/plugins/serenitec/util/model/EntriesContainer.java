@@ -8,8 +8,10 @@
  */
 package hudson.plugins.serenitec.util.model;
 
+
 import hudson.plugins.serenitec.parseur.ReportEntry;
 import hudson.plugins.serenitec.parseur.ReportPointeur;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +36,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** Unique identifier of this class. */
     private static final long serialVersionUID = 855696821788264261L;
 
-    
-
     /** The hierarchy of a container. */
-    public enum Hierarchy
-    {
+    public enum Hierarchy {
 
         /** Project level. */
         PROJECT,
@@ -49,32 +48,35 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         /** File level. */
         FILE
     }
+
     @SuppressWarnings("Se")
-    private final List<ReportEntry> rules = new ArrayList<ReportEntry>();
+    private final List<ReportEntry>                        rules   = new ArrayList<ReportEntry>();
     /** The active entries */
-    private final List<ReportEntry> entries = new ArrayList<ReportEntry>();
+    private final List<ReportEntry>                        entries = new ArrayList<ReportEntry>();
     /** The entries mapped by severity. */
     private transient Map<Integer, ArrayList<ReportEntry>> entriesBySeverity;
     /** The entries mapped by name. */
-    private transient Map<String, ArrayList<ReportEntry>> entriesByName;
+    private transient Map<String, ArrayList<ReportEntry>>  entriesByName;
     /** The not fixed entries */
-    private transient List<ReportEntry> entriesNotFixed;
+    private transient List<ReportEntry>                    entriesNotFixed;
     /** The fixed entries */
-    private transient List<ReportEntry> entriesFixed;
+    private transient List<ReportEntry>                    entriesFixed;
     /** Entries mapped by number of pointeurs */
-    private transient List<ReportEntry> entriesOrderByNumberOfPointeurs;
+    private transient List<ReportEntry>                    entriesOrderByNumberOfPointeurs;
     /** The TOP5 entries */
-    private transient List<ReportEntry> topFiveEntries;
+    private transient List<ReportEntry>                    topFiveEntries;
+    /** The files */
+    private transient List<String>                         files;
     /** The list of pointeurs */
-    private transient List<ReportPointeur> pointeurs;
+    private transient List<ReportPointeur>                 pointeurs;
     /** The files that contain annotations mapped by file name. */
-    private transient Map<String, Package> packagesByName;
+    private transient Map<String, Package>                 packagesByName;
     /** The files that contain annotations mapped by file name. */
-    private transient Map<String, MavenModule> modulesByName;
+    private transient Map<String, MavenModule>             modulesByName;
     /** Name of this container. */
-    private String name;
+    private String                                         name;
     /** Hierarchy level of this container. */
-    private Hierarchy hierarchy;
+    private Hierarchy                                      hierarchy;
 
     /**
      * Creates a new instance of <code>AnnotationContainer</code>.
@@ -82,8 +84,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param hierarchy
      *            the hierarchy of this container
      */
-    public EntriesContainer(final Hierarchy hierarchy)
-    {
+    public EntriesContainer(final Hierarchy hierarchy) {
+
         this(StringUtils.EMPTY, hierarchy);
     }
 
@@ -95,8 +97,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param hierarchy
      *            the hierarchy of this container
      */
-    protected EntriesContainer(final String name, final Hierarchy hierarchy)
-    {
+    protected EntriesContainer(final String name, final Hierarchy hierarchy) {
 
         initialize();
         this.name = name;
@@ -110,8 +111,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void addCategory(final ReportEntry annotation)
-    {        // String category = annotation.getCategory();
+    private void addCategory(final ReportEntry annotation) { // String category = annotation.getCategory();
+
         // if (!annotationsByCategory.containsKey(category)) {
         // annotationsByCategory.put(category, new HashSet<FileAnnotation>());
         // }
@@ -124,10 +125,9 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param newAnnotations
      *            the annotations to add
      */
-    public final void addEntries(final Collection<? extends ReportEntry> newentry)
-    {
-        for (final ReportEntry entry : newentry)
-        {
+    public final void addEntries(final Collection<? extends ReportEntry> newentry) {
+
+        for (final ReportEntry entry : newentry) {
             addEntry(entry);
         }
         initialize();
@@ -139,8 +139,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param newAnnotations
      *            the annotations to add
      */
-    public final void addEntries(final ReportEntry[] newAnnotations)
-    {
+    public final void addEntries(final ReportEntry[] newAnnotations) {
+
         addEntries(Arrays.asList(newAnnotations));
     }
 
@@ -150,11 +150,10 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the annotation to add
      */
-    public final void addEntry(final ReportEntry entry)
-    {
+    public final void addEntry(final ReportEntry entry) {
+
         rules.add(entry);
-        if (entry.isActive())
-        {
+        if (entry.isActive()) {
             entries.add(entry);
         }
         updateMappings(entry);
@@ -167,8 +166,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void addFile(final ReportEntry annotation)
-    {        // String fileName = annotation.getFileName();
+    private void addFile(final ReportEntry annotation) { // String fileName = annotation.getFileName();
+
         // if (!filesByName.containsKey(fileName)) {
         // filesByName.put(fileName, new WorkspaceFile(fileName));
         // }
@@ -182,8 +181,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void addModule(final ReportEntry annotation)
-    {        // String moduleName = annotation.getModuleName();
+    private void addModule(final ReportEntry annotation) { // String moduleName = annotation.getModuleName();
+
         // if (!modulesByName.containsKey(moduleName)) {
         // modulesByName.put(moduleName, new MavenModule(moduleName));
         // }
@@ -197,8 +196,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void addPackage(final ReportEntry annotation)
-    {        // String packageName = annotation.getPackageName();
+    private void addPackage(final ReportEntry annotation) { // String packageName = annotation.getPackageName();
+
         // if (!packagesByName.containsKey(packageName)) {
         // packagesByName.put(packageName, new Package(packageName));
         // }
@@ -212,8 +211,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void addType(final ReportEntry annotation)
-    {        // String type = annotation.getType();
+    private void addType(final ReportEntry annotation) { // String type = annotation.getType();
+
         // if (!annotationsByType.containsKey(type)) {
         // annotationsByType.put(type, new HashSet<FileAnnotation>());
         // }
@@ -227,8 +226,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      *            the module to check for
      * @return <code>true</code> if the maven module with the given name exists, <code>false</code> otherwise
      */
-    public boolean containsModule(final String moduleName)
-    {
+    public boolean containsModule(final String moduleName) {
+
         return modulesByName.containsKey(moduleName);
     }
 
@@ -239,8 +238,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      *            the package to check for
      * @return <code>true</code> if the package with the given name exists, <code>false</code> otherwise
      */
-    public boolean containsPackage(final String packageName)
-    {
+    public boolean containsPackage(final String packageName) {
+
         return packagesByName.containsKey(packageName);
     }
 
@@ -249,20 +248,17 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the maximum number of annotations
      */
-    public final int getAnnotationBound()
-    {
+    public final int getAnnotationBound() {
 
         int maximum = 0;
-        for (final EntriesContainer subContainer : getChildren())
-        {
+        for (final EntriesContainer subContainer : getChildren()) {
             maximum = Math.max(maximum, subContainer.getNumberOfEntry());
         }
         return maximum;
     }
 
     /** {@inheritDoc} */
-    public final Collection<ReportEntry> getAnnotations()
-    {
+    public final Collection<ReportEntry> getAnnotations() {
 
         return Collections.unmodifiableCollection(rules);
     }
@@ -279,95 +275,81 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return this container
      */
-    public EntriesContainer getContainer()
-    {
+    public EntriesContainer getContainer() {
 
         return this;
     }
 
     /**
      * Returns the pointeur identified by its key number
+     * 
      * @param key
      * @return ReportPointeur
      */
-    public ReportPointeur getPointeur(int key)
-    {
-        for (ReportPointeur pointeur : pointeurs)
-        {
-            if (pointeur.getKey() == key)
-            {
+    public ReportPointeur getPointeur(int key) {
+
+        for (ReportPointeur pointeur : pointeurs) {
+            if (pointeur.getKey() == key) {
                 return pointeur;
             }
         }
         return null;
     }
-    public List<String> getModifiedFiles()
-    {
+    public List<String> getModifiedFiles() {
+
         List<String> resultat = new ArrayList<String>();
-        for (ReportPointeur pointeur : pointeurs)
-        {
-            if (!resultat.contains(pointeur.getFilename()))
-            {
+        for (ReportPointeur pointeur : pointeurs) {
+            if (!resultat.contains(pointeur.getFilename())) {
                 resultat.add(pointeur.getFilename());
             }
         }
         return resultat;
     }
-    public final List<ReportEntry> getRules()
-    {
+    public final List<ReportEntry> getRules() {
+
         return rules;
     }
-    
 
-    public final List<ReportEntry> getEntries()
-    {
+    public final List<ReportEntry> getEntries() {
+
         return entries;
     }
 
-    public final Map<String, ArrayList<ReportEntry>> getEntriesByName()
-    {
+    public final Map<String, ArrayList<ReportEntry>> getEntriesByName() {
+
         return entriesByName;
     }
 
-    public final Map<Integer, ArrayList<ReportEntry>> getEntriesBySeverity()
-    {
+    public final Map<Integer, ArrayList<ReportEntry>> getEntriesBySeverity() {
+
         return entriesBySeverity;
     }
 
-    public final List<ReportEntry> getEntriesFixed()
-    {
+    public final List<ReportEntry> getEntriesFixed() {
+
         return entriesFixed;
     }
 
-    public List<ReportEntry> getEntriesNotFixed()
-    {
+    public List<ReportEntry> getEntriesNotFixed() {
+
         return entriesNotFixed;
     }
 
     /**
      * @return the hightest severity entry discovered
      */
-    public int getMaxSeverityDiscovered()
-    {
+    public int getMaxSeverityDiscovered() {
+
         int resultat = 0;
-        if (getNumberOfSeverityHighSecurity() > 0)
-        {
+        if (getNumberOfSeverityHighSecurity() > 0) {
             resultat = 5;
-        }
-        else if (getNumberOfSeverityLowSecurity() > 0)
-        {
+        } else if (getNumberOfSeverityLowSecurity() > 0) {
             resultat = 4;
-        }
-        else if (getNumberOfSeverityDesign() > 0)
-        {
+        } else if (getNumberOfSeverityDesign() > 0) {
             resultat = 3;
-        }
-        else if (getNumberOfSeverityPerformance() > 0)
-        {
+        } else if (getNumberOfSeverityPerformance() > 0) {
             resultat = 2;
-        }
-        else if (getNumberOfSeverityFormatage() > 0)
-        {
+        } else if (getNumberOfSeverityFormatage() > 0) {
             resultat = 1;
         }
         return resultat;
@@ -380,11 +362,9 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      *            the name of the module
      * @return the module with the given name
      */
-    public MavenModule getModule(final String moduleName)
-    {
+    public MavenModule getModule(final String moduleName) {
 
-        if (modulesByName.containsKey(moduleName))
-        {
+        if (modulesByName.containsKey(moduleName)) {
             return modulesByName.get(moduleName);
         }
         throw new NoSuchElementException("Module not found: " + moduleName);
@@ -395,14 +375,12 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the modules with annotations
      */
-    public Collection<MavenModule> getModules()
-    {
+    public Collection<MavenModule> getModules() {
 
         return Collections.unmodifiableCollection(modulesByName.values());
     }
 
-    public final Map<String, MavenModule> getModulesByName()
-    {
+    public final Map<String, MavenModule> getModulesByName() {
 
         return modulesByName;
     }
@@ -412,97 +390,132 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the name of this container
      */
-    public final String getName()
-    {
+    public final String getName() {
 
         return name;
     }
 
-    public int getNumberOfRules()
-    {
+    public int getNumberOfRules() {
+
         return rules.size();
     }
 
-    public int getNumberOfEntry()
-    {
+    public int getNumberOfEntry() {
+
         return entries.size();
     }
 
-    public int getNumberOfFixedEntry()
-    {
+    public int getNumberOfFixedEntry() {
+
         return entriesFixed.size();
     }
 
-    public int getNumberOfNotFixedEntry()
-    {
+    public int getNumberOfNotFixedEntry() {
+
         return entriesNotFixed.size();
     }
 
-    public int getNumberOfPointeurs()
-    {
+    public int getNumberOfPointeurs() {
+
         System.out.println("EntriesContainer.getNumberOfPointeurs : " + pointeurs.size());
         return pointeurs.size();
     }
+    public int getNumberOfSeverityDesignPatterns() {
 
-    public int getNumberOfSeverityDesign()
-    {
-        if (entriesBySeverity.containsKey(3))
-        {
+        int resultat = 0;
+        if (entriesBySeverity.containsKey(3)) {
+            for (ReportEntry entry : entriesBySeverity.get(3)) {
+                resultat += entry.getNumberOfPointeurs();
+            }
+        }
+        return resultat;
+    }
+
+    public int getNumberOfSeverityFormatagePatterns() {
+
+        int resultat = 0;
+        if (entriesBySeverity.containsKey(1)) {
+            for (ReportEntry entry : entriesBySeverity.get(1)) {
+                resultat += entry.getNumberOfPointeurs();
+            }
+        }
+        return resultat;
+    }
+
+    public int getNumberOfSeverityHighSecurityPatterns() {
+
+        int resultat = 0;
+        if (entriesBySeverity.containsKey(5)) {
+            for (ReportEntry entry : entriesBySeverity.get(5)) {
+                resultat += entry.getNumberOfPointeurs();
+            }
+        }
+        return resultat;
+    }
+
+    public int getNumberOfSeverityLowSecurityPatterns() {
+
+        int resultat = 0;
+        if (entriesBySeverity.containsKey(4)) {
+            for (ReportEntry entry : entriesBySeverity.get(4)) {
+                resultat += entry.getNumberOfPointeurs();
+            }
+        }
+        return resultat;
+    }
+
+    public int getNumberOfSeverityPerformancePatterns() {
+
+        int resultat = 0;
+        if (entriesBySeverity.containsKey(2)) {
+            for (ReportEntry entry : entriesBySeverity.get(2)) {
+                resultat += entry.getNumberOfPointeurs();
+            }
+        }
+        return resultat;
+    }
+
+    public int getNumberOfSeverityDesign() {
+
+        if (entriesBySeverity.containsKey(3)) {
             return entriesBySeverity.get(3).size();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public int getNumberOfSeverityFormatage()
-    {
+    public int getNumberOfSeverityFormatage() {
 
-        if (entriesBySeverity.containsKey(1))
-        {
+        if (entriesBySeverity.containsKey(1)) {
             return entriesBySeverity.get(1).size();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public int getNumberOfSeverityHighSecurity()
-    {
-        if (entriesBySeverity.containsKey(5))
-        {
+    public int getNumberOfSeverityHighSecurity() {
+
+        if (entriesBySeverity.containsKey(5)) {
             return entriesBySeverity.get(5).size();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public int getNumberOfSeverityLowSecurity()
-    {
+    public int getNumberOfSeverityLowSecurity() {
 
-        if (entriesBySeverity.containsKey(4))
-        {
+        if (entriesBySeverity.containsKey(4)) {
             return entriesBySeverity.get(4).size();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
 
-    public int getNumberOfSeverityPerformance()
-    {
+    public int getNumberOfSeverityPerformance() {
 
-        if (entriesBySeverity.containsKey(2))
-        {
+        if (entriesBySeverity.containsKey(2)) {
             return entriesBySeverity.get(2).size();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
@@ -514,11 +527,9 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      *            the name of the package
      * @return the file with the given name
      */
-    public Package getPackage(final String packageName)
-    {
+    public Package getPackage(final String packageName) {
 
-        if (packagesByName.containsKey(packageName))
-        {
+        if (packagesByName.containsKey(packageName)) {
             return packagesByName.get(packageName);
         }
         throw new NoSuchElementException("Package not found: " + packageName);
@@ -529,8 +540,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the package category name for the scanned files
      */
-    public final String getPackageCategoryName()
-    {
+    public final String getPackageCategoryName() {
 
         return "Entete message header getpackageCategoryName";
     }
@@ -540,14 +550,13 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the packages with annotations
      */
-    public Collection<Package> getPackages()
-    {
+    public Collection<Package> getPackages() {
 
         return Collections.unmodifiableCollection(packagesByName.values());
     }
 
-    public final List<ReportPointeur> getPointeurs()
-    {
+    public final List<ReportPointeur> getPointeurs() {
+
         return pointeurs;
     }
 
@@ -556,22 +565,21 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return a tooltip showing the distribution of priorities
      */
-    public String getToolTip()
-    {
+    public String getToolTip() {
 
         final StringBuilder message = new StringBuilder();
 
         return StringUtils.removeEnd("repartition selon les priorités des entry", " - ");
     }
 
-    public final List<ReportEntry> getTopFiveEntries()
-    {
+    public final List<ReportEntry> getTopFiveEntries() {
+
         return topFiveEntries;
     }
 
     /** {@inheritDoc} */
-    public final boolean hasAnnotations()
-    {
+    public final boolean hasAnnotations() {
+
         System.out.println("EntriesContainer.HASANNOTATION()**");
         return !entries.isEmpty();
     }
@@ -579,8 +587,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /**
      * Initializes the transient mappings.
      */
-    private void initialize()
-    {
+    private void initialize() {
+
         entriesBySeverity = new Hashtable<Integer, ArrayList<ReportEntry>>();
         entriesByName = new Hashtable<String, ArrayList<ReportEntry>>();
         entriesNotFixed = new ArrayList<ReportEntry>();
@@ -590,19 +598,15 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         pointeurs = new ArrayList<ReportPointeur>();
 
         boolean etat_pointeur;
-        for (final ReportEntry entry : entries)
-        {
+        for (final ReportEntry entry : entries) {
             /**
              * ENTRIES BY SEVERITY
              */
-            if (entriesBySeverity.containsKey(entry.getSeverity()))
-            {
+            if (entriesBySeverity.containsKey(entry.getSeverity())) {
                 final ArrayList<ReportEntry> temp = entriesBySeverity.get(entry.getSeverity());
                 temp.add(entry);
                 entriesBySeverity.put(entry.getSeverity(), temp);
-            }
-            else
-            {
+            } else {
                 final ArrayList<ReportEntry> temp = new ArrayList<ReportEntry>();
                 temp.add(entry);
                 entriesBySeverity.put(entry.getSeverity(), temp);
@@ -610,8 +614,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
             /**
              * ENTRIES BY NAME
              */
-            if (entriesByName.containsKey(entry.getName()))
-            {
+            if (entriesByName.containsKey(entry.getName())) {
                 final ArrayList<ReportEntry> temp = entriesByName.get(entry.getName());
                 temp.add(entry);
                 entriesByName.put(entry.getName(), temp);
@@ -620,10 +623,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
              * ENTRIES NOT FIXED & ENTRIES FIXED
              */
             etat_pointeur = true;
-            for (final ReportPointeur pointeur : entry.getPointeurs())
-            {
-                if (!pointeur.isIsfixed())
-                {
+            for (final ReportPointeur pointeur : entry.getPointeurs()) {
+                if (!pointeur.isIsfixed()) {
                     etat_pointeur = false;
                 }
                 /**
@@ -631,12 +632,9 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
                  */
                 pointeurs.add(pointeur);
             }
-            if (etat_pointeur)
-            {
+            if (etat_pointeur) {
                 entriesFixed.add(entry);
-            }
-            else
-            {
+            } else {
                 entriesNotFixed.add(entry);
             }
         }
@@ -646,8 +644,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         entriesOrderByNumberOfPointeurs = rules;
         Collections.sort(entriesOrderByNumberOfPointeurs, Collections.reverseOrder());
         int i = 0;
-        while (i < 5 && i < entriesOrderByNumberOfPointeurs.size())
-        {
+        while (i < 5 && i < entriesOrderByNumberOfPointeurs.size()) {
             topFiveEntries.add(entriesOrderByNumberOfPointeurs.get(i));
             i++;
         }
@@ -659,8 +656,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /**
      * Return true if all the patterns have been fixed
      */
-    public final boolean IsFixed()
-    {
+    public final boolean IsFixed() {
+
         return getNumberOfNotFixedEntry() == 0;
     }
 
@@ -669,8 +666,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * 
      * @return the created object
      */
-    private Object readResolve()
-    {
+    private Object readResolve() {
 
         rebuildMappings();
         return this;
@@ -679,12 +675,10 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /**
      * Rebuilds the priorities and files after deserialization.
      */
-    protected void rebuildMappings()
-    {
+    protected void rebuildMappings() {
 
         initialize();
-        for (final ReportEntry entry : getEntries())
-        {
+        for (final ReportEntry entry : getEntries()) {
             updateMappings(entry);
         }
     }
@@ -695,8 +689,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param hierarchy
      *            the value to set
      */
-    protected void setHierarchy(final Hierarchy hierarchy)
-    {
+    protected void setHierarchy(final Hierarchy hierarchy) {
 
         this.hierarchy = hierarchy;
     }
@@ -707,8 +700,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param name
      *            the name of this container
      */
-    public final void setName(final String name)
-    {
+    public final void setName(final String name) {
 
         this.name = name;
     }
@@ -719,8 +711,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
      * @param annotation
      *            the new annotation
      */
-    private void updateMappings(final ReportEntry annotation)
-    {        // annotationsByPriority.get(annotation.getPriority()).add(annotation);
+    private void updateMappings(final ReportEntry annotation) { // annotationsByPriority.get(annotation.getPriority()).add(annotation);
+
         // if (StringUtils.isNotBlank(annotation.getCategory())) {
         // addCategory(annotation);
         // }

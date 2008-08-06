@@ -1,0 +1,49 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout norefresh="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <l:main-panel>
+        <h1>${it.DisplayName}</h1>
+        <div>
+            Ici mettre petit graphique
+		</div>
+       
+            <table class="pane" id="summary">
+                <tr>
+                        <td class="pane-header" style="width:20%;">Name</td>
+                        <td class="pane-header" style="width:70%; text-align:left">Description</td>
+                        <td class="pane-header" style="width:10%;">Severity</td>
+                </tr>
+            <j:forEach var="entry" items="${it.Data}">      
+                <tr>
+                    <td class="pane">${entry.Name}</td>
+                    <td class="pane">
+                        <j:forEach var="description" items="${entry.Descriptions}">   
+                            [${description.Language}] ${description.Description}<br />
+                        </j:forEach>  
+                    </td>
+                    <td class="pane" style="text-align:right">${entry.Severity}</td>
+                </tr>
+                <tr>
+                        <td class="pane-header" style="width:20%;">Filename</td>
+                        <td class="pane-header" style="width:70%; text-align:left">Fullpath</td>
+                        <td class="pane-header" style="width:10%;">Line number</td>
+                </tr>
+                <j:forEach var="patterns" items="${entry.Pointeurs}">   
+                	<tr>
+                		<td>${patterns.Filename}</td>
+                		<td>${patterns.Fullpath}</td>
+                		<td>${patterns.Linenumber}</td>
+                	</tr>
+                </j:forEach> 
+                
+                
+            </j:forEach>
+            </table>
+       
+        
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
+

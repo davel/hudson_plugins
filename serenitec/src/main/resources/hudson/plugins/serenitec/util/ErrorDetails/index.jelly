@@ -1,0 +1,32 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+
+			<h1>Error details</h1>
+  				Information sur votre regle : ${it.Entry.Name}
+			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
+				Rule : <b>${Entry.Name}</b>
+				<br />
+				Description : <br />
+				<j:forEach var="description" items="${it.Entry.Descriptions}">   
+	            	[${description.Language}] ${description.Description}<br />
+			    </j:forEach>
+			    Severity : <b>
+			    <j:if test="${Entry.Severity=1}">
+			    	Formating
+			    </j:if>
+			    <j:if test="${Entry.Severity=2}">
+			    	Language evolution
+			    </j:if>
+			    <j:if test="${Entry.Severity=3}">
+			    	Design
+			    </j:if>
+			    <j:if test="${Entry.Severity=4}">
+			    	Low security
+			    </j:if>
+			    <j:if test="${Entry.Severity=5}">
+			    	High security
+			    </j:if>
+			    </b>
+			</div>
+</j:jelly>

@@ -13,29 +13,29 @@
 					<td class="pane" style="width:10%; text-align:right">${it.NumberOfRules}</td>
 					<td class="pane" style="width:10%;">
 					<j:if test="${it.NumberOfRulesBefore == it.NumberOfRules}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />	
 					</j:if>
 					<j:if test="${it.NumberOfRulesBefore lt it.NumberOfRules}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_green.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfRulesBefore gt it.NumberOfRules}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_red.gif" alt="DOWN" />
 					</j:if>					
 					(${it.NumberOfRulesBefore})</td>
 				</tr>
                                 <tr>
 					<td class="pane-header" style="width:20%;"><a href="errors">Number of errors</a></td>
-                                        <td class="pane" style="width:60%;">Number of detected errors in your project</td>
+                     <td class="pane" style="width:60%;">Number of detected errors in your project</td>
 					<td class="pane" style="width:10%; text-align:right">${it.NumberOfEntry}</td>
 					<td class="pane" style="width:10%;">
 					<j:if test="${it.NumberOfEntryBefore == it.NumberOfEntry}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfEntryBefore lt it.NumberOfEntry}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfEntryBefore gt it.NumberOfEntry}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>					
 					(${it.NumberOfEntryBefore})</td>
 				</tr>
@@ -45,13 +45,13 @@
 					<td class="pane" style="text-align:right">${it.NumberOfNewEntryPercent}% (${it.NumberOfNewEntry})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfNewEntryBefore == it.NumberOfNewEntry}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfNewEntryBefore lt it.NumberOfNewEntry}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfNewEntryBefore gt it.NumberOfNewEntry}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>					
 					(${it.NumberOfNewEntryBefore})
 					</td>
@@ -62,13 +62,13 @@
                                         <td class="pane" style="text-align:right">${it.NumberOfFixedEntryPercent}% (${it.NumberOfFixedEntry})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfFixedEntryBefore == it.NumberOfFixedEntry}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfFixedEntryBefore lt it.NumberOfFixedEntry}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_green.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfFixedEntryBefore gt it.NumberOfFixedEntry}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_red.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfFixedEntryBefore})
 					</td>
@@ -79,13 +79,13 @@
 					<td class="pane" style="text-align:right">${it.NumberOfNotFixedEntryPercent}% (${it.NumberOfNotFixedEntry})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfNotFixedEntryBefore == it.NumberOfNotFixedEntry}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfNotFixedEntryBefore lt it.NumberOfNotFixedEntry}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfNotFixedEntryBefore gt it.NumberOfNotFixedEntry}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfNotFixedEntryBefore})</td>
 				</tr>
@@ -95,101 +95,104 @@
 					<td class="pane" style="text-align:right">${it.NumberMoyenneOfPointeursPerEntry}/entry (${it.NumberOfPointeurs})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfPointeursBefore == it.NumberOfPointeurs}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfPointeursBefore lt it.NumberOfPointeurs}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfPointeursBefore gt it.NumberOfPointeurs}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfPointeursBefore})</td>
 				</tr>
 			</table>
 				
-			<h2>Refactoring Severity trend</h2>	
+			<h2>Refactoring Severity trend</h2>
+			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
+			<center><img src="errorBySeverityTrend" /><img src="patternsBySeverityTrend" /></center>
+			</div>	
 			<table class="pane" id="summary">
 				<tr>
-					<td class="pane-header" style="width:20%;">Formating</td>
+					<td class="pane-header" style="width:20%;"><a href="Severity.1">Formating</a></td>
                                         <td class="pane" style="width:60%">Description of this severity</td>
 					<td class="pane" style="width:10%; text-align:right">${it.NumberOfSeverityFormatagePercent}% (${it.NumberOfSeverityFormatage})</td>
 					<td class="pane" style="width:10%;">
 					<j:if test="${it.NumberOfSeverityFormatageBefore == it.NumberOfSeverityFormatage}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityFormatageBefore lt it.NumberOfSeverityFormatage}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityFormatageBefore gt it.NumberOfSeverityFormatage}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfSeverityFormatageBefore})
 					</td>
 				</tr>
 				<tr>
-					<td class="pane-header">Language evolution</td>
+					<td class="pane-header"><a href="Severity.2">Language evolution</a></td>
                                         <td class="pane">Description of this severity</td>
 					<td class="pane" style="text-align:right">${it.NumberOfSeverityPerformancePercent}% (${it.NumberOfSeverityPerformance})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfSeverityPerformanceBefore == it.NumberOfSeverityPerformance}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityPerformanceBefore lt it.NumberOfSeverityPerformance}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityPerformanceBefore gt it.NumberOfSeverityPerformance}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfSeverityPerformanceBefore})
 					</td>
 				</tr>
 				<tr>
-					<td class="pane-header">Design</td>
+					<td class="pane-header"><a href="Severity.3">Design</a></td>
                                         <td class="pane">Description of this severity</td>
 					<td class="pane" style="text-align:right">${it.NumberOfSeverityDesignPercent}% (${it.NumberOfSeverityDesign})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfSeverityDesignBefore == it.NumberOfSeverityDesign}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityDesignBefore lt it.NumberOfSeverityDesign}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityDesignBefore gt it.NumberOfSeverityDesign}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfSeverityDesignBefore})
 					</td>
 				</tr>
 				<tr>
-					<td class="pane-header">Low security</td>
+					<td class="pane-header"><a href="Severity.4">Low security</a></td>
                                         <td class="pane">Description of this severity</td>
 					<td class="pane" style="text-align:right">${it.NumberOfSeverityLowSecurityPercent}% (${it.NumberOfSeverityLowSecurity})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfSeverityLowSecurityBefore == it.NumberOfSeverityLowSecurity}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityLowSecurityBefore lt it.NumberOfSeverityLowSecurity}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityLowSecurityBefore gt it.NumberOfSeverityLowSecurity}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfSeverityLowSecurityBefore})
 					</td>
 				</tr>
 				<tr>
-					<td class="pane-header">High security</td>
+					<td class="pane-header"><a href="Severity.5">High security</a></td>
                                         <td class="pane">Description of this severity</td>
 					<td class="pane" style="text-align:right">${it.NumberOfSeverityHighSecurityPercent}% (${it.NumberOfSeverityHighSecurity})</td>
 					<td class="pane">
 					<j:if test="${it.NumberOfSeverityHighSecurityBefore == it.NumberOfSeverityHighSecurity}">
-						STABLE
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityHighSecurityBefore lt it.NumberOfSeverityHighSecurity}">
-						UP
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
 					</j:if>
 					<j:if test="${it.NumberOfSeverityHighSecurityBefore gt it.NumberOfSeverityHighSecurity}">
-						DOWN
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
 					</j:if>
 					(${it.NumberOfSeverityHighSecurityBefore})
 					</td>
@@ -197,7 +200,10 @@
 			</table>	
 			
 			
-			<h2>TOP5 - Refactoring main entries</h2>	
+			<h2>TOP5 - Refactoring main entries</h2>
+			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
+			<center><img src="topFiveTrend" /></center>
+			</div>	
 			<table class="pane" id="summary">
 				<j:forEach var="entry" items="${it.TopFiveEntries}">      
 		        <tr>

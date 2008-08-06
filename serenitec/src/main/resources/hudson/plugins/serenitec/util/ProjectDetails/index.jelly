@@ -7,44 +7,35 @@
         <h1>${it.DisplayName}</h1>
         <div>
             <img src="trend" />
-	</div>
-        <j:if test="${it.Entry}">
-            <table class="pane" id="summary">
-                <tr>
-                        <td class="pane-header" style="width:20%;">Name</td>
-                        <td class="pane-header" style="width:70%; text-align:left">Description</td>
-                        <td class="pane-header" style="width:10%;">Severity</td>
-                </tr>
-            <j:forEach var="entry" items="${it.Data}">      
-                <tr>
-                    <td class="pane">${entry.Name}</td>
-                    <td class="pane">
-                        <j:forEach var="description" items="${entry.Descriptions}">   
-                            [${description.Language}] ${description.Description}<br />
-                        </j:forEach>  
-                    </td>
-                    <td class="pane" style="text-align:right">${entry.Severity}</td>
-                </tr>
-            </j:forEach>
-            </table>
-        </j:if>
-        <j:if test="${!it.Entry}">
-        <table class="pane" id="summary">
-                <tr>
-                        <td class="pane-header" style="width:20%;">File</td>
-                        <td class="pane-header" style="width:60%; text-align:left">Absolute Path</td>
-                        <td class="pane-header" style="width:10%;">Line Number</td>
-                </tr>
-            <j:forEach var="pattern" items="${it.Data}">      
-                <tr>
-                    <td class="pane">${pattern.Filename}</td>
-                    <td class="pane">${pattern.Fullpath}</td>
-                    <td class="pane">${pattern.Linenumber}</td>                    
-                </tr>
-            </j:forEach>
-            </table>
+		</div>
         
+        <j:if test="${it.TestedRules}">
+        	<st:include page="TestedRules.jelly" />
         </j:if>
+        
+        <j:if test="${it.Errors}">
+        	<st:include page="Errors.jelly" />
+        </j:if>
+        
+        <j:if test="${it.NewErrors}">
+        	<st:include page="NewErrors.jelly" />
+        </j:if>
+        
+        <j:if test="${it.FixedErrors}">
+        	<st:include page="FixedErrors.jelly" />
+        </j:if>
+        
+        <j:if test="${it.NotFixedErrors}">
+        	<st:include page="NotFixedErrors.jelly" />
+        </j:if>
+        
+        <j:if test="${it.Patterns}">
+        	<st:include page="Patterns.jelly" />
+        </j:if>
+        
+        
+        
+        
     </l:main-panel>
   </l:layout>
 </j:jelly>

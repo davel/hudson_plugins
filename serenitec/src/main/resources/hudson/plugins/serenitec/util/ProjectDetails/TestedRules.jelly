@@ -1,0 +1,42 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt" xmlns:local="local">
+  
+  <table class="pane" id="summary">
+  	<tr>
+	    <td class="pane-header" style="width:20%;">Name</td>
+	    <td class="pane-header" style="width:55%; text-align:left">Description</td>
+	    <td class="pane-header" style="width:10%;">Severity</td>
+	    <td class="pane-header" style="width:10%;">Number of patterns</td>
+	    <td class="pane-header" style="width:5%;"> </td>
+    </tr>
+    
+    <j:forEach var="entry" items="${it.Data}">      
+    	<tr>
+        	<td class="pane">${entry.Name}
+        	</td>
+            <td class="pane">
+            	<j:forEach var="description" items="${entry.Descriptions}">   
+                	[${description.Language}] ${description.Description}<br />
+                </j:forEach>  
+            </td>
+            <td class="pane" style="text-align:right">${entry.Severity}</td>
+            <td class="pane" style="text-align:right">${entry.NumberOfPointeurs}</td>
+            <td class="pane" style="text-align:center">
+            	<j:if test="${entry.Active}">
+            		<a href="../Errors.${entry.Name}">
+            			<img src="/plugin/serenitec/icons/info_red.gif" border="0" alt="Errors reported" />
+            		</a>
+            	</j:if>
+            	<j:if test="${!entry.Active}">
+            		<img src="/plugin/serenitec/icons/info_green.gif" alt="No Errors Reported" />
+            	</j:if>
+            </td>
+        </tr>
+     </j:forEach>
+  </table>
+  <br />
+  <img src="/plugin/serenitec/icons/info_red.gif" alt="Errors reported" /> : Some errors are reported.
+  <br />
+  <img src="/plugin/serenitec/icons/info_green.gif" alt="No errors reported" /> : No error is reported.
+</j:jelly>

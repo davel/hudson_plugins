@@ -8,7 +8,9 @@
  */
 package hudson.plugins.serenitec.util.model;
 
+
 import hudson.plugins.serenitec.parseur.ReportEntry;
+
 import java.util.List;
 
 /**
@@ -16,11 +18,12 @@ import java.util.List;
  */
 public interface EntriesProvider
 {
+
     /**
      * @return rules
      */
     public List<ReportEntry> getRules();
-    
+
     /**
      * return entries
      */
@@ -40,12 +43,12 @@ public interface EntriesProvider
      * @return the highest severity entry discovered
      */
     public int getMaxSeverityDiscovered();
-    
+
     /**
      * @return the numberOfRules
      */
     public int getNumberOfRules();
-    
+
     /**
      * @return the numberOfEntry
      */
@@ -72,9 +75,19 @@ public interface EntriesProvider
     public int getNumberOfSeverityDesign();
 
     /**
+     * @return the numberOfSeverityDesignPatterns
+     */
+    public int getNumberOfSeverityDesignPatterns();
+
+    /**
      * @return the numberOfSeverityFormatage
      */
     public int getNumberOfSeverityFormatage();
+
+    /**
+     * @return the numberOfSeverityFormatagePatterns
+     */
+    public int getNumberOfSeverityFormatagePatterns();
 
     /**
      * @return the numberOfSeverityHighSecurity
@@ -82,14 +95,29 @@ public interface EntriesProvider
     public int getNumberOfSeverityHighSecurity();
 
     /**
+     * @return the numberOfSeverityHighSecurityPatterns
+     */
+    public int getNumberOfSeverityHighSecurityPatterns();
+
+    /**
      * @return the numberOfSeverityLowSecurity
      */
     public int getNumberOfSeverityLowSecurity();
 
     /**
+     * @return the numberOfSeverityLowSecurityPatterns
+     */
+    public int getNumberOfSeverityLowSecurityPatterns();
+
+    /**
      * @return the numberOfSeverityPerformance
      */
     public int getNumberOfSeverityPerformance();
+
+    /**
+     * @return the numberOfSeverityPerformancePatterns
+     */
+    public int getNumberOfSeverityPerformancePatterns();
 
     /**
      * @return the topFiveEntries
