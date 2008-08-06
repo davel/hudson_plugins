@@ -11,6 +11,7 @@
   
   <artifactId>ftppublisher</artifactId>
   <packaging>hpi</packaging>
+  <name>FTP publisher plugin</name>
   <version>0.9</version>
   
   <dependencies>
