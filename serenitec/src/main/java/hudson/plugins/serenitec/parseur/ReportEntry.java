@@ -8,44 +8,40 @@
  */
 package hudson.plugins.serenitec.parseur;
 
+
 import java.util.ArrayList;
 
 public class ReportEntry implements Comparable<ReportEntry>
 {
+
     String                       name;
     int                          severity;
     ArrayList<ReportPointeur>    pointeurs;
     ArrayList<ReportDescription> descriptions;
 
-    public ReportEntry()
-    {
-        pointeurs = new ArrayList< ReportPointeur >();
-        descriptions = new ArrayList< ReportDescription >();
+    public ReportEntry() {
+
+        pointeurs = new ArrayList<ReportPointeur>();
+        descriptions = new ArrayList<ReportDescription>();
     }
 
-    public int compareTo(final ReportEntry _o)
-    {
+    public int compareTo(final ReportEntry _o) {
+
         int resultat = 0;
-        if (getNumberOfPointeurs() < _o.getNumberOfPointeurs())
-        {
+        if (getNumberOfPointeurs() < _o.getNumberOfPointeurs()) {
             resultat = -1;
-        }
-        else if (getNumberOfPointeurs() > _o.getNumberOfPointeurs()) 
-        {
+        } else if (getNumberOfPointeurs() > _o.getNumberOfPointeurs()) {
             resultat = 1;
         }
         return resultat;
     }
-    public boolean equals(final ReportEntry _o)
-    {
+    public boolean equals(final ReportEntry _o) {
+
         boolean etat = false;
-        if (name.equals(_o.getName()))
-        {
+        if (name.equals(_o.getName())) {
             etat = true;
-            for (final ReportPointeur pointeur : pointeurs)
-            {
-                if (!_o.getPointeurs().contains(pointeur))
-                {
+            for (final ReportPointeur pointeur : pointeurs) {
+                if (!_o.getPointeurs().contains(pointeur)) {
                     etat = false;
                 }
             }
@@ -53,49 +49,65 @@ public class ReportEntry implements Comparable<ReportEntry>
         return etat;
     }
 
-    public ArrayList<ReportDescription> getDescriptions()
-    {
+    public ArrayList<ReportDescription> getDescriptions() {
+
         return descriptions;
     }
 
-    public String getName()
-    {
+    public String getName() {
+
         return name;
     }
-    public ArrayList<ReportPointeur> getPointeurs()
-    {
+    public ArrayList<ReportPointeur> getPointeurs() {
+
         return pointeurs;
     }
-    public int getNumberOfPointeurs()
-    {
+    public int getNumberOfPointeurs() {
+
         return pointeurs.size();
     }
-    public int getSeverity()
-    {
+    public int getSeverity() {
+
         return severity;
     }
 
-    public void setDescriptions(final ArrayList<ReportDescription> descriptions)
-    {
+    public void setDescriptions(final ArrayList<ReportDescription> descriptions) {
+
         this.descriptions = descriptions;
     }
-    public void setName(final String name)
-    {
+    public void setName(final String name) {
+
         this.name = name;
     }
 
-    public void setPointeurs(final ArrayList<ReportPointeur> pointeurs)
-    {
+    public void setPointeurs(final ArrayList<ReportPointeur> pointeurs) {
+
         this.pointeurs = pointeurs;
     }
 
-    public void setSeverity(final int severity)
-    {
+    public void setSeverity(final int severity) {
+
         this.severity = severity;
     }
-    public boolean isActive()
-    {
+    public boolean isActive() {
+
         return this.pointeurs.size() > 0;
+    }
+    /**
+     * Return the patern having this ID key
+     * 
+     * @param key
+     * @return ReportPointeur
+     */
+    public ReportPointeur getPattern(final int key) {
+
+        ReportPointeur resultat = null;
+        for (ReportPointeur pattern : getPointeurs()) {
+            if (pattern.getKey() == key) {
+                resultat = pattern;
+            }
+        }
+        return resultat;
     }
 
 }

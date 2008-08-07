@@ -140,7 +140,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
                 } else if (param.equals("errors")) {
                     series.add(current.getNumberOfEntry());
                 } else if (param.equals("newErrors")) {
-                    series.add(current.getNumberOfEntry());
+                    series.add(current.getNumberOfNewEntry());
                 } else if (param.equals("fixedErrors")) {
                     series.add(current.getNumberOfFixedEntry());
                 } else if (param.equals("unfixedErrors")) {
@@ -175,6 +175,30 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
 
         return getHealthReportBuilder().createGraph(useHealthBuilder, getDescriptor().getPluginResultUrlName(),
                 buildDataSet(useHealthBuilder), this);
+    }
+
+    /**
+     * Creates the chart for this action.
+     * 
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @return the chart for this action.
+     */
+    private JFreeChart createRulesRepartitionChart(final StaplerRequest request, final StaplerResponse response, final int n1,
+            final int n2, final String titre) {
+
+        JFreeChart chart = null;
+
+        DefaultPieDataset pieDataset = new DefaultPieDataset();
+        pieDataset.setValue(titre + "(" + n1 * 100.0f / n2 + "%)", n1);
+        pieDataset.setValue("Remains", (n2 - n1));
+        chart = ChartFactory.createPieChart3D(null, pieDataset, false, true, false);
+        PiePlot3D p = (PiePlot3D) chart.getPlot();
+        p.setForegroundAlpha(0.5f);
+        return chart;
+
     }
 
     /**
@@ -315,6 +339,28 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
         }
 
         ChartUtil.generateGraph(request, response, createPersonalChart(request, response, type), width, height);
+    }
+    /**
+     * Generates a PNG image for the result personal trend.
+     * 
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @param height
+     *            the height of the trend graph
+     * @throws IOException
+     *             in case of an error
+     */
+    public final void doRulesRepartitionPie(final StaplerRequest request, final StaplerResponse response, int size, final int n1,
+            final int n2, final String titre) throws IOException {
+
+        System.out.println("---doGraph------");
+        if (ChartUtil.awtProblem) {
+            response.sendRedirect2(request.getContextPath() + "/images/headless.png");
+            return;
+        }
+        ChartUtil.generateGraph(request, response, createRulesRepartitionChart(request, response, n1, n2, titre), 300, 150);
     }
     /**
      * Generates a PNG image for the repository trend

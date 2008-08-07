@@ -546,7 +546,17 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
             System.out.println(save_project.getContainer().getPointeur(Integer.parseInt(StringUtils.substringAfter(link, "source."))));
             System.out.println("******************************************" + "***************");
 
-            resultat = new SourceDetail(getOwner(), "C:\\developpement-local\\JarClassLoader.java");
+            int key = Integer.parseInt(StringUtils.substringAfter(link, "source."));
+            /**
+             * We find the pattern having this ID key
+             */
+            ReportPointeur send_pattern = null;
+            for (ReportPointeur pattern : pointeurs) {
+                if (pattern.getKey() == key) {
+                    send_pattern = pattern;
+                }
+            }
+            resultat = new SourceDetail(getOwner(), send_pattern);
         }
         return resultat;
     }

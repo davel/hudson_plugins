@@ -8,18 +8,17 @@
  */
 package hudson.plugins.serenitec;
 
-import hudson.plugins.serenitec.parseur.Gettingxml;
-import hudson.plugins.serenitec.parseur.ReportDescription;
-import hudson.plugins.serenitec.parseur.ReportEntry;
-import hudson.plugins.serenitec.parseur.ReportPointeur;
-import hudson.plugins.serenitec.util.HealthAwarePublisher;
-import hudson.plugins.serenitec.util.HealthReportBuilder;
-import hudson.plugins.serenitec.util.Project;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.Result;
+import hudson.plugins.serenitec.parseur.Gettingxml;
+import hudson.plugins.serenitec.parseur.ReportEntry;
+import hudson.plugins.serenitec.util.HealthAwarePublisher;
+import hudson.plugins.serenitec.util.HealthReportBuilder;
+import hudson.plugins.serenitec.util.Project;
 import hudson.tasks.Publisher;
 
 import java.io.File;
@@ -27,8 +26,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import java.util.List;
-import org.apache.commons.io.filefilter.FileFileFilter;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -41,37 +38,32 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class SerenitecPublisher extends HealthAwarePublisher
 {
+
     /*
      * Descriptor de notre plugin
      */
-    public static final SerenitecDescriptor SERENITEC_DESCRIPTOR =
-            new SerenitecDescriptor();
+    public static final SerenitecDescriptor SERENITEC_DESCRIPTOR = new SerenitecDescriptor();
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
      * 
      * @param threshold
-     *            Entries threshold to be reached if a build should be
-     *            considered as unstable.
+     *            Entries threshold to be reached if a build should be considered as unstable.
      * @param healthy
-     *            Report health as 100% when the number of entries is less than
-     *            this value
+     *            Report health as 100% when the number of entries is less than this value
      * @param unHealthy
-     *            Report health as 0% when the number of entries is greater than
-     *            this value
+     *            Report health as 0% when the number of entries is greater than this value
      * @param height
      *            the height of the trend graph
      */
     @DataBoundConstructor
-    public SerenitecPublisher(final String threshold, final String healthy,
-            final String unHealthy, final String height)
-    {
+    public SerenitecPublisher(final String threshold, final String healthy, final String unHealthy, final String height) {
+
         super(threshold, healthy, unHealthy, height, "Serenitec Hudson Plugin");
     }
 
     @Override
-    protected boolean canContinue(final Result result)
-    {
+    protected boolean canContinue(final Result result) {
 
         return result != Result.ABORTED;
     }
@@ -79,59 +71,51 @@ public class SerenitecPublisher extends HealthAwarePublisher
     /*
      * @see hudson.model.Describable#getDescriptor()
      */
-    public Descriptor<Publisher> getDescriptor()
-    {
+    public Descriptor<Publisher> getDescriptor() {
 
         return SERENITEC_DESCRIPTOR;
     }
 
     @Override
-    public Action getProjectAction(final AbstractProject<?, ?> project)
-    {
+    public Action getProjectAction(final AbstractProject<?, ?> project) {
+
         return new SerenitecProjectAction(project, getTrendHeight());
     }
 
     @Override
-    protected Project perform(final AbstractBuild<?, ?> build,
-            final PrintStream logger) throws InterruptedException, IOException
-    {
+    protected Project perform(final AbstractBuild<?, ?> build, final PrintStream logger) throws InterruptedException, IOException {
+
         /**
          * Creating the project
          */
         Project projet = new Project();
-        
+
         /**
          * Scanning for the report
          */
-        
+
         String uri_report = build.getRootDir().getParentFile().getParentFile().getAbsolutePath() + "\\" + "serenitec-report.xml";
         log(logger, "Scanning for the report in " + uri_report);
         final File report = new File(uri_report);
-        if (!report.exists() || !report.canRead())
-        {
+        if (!report.exists() || !report.canRead()) {
             log(logger, "Error : Unable to read xml event report.");
             build.setResult(Result.FAILURE);
-        }
-        else
-        {
+        } else {
             /**
              * We parse the report
              */
             log(logger, "Opening report file and parsing results :");
-            final Gettingxml parseur = new Gettingxml(report.getAbsolutePath());            
-            try
-            {
+            final Gettingxml parseur = new Gettingxml(report.getAbsolutePath());
+            try {
                 parseur.parse();
-            }
-            catch (final Exception e)
-            {
+            } catch (final Exception e) {
                 log(logger, "Error on parsing results : " + e.getLocalizedMessage());
                 build.setResult(Result.FAILURE);
             }
             ArrayList<ReportEntry> xml = parseur.result();
-           
-            projet.addEntries(xml);
-            
+
+            projet.addEntries(xml, build);
+
             log(logger, "-Repository-------------------------------------");
             log(logger, " Number of Rules : " + projet.getNumberOfRules());
             log(logger, " Number of Errors : " + projet.getNumberOfEntry());
@@ -146,8 +130,7 @@ public class SerenitecPublisher extends HealthAwarePublisher
             /**
              * Implementing the HealthReportBuilder
              */
-            final HealthReportBuilder healthReportBuilder =
-                    createHealthReporter("Serenitec Reports : 1 open task found.",
+            final HealthReportBuilder healthReportBuilder = createHealthReporter("Serenitec Reports : 1 open task found.",
                     "Serenitec Reports : {\"%d\"} open tasks found.");
             log(logger, "Adding new Serenitec Result Action into the build");
             build.getActions().add(new SerenitecResultAction(build, healthReportBuilder, resultat));

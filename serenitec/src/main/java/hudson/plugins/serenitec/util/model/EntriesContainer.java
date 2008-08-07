@@ -9,6 +9,9 @@
 package hudson.plugins.serenitec.util.model;
 
 
+import hudson.model.AbstractBuild;
+import hudson.plugins.serenitec.SerenitecResult;
+import hudson.plugins.serenitec.SerenitecResultAction;
 import hudson.plugins.serenitec.parseur.ReportEntry;
 import hudson.plugins.serenitec.parseur.ReportPointeur;
 
@@ -61,6 +64,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     private transient List<ReportEntry>                    entriesNotFixed;
     /** The fixed entries */
     private transient List<ReportEntry>                    entriesFixed;
+    /** The new entries */
+    private transient List<ReportEntry>                    newEntries;
     /** Entries mapped by number of pointeurs */
     private transient List<ReportEntry>                    entriesOrderByNumberOfPointeurs;
     /** The TOP5 entries */
@@ -131,6 +136,29 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
             addEntry(entry);
         }
         initialize();
+    }
+    public final void addEntries(final Collection<? extends ReportEntry> newentry, AbstractBuild<?, ?> build) {
+
+        System.out.println("addEntries");
+        addEntries(newentry);
+        System.out.println("Looking for new entries");
+        System.out.println("Find the previousAction");
+        SerenitecResultAction previousAction = build.getPreviousNotFailedBuild().getAction(SerenitecResultAction.class);
+        System.out.println("Get the previousAction.getResult()");
+        SerenitecResult previousResult = previousAction.getResult();
+        System.out.println("Get the previousAction.getResult.getContainer");
+        EntriesContainer previousContainer = previousResult.getContainer();
+        System.out.println("get the previousAction.getResult.getContainer.getEntries");
+        List<ReportEntry> prec_entries = previousAction.getResult().getContainer().getEntries();
+
+        System.out.println("Find new entries");
+        for (ReportEntry entry : newentry) {
+            if (!prec_entries.contains(entry)) {
+                newEntries.add(entry);
+                System.out.println("New Entry Found !!");
+            }
+        }
+        System.out.println("Fin de addEntries");
     }
 
     /**
@@ -403,6 +431,10 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     public int getNumberOfEntry() {
 
         return entries.size();
+    }
+    public int getNumberOfNewEntry() {
+
+        return newEntries.size();
     }
 
     public int getNumberOfFixedEntry() {

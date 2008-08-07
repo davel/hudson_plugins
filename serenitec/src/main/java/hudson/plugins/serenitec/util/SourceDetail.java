@@ -8,50 +8,55 @@
  */
 package hudson.plugins.serenitec.util;
 
+
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
-
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import hudson.plugins.serenitec.parseur.ReportPointeur;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Renders a source file containing an annotation for the whole file or a
- * specific line number.
- *
+ * Renders a source file containing an annotation for the whole file or a specific line number.
+ * 
  * @author Georges Bossert
  */
 public class SourceDetail implements ModelObject
 {
 
-    /** Full path to the file before refactoring */
-    private final String _fileBefore;
-    /** Full path to the file after refactoring */
-    private final String _fileAfter;
+    /**
+     * Pattern from which we want the source
+     */
+    private final ReportPointeur      pattern;
     /** Asbtract Build */
     private final AbstractBuild<?, ?> _owner;
-    /** Source Code */
-    private String _sourceCode;
 
-    public SourceDetail(final AbstractBuild<?, ?> owner, String filepath)
-    {
-        this._fileAfter = filepath;
-        this._fileBefore = getBeforeFile(filepath);
+    private final String              _fileBefore;
+    private final String              _fileAfter;
+
+    /** Source Code */
+    private String                    _sourceCode;
+
+    public SourceDetail(final AbstractBuild<?, ?> owner, ReportPointeur pattern) {
+
+        this.pattern = pattern;
         this._owner = owner;
+        _fileBefore = pattern.getFullpath();
+        _fileAfter = pattern.getFullpath();
+
     }
 
-    private String getBeforeFile(String filepath)
-    {
+    private String getBeforeFile(String filepath) {
+
         return filepath + ".bis";
     }
 
-    public String getSourceCode()
-    {
+    public String getSourceCode() {
+
         execute();
         return _sourceCode;
     }
@@ -59,10 +64,9 @@ public class SourceDetail implements ModelObject
     /**
      * Execute the diff
      */
-    private void execute()
-    {
-        try
-        {
+    private void execute() {
+
+        try {
             String[] a = file2string(_fileBefore);
             String[] b = file2string(_fileAfter);
             Diff diff = new Diff(a, b);
@@ -80,43 +84,31 @@ public class SourceDetail implements ModelObject
 
             stb.append("</tr>");
 
-
             /**
              * generation html source code for those two files
              */
             int max = a.length;
-            if (max < b.length)
-            {
+            if (max < b.length) {
                 max = b.length;
             }
             String ligneAvant, ligneApres;
             int numeroLigneAvant = 0, numeroLigneApres = 0;
-            while (numeroLigneAvant < a.length || numeroLigneApres < b.length)
-            {
+            while (numeroLigneAvant < a.length || numeroLigneApres < b.length) {
                 stb.append("<tr>");
-                if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null)
-                {
+                if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null) {
                     ligneAvant = "";
-                }
-                else
-                {
+                } else {
                     ligneAvant = a[numeroLigneAvant];
                 }
-                if (numeroLigneApres >= b.length || b[numeroLigneApres] == null)
-                {
+                if (numeroLigneApres >= b.length || b[numeroLigneApres] == null) {
                     ligneApres = "";
-                }
-                else
-                {
+                } else {
                     ligneApres = b[numeroLigneApres];
                 }
 
-                if (next != null && next.line0 == numeroLigneAvant)
-                {
-                    if (next.inserted > 0 && next.deleted == 0)
-                    {
-                        for (int i = 0; i < next.inserted; i++)
-                        {
+                if (next != null && next.line0 == numeroLigneAvant) {
+                    if (next.inserted > 0 && next.deleted == 0) {
+                        for (int i = 0; i < next.inserted; i++) {
 
                             stb.append("<tr>");
                             stb.append("<td class=\"ligne_normal\">" + numeroLigneAvant + "</td>");
@@ -127,20 +119,15 @@ public class SourceDetail implements ModelObject
                             stb.append("</tr>");
 
                             numeroLigneApres++;
-                            if (numeroLigneApres >= b.length || b[numeroLigneApres] == null)
-                            {
+                            if (numeroLigneApres >= b.length || b[numeroLigneApres] == null) {
                                 ligneApres = "";
-                            }
-                            else
-                            {
+                            } else {
                                 ligneApres = b[numeroLigneApres];
                             }
                         }
                     }
-                    if (next.deleted > 0 && next.inserted == 0)
-                    {
-                        for (int i = 0; i < next.deleted; i++)
-                        {
+                    if (next.deleted > 0 && next.inserted == 0) {
+                        for (int i = 0; i < next.deleted; i++) {
 
                             stb.append("<tr>");
                             stb.append("<td class=\"ligne_deleted\">" + numeroLigneAvant + "</td>");
@@ -151,35 +138,27 @@ public class SourceDetail implements ModelObject
                             stb.append("</tr>");
 
                             numeroLigneAvant++;
-                            if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null)
-                            {
+                            if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null) {
                                 ligneAvant = "";
-                            }
-                            else
-                            {
+                            } else {
                                 ligneAvant = a[numeroLigneAvant];
                             }
                         }
                     }
-                    if (next.deleted > 0 && next.inserted > 0)
-                    {
+                    if (next.deleted > 0 && next.inserted > 0) {
                         int max_temp = 0;
                         int min_temp = 0;
 
                         max_temp = next.deleted;
                         min_temp = next.inserted;
 
-                        if (max_temp < next.inserted)
-                        {
+                        if (max_temp < next.inserted) {
                             max_temp = next.inserted;
                             min_temp = next.deleted;
                         }
-                        for (int i = 1; i <= max_temp; i++)
-                        {
-                            if (i > min_temp)
-                            {
-                                if (next.deleted > next.inserted)
-                                {
+                        for (int i = 1; i <= max_temp; i++) {
+                            if (i > min_temp) {
+                                if (next.deleted > next.inserted) {
                                     stb.append("<tr>");
                                     stb.append("<td class=\"ligne_deleted\">" + numeroLigneAvant + "</td>");
                                     stb.append("<td class=\"original_deleted\">" + ligneAvant + "</td>");
@@ -187,17 +166,12 @@ public class SourceDetail implements ModelObject
                                     stb.append("<td class=\"refactored_deleted\">&nbsp;</td>");
                                     stb.append("</tr>");
                                     numeroLigneAvant++;
-                                    if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null)
-                                    {
+                                    if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null) {
                                         ligneAvant = "";
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         ligneAvant = a[numeroLigneAvant];
                                     }
-                                }
-                                else
-                                {
+                                } else {
                                     stb.append("<tr>");
                                     stb.append("<td class=\"ligne_normal\">" + numeroLigneAvant + "</td>");
                                     stb.append("<td class=\"original_added\">&nbsp;</td>");
@@ -205,19 +179,14 @@ public class SourceDetail implements ModelObject
                                     stb.append("<td class=\"refactored_added\">" + ligneApres + "</td>");
                                     stb.append("</tr>");
                                     numeroLigneApres++;
-                                    if (numeroLigneApres >= b.length || b[numeroLigneApres] == null)
-                                    {
+                                    if (numeroLigneApres >= b.length || b[numeroLigneApres] == null) {
                                         ligneApres = "";
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         ligneApres = b[numeroLigneApres];
                                     }
                                 }
 
-                            }
-                            else
-                            {
+                            } else {
                                 stb.append("<tr>");
                                 stb.append("<td class=\"ligne_modified\">" + numeroLigneAvant + "</td>");
                                 stb.append("<td class=\"original_modified\">" + ligneAvant + "</td>");
@@ -226,20 +195,14 @@ public class SourceDetail implements ModelObject
                                 stb.append("</tr>");
                                 numeroLigneAvant++;
                                 numeroLigneApres++;
-                                if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null)
-                                {
+                                if (numeroLigneAvant >= a.length || a[numeroLigneAvant] == null) {
                                     ligneAvant = "";
-                                }
-                                else
-                                {
+                                } else {
                                     ligneAvant = a[numeroLigneAvant];
                                 }
-                                if (numeroLigneApres >= b.length || b[numeroLigneApres] == null)
-                                {
+                                if (numeroLigneApres >= b.length || b[numeroLigneApres] == null) {
                                     ligneApres = "";
-                                }
-                                else
-                                {
+                                } else {
                                     ligneApres = b[numeroLigneApres];
                                 }
                             }
@@ -247,9 +210,7 @@ public class SourceDetail implements ModelObject
 
                     }
                     next = next.link;
-                }
-                else
-                {
+                } else {
                     stb.append("<tr>");
                     stb.append("<td class=\"ligne_normal\">" + numeroLigneAvant + "</td>");
                     stb.append("<td class=\"original_normal\">" + ligneAvant + "</td>");
@@ -262,39 +223,34 @@ public class SourceDetail implements ModelObject
             }
             stb.append("</table>");
             _sourceCode = stb.toString();
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(SourceDetail.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    static String[] file2string(String file) throws IOException
-    {
+    static String[] file2string(String file) throws IOException {
+
         BufferedReader rdr = new BufferedReader(new FileReader(file));
         Vector s = new Vector();
-        for (;;)
-        {
+        for (;;) {
             String line = rdr.readLine();
-            if (line == null)
-            {
+            if (line == null) {
                 break;
             }
             s.addElement(line);
         }
-        String[] a = new String[ s.size() ];
+        String[] a = new String[s.size()];
         s.copyInto(a);
         return a;
     }
 
-    public AbstractBuild<?, ?> getOwner()
-    {
+    public AbstractBuild<?, ?> getOwner() {
+
         return _owner;
     }
 
-    public String getDisplayName()
-    {
-        return "getDisplayName : SourceDetail";
+    public String getDisplayName() {
+
+        return "Source Code of " + _fileBefore;
     }
 }
-

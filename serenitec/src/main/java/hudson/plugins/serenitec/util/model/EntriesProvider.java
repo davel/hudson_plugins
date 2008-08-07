@@ -53,6 +53,10 @@ public interface EntriesProvider
      * @return the numberOfEntry
      */
     public int getNumberOfEntry();
+    /**
+     * @return the number of NewEntry;
+     */
+    public int getNumberOfNewEntry();
 
     /**
      * @return the numberOfFixedEntry

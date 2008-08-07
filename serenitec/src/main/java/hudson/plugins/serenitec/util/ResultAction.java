@@ -86,6 +86,8 @@ public interface ResultAction<T> extends Action
      */
     void doPersonalGraph(StaplerRequest request, StaplerResponse response, int height, String type) throws IOException;
 
+    void doRulesRepartitionPie(StaplerRequest request, StaplerResponse response, int size, int n1, int n2, String titre) throws IOException;
+
     /**
      * Generates a clickable map for the trend graph of this result action.
      * 

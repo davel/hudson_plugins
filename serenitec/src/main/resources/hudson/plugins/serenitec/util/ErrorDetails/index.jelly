@@ -1,32 +1,69 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-
-			<h1>Error details</h1>
-  				Information sur votre regle : ${it.Entry.Name}
-			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
-				Rule : <b>${Entry.Name}</b>
+  xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout norefresh="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <l:main-panel>
+        <h1>${it.DisplayName}</h1>
+			<div style="background-color:#f0f0f0; border:1px solid #bbb; padding:3px;">
+				
+				<div style="float:right;">
+		            <img src="repartitionPie" />
+				</div>
+				
+				Rule : <b>${it.Entry.Name}</b> 
+				(
+			    <j:if test="${it.Entry.Severity==1}">
+			    	Formating
+			    </j:if>
+			    <j:if test="${it.Entry.Severity==2}">
+			    	Language evolution
+			    </j:if>
+			    <j:if test="${it.Entry.Severity==3}">
+			    	Design
+			    </j:if>
+			    <j:if test="${it.Entry.Severity==4}">
+			    	Low security
+			    </j:if>
+			    <j:if test="${it.Entry.Severity==5}">
+			    	High security
+			    </j:if> )
 				<br />
-				Description : <br />
 				<j:forEach var="description" items="${it.Entry.Descriptions}">   
 	            	[${description.Language}] ${description.Description}<br />
 			    </j:forEach>
-			    Severity : <b>
-			    <j:if test="${Entry.Severity=1}">
-			    	Formating
-			    </j:if>
-			    <j:if test="${Entry.Severity=2}">
-			    	Language evolution
-			    </j:if>
-			    <j:if test="${Entry.Severity=3}">
-			    	Design
-			    </j:if>
-			    <j:if test="${Entry.Severity=4}">
-			    	Low security
-			    </j:if>
-			    <j:if test="${Entry.Severity=5}">
-			    	High security
-			    </j:if>
-			    </b>
+			    
+			    
+			    <table class="pane" id="summary">
+					<j:forEach var="pattern" items="${it.Entry.Pointeurs}">      
+			        <tr>
+			        	<td class="pane-header" style="background-color:#FFF">${pattern.Fullpath}
+			        	<br />
+			        	<font color="#bbbbbb"><small><i>${pattern.LineFromFile}</i></small></font>
+			        	</td>
+			        	<td class="pane" style="text-align:right;">#${pattern.Linenumber}</td>
+			        	<td class="pane" style="background-color:#FFF; text-align:center;">
+			        	<a href="../source.${pattern.Key}">
+			        	<j:if test="${pattern.isfixed}">
+					    	<img src="/plugin/serenitec/icons/pen_green.gif" alt="Fixed" border="0" />
+					    </j:if>
+					    <j:if test="${!pattern.isfixed}">
+					    	<img src="/plugin/serenitec/icons/pen_black.gif" alt="Not Fixed" border="0" />
+					    </j:if>
+					    </a>
+			        	</td>
+			        </tr>
+			        </j:forEach>				
+				</table>
+			    
+			    
+			    
+			    
+			    
+			    
 			</div>
+    
+    </l:main-panel>
+  </l:layout>
 </j:jelly>
+	
