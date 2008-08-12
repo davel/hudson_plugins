@@ -185,7 +185,6 @@
         <module>promoted-builds</module>
         <module>sametime</module>
         <module>scp</module>
-	<module>selenium</module>
         <module>sonar</module>
         <module>ssh-slaves</module>
         <!-- module>sfee</module --> <!--  not compiling currently  -->
