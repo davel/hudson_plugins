@@ -1,0 +1,59 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jvnet.hudson.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.245</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.mtvi.plateng.hudson</groupId>
+    <artifactId>jmx-invoker</artifactId>
+    <packaging>hpi</packaging>
+    <version>0.1-SNAPSHOT</version>
+    <name>JMX Invoker plugin</name>
+    <description>
+        Plugin for Hudson that invokes a JMX operation upon a successful build.
+    </description>
+    <url>http://hudson.gotdns.com/wiki/display/HUDSON/JMX+Invoker+Plugin</url>
+    
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <configLocation>
+                        http://buildtools.mtvitech.com/resources/checkstyle.xml
+                    </configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <formats>
+                        <format>xml</format>
+                    </formats>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.2.5</version>
+                <configuration>
+                    <header>http://buildtools.mtvitech.com/resources/license.txt</header>
+                    <excludes>
+                        <exclude>target*/**</exclude>
+                    </excludes>
+                    <mapping>
+                        <jelly>xml</jelly>
+                    </mapping>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

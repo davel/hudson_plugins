@@ -1,0 +1,20 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="MBean Server URL" help="/plugin/jmx/help-project-mbeanServerUrl.html">
+	<f:textbox name="jmx.mbeanServerUrl" value="${instance.mbeanServerUrl}"
+	  checkUrl="'${rootURL}/publisher/JMXInvokerPublisher/checkMBeanServerUrl?value='+escape(this.value)"/>
+  </f:entry>
+  <f:entry title="Object Name" help="/plugin/jmx/help-project-objectName.html">
+	<f:textbox name="jmx.objectName" value="${instance.objectName}"
+	  checkUrl="'${rootURL}/publisher/JMXInvokerPublisher/checkObjectName?value='+escape(this.value)"/>
+  </f:entry>
+  <f:entry title="Operation Name" help="/plugin/jmx/help-project-operationName.html">
+	<f:textbox name="jmx.operationName" value="${instance.operationName}"
+	  checkUrl="'${rootURL}/publisher/JMXInvokerPublisher/checkOperationName?value='+escape(this.value)"/>
+  </f:entry>
+  <f:entry title="Username" help="/plugin/jmx/help-project-username.html">
+	<f:textbox name="jmx.username" value="${instance.username}" />
+  </f:entry>
+  <f:entry title="Password" help="/plugin/jmx/help-project-password.html">
+	<f:textbox name="jmx.password" value="${instance.password}" />
+  </f:entry>
+</j:jelly>
