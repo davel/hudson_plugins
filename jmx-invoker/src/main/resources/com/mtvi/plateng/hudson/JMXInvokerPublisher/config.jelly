@@ -11,10 +11,12 @@
 	<f:textbox name="jmx.operationName" value="${instance.operationName}"
 	  checkUrl="'${rootURL}/publisher/JMXInvokerPublisher/checkOperationName?value='+escape(this.value)"/>
   </f:entry>
-  <f:entry title="Username" help="/plugin/jmx/help-project-username.html">
-	<f:textbox name="jmx.username" value="${instance.username}" />
-  </f:entry>
-  <f:entry title="Password" help="/plugin/jmx/help-project-password.html">
-	<f:textbox name="jmx.password" value="${instance.password}" />
-  </f:entry>
+  <f:advanced>
+    <f:entry title="Username" help="/plugin/jmx/help-project-username.html">
+	  <f:textbox name="jmx.username" value="${instance.username}" />
+    </f:entry>
+    <f:entry title="Password" help="/plugin/jmx/help-project-password.html">
+	  <f:textbox name="jmx.password" value="${instance.password}" />
+    </f:entry>
+  </f:advanced>
 </j:jelly>
