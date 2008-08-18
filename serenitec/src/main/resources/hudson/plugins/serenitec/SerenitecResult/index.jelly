@@ -8,6 +8,12 @@
 			<h2>Refactoring trend</h2>
 			<table class="pane" id="summary">
 				<tr>
+					<td class="pane-header" style="width:20%;">Statistics</td>
+                    <td class="pane-header" style="width:60%;">Description</td>
+					<td class="pane-header" style="width:10%;">This build</td>
+					<td class="pane-header" style="width:10%;">Trend</td>
+				</tr>
+				<tr>
 					<td class="pane-header" style="width:20%;"><a href="testedRules">Number of tested rules</a></td>
                                         <td class="pane" style="width:60%;">Number of detected rules in your repository</td>
 					<td class="pane" style="width:10%; text-align:right">${it.NumberOfRules}</td>

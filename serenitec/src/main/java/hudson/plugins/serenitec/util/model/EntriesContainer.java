@@ -10,7 +10,6 @@ package hudson.plugins.serenitec.util.model;
 
 
 import hudson.model.AbstractBuild;
-import hudson.plugins.serenitec.SerenitecResult;
 import hudson.plugins.serenitec.SerenitecResultAction;
 import hudson.plugins.serenitec.parseur.ReportEntry;
 import hudson.plugins.serenitec.parseur.ReportPointeur;
@@ -53,9 +52,9 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     }
 
     @SuppressWarnings("Se")
-    private final List<ReportEntry>                        rules   = new ArrayList<ReportEntry>();
+    private final List<ReportEntry>                        rules      = new ArrayList<ReportEntry>();
     /** The active entries */
-    private final List<ReportEntry>                        entries = new ArrayList<ReportEntry>();
+    private final List<ReportEntry>                        entries    = new ArrayList<ReportEntry>();
     /** The entries mapped by severity. */
     private transient Map<Integer, ArrayList<ReportEntry>> entriesBySeverity;
     /** The entries mapped by name. */
@@ -65,7 +64,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** The fixed entries */
     private transient List<ReportEntry>                    entriesFixed;
     /** The new entries */
-    private transient List<ReportEntry>                    newEntries;
+    private final List<ReportEntry>                        newEntries = new ArrayList<ReportEntry>();
     /** Entries mapped by number of pointeurs */
     private transient List<ReportEntry>                    entriesOrderByNumberOfPointeurs;
     /** The TOP5 entries */
@@ -92,6 +91,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     public EntriesContainer(final Hierarchy hierarchy) {
 
         this(StringUtils.EMPTY, hierarchy);
+
     }
 
     /**
@@ -137,28 +137,39 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         }
         initialize();
     }
-    public final void addEntries(final Collection<? extends ReportEntry> newentry, AbstractBuild<?, ?> build) {
+    public final void addEntries(final Collection<? extends ReportEntry> detectedEntries, AbstractBuild<?, ?> build) {
 
-        System.out.println("addEntries");
-        addEntries(newentry);
-        System.out.println("Looking for new entries");
-        System.out.println("Find the previousAction");
-        SerenitecResultAction previousAction = build.getPreviousNotFailedBuild().getAction(SerenitecResultAction.class);
-        System.out.println("Get the previousAction.getResult()");
-        SerenitecResult previousResult = previousAction.getResult();
-        System.out.println("Get the previousAction.getResult.getContainer");
-        EntriesContainer previousContainer = previousResult.getContainer();
-        System.out.println("get the previousAction.getResult.getContainer.getEntries");
-        List<ReportEntry> prec_entries = previousAction.getResult().getContainer().getEntries();
+        Object previous = build.getPreviousBuild();
+        boolean go = true;
+        while (previous != null && previous instanceof AbstractBuild<?, ?> && go) {
+            AbstractBuild<?, ?> previousBuild = (AbstractBuild<?, ?>) previous;
+            SerenitecResultAction previousAction = previousBuild.getAction(SerenitecResultAction.class);
+            if (previousAction != null) {
+                System.out.println("previousAction != null");
+                List<ReportEntry> prec_entries = previousAction.getResult().getContainer().getEntries();
+                if (prec_entries != null) {
+                    System.out.println("Number de entries : " + prec_entries.size());
 
-        System.out.println("Find new entries");
-        for (ReportEntry entry : newentry) {
-            if (!prec_entries.contains(entry)) {
-                newEntries.add(entry);
-                System.out.println("New Entry Found !!");
+                    System.out.println("Find new entries");
+
+                    for (ReportEntry entry : detectedEntries) {
+                        System.out.println("Entry : " + entry.getName() + " est nouvelle ?");
+                        if (!prec_entries.contains(entry)) {
+                            newEntries.add(entry);
+                            System.out.println("New Entry Found !!");
+                        }
+                    }
+                    go = false;
+                }
+                System.out.println("Fin de addEntries");
             }
+            previous = previousBuild.getPreviousBuild();
         }
-        System.out.println("Fin de addEntries");
+        System.out.println("Fin de la recherche d'un ancien build avec résultat");
+        System.out.println("Découverte de " + newEntries.size() + " nouvelles erreurs.");
+        System.out.println("addEntries");
+        addEntries(detectedEntries);
+
     }
 
     /**
@@ -683,6 +694,8 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
 
         packagesByName = new HashMap<String, Package>();
         modulesByName = new HashMap<String, MavenModule>();
+
+        System.out.println("Verifications : " + newEntries.size() + " nouvelles erreurs détectées.");
     }
 
     /**

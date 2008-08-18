@@ -109,5 +109,18 @@ public class ReportEntry implements Comparable<ReportEntry>
         }
         return resultat;
     }
+    /**
+     * Return if all the patterns are fixed
+     */
+    public boolean isFixed() {
+
+        boolean resultat = true;
+        for (ReportPointeur pattern : getPointeurs()) {
+            if (!pattern.isIsfixed()) {
+                resultat = false;
+            }
+        }
+        return resultat;
+    }
 
 }
