@@ -10,7 +10,7 @@
     <packaging>hpi</packaging>
     <artifactId>serenitec</artifactId>
     <name>Hudson Serenitec Plugin.</name>
-    <version>0.14</version>
+    <version>0.14-SNAPSHOT</version>
     <description>Execute the Serenitec refactoring solution on your project and
     generate reports on its activities.
     </description>
@@ -126,10 +126,4 @@
             </plugin>
         </plugins>
     </reporting>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/serenitec-0.14</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/serenitec-0.14</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/serenitec/tags/serenitec-0.14</url>
-  </scm>
 </project>
