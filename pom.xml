@@ -44,6 +44,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jvnet.hudson.main</groupId>
+            <artifactId>hudson-test-harness</artifactId>
+            <version>1.248</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.3.1</version>
