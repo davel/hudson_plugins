@@ -16,6 +16,7 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.plugins.serenitec.parseur.Gettingxml;
 import hudson.plugins.serenitec.parseur.ReportEntry;
+import hudson.plugins.serenitec.parseur.ReportFile;
 import hudson.plugins.serenitec.util.HealthAwarePublisher;
 import hudson.plugins.serenitec.util.HealthReportBuilder;
 import hudson.plugins.serenitec.util.Project;
@@ -113,15 +114,17 @@ public class SerenitecPublisher extends HealthAwarePublisher
                 build.setResult(Result.FAILURE);
             }
             ArrayList<ReportEntry> xml = parseur.result();
-
+            ArrayList<ReportFile> xml_fichier = parseur.resultFiles();
             projet.addEntries(xml, build);
-
+            System.out.println("Appel de projet.addFiles avec " + xml_fichier.size() + "fichiers.");
+            projet.addFiles(xml_fichier);
             log(logger, "-Repository-------------------------------------");
             log(logger, " Number of Rules : " + projet.getNumberOfRules());
             log(logger, " Number of Errors : " + projet.getNumberOfEntry());
             log(logger, " Number of Patterns : " + projet.getNumberOfPointeurs());
             log(logger, " Number of Fixed errors : " + projet.getNumberOfFixedEntry());
             log(logger, " Number of Unfixed errors : " + projet.getNumberOfNotFixedEntry());
+            log(logger, " Number of Scanned files : " + projet.getNumberOfFiles());
             log(logger, "------------------------------------------------");
             /**
              * Implementing the Result Builder

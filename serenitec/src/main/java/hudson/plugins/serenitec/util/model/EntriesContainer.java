@@ -12,6 +12,7 @@ package hudson.plugins.serenitec.util.model;
 import hudson.model.AbstractBuild;
 import hudson.plugins.serenitec.SerenitecResultAction;
 import hudson.plugins.serenitec.parseur.ReportEntry;
+import hudson.plugins.serenitec.parseur.ReportFile;
 import hudson.plugins.serenitec.parseur.ReportPointeur;
 
 import java.io.Serializable;
@@ -64,13 +65,13 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     /** The fixed entries */
     private transient List<ReportEntry>                    entriesFixed;
     /** The new entries */
-    private final List<ReportEntry>                        newEntries = new ArrayList<ReportEntry>();
+    private transient final List<ReportEntry>              newEntries = new ArrayList<ReportEntry>();
     /** Entries mapped by number of pointeurs */
     private transient List<ReportEntry>                    entriesOrderByNumberOfPointeurs;
     /** The TOP5 entries */
     private transient List<ReportEntry>                    topFiveEntries;
     /** The files */
-    private transient List<String>                         files;
+    private transient final List<ReportFile>               fichiers;
     /** The list of pointeurs */
     private transient List<ReportPointeur>                 pointeurs;
     /** The files that contain annotations mapped by file name. */
@@ -81,6 +82,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     private String                                         name;
     /** Hierarchy level of this container. */
     private Hierarchy                                      hierarchy;
+    private transient AbstractBuild<?, ?>                  build;
 
     /**
      * Creates a new instance of <code>AnnotationContainer</code>.
@@ -107,6 +109,7 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         initialize();
         this.name = name;
         this.hierarchy = hierarchy;
+        this.fichiers = new ArrayList<ReportFile>();
     }
 
     /**
@@ -139,39 +142,22 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     }
     public final void addEntries(final Collection<? extends ReportEntry> detectedEntries, AbstractBuild<?, ?> build) {
 
-        Object previous = build.getPreviousBuild();
-        boolean go = true;
-        while (previous != null && previous instanceof AbstractBuild<?, ?> && go) {
-            AbstractBuild<?, ?> previousBuild = (AbstractBuild<?, ?>) previous;
-            SerenitecResultAction previousAction = previousBuild.getAction(SerenitecResultAction.class);
-            if (previousAction != null) {
-                System.out.println("previousAction != null");
-                List<ReportEntry> prec_entries = previousAction.getResult().getContainer().getEntries();
-                if (prec_entries != null) {
-                    System.out.println("Number de entries : " + prec_entries.size());
-
-                    System.out.println("Find new entries");
-
-                    for (ReportEntry entry : detectedEntries) {
-                        System.out.println("Entry : " + entry.getName() + " est nouvelle ?");
-                        if (!prec_entries.contains(entry)) {
-                            newEntries.add(entry);
-                            System.out.println("New Entry Found !!");
-                        }
-                    }
-                    go = false;
-                }
-                System.out.println("Fin de addEntries");
-            }
-            previous = previousBuild.getPreviousBuild();
-        }
-        System.out.println("Fin de la recherche d'un ancien build avec résultat");
-        System.out.println("Découverte de " + newEntries.size() + " nouvelles erreurs.");
-        System.out.println("addEntries");
+        this.build = build;
         addEntries(detectedEntries);
-
     }
+    public void addFiles(final ArrayList<ReportFile> files) {
 
+        for (ReportFile fichier : files) {
+            System.out.println("Ajout du fichier " + fichier.getFilename());
+            this.addFile(fichier);
+        }
+    }
+    public void addFile(final ReportFile fichier) {
+
+        fichier.addPatterns(this.getPointeurs());
+        this.fichiers.add(fichier);
+        Collections.sort(this.fichiers);
+    }
     /**
      * Adds the specified annotations to this container.
      * 
@@ -445,9 +431,41 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
     }
     public int getNumberOfNewEntry() {
 
-        return newEntries.size();
-    }
+        if (newEntries == null) {
+            return entries.size();
+        } else {
+            return newEntries.size();
+        }
 
+    }
+    public int getNumberOfFiles() {
+
+        if (fichiers == null) {
+            return 0;
+        } else {
+            return fichiers.size();
+        }
+    }
+    public int getNumberOfFilesWithErrors() {
+
+        System.out.println("-----------------------------------");
+        int resultat = 0;
+        System.out.println("getNumberOfFilesWithErrors");
+        if (fichiers != null) {
+            for (ReportFile fichier : fichiers) {
+                if (fichier.hasPatterns()) {
+                    resultat++;
+                }
+            }
+        }
+        System.out.println("-----------------------------------");
+        return resultat;
+    }
+    public int getNumberOfFilesWithNoErrors() {
+
+        return fichiers.size() - getNumberOfFilesWithErrors();
+
+    }
     public int getNumberOfFixedEntry() {
 
         return entriesFixed.size();
@@ -640,6 +658,42 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         entriesOrderByNumberOfPointeurs = new ArrayList<ReportEntry>();
         pointeurs = new ArrayList<ReportPointeur>();
 
+        /**
+         * NEW ENTRIES
+         */
+
+        System.out.println("Execution de EntriesContainer.addEntries() : -------------------------");
+        boolean doit = true;
+        if (build != null) {
+            Object previous = build.getPreviousBuild();
+            boolean go = true;
+            while (previous != null && previous instanceof AbstractBuild<?, ?> && go) {
+                AbstractBuild<?, ?> previousBuild = (AbstractBuild<?, ?>) previous;
+                SerenitecResultAction previousAction = previousBuild.getAction(SerenitecResultAction.class);
+                if (previousAction != null) {
+                    List<ReportEntry> prec_entries = previousAction.getResult().getContainer().getEntries();
+                    if (prec_entries != null) {
+                        for (ReportEntry entry : entries) {
+                            System.out.println("Entry : " + entry.getName() + " est nouvelle ?");
+                            for (ReportEntry temp_entry : prec_entries) {
+                                if (temp_entry.equals(entry)) {
+                                    doit = false;
+                                }
+                            }
+                            if (doit) {
+                                newEntries.add(entry);
+                                System.out.println("New Entry Found !!");
+                            }
+                            doit = true;
+                        }
+                        go = false;
+                    }
+                }
+                previous = previousBuild.getPreviousBuild();
+            }
+        }
+        System.out.println("Fin de execution de EntriesContainer.addEntries() : -------------------------");
+
         boolean etat_pointeur;
         for (final ReportEntry entry : entries) {
             /**
@@ -694,8 +748,6 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
 
         packagesByName = new HashMap<String, Package>();
         modulesByName = new HashMap<String, MavenModule>();
-
-        System.out.println("Verifications : " + newEntries.size() + " nouvelles erreurs détectées.");
     }
 
     /**
@@ -773,5 +825,15 @@ public abstract class EntriesContainer implements EntriesProvider, Serializable
         // if (hierarchy == Hierarchy.PROJECT || hierarchy == Hierarchy.MODULE || hierarchy == Hierarchy.PACKAGE) {
         // addFile(annotation);
         // }
+    }
+
+    public List<ReportEntry> getNewEntries() {
+
+        return newEntries;
+    }
+
+    public List<ReportFile> getFichiers() {
+
+        return fichiers;
     }
 }

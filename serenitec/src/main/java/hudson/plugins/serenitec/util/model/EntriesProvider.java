@@ -127,4 +127,19 @@ public interface EntriesProvider
      * @return the topFiveEntries
      */
     public List<ReportEntry> getTopFiveEntries();
+
+    /**
+     * @return the number of files
+     */
+    public int getNumberOfFiles();
+
+    /**
+     * @return the number of files with errors
+     */
+    public int getNumberOfFilesWithErrors();
+
+    /**
+     * @return the number of files with no errors
+     */
+    public int getNumberOfFilesWithNoErrors();
 }

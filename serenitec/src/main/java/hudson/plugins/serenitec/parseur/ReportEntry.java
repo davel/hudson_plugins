@@ -35,16 +35,23 @@ public class ReportEntry implements Comparable<ReportEntry>
         }
         return resultat;
     }
-    public boolean equals(final ReportEntry _o) {
+    public boolean equals(ReportEntry _o) {
 
         boolean etat = false;
+        System.out.println(name + " =?= " + _o.getName());
         if (name.equals(_o.getName())) {
+            System.out.println("YES");
             etat = true;
             for (final ReportPointeur pointeur : pointeurs) {
-                if (!_o.getPointeurs().contains(pointeur)) {
-                    etat = false;
+                boolean doit = true;
+                for (final ReportPointeur pointeur_temp : _o.getPointeurs()) {
+                    if (!pointeur_temp.equals(pointeur)) {
+                        etat = false;
+                    }
                 }
             }
+        } else {
+            System.out.println("NO");
         }
         return etat;
     }

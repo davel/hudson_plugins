@@ -11,7 +11,7 @@
 					<td class="pane-header" style="width:20%;">Statistics</td>
                     <td class="pane-header" style="width:60%;">Description</td>
 					<td class="pane-header" style="width:10%;">This build</td>
-					<td class="pane-header" style="width:10%;">Trend</td>
+					<td class="pane-header" 	style="width:10%;">Trend</td>
 				</tr>
 				<tr>
 					<td class="pane-header" style="width:20%;"><a href="testedRules">Number of tested rules</a></td>
@@ -112,6 +112,30 @@
 					(${it.NumberOfPointeursBefore})</td>
 				</tr>
 			</table>
+			
+			<h2>File Coverage Analysis</h2>
+			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
+			<center><img src="coverage" /></center>
+			</div>	
+			<table class="pane" id="summary"> 
+		        <tr>
+		        	<td class="pane-header" style="width:20%;">Poisoned Files</td>
+		        	<td class="pane">Number of files having errors.</td>
+		        	<td class="pane" style="text-align:right">${it.percentOfFilesWithErrors}% (${it.NumberOfFilesWithErrors})</td>
+					<td class="pane">
+					<j:if test="${it.NumberOfFilesWithErrorsBefore == it.NumberOfFilesWithErrors}">
+						<img src="/plugin/serenitec/icons/arrow_stable_black.gif" alt="STABLE" />
+					</j:if>
+					<j:if test="${it.NumberOfFilesWithErrorsBefore lt it.NumberOfFilesWithErrors}">
+						<img src="/plugin/serenitec/icons/arrow_up_red.gif" alt="UP" />
+					</j:if>
+					<j:if test="${it.NumberOfFilesWithErrorsBefore gt it.NumberOfFilesWithErrors}">
+						<img src="/plugin/serenitec/icons/arrow_down_green.gif" alt="DOWN" />
+					</j:if>
+					(${it.NumberOfFilesWithErrorsBefore})</td>
+		        </tr>			
+			</table>	
+			
 				
 			<h2>Refactoring Severity trend</h2>
 			<div style="background-color:#f0f0f0; border:1px solid #bbb;">
@@ -224,22 +248,24 @@
 		        </j:forEach>				
 			</table>	
 
-                        <h2>PATCHS - <a href="">Apply patchs to resolve your project errors</a></h2>
+                        <h2>Files - <a href="">Apply patchs to resolve your project errors</a></h2>
 
                         <table class="pane" id="summary">
                             <tr>
                                 <td class="pane-header" style="width:20%;">Files</td>
-                                <td class="pane-header" style="width:70%;">Generated patchs</td>
-                                <td class="pane-header" style="width:20%;">Apply patchs</td>
+                                <td class="pane-header" style="width:70%;">FullPath</td>
+                                <td class="pane-header" style="width:20%;">Number of patterns</td>
                             </tr>
-                            <j:forEach var="file" items="${it.ModifiedFiles}">      
+                            <j:forEach var="file" items="${it.Fichiers}">      
+                                <j:if test="${file.NumberOfPatterns gt 0}">
                                 <tr>
-                                    <td class="pane">${file}</td>
+                                    <td class="pane">${file.Filename}</td>
                                     <td class="pane">
-                                        Patch1 | Pacth2 | Pacth3 | Patch4 | Patch5 | Patch6 | Patch7 | Patch8 | Patch9 | Patch10 | patch11
+                                        ${file.Fullpath}
                                     </td>
-                                    <td class="pane" style="text-align:right"><a href="">Apply all</a></td>
+                                    <td class="pane" style="text-align:right">${file.NumberOfPatterns}</td>
                                 </tr>
+                                </j:if>
                             </j:forEach>	
 			</table>
 		</l:main-panel>

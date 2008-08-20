@@ -36,7 +36,7 @@
      </j:forEach>
   </table>
   <br />
-  <img src="/plugin/serenitec/icons/info_red.gif" alt="Errors reported" /> : Some errors are reported.
+  <img src="/plugin/serenitec/icons/info_red.gif" alt="Errors reported" /> : Some patterns are reported.
   <br />
-  <img src="/plugin/serenitec/icons/info_green.gif" alt="No errors reported" /> : No error is reported.
+  <img src="/plugin/serenitec/icons/info_green.gif" alt="No errors reported" /> : No pattern is reported.
 </j:jelly>

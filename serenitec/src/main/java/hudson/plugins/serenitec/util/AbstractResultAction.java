@@ -238,7 +238,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
             PiePlot3D p = (PiePlot3D) chart.getPlot();
             p.setForegroundAlpha(0.5f);
         } else if (type.equals("topFiveTrend")) {
-            System.out.println("patternsBySeverityTrend");
+            System.out.println("topFiveTrend");
             DefaultCategoryDataset categorieDataset = new DefaultCategoryDataset();
             int numberOfPatternsForTopFive = 0;
             int numberOfPatternsForNotTopFive = 0;
@@ -251,6 +251,33 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
                     / getResult().getNumberOfPointeurs() + "%)", "Patterns");
             categorieDataset.addValue(numberOfPatternsForNotTopFive, "Remains (" + numberOfPatternsForNotTopFive * 100.0f
                     / getResult().getNumberOfPointeurs() + "%)", "Patterns");
+
+            chart = ChartFactory.createStackedBarChart3D(null, // chart title
+                    null, // domain axis label
+                    null, // range axis label
+                    categorieDataset, // data
+                    PlotOrientation.HORIZONTAL, // the plot orientation
+                    true, // include legend
+                    true, // tooltips
+                    false // urls
+                    );
+            final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+            final CategoryItemRenderer renderer = plot.getRenderer();
+            plot.setForegroundAlpha(0.5f);
+
+            return chart;
+        } else if (type.equals("coverage")) {
+            System.out.println("Coverage");
+            DefaultCategoryDataset categorieDataset = new DefaultCategoryDataset();
+            int numberOfFilesWithErrors = 0;
+            int numberOfFilesWithNoErrors = 0;
+            numberOfFilesWithErrors = getResult().getNumberOfFilesWithErrors();
+            numberOfFilesWithNoErrors = getResult().getNumberOfFilesWithNoErrors();
+
+            categorieDataset.addValue(numberOfFilesWithErrors, "Files with Errors (" + numberOfFilesWithErrors * 100.0f
+                    / getResult().getNumberOfFiles() + "%)", "Files");
+            categorieDataset.addValue(numberOfFilesWithNoErrors, "Remains (" + numberOfFilesWithNoErrors * 100.0f
+                    / getResult().getNumberOfFiles() + "%)", "Files");
 
             chart = ChartFactory.createStackedBarChart3D(null, // chart title
                     null, // domain axis label
@@ -333,7 +360,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
             return;
         }
         int width = 400;
-        if (type.equals("topFiveTrend")) {
+        if (type.equals("topFiveTrend") || type.equals("coverage")) {
             width = 800;
             height = 100;
         }

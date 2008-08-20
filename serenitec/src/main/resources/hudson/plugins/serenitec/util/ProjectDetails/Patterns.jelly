@@ -4,11 +4,21 @@
   
   <table class="pane" id="summary">
   	<tr>
-	    <td class="pane-header" style="width:20%;">Name</td>
-	    <td class="pane-header" style="width:60%; text-align:left">Description</td>
-	    <td class="pane-header" style="width:10%;">Severity</td>
-	    <td class="pane-header" style="width:10%;">Number of patterns</td>
+	    <td class="pane-header" style="width:20%;">FileName</td>
+	    <td class="pane-header" style="width:60%; text-align:left">FullPath</td>
+	    <td class="pane-header" style="width:10%;">Patterns</td>
     </tr>
+    <j:forEach var="fichier" items="${it.Data}">      
+    	<tr>
+        	<td class="pane" style="vertical-text:top;">${fichier.Filename}</td>
+            <td class="pane" style="vertical-text:top;">${fichier.Fullpath}</td>
+            <td class="pane" style="vertical-text:top;">
+            	<j:forEach var="pattern" items="${fichier.Patterns}">   
+                	<b>Line ${pattern.Linenumber} :</b> ${pattern.LineFromFile}<br />
+                </j:forEach>  
+            </td>
+        </tr>
+     </j:forEach>
     
   </table>
 </j:jelly>

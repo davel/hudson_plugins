@@ -13,6 +13,7 @@ import hudson.XmlFile;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.plugins.serenitec.parseur.ReportEntry;
+import hudson.plugins.serenitec.parseur.ReportFile;
 import hudson.plugins.serenitec.parseur.ReportPointeur;
 import hudson.plugins.serenitec.util.ErrorDetails;
 import hudson.plugins.serenitec.util.Project;
@@ -85,6 +86,8 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
     private List<ReportEntry>                newEntries;
     /** The pointeurs */
     private List<ReportPointeur>             pointeurs;
+    /** All the files */
+    private ArrayList<ReportFile>            fichiers;
     /** The modified files */
     private List<String>                     modifiedFiles;
     /** The number of entry in this build */
@@ -128,8 +131,14 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
     private int                              numberOfSeverityPerformanceBefore;
     private int                              numberOfSeverityDesignBefore;
     private int                              numberOfSeverityLowSecurityBefore;
-
     private int                              numberOfSeverityHighSecurityBefore;
+    /** Number of files with errors */
+    private int                              numberOfFiles;
+    private int                              numberOfFilesWithErrors;
+    private float                            percentOfFilesWithErrors;
+    private int                              numberOfFilesWithNoErrors;
+    private int                              numberOfFilesWithErrorsBefore;
+
     /** Number of pointeur */
     private int                              numberOfPointeurs;
 
@@ -176,10 +185,8 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
     public SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final SerenitecResult previous) {
 
         EntriesContainer previousProject = previous.getProject();
-        System.out
-                .println("Lancement de initialize() par SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final SerenitecResult previous)");
         initialize(build, project, previousProject);
-        System.out.println("Fin du lancementy");
+        System.out.println("Fin du lancement");
 
     }
 
@@ -195,8 +202,6 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
      */
     public SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject) {
 
-        System.out
-                .println("Executing SerenitecResult.SerenitecResult(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject)");
         initialize(build, project, previousProject);
     }
     public void initialize(final AbstractBuild<?, ?> build, final Project project, final EntriesContainer previousProject) {
@@ -220,9 +225,20 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
         numberOfEntry = project.getContainer().getNumberOfEntry();
 
         /**
-         * Get all the modified files
+         * Get all the files
          */
-        modifiedFiles = project.getContainer().getModifiedFiles();
+        fichiers = (ArrayList<ReportFile>) project.getContainer().getFichiers();
+        numberOfFiles = fichiers.size();
+        System.out.println("---------------------------------------------------------");
+        System.out.println("On a donc " + numberOfFiles + " fichiers dans l'étude");
+        System.out.println("---------------------------------------------------------");
+
+        /**
+         * Get all the poisoned files
+         */
+        numberOfFilesWithErrors = project.getContainer().getNumberOfFilesWithErrors();
+        numberOfFilesWithNoErrors = project.getContainer().getNumberOfFilesWithNoErrors();
+        percentOfFilesWithErrors = doPercentage(numberOfFilesWithErrors, numberOfFiles);
 
         /**
          * Get the not fixed entries
@@ -316,17 +332,18 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
             numberOfSeverityLowSecurityBefore = previousProject.getContainer().getNumberOfSeverityLowSecurity();
             numberOfSeverityHighSecurityBefore = previousProject.getContainer().getNumberOfSeverityHighSecurity();
             /**
+             * Get number of files with error Before
+             */
+            numberOfFilesWithErrorsBefore = previousProject.getContainer().getNumberOfFilesWithErrors();
+            /**
              * Get the new entries
              */
-            newEntries = new ArrayList<ReportEntry>();
-            for (final ReportEntry entry : rules) {
-                if (previousProject != project && previousProject.getContainer().getEntries().contains(entry.getName())) {
-                    newEntries.add(entry);
-                }
-            }
+            newEntries = project.getContainer().getNewEntries();
             numberOfNewEntry = newEntries.size();
             numberOfNewEntryPercent = doPercentage(numberOfNewEntry, numberOfEntry);
-            numberOfNewEntryBefore = 0;
+
+            System.out.println("TEST");
+
         } else {
             System.out.println("pas de build precedente donc on positionne avec la valeur par défault : 0");
             numberOfRulesBefore = 0;
@@ -344,6 +361,10 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
             numberOfSeverityDesignBefore = 0;
             numberOfSeverityLowSecurityBefore = 0;
             numberOfSeverityHighSecurityBefore = 0;
+            newEntries = project.getContainer().getRules();
+            numberOfNewEntry = numberOfRules;
+            numberOfNewEntryBefore = 0;
+            numberOfFilesWithErrorsBefore = 0;
         }
 
         /**
@@ -352,6 +373,7 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
         System.out.println("----------------------------------------------------");
         System.out.println("Nombre de rules dans le référentiel : " + numberOfRules);
         System.out.println("Nombre d'entry : " + numberOfEntry);
+        System.out.println("Nombre de nouvelles entry : " + numberOfNewEntry);
         System.out.println("Nombre de pointeurs : " + numberOfPointeurs);
         System.out.println("Nombre de pointeurs before : " + numberOfPointeursBefore);
         System.out.println("Nombre de fixed entry : " + numberOfFixedEntry);
@@ -410,6 +432,22 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
 
         createGraph(request, response, "topFiveTrend");
     }
+
+    /**
+     * Display the trend graph. Delegates to the the associated {@link ResultAction}.
+     * 
+     * @param request
+     *            Stapler request
+     * @param response
+     *            Stapler response
+     * @throws IOException
+     *             in case of an error in {@link ResultAction#doGraph(StaplerRequest, StaplerResponse, int)}
+     */
+    public void doCoverage(final StaplerRequest request, final StaplerResponse response) throws IOException {
+
+        createGraph(request, response, "coverage");
+    }
+
     /**
      * Creates a trend graph or map.
      * 
@@ -539,7 +577,7 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
             resultat = new ProjectDetails(getOwner(), "unfixedErrors", entriesnotfixed);
         }
         if (link.startsWith("patterns")) {
-            resultat = new ProjectDetails(getOwner(), "patterns", pointeurs);
+            resultat = new ProjectDetails(getOwner(), "patterns", fichiers);
         } else if (link.startsWith("source.")) {
             System.out.println(StringUtils.substringAfter(link, "source."));
             System.out.println("******************************************" + "***************");
@@ -1078,5 +1116,37 @@ public class SerenitecResult implements ModelObject, Serializable, EntriesProvid
     public int getNumberOfSeverityPerformancePatterns() {
 
         return numberOfSeverityPerformancePatterns;
+    }
+    public int getNumberOfFiles() {
+
+        return numberOfFiles;
+    }
+    public int getNumberOfFilesWithErrors() {
+
+        return numberOfFilesWithErrors;
+    }
+    public int getNumberOfFilesWithNoErrors() {
+
+        return numberOfFilesWithNoErrors;
+    }
+
+    public int getNumberOfFilesWithErrorsBefore() {
+
+        return numberOfFilesWithErrorsBefore;
+    }
+
+    public float getPercentOfFilesWithErrors() {
+
+        return percentOfFilesWithErrors;
+    }
+
+    public ArrayList<ReportFile> getFichiers() {
+
+        return fichiers;
+    }
+
+    public void setPercentOfFilesWithErrors(float percentOfFilesWithErrors) {
+
+        this.percentOfFilesWithErrors = percentOfFilesWithErrors;
     }
 }
