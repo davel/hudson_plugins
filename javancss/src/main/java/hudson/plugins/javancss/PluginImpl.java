@@ -8,7 +8,6 @@ import hudson.tasks.BuildStep;
  * Entry point of JavaNCSS plugin.
  *
  * @author Stephen Connolly
- * @plugin
  */
 public class PluginImpl extends Plugin {
     /**

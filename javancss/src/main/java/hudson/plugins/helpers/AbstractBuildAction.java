@@ -3,6 +3,8 @@ package hudson.plugins.helpers;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
 
+import java.io.Serializable;
+
 /**
  * An action that is associated with a build.
  *
@@ -10,7 +12,12 @@ import hudson.model.HealthReportingAction;
  * @param <BUILD> the build class that the action is associated with.
  * @since 04-Feb-2008 19:41:25
  */
-public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>> implements HealthReportingAction {
+public abstract class AbstractBuildAction<BUILD extends AbstractBuild<?, ?>> 
+	implements HealthReportingAction, Serializable 
+{
+    /** Unique identifier for this class. */
+    private static final long serialVersionUID = 31415926L;
+
     /**
      * The owner of this Action.  Ideally I'd like this to be final and set in the constructor, but Maven does not
      * let us do that, so we need a setter.
