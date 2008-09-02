@@ -1,0 +1,9 @@
+<j:jelly xmlns:j="jelly:core">
+	<j:choose>
+		<j:when test="${it.available}">
+			<img width="16" height="16"
+			  title="Saved Workspace"
+			  src="${imagesURL}/16x16/folder.gif"/>
+		</j:when>
+	</j:choose>
+</j:jelly>  
