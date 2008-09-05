@@ -4,14 +4,8 @@
 
 package com.mtvi.plateng.hudson.ldap;
 
-import hudson.model.Hudson;
 import hudson.model.User;
 
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-
-import com.mockobjects.servlet.MockServletContext;
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
 public class ResolverTest extends BaseLdapTestCase {
@@ -20,10 +14,6 @@ public class ResolverTest extends BaseLdapTestCase {
     protected String getLDAPURL() {
         return "ldap://" + ResolverTest.class.getName();
     }
-
-    protected Hudson hudson;
-    protected File root;
-    protected MockServletContext servletContext;
 
     public void testLookupUser() throws Exception {
         Configuration config = new Configuration();
@@ -43,13 +33,12 @@ public class ResolverTest extends BaseLdapTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        hudson = HudsonUtil.hudson;
+        HudsonUtil.initHudson();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        HudsonUtil.hudson.cleanUp();
-        FileUtils.deleteDirectory(HudsonUtil.root);
+        HudsonUtil.cleanUpHudson();
         super.tearDown();
     }
 }

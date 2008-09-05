@@ -4,37 +4,40 @@
 
 package com.mtvi.plateng.hudson.ldap;
 
+import hudson.model.Hudson;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.apache.commons.io.FileUtils;
+public class BadConfigLoadTest {
 
-public class BadConfigLoadTest extends TestCase {
-
+    @Test
     public void testBadConfig() throws IOException {
         PluginImpl pi = new PluginImpl();
         Configuration config = pi.loadConfiguration();
-        assertFalse(config.isValid());
+        Assert.assertFalse(config.isValid());
     }
 
+    @Test
     public void testLdapMailAddressResolver() throws Exception {
         PluginImpl pi = new PluginImpl();
         Configuration config = pi.loadConfiguration();
         LdapMailAddressResolver resolver = new LdapMailAddressResolver(config);
-        assertNull(resolver.findMailAddressFor("username"));
+        Assert.assertNull(resolver.findMailAddressFor("username"));
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        HudsonUtil.hudson.getRootUrl();
+    @Before
+    public void setUp() throws Exception {
+        HudsonUtil.initHudson();
+        Assert.assertNotNull(Hudson.getInstance());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        HudsonUtil.hudson.cleanUp();
-        FileUtils.deleteDirectory(HudsonUtil.root);
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
+        HudsonUtil.cleanUpHudson();
     }
 }

@@ -9,15 +9,17 @@ import hudson.model.Hudson;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
 import com.mockobjects.servlet.MockServletContext;
 
 public class HudsonUtil {
 
-    public static final Hudson hudson;
-    public static final File root;
-    public static final MockServletContext servletContext;
+    private static Hudson hudson;
+    private static File root;
+    private static MockServletContext servletContext;
 
-    static {
+    public static void initHudson() {
         root = new File("target/test-hudson");
         root.mkdirs();
         servletContext = new MockServletContext();
@@ -29,6 +31,15 @@ public class HudsonUtil {
             e.printStackTrace();
         }
         hudson = temp;
+    }
+
+    public static void cleanUpHudson() throws IOException {
+        HudsonUtil.hudson.cleanUp();
+        FileUtils.deleteDirectory(HudsonUtil.root);
+    }
+
+    public static File getRootDirectory() {
+        return root;
     }
 
 }
