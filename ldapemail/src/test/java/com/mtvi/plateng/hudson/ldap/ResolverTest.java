@@ -12,6 +12,7 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 
 import com.mockobjects.servlet.MockServletContext;
+import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
 public class ResolverTest extends BaseLdapTestCase {
 

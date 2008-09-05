@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import com.mockobjects.naming.directory.MockAttribute;
 import com.mockobjects.naming.directory.MockAttributes;
 import com.mockobjects.naming.directory.MockDirContext;
+import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
 public abstract class BaseLdapTestCase extends TestCase {
     protected MockDirContext mockContext;
@@ -31,6 +32,7 @@ public abstract class BaseLdapTestCase extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        MockDirContextFactory.removeContext(getLDAPURL());
         super.tearDown();
     }
 
