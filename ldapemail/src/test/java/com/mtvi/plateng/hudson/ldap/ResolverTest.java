@@ -6,6 +6,7 @@ package com.mtvi.plateng.hudson.ldap;
 
 import hudson.model.User;
 
+import com.mtvi.plateng.testing.hudson.HudsonUtil;
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
 public class ResolverTest extends BaseLdapTestCase {
