@@ -157,6 +157,7 @@
         <module>gant</module>
         <module>gcal</module>
         <module>git</module>
+        <module>googleanalytics</module>
         <module>googlecode</module>
         <module>groovy</module>
         <module>hello-world</module>
