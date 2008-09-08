@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>plugin</artifactId>
     <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
     <version>1.252</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -13,6 +13,10 @@
   <packaging>hpi</packaging>
   <name>FTP publisher plugin</name>
   <version>0.9</version>
+  <name>Hudson ftp publisher plugin</name>
+  <description>Make it possible to upload artifacts and other resources to a ftp server.</description>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/FTPPUBLISHER+plugin</url>
+
   
   <dependencies>
     <dependency>
