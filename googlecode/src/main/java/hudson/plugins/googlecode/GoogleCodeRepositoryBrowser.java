@@ -6,6 +6,8 @@ import hudson.scm.RepositoryBrowser;
 import hudson.scm.SubversionChangeLogSet.LogEntry;
 import hudson.scm.SubversionChangeLogSet.Path;
 import hudson.scm.SubversionRepositoryBrowser;
+
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
 
     private transient GoogleCodeProjectProperty.PropertyRetriever propertyRetriever;
     
+    @DataBoundConstructor
     public GoogleCodeRepositoryBrowser(GoogleCodeProjectProperty.PropertyRetriever retriever) {
         propertyRetriever = retriever;
     }
