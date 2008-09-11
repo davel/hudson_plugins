@@ -10,7 +10,7 @@
 
     <artifactId>javancss</artifactId>
     <packaging>hpi</packaging>
-    <version>1-SNAPSHOT</version>
+    <version>1.0-alpha-1</version>
     <name>Hudson JavaNCSS plugin</name>
     <url>http://hudson.gotdns.com/wiki/display/HUDSON/JavaNCSS+Plugin</url>
     <build>
@@ -30,4 +30,10 @@
         </plugin>
       </plugins>
     </build>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/javancss-1.0-alpha-1</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/javancss-1.0-alpha-1</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/javancss/tags/javancss-1.0-alpha-1</url>
+  </scm>
 </project>
