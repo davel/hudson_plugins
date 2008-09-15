@@ -24,4 +24,14 @@ public class BasicCoverage implements Measurement {
     public int getCover() {
         return cover;
     }
+
+    public float getPercentValue() {
+        if (count == 0 || cover == count) {
+            return 100f;
+        }
+        if (cover == 0) {
+            return 0;
+        }
+        return cover * 100f / count;
+    }
 }
