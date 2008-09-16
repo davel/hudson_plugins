@@ -15,7 +15,7 @@ public final class StandardModel implements Model {
     }
 
     public static StandardModel getInstance() {
-        return SingletomHolder.INSTANCE;
+        return SingletonHolder.INSTANCE;
     }
 
     public void apply(Instance instance) {
@@ -41,7 +41,7 @@ public final class StandardModel implements Model {
         instance.setMeasurement(Metric.BRANCH_COVERAGE, new BranchCoverage(branchCount, branchCover));
     }
 
-    private static final class SingletomHolder {
+    private static final class SingletonHolder {
         private static final StandardModel INSTANCE = new StandardModel();
     }
 }
