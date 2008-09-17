@@ -2,7 +2,6 @@ package hudson.plugins.googlecode.scm;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
@@ -17,7 +16,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Hudson;
-import hudson.model.Project;
 import hudson.model.TaskListener;
 import hudson.plugins.googlecode.GoogleCodeProjectProperty;
 import hudson.plugins.googlecode.GoogleCodeRepositoryBrowser;
@@ -65,8 +63,7 @@ public class GoogleCodeSCM extends SCM {
      */
     private SCM getSCM() {
         if (configuredScm == null) {
-            List<Project> projects = Hudson.getInstance().getProjects();
-            for (Project<?, ?> project : projects) {
+            for (AbstractProject<?, ?> project : Hudson.getInstance().getItems(AbstractProject.class)) {
                 if (this == project.getScm() ) {
                     GoogleCodeProjectProperty property = project.getProperty(GoogleCodeProjectProperty.class);
                     if (property != null) {
@@ -138,7 +135,7 @@ public class GoogleCodeSCM extends SCM {
         return PluginImpl.GOOGLE_CODE_SCM_DESCRIPTOR;
     }
     
-    public static class DescriptorImpl extends SCMDescriptor {
+    public static class DescriptorImpl extends SCMDescriptor<GoogleCodeSCM> {
 
         public DescriptorImpl() {
             super(GoogleCodeSCM.class, GoogleCodeRepositoryBrowser.class);       
