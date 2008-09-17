@@ -8,7 +8,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-import hudson.plugins.googlecode.scm.GoogleCodeSCM;
 import hudson.scm.SubversionChangeLogSet.LogEntry;
 
 import net.sf.json.JSONObject;

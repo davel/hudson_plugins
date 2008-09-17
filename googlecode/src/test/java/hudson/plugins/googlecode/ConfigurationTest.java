@@ -2,7 +2,6 @@ package hudson.plugins.googlecode;
 
 import hudson.model.FreeStyleProject;
 import hudson.plugins.googlecode.scm.GoogleCodeSCM;
-import hudson.scm.SCM;
 import hudson.scm.SCMS;
 
 import org.jvnet.hudson.test.HudsonTestCase;
