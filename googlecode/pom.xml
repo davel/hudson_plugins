@@ -9,7 +9,7 @@
   </parent>
   
   <artifactId>googlecode</artifactId>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3</version>
   <packaging>hpi</packaging>
   <name>Hudson Google Code plugin</name>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Google+Code+Plugin</url>
@@ -28,4 +28,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/googlecode-1.3</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/googlecode-1.3</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/googlecode/tags/googlecode-1.3</url>
+  </scm>
 </project>
