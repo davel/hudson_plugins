@@ -11,7 +11,7 @@ import com.mockobjects.naming.directory.MockAttributes;
 import com.mockobjects.naming.directory.MockDirContext;
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
-public abstract class BaseLdapTestCase extends TestCase {
+public abstract class BaseLdapDNLookupTestCase extends TestCase {
     protected MockDirContext mockContext;
 
     protected abstract String getLDAPURL();

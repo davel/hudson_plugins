@@ -6,7 +6,7 @@ package com.mtvi.plateng.hudson.ldap;
 
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
-public class LdapLookupTest extends BaseLdapTestCase {
+public class LdapLookupTest extends BaseLdapDNLookupTestCase {
 
     public void testLookupUser() throws Exception {
         Configuration config = new Configuration();
