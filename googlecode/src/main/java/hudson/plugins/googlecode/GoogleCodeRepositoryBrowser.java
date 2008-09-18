@@ -7,6 +7,8 @@ import hudson.scm.SubversionChangeLogSet.LogEntry;
 import hudson.scm.SubversionChangeLogSet.Path;
 import hudson.scm.SubversionRepositoryBrowser;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -83,8 +85,8 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
         }
 
         @Override
-        public GoogleCodeRepositoryBrowser newInstance(StaplerRequest req) throws FormException {
-            return new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR);
+        public GoogleCodeRepositoryBrowser newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            return new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR);        
         }
     }
 }
