@@ -20,7 +20,7 @@ public class ResolverTest extends BaseLdapDNLookupTestCase {
         Configuration config = new Configuration();
         config.setServer(getLDAPURL());
         config.setBaseDN("ou=Users,dc=test,dc=com");
-        config.setEmailAttribute("mail");
+        config.setEmailAttribute("email");
         config.setSearchAttribute("uid");
         config.setInitialContextFactoryName(MockDirContextFactory.NAME);
 
@@ -28,7 +28,6 @@ public class ResolverTest extends BaseLdapDNLookupTestCase {
         User u = User.get("testuser");
         assertEquals("mail@test.com", resolver.findMailAddressFor(u));
 
-        mockContext.verify();
     }
 
     @Override

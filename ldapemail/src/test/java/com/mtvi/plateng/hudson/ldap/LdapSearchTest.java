@@ -6,26 +6,28 @@ package com.mtvi.plateng.hudson.ldap;
 
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
-public class LdapLookupTest extends BaseLdapDNLookupTestCase {
+public class LdapSearchTest extends BaseLdapSearchTestCase {
 
-    public void testLookupUser() throws Exception {
+    public void testSearchUser() throws Exception {
         Configuration config = new Configuration();
         config.setServer(getLDAPURL());
-        config.setBaseDN("ou=Users,dc=test,dc=com");
+        config.setBaseDN("dc=test,dc=com");
         config.setEmailAttribute("email");
         config.setSearchAttribute("uid");
+        config.setPerformSearch(true);
         config.setInitialContextFactoryName(MockDirContextFactory.NAME);
 
         LdapMailAddressResolver resolver = new LdapMailAddressResolver(config);
         assertEquals("mail@test.com", resolver.findMailAddressFor("testuser"));
     }
 
-    public void testLookupUserWithAuth() throws Exception {
+    public void testSearchUserWithAuth() throws Exception {
         Configuration config = new Configuration();
         config.setServer(getLDAPURL());
-        config.setBaseDN("ou=Users,dc=test,dc=com");
+        config.setBaseDN("dc=test,dc=com");
         config.setEmailAttribute("email");
         config.setSearchAttribute("uid");
+        config.setPerformSearch(true);
         config.setBindDN("bindDN");
         config.setBindPassword("password");
         config.setInitialContextFactoryName(MockDirContextFactory.NAME);

@@ -46,6 +46,12 @@ public class Configuration {
     private String initialContextFactoryName;
 
     /**
+     * If true, the user's LDAP account will be found by searching through the
+     * baseDN
+     */
+    private boolean performSearch = false;
+
+    /**
      * The LDAP attribute to use for searching. Usually 'uid'
      */
     private String searchAttribute;
@@ -88,6 +94,10 @@ public class Configuration {
         return (bindDN != null) && (bindPassword != null);
     }
 
+    public boolean isPerformSearch() {
+        return performSearch;
+    }
+
     public boolean isValid() {
         return (server != null) && (baseDN != null) && (searchAttribute != null)
                 && (emailAttribute != null);
@@ -96,8 +106,7 @@ public class Configuration {
     /**
      * Construct a user's distinguised name (DN) from their username.
      * 
-     * @param userName
-     *            the user's username
+     * @param userName the user's username
      * @return the DN
      */
     public String makeUserDN(String userName) {
@@ -125,6 +134,10 @@ public class Configuration {
 
     public void setInitialContextFactoryName(String initialContextFactoryName) {
         this.initialContextFactoryName = initialContextFactoryName;
+    }
+
+    public void setPerformSearch(boolean performSearch) {
+        this.performSearch = performSearch;
     }
 
     public void setSearchAttribute(String searchAttribute) {
