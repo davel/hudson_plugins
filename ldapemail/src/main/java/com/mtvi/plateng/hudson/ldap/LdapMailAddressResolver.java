@@ -33,7 +33,8 @@ public class LdapMailAddressResolver extends MailAddressResolver {
     /**
      * A logger object.
      */
-    private static final Logger LOGGER = Logger.getLogger(LdapMailAddressResolver.class.getName());
+    private static final Logger LOGGER = Logger.getLogger("hudson."
+            + LdapMailAddressResolver.class.getName());
 
     /**
      * Configuration object encapsulating how to connect to the LDAP server.
