@@ -2,10 +2,15 @@ package hudson.plugins.codeplex.scm;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.rpc.ServiceException;
+
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.codeplex.soap.ProjectInfoServiceLocator;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -62,28 +67,43 @@ public class CodePlexTfsScm extends SCM {
 
     public SCM getScm() {
         if (configuredScm == null) {
-            List<Project> projects = Hudson.getInstance().getProjects();
-            for (Project<?, ?> project : projects) {
-                if (this == project.getScm() ) {
-                    CodePlexProjectProperty property = project.getProperty(CodePlexProjectProperty.class);
-                    if (property != null) {
-                        configuredScm = new TeamFoundationServerScm(
-                                String.format("https://tfs01.codeplex.com"), 
-                                String.format("$/%s%s", property.getProjectName(), path), 
-                                ".", true, null, 
-                                (getUserName() != null ? String.format("snd\\%s_cp", getUserName()) : null), 
-                                (getUserPassword() != null ? getUserPassword() : null));
-                    } else {
-                        throw new RuntimeException("The project does not have a google code property. Please report this to the plugin author.");
+            try {
+                for (AbstractProject<?, ?> project : Hudson.getInstance().getItems(AbstractProject.class)) {
+                    if (this == project.getScm() ) {
+                        CodePlexProjectProperty property = project.getProperty(CodePlexProjectProperty.class);
+                        if (property != null) {
+                                configuredScm = new TeamFoundationServerScm(
+                                    getTfsUrl(property), 
+                                    String.format("$/%s%s", property.getProjectName(), path), 
+                                    ".", true, null, 
+                                    (getUserName() != null ? getTfsUserName(getUserName()) : null), 
+                                    (getUserPassword() != null ? getUserPassword() : null));
+                        } else {
+                            throw new RuntimeException("The project does not have a google code property. Please report this to the plugin author.");
+                        }
+                        break;
                     }
-                    break;
                 }
+            } catch (RemoteException e) {
+                throw new RuntimeException("Could not communicate with the remote CodePlex SOAP server. Please contact plugin author.", e);
+            } catch (ServiceException e) {
+                throw new RuntimeException("Could not communicate with the remote CodePlex SOAP server. Please contact plugin author.", e);
             }
-            if (configuredScm == null) {
-                throw new RuntimeException("Could not find the project for this SCM object. Please contact plugin author.");
-            }
+         if (configuredScm == null) {
+            throw new RuntimeException("Could not find the project for this SCM object. Please contact plugin author.");
+         }
         }
         return configuredScm;
+    }
+
+    private String getTfsUserName(String codePlexUserName) throws RemoteException, ServiceException {
+        ProjectInfoServiceLocator locator = new ProjectInfoServiceLocator();
+        return locator.getProjectInfoServiceSoap().codePlexUserNameToTfsUserName(codePlexUserName);
+    }
+
+    private String getTfsUrl(CodePlexProjectProperty property) throws RemoteException, ServiceException {
+        ProjectInfoServiceLocator locator = new ProjectInfoServiceLocator();
+        return locator.getProjectInfoServiceSoap().getTfsInfoForProject(property.getProjectName()).getTfsServerUrl();
     }
 
     @Override
