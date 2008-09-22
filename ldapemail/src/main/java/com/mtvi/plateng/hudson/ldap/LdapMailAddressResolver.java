@@ -48,6 +48,9 @@ public class LdapMailAddressResolver extends MailAddressResolver {
      */
     public LdapMailAddressResolver(Configuration config) {
         configuration = config;
+        if (!configuration.isValid()) {
+            LOGGER.warning("Provided configuration isn't valid. Check for missing elements.");
+        }
     }
 
     /**
