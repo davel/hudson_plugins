@@ -188,9 +188,10 @@
         <module>polarion</module>
         <module>port-allocator</module>
         <module>pmd</module>
-	    <module>rake</module>
-        <module>ruby</module>
         <module>promoted-builds</module>
+	      <module>rake</module>
+        <module>ruby</module>
+        <module>rubyMetrics</module>
         <module>sametime</module>
         <module>scp</module>
         <module>sonar</module>
