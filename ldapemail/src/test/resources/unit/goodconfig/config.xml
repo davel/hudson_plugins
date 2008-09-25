@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Copyright (c) 2008, MTV Networks
+
+-->
+
+<com.mtvi.plateng.hudson.ldap.Configuration>
+	<server>ldap://testserver:389</server>
+	<baseDN>ou=People,dc=test,dc=com</baseDN>
+	<bindDN>cn=System,ou=Internal,dc=test,dc=com</bindDN>
+	<bindPassword>password</bindPassword>
+	<emailAttribute>mail</emailAttribute>
+	<searchAttribute>uid</searchAttribute>
+</com.mtvi.plateng.hudson.ldap.Configuration>
