@@ -18,7 +18,7 @@
 	<groupId>com.mtvi.plateng.hudson</groupId>
 	<artifactId>ldapemail</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.3</version>
+	<version>0.4-SNAPSHOT</version>
 
 	<dependencies>
         <dependency>
@@ -76,10 +76,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/ldapemail-0.3</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/ldapemail-0.3</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/ldapemail/tags/ldapemail-0.3</url>
-  </scm>
 </project>
