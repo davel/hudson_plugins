@@ -4,14 +4,14 @@
 
 package com.mtvi.plateng.hudson.ldap;
 
-import junit.framework.TestCase;
+import org.jvnet.hudson.test.HudsonTestCase;
 
 import com.mockobjects.naming.directory.MockAttribute;
 import com.mockobjects.naming.directory.MockAttributes;
 import com.mockobjects.naming.directory.MockDirContext;
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
-public abstract class BaseLdapDNLookupTestCase extends TestCase {
+public abstract class BaseLdapDNLookupTestCase extends HudsonTestCase {
     private MockDirContext mockContext;
     private MockAttributes attrs;
     private MockAttribute attr;

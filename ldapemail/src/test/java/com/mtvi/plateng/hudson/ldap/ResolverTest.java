@@ -6,7 +6,6 @@ package com.mtvi.plateng.hudson.ldap;
 
 import hudson.model.User;
 
-import com.mtvi.plateng.testing.hudson.HudsonUtil;
 import com.mtvi.plateng.testing.jndi.MockDirContextFactory;
 
 public class ResolverTest extends BaseLdapDNLookupTestCase {
@@ -28,17 +27,5 @@ public class ResolverTest extends BaseLdapDNLookupTestCase {
         User u = User.get("testuser");
         assertEquals("mail@test.com", resolver.findMailAddressFor(u));
 
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        HudsonUtil.initHudson();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        HudsonUtil.cleanUpHudson();
-        super.tearDown();
     }
 }
