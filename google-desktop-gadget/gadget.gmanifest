@@ -1,13 +1,13 @@
-﻿<gadget minimumGoogleDesktopVersion="5.1.0.0">
+﻿<gadget minimumGoogleDesktopVersion="5.5.0.0">
 	<about>
 		<name>&GADGET_NAME;</name>
 		<description>&GADGET_DESCRIPTION;</description>
 		<aboutText>&GADGET_ABOUT_TEXT;</aboutText>
 		<smallIcon>icon_small.png</smallIcon>
 		<icon>icon_large.png</icon>
-		<version>0.9.5</version>
+		<version>1.0</version>
 		<author>Jeff Black</author>
-		<authorWebsite>http://codebeneath.blogspot.com</authorWebsite>
+		<authorWebsite>http://hudson.gotdns.com/wiki/display/HUDSON/Hudson+Google+Desktop+Gadget</authorWebsite>
 		<id>b2494e1d-1ce9-4bd7-a008-ddb4435cf785</id>
 		<copyright>&GADGET_COPYRIGHT;</copyright>
 		<authorEmail>codebeneath@yahoo.com</authorEmail>

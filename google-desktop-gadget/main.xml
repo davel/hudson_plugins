@@ -1,7 +1,7 @@
-﻿<view height="120" resizable="true" width="200" onopen="view_onOpen();"
-  onoptionchanged="onOptionChanged();">
-    <img height="35" name="backgroundImg" width="100%" y="1" src="stock_images\background.png"
-     />
+﻿<view height="120" resizable="true" showCaptionAlways="true" width="200"
+  onopen="view_onOpen();" onoptionchanged="onOptionChanged();"
+ >
+    <contentArea height="100%" name="contentArea" width="100%"/>
     <img height="23" name="img1" width="26" x="100" y="6" src="images\hudson.png"
      />
     <label enabled="true" height="15" hitTest="htclient" name="jobLabel"
