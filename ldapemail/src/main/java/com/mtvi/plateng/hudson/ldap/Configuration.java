@@ -4,6 +4,9 @@
 
 package com.mtvi.plateng.hudson.ldap;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * Class to store configuration for the plugin.
  * 
@@ -146,6 +149,19 @@ public class Configuration {
 
     public void setServer(String server) {
         this.server = server;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("baseDN", baseDN)
+                .append("bindDN", bindDN).append("bindPassword",
+                        bindPassword != null ? "xxxx" : null).append("emailAttribute",
+                        emailAttribute).append("initialContextFactoryName",
+                        initialContextFactoryName).append("performSearch", performSearch).append(
+                        "server", server).toString();
     }
 
 }
