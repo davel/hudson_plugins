@@ -21,10 +21,13 @@ Copyright (c) 2008 Jeff Black
 
   <JOB_LABEL_TEXT>Job list</JOB_LABEL_TEXT>
   <TIMEOUT_LABEL>Polling interval in minutes</TIMEOUT_LABEL>
-  <URL_LABEL>The url to Hudson, http://server[:port]/</URL_LABEL>
+  <URL_LABEL>Enter a Hudson URL, http://server[:port]/.  This can be the main dashboard URL or any view URL.</URL_LABEL>
 
   <ERR_URL_EMPTY>Hudson url is not valid.</ERR_URL_EMPTY>
-  <VALID_TIMEOUT>Timeout should be a valid number.</VALID_TIMEOUT>
+  <ADD_URL>Add New Hudson URL</ADD_URL>
+  <BUTTON_ADD>Add URL</BUTTON_ADD>
+  <BUTTON_UPDATE>Update URL</BUTTON_UPDATE>
+  <BUTTON_REMOVE>Remove URL</BUTTON_REMOVE>
 
   <TABLE_HEAD_JOB>Job</TABLE_HEAD_JOB>
   <TABLE_HEAD_STATUS>Status</TABLE_HEAD_STATUS>

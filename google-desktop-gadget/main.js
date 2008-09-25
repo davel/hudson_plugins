@@ -64,18 +64,25 @@ var hudsonUrl = DEFAULT_HUDSON_URL;
 var pollingIntervalMinutes = DEFAULT_POLLING_INTERVAL_MINUTES;
 var updateFailCount = 0;
 var httpRequest;
+var strurls = "";				// the urls as a single string
+var hudsonUrls = new Array();	// array of urls
+
 
 function view_onOpen() {
-  initializeStoredOptions();
-  hudsonUrl = options.getValue('hudsonUrlProp');
+    initializeStoredOptions();
 
-  if (hudsonUrl != "") {
-    updateStatus();
-  }
+    // load urls setting from data base
+    strurls = options.getValue("hudsonUrlsProp");
+    if (strurls != "") {
+      // split urls between each comma
+      hudsonUrls = strurls.split(",");
+      hudsonUrl = hudsonUrls[0]; // @TODO: loop thru all urls
+      updateStatus();
+    }
 }
 
 function initializeStoredOptions() {
-  options.putDefaultValue('hudsonUrlProp', DEFAULT_HUDSON_URL);
+  options.putDefaultValue('hudsonUrlsProp', DEFAULT_HUDSON_URL);
   options.putDefaultValue('intervalMinutesProp', DEFAULT_POLLING_INTERVAL_MINUTES);
 }
 
@@ -91,10 +98,10 @@ function onOptionChanged() {
     g_updateStatusTimer = null;
   }
 
-  // remove the configure your hudson url msg, if still there
+  // remove the "configure your hudson url" msg, if still there
   jobList.removeAllElements();
 
-  hudsonUrl = options.getValue('hudsonUrlProp');
+  hudsonUrl = options.getValue('hudsonUrlsProp');
   pollingIntervalMinutes = options.getValue('intervalMinutesProp');
 
   updateStatus();
