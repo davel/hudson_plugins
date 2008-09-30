@@ -78,7 +78,7 @@ public class LdapMailAddressResolver extends MailAddressResolver {
                 env.put(Context.PROVIDER_URL, configuration.getServer());
 
                 if (configuration.isBindCredentialsProvided()) {
-                    LOGGER.log(Level.FINE, "Using provided credentials for binding to LDAP server");
+                    LOGGER.log(Level.INFO, "Using provided credentials for binding to LDAP server");
                     env.put(Context.SECURITY_PRINCIPAL, configuration.getBindDN());
                     env.put(Context.SECURITY_CREDENTIALS, configuration.getBindPassword());
                 }
@@ -100,17 +100,17 @@ public class LdapMailAddressResolver extends MailAddressResolver {
         String emailAddress = null;
         String dn = configuration.makeUserDN(userName);
 
-        LOGGER.log(Level.FINE, String.format("Looking up attributes for DN %s", dn));
+        LOGGER.log(Level.INFO, String.format("Looking up attributes for DN %s", dn));
 
         Attributes attrs = ctx
                 .getAttributes(dn, new String[] { configuration.getEmailAttribute() });
         Attribute attr = attrs.get(configuration.getEmailAttribute());
         if (attr != null) {
             emailAddress = (String) attr.get();
-            LOGGER.log(Level.FINE, String.format("Found mail attribute %s for userName %s",
+            LOGGER.log(Level.INFO, String.format("Found mail attribute %s for userName %s",
                     emailAddress, userName));
         } else {
-            LOGGER.log(Level.FINE, String.format("No mail attribute found for userName %s",
+            LOGGER.log(Level.INFO, String.format("No mail attribute found for userName %s",
                     userName));
         }
         return emailAddress;
@@ -122,7 +122,7 @@ public class LdapMailAddressResolver extends MailAddressResolver {
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         String filter = String.format("%s=%s", configuration.getSearchAttribute(), userName);
 
-        LOGGER.log(Level.FINE, String.format("Performing LDAP search within %s using %s",
+        LOGGER.log(Level.INFO, String.format("Performing LDAP search within %s using %s",
                 configuration.getBaseDN(), filter));
 
         NamingEnumeration<SearchResult> results = ctx.search(configuration.getBaseDN(), filter,
@@ -132,14 +132,14 @@ public class LdapMailAddressResolver extends MailAddressResolver {
             Attribute attr = result.getAttributes().get(configuration.getEmailAttribute());
             if (attr != null) {
                 emailAddress = (String) attr.get();
-                LOGGER.log(Level.FINE, String.format("Found mail attribute %s for userName %s",
+                LOGGER.log(Level.INFO, String.format("Found mail attribute %s for userName %s",
                         emailAddress, userName));
             } else {
-                LOGGER.log(Level.FINE, String.format("No mail attribute found for userName %s",
+                LOGGER.log(Level.INFO, String.format("No mail attribute found for userName %s",
                         userName));
             }
         } else {
-            LOGGER.log(Level.FINE, String.format("No results found for filter %s inside baseDN %s",
+            LOGGER.log(Level.INFO, String.format("No results found for filter %s inside baseDN %s",
                     filter, configuration.getBaseDN()));
         }
         return emailAddress;
