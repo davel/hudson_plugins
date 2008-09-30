@@ -11,7 +11,7 @@
     <groupId>com.mtvi.plateng.hudson</groupId>
     <artifactId>springbeandoc</artifactId>
     <packaging>hpi</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
 
     <build>
         <defaultGoal>package</defaultGoal>
