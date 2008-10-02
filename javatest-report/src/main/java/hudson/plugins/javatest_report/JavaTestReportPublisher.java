@@ -79,7 +79,6 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
     }
 
     public boolean perform(Build build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
-        final long buildTime = build.getTimestamp().getTimeInMillis();
 
         archiveJTWork(build,listener);
 
@@ -90,9 +89,14 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
         dataDir.mkdirs();
         final FilePath target = new FilePath(dataDir);
 
+        final long buildTime = build.getTimestamp().getTimeInMillis();
+        final long nowMaster = System.currentTimeMillis();
+
         try {
             build.getProject().getWorkspace().act(new FileCallable<Void>() {
                 public Void invoke(File ws, VirtualChannel channel) throws IOException {
+                    final long nowSlave = System.currentTimeMillis();
+
                     FileSet fs = new FileSet();
                     org.apache.tools.ant.Project p = new org.apache.tools.ant.Project();
                     fs.setProject(p);
@@ -112,7 +116,7 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
                     for (String file : includedFiles) {
                         File src = new File(ws, file);
 
-                        if(src.lastModified()<buildTime) {
+                        if(src.lastModified()<buildTime+(nowSlave-nowMaster)) {
                             listener.getLogger().println("Skipping "+src+" because it's not up to date");
                             continue;       // not up to date.
                         }
