@@ -83,7 +83,7 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
 
         archiveJTWork(build,listener);
 
-        listener.getLogger().println("Collecting Java Test reports");
+        listener.getLogger().println("Collecting JavaTest reports");
 
         // target directory
         File dataDir = JavaTestAction.getDataDir(build);
@@ -153,7 +153,7 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
 
     private void archiveJTWork(Build<?,?> owner, BuildListener listener) throws IOException, InterruptedException {
         if (jtwork == null || jtwork.equals("")) {
-            listener.getLogger().println("Set Java Test Work directory for better reporting");
+            listener.getLogger().println("Set JavaTest Work directory for better reporting");
         } else {
             Project p = owner.getProject();
 

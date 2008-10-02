@@ -41,7 +41,7 @@ public final class Report extends TestCollection<Report,Suite> {
 
     public Report(JavaTestAction owner) {
         this.owner = owner;
-        setName("Java Test Result");
+        setName("JavaTest Result");
         setId("root");
     }
 
