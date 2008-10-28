@@ -13,13 +13,11 @@ import hudson.tasks.Publisher;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ognl.Ognl;
 import ognl.OgnlException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -67,16 +65,14 @@ public class SubversionImporter extends Publisher {
         for (FilePath file : files) {
             String filePath = file.toURI().toString().substring(workspaceURI.length() - 1);
 
+            String output = importExpression;
+
             Matcher matcher = artifactPattern.matcher(filePath);
             if (matcher.matches()) {
-                List<String> groups = new ArrayList<String>();
-                groups.add(matcher.group(0));
                 for (int i = 1; i <= matcher.groupCount(); i++) {
-                    groups.add(matcher.group(i));
+                    output = output.replace("$" + i, matcher.group(i));
                 }
-                String s = (String) Ognl.getValue(importExpression, Collections.singletonMap("g",
-                        groups));
-                items.add(new ImportItem(file, baseSvnUrl.appendPath(s, false)));
+                items.add(new ImportItem(file, baseSvnUrl.appendPath(output, false)));
             }
         }
         return items;

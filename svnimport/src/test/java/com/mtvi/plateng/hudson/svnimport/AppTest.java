@@ -16,7 +16,7 @@ public class AppTest {
     public void whenExpressionWorks() throws Exception {
         SubversionImporter importer = new SubversionImporter(
                 "/trunk/target/foo-(\\d*).(\\d*).(\\d*)-(\\d*).swf", "http://subversion/dest",
-                "'/'+g[1]+'/'+g[2]+'.'+g[3]+'/'+g[4]+'/'+'foo.swf'");
+                "/$1/$2.$3/$4/foo.swf");
         // List<String> filePaths =
         // Arrays.asList("/trunk/target/foo-1.2.3-4.swf");
         FilePath workspace = new FilePath(new File("src/test/resources/workspace1"));
@@ -30,7 +30,7 @@ public class AppTest {
     public void multipleFiles() throws Exception {
         SubversionImporter importer = new SubversionImporter(
                 "/trunk/target/foo-(\\d*).(\\d*).(\\d*)-(\\d*).swf", "http://subversion/dest",
-                "'/'+g[1]+'/'+g[2]+'.'+g[3]+'/'+g[4]+'/'+'foo.swf'");
+                "/$1/$2.$3/$4/foo.swf");
         // List<String> filePaths =
         // Arrays.asList("/trunk/target/foo-1.2.3-4.swf",
         // "/trunk/target/foo-1.2.3-5.swf");
