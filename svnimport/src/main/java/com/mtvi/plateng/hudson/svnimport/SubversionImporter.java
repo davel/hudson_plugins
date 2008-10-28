@@ -18,8 +18,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ognl.OgnlException;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
@@ -56,8 +54,8 @@ public class SubversionImporter extends Publisher {
         return DescriptorImpl.INSTANCE;
     }
 
-    public List<ImportItem> getItemsToImport(FilePath workspace) throws OgnlException,
-            SVNException, IOException, InterruptedException {
+    public List<ImportItem> getItemsToImport(FilePath workspace) throws SVNException, IOException,
+            InterruptedException {
         String workspaceURI = workspace.toURI().toString();
         FilePath[] files = workspace.list("**/*");
 
@@ -103,9 +101,6 @@ public class SubversionImporter extends Publisher {
                 }
 
             }
-        } catch (OgnlException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (SVNException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
