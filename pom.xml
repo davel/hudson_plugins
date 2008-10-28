@@ -190,6 +190,7 @@
         <module>pmd</module>
         <module>promoted-builds</module>
 	      <module>rake</module>
+        <module>redmine</module>
         <module>ruby</module>
         <module>rubyMetrics</module>
         <module>sametime</module>
