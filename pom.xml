@@ -212,6 +212,7 @@
         <module>webtestpresenter</module>
         <module>ws7</module>
         <module>xvnc</module>
+        <module>pvcs_scm</module>
     </modules>
 
     <properties>
