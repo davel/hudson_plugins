@@ -105,11 +105,12 @@ public class SpringBeanDocArchiver extends Publisher {
         }
 
         public String getIconFileName() {
-            if (getBeandocDir(project).exists())
-                return "help.gif";
-            else
-                // hide it since we don't have javadoc yet.
+            if (getBeandocDir(project).exists()) {
+                return "/plugin/springbeandoc/images/24x24/spring-logo.png";
+            } else {
+                // hide it since we don't have beandoc yet.
                 return null;
+            }
         }
 
         public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException,

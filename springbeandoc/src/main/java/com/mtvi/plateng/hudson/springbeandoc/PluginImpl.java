@@ -7,6 +7,7 @@ import hudson.tasks.BuildStep;
  * Entry point of a plugin.
  * 
  * @author edelsonj
+ * @plugin
  */
 public class PluginImpl extends Plugin {
     public void start() throws Exception {
