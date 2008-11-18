@@ -10,11 +10,12 @@ import hudson.plugins.coverage.model.measurements.LineCoverage;
  * @since 26-Jun-2008 18:01:36
  */
 public class JavaModel implements Model {
-    public static final Element LANGUAGE = Element.getRootElement().newChild("java", false, SingletomHolder.INSTANCE);
-    public static final Element PACKAGE = LANGUAGE.newChild("package", false, SingletomHolder.INSTANCE);
-    public static final Element FILE = PACKAGE.newChild("file", true, SingletomHolder.INSTANCE);
-    public static final Element CLASS = FILE.newChild("class", false, SingletomHolder.INSTANCE);
-    public static final Element METHOD = CLASS.newChild("method", false, SingletomHolder.INSTANCE);
+
+    public static final Element LANGUAGE = Element.getRootElement().newChild("java", false, SingletonHolder.INSTANCE);
+    public static final Element PACKAGE = LANGUAGE.newChild("package", false, SingletonHolder.INSTANCE);
+    public static final Element FILE = PACKAGE.newChild("file", true, SingletonHolder.INSTANCE);
+    public static final Element CLASS = FILE.newChild("class", false, SingletonHolder.INSTANCE);
+    public static final Element METHOD = CLASS.newChild("method", false, SingletonHolder.INSTANCE);
 
     public static final Metric PACKAGE_COVERAGE = Metric.newMetric("package", BasicCoverage.class);
     public static final Metric FILE_COVERAGE = Metric.newMetric("file", BasicCoverage.class);
@@ -32,7 +33,7 @@ public class JavaModel implements Model {
             int classCover = 0;
             int fileCount = 0;
             int fileCover = 0;
-            for (Instance child : instance.getChildren(CLASS).values()) {
+            for (Instance child : instance.getChildren(PACKAGE).values()) {
                 BasicCoverage coverage = (BasicCoverage) child.getMeasurement(METHOD_COVERAGE);
                 methodCount += coverage.getCount();
                 methodCover += coverage.getCover();
@@ -47,14 +48,14 @@ public class JavaModel implements Model {
             instance.setMeasurement(METHOD_COVERAGE, new BasicCoverage(methodCount, methodCover));
             instance.setMeasurement(CLASS_COVERAGE, new BasicCoverage(classCount, classCover));
             instance.setMeasurement(FILE_COVERAGE, new BasicCoverage(fileCount, fileCover));
-        } else if (FILE.equals(instance.getElement())) {
+        } else if (PACKAGE.equals(instance.getElement())) {
             int methodCount = 0;
             int methodCover = 0;
             int classCount = 0;
             int classCover = 0;
             int fileCount = 0;
             int fileCover = 0;
-            for (Instance child : instance.getChildren(CLASS).values()) {
+            for (Instance child : instance.getChildren(FILE).values()) {
                 BasicCoverage coverage = (BasicCoverage) child.getMeasurement(METHOD_COVERAGE);
                 methodCount += coverage.getCount();
                 methodCover += coverage.getCover();
@@ -101,7 +102,8 @@ public class JavaModel implements Model {
         }
     }
 
-    private static final class SingletomHolder {
+    private static final class SingletonHolder {
+
         private static final JavaModel INSTANCE = new JavaModel();
     }
 

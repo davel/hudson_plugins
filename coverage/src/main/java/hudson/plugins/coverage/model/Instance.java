@@ -1,7 +1,12 @@
 package hudson.plugins.coverage.model;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * An instance of an {@linkplain Element}.
@@ -50,8 +55,8 @@ public class Instance {
     private transient File sourceFile;
 
     /**
-     * Used to keep track of all the source code files so we can archive the source code.
-     * Only set for the root element while on the slave that hosts the source code.
+     * Used to keep track of all the source code files so we can archive the source code. Only set for the root element
+     * while on the slave that hosts the source code.
      */
     private final transient Set<File> sourceFiles;
 
@@ -66,9 +71,10 @@ public class Instance {
      * Creates a new Instance instance using the provided recorders.
      *
      * @param recorders The recorders.
+     *
      * @return The new Instance instance.
      */
-    public static Instance newInstance(Set<Recorder> recorders) {
+    public static Instance newInstance(Set<? extends Recorder> recorders) {
         Instance result = new Instance();
 
         // first-pass: identify the source files
@@ -227,12 +233,13 @@ public class Instance {
      * @param memo             A memo object that the recorder can use to hold state prior to the second-pass parsing
      *                         {@linkplain hudson.plugins.coverage.model.Recorder#parseSourceResults(Instance, Set,
      *                         Object)}
+     *
      * @see hudson.plugins.coverage.model.Recorder#identifySourceFiles(Instance) the first-pass parsing which should
      *      register recorders.
      * @see hudson.plugins.coverage.model.Recorder#reidentifySourceFiles(Instance, java.util.Set, java.io.File) the
      *      first-pass parsing at report time which should register recorders.
-     * @see hudson.plugins.coverage.model.Recorder#parseSourceResults(Instance, Set, Object) the second-pass parsing which
-     *      populates the parse results.
+     * @see hudson.plugins.coverage.model.Recorder#parseSourceResults(Instance, Set, Object) the second-pass parsing
+     *      which populates the parse results.
      */
     public synchronized void addRecorder(Recorder recorder, Set<File> measurementFiles, Object memo) {
         recorder.getClass(); // throw NPE if null
@@ -248,9 +255,13 @@ public class Instance {
         assert root != null : "The root element can never be source level";
         assert this.measurementFiles != null;
         synchronized (this.measurementFiles) {
-            this.measurementFiles.put(recorder, measurementFiles);
+            Set<File> fileSet = this.measurementFiles.get(recorder);
+            if (fileSet == null) {
+                this.measurementFiles.put(recorder, fileSet = new HashSet<File>());
+            }
+            fileSet.addAll(measurementFiles);
         }
-        while (root.measurementFiles != null) {
+        while (root.parent != null) {
             root = root.parent;
         }
         synchronized (root.measurementFiles) {
@@ -275,6 +286,7 @@ public class Instance {
      * Returns all the children of a specific child element type.
      *
      * @param element The child element type.
+     *
      * @return All the children of the child element type.
      */
     public Map<String, Instance> getChildren(Element element) {
@@ -288,6 +300,7 @@ public class Instance {
      * Returns the measurement of a specific metric.
      *
      * @param metric The metric.
+     *
      * @return The measurement of the metric.
      */
     public Measurement getMeasurement(Metric metric) {
@@ -330,6 +343,7 @@ public class Instance {
      *
      * @param element The child element type.
      * @param name    The child name.
+     *
      * @return The child instance.
      */
     public Instance newChild(Element element, String name) {
@@ -339,17 +353,53 @@ public class Instance {
     }
 
     /**
+     * Looks up an existing child instance or creates a new child instance.
+     *
+     * @param element The child element type.
+     * @param name    The child name.
+     *
+     * @return The child instance.
+     */
+    public Instance findOrCreateChild(Element element, String name) {
+        if (!this.element.getChildren().contains(element)) {
+            throw new IllegalArgumentException("A " + element + " is not a child of " + this.element);
+        }
+        final Map<String, Instance> map = children.get(element);
+        Instance i = map == null ? null : map.get(name);
+        return (i == null) ? newChild(element, name) : i;
+    }
+
+    /**
      * Creates a new child instance corresponding with a file level element.
      *
      * @param element    The child element type.
      * @param name       The child name.
      * @param sourceFile The source file.
+     *
      * @return The child instance.
      */
     public Instance newChild(Element element, String name, File sourceFile) {
         Instance child = new Instance(element, this, name, sourceFile);
         addChild(child);
         return child;
+    }
+
+    /**
+     * Looks up an existing child instance or creates a new child instance corresponding with a file level element.
+     *
+     * @param element    The child element type.
+     * @param name       The child name.
+     * @param sourceFile The source file.
+     *
+     * @return The child instance.
+     */
+    public Instance findOrCreateChild(Element element, String name, File sourceFile) {
+        if (!this.element.getChildren().contains(element)) {
+            throw new IllegalArgumentException("A " + element + " is not a child of " + this.element);
+        }
+        final Map<String, Instance> map = children.get(element);
+        Instance i = map.get(name);
+        return (i == null) ? newChild(element, name, sourceFile) : i;
     }
 
     /**
@@ -362,11 +412,14 @@ public class Instance {
         if (!element.getChildren().contains(child.element)) {
             throw new IllegalArgumentException("A " + child.element + " is not a child of " + element);
         }
-        final Map<String, Instance> map = children.get(child.element);
+        Map<String, Instance> map = children.get(child.element);
+        if (map == null) {
+            children.put(child.element, map = new TreeMap<String, Instance>());
+        }
         map.put(child.name, child);
         if (child.sourceFile != null) {
             Instance root = this;
-            while (root.sourceFiles != null) {
+            while (root.parent != null) {
                 root = root.parent;
             }
             synchronized (root.sourceFiles) {
@@ -388,5 +441,27 @@ public class Instance {
             throw new IllegalArgumentException("Measurements of " + metric + " must implement " + metric.getClazz());
         }
         measurements.put(metric, measurement);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        Instance i = parent;
+        while (i != null) {
+            builder.append("  ");
+            i = i.parent;
+        }
+        builder.append('"');
+        builder.append(name);
+        builder.append("\" [");
+        builder.append(element.getFullName());
+        builder.append(']');
+        builder.append("\n");
+        for (Map<String, Instance> child : children.values()) {
+            for (Instance j : child.values()) {
+                builder.append(j);
+            }
+        }
+        return builder.toString();
     }
 }

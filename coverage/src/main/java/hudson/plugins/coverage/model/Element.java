@@ -61,6 +61,7 @@ public final class Element implements Comparable<Element> {
      * Gets the root element from which all elements must inherit.
      *
      * @param fullName The full name of the element.
+     *
      * @return the root element from which all elements must inherit.
      */
     public static Element getElement(String fullName) {
@@ -71,6 +72,7 @@ public final class Element implements Comparable<Element> {
      * Finds an element from its full name.
      *
      * @param fullName The full name.
+     *
      * @return the element of {@code null} if the element does not exist.
      */
     public Element find(String fullName) {
@@ -92,6 +94,7 @@ public final class Element implements Comparable<Element> {
      * @param name      The name of the element.
      * @param fileLevel {@code true} if this element corresponds to a source file.
      * @param model     The model that describes how this element calculates results from its children.
+     *
      * @return The new element.
      */
     public static Element newElement(Element parent, String name, boolean fileLevel, Model model) {
@@ -212,13 +215,21 @@ public final class Element implements Comparable<Element> {
      * {@inheritDoc}
      */
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Element element = (Element) o;
 
-        if (!name.equals(element.name)) return false;
-        if (parent != null ? !parent.equals(element.parent) : element.parent != null) return false;
+        if (!name.equals(element.name)) {
+            return false;
+        }
+        if (parent != null ? !parent.equals(element.parent) : element.parent != null) {
+            return false;
+        }
 
         return true;
     }
@@ -315,6 +326,7 @@ public final class Element implements Comparable<Element> {
      * @param name      The name of the element.
      * @param fileLevel {@code true} if this element corresponds to a source file.
      * @param model     The model that describes how this element calculates results from its children.
+     *
      * @return The new element.
      */
     public Element newChild(String name, boolean fileLevel, Model model) {
@@ -323,7 +335,12 @@ public final class Element implements Comparable<Element> {
         return result;
     }
 
-// -------------------------- INNER CLASSES --------------------------
+    @Override
+    public String toString() {
+        return getFullName();
+    }
+
+    // -------------------------- INNER CLASSES --------------------------
 
     /**
      * Holds the root element and ensures that the Element class has fully loaded before constructing it.
