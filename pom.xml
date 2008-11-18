@@ -168,6 +168,7 @@
         <module>jabber</module>
         <module>japex</module>
         <module>javatest-report</module>
+        <module>javancss</module>
         <module>javanet</module>
         <module>javanet-uploader</module>
         <module>javanet-trigger-installer</module>
