@@ -1,16 +1,14 @@
 package hudson.plugins.coverage;
 
-import hudson.tasks.Publisher;
-import hudson.model.*;
-import hudson.Launcher;
+import java.util.Set;
+
 import hudson.maven.MavenModule;
 import hudson.maven.MavenModuleSet;
+import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.plugins.helpers.AbstractPublisherImpl;
-import hudson.plugins.helpers.health.HealthMetric;
-
-import java.io.IOException;
-
-import org.kohsuke.stapler.StaplerRequest;
+import hudson.plugins.helpers.Ghostwriter;
+import hudson.tasks.Publisher;
 
 /**
  * Generic code coverage {@link hudson.tasks.Publisher}.
@@ -20,7 +18,9 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class CoveragePublisher extends AbstractPublisherImpl {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Descriptor<Publisher> getDescriptor() {
         // see Descriptor javadoc for more about what a descriptor is.
         return DESCRIPTOR;
@@ -31,16 +31,25 @@ public class CoveragePublisher extends AbstractPublisherImpl {
      */
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+    protected Ghostwriter newGhostwriter() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     /**
      * Descriptor for {@link CoveragePublisher}.
      */
     public static final class DescriptorImpl extends Descriptor<Publisher> {
-        /** Constructs a new DescriptorImpl. */
+
+        /**
+         * Constructs a new DescriptorImpl.
+         */
         public DescriptorImpl() {
             super(CoveragePublisher.class);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getDisplayName() {
             return "Record code coverage";
         }
@@ -50,7 +59,7 @@ public class CoveragePublisher extends AbstractPublisherImpl {
                     && !MavenModule.class.isAssignableFrom(aClass);
         }
 
-        public HealthMetric[] getMetrics() {
+        public Set<CoverageHealthMetrics> getMetrics() {
             return CoverageHealthMetrics.values();
         }
     }

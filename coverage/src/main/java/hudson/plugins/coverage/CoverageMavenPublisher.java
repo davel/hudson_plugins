@@ -1,17 +1,22 @@
 package hudson.plugins.coverage;
-import hudson.maven.*;
+
+import java.io.File;
+import java.util.Set;
+
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
+import hudson.maven.MavenReporter;
+import hudson.maven.MavenReporterDescriptor;
+import hudson.maven.MojoInfo;
 import hudson.model.Action;
 import hudson.plugins.helpers.AbstractMavenReporterImpl;
 import hudson.plugins.helpers.Ghostwriter;
-import hudson.plugins.helpers.health.HealthMetric;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-
-import java.io.File;
 
 /**
  * TODO javadoc.
@@ -20,6 +25,7 @@ import java.io.File;
  * @since 29-Jun-2008 20:50:39
  */
 public class CoverageMavenPublisher extends AbstractMavenReporterImpl {
+
     private CoverageHealthTarget[] targets;
 
     @DataBoundConstructor
@@ -134,7 +140,7 @@ public class CoverageMavenPublisher extends AbstractMavenReporterImpl {
             return req.bindJSON(CoverageMavenPublisher.class, formData);
         }
 
-        public HealthMetric[] getMetrics() {
+        public Set<CoverageHealthMetrics> getMetrics() {
             return CoverageHealthMetrics.values();
         }
     }

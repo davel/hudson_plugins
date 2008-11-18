@@ -1,11 +1,17 @@
 package hudson.plugins.coverage;
 
-import hudson.maven.*;
-import hudson.model.AbstractBuild;
-import hudson.model.HealthReport;
-
 import java.util.List;
 import java.util.Map;
+
+import hudson.maven.AggregatableAction;
+import hudson.maven.MavenAggregatedReport;
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
+import hudson.maven.MavenModuleSetBuild;
+import hudson.model.AbstractBuild;
+import hudson.model.HealthReport;
+import hudson.plugins.coverage.model.Measurement;
+import hudson.plugins.coverage.model.Metric;
 
 /**
  * TODO javadoc.
@@ -18,11 +24,12 @@ public class CoverageBuildIndividualReport extends AbstractBuildReport<AbstractB
 
     private HealthReport healthReport;
 
-    public CoverageBuildIndividualReport() {
+    public CoverageBuildIndividualReport(Map<Metric, Measurement> results) {
         super(results);
     }
 
-    public MavenAggregatedReport createAggregatedAction(MavenModuleSetBuild build, Map<MavenModule, List<MavenBuild>> moduleBuilds) {
+    public MavenAggregatedReport createAggregatedAction(MavenModuleSetBuild build,
+                                                        Map<MavenModule, List<MavenBuild>> moduleBuilds) {
         return new CoverageBuildAggregatedReport(build, moduleBuilds);
     }
 

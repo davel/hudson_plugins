@@ -1,13 +1,15 @@
 package hudson.plugins.coverage;
 
-import hudson.plugins.helpers.health.HealthMetric;
-import hudson.plugins.coverage.model.Metric;
-import hudson.plugins.coverage.model.Instance;
-
-import java.util.*;
+import java.io.ObjectStreamException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.io.ObjectStreamException;
+
+import hudson.plugins.coverage.model.Metric;
+import hudson.plugins.helpers.health.HealthMetric;
+import org.apache.commons.beanutils.Converter;
 
 /**
  * TODO javadoc.
@@ -22,6 +24,11 @@ public class CoverageHealthMetrics implements HealthMetric<CoverageBuildIndividu
      * The metric that this is based on.
      */
     private final Metric metric;
+    public static final Converter CONVERTER = new Converter() {
+        public Object convert(Class type, Object value) {
+            return null;
+        }
+    };
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -83,6 +90,7 @@ public class CoverageHealthMetrics implements HealthMetric<CoverageBuildIndividu
      * Ensure that instances are deserialized correctly.
      *
      * @return The deserialized instance.
+     *
      * @throws ObjectStreamException never.
      */
     private Object readResolve() throws ObjectStreamException {
