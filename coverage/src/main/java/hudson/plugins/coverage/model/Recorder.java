@@ -2,6 +2,7 @@ package hudson.plugins.coverage.model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -31,10 +32,10 @@ public interface Recorder extends Serializable {
     /**
      * Parse the source file results, populating any sub-file level results.
      *
-     * @param sourceFile       The source file instance to parse the results for.
-     * @param measurementFiles The files that contain the measurements that this recorder identified.
-     * @param memo             The memo object that the recorder registered against this instance when it was attached.
+     * @param sourceFile      The source file instance to parse the results for.
+     * @param measurementFile The file that the memo objects relate to.
+     * @param memos           The memo objects that the recorder registered against this instance when it was attached.
      */
-    void parseSourceResults(Instance sourceFile, Set<File> measurementFiles, Object memo);
+    void parseSourceResults(Instance sourceFile, File measurementFile, Collection<Object> memos);
 
 }

@@ -4,11 +4,16 @@ import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -103,7 +108,7 @@ public class CoberturaRecorder implements Recorder {
      * {@inheritDoc}
      */
     public void reidentifySourceFiles(Instance root, Set<File> measurementFiles, File sourceCodeDirectory) {
-        final XMLInputFactory inputFactory = XMLInputFactory2.newInstance();
+        XMLInputFactory inputFactory = newXMLInputFactory();
         for (File measurementFile : measurementFiles) {
             if (measurementFile.isFile()) {
                 FileInputStream fis = null;
@@ -161,7 +166,7 @@ public class CoberturaRecorder implements Recorder {
                                         if (fileName != null && className != null) {
                                             packageInstance.findOrCreateChild(JavaModel.FILE, fileName,
                                                     findFileFromParents(sourceRoots, fileName))
-                                                    .addRecorder(this, Collections.singleton(measurementFile), null);
+                                                    .addRecorder(this, measurementFile, start.getLocation());
                                         }
                                         System.out.println("class " + className + " (" + fileName + ")");
                                     }
@@ -213,10 +218,69 @@ public class CoberturaRecorder implements Recorder {
         }
     }
 
+    private XMLInputFactory newXMLInputFactory() {
+        XMLInputFactory inputFactory = XMLInputFactory2.newInstance();
+        inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
+        inputFactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
+        inputFactory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+        inputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
+        inputFactory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+        inputFactory.setProperty(XMLInputFactory2.P_PRESERVE_LOCATION, Boolean.TRUE);
+        inputFactory.setProperty(XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, Boolean.TRUE);
+        return inputFactory;
+    }
+
     /**
      * {@inheritDoc}
      */
-    public void parseSourceResults(Instance sourceFile, Set<File> measurementFiles, Object memo) {
+    public void parseSourceResults(Instance sourceFile, File measurementFile, Collection<Object> memos) {
+        if (sourceFile.getElement().isFileLevel() && measurementFile.isFile() && memos != null && !memos.isEmpty()) {
+            SortedSet<Location> locations = convertMemosToSortedLocations(memos);
+
+            // arse arse arse... how to efficiently re-read this file
+
+            FileReader fis = null;
+            FileInputStream bis = null;
+            XMLEventReader r = null;
+            try {
+                fis = new FileReader(measurementFile);
+                r = newXMLInputFactory().createXMLEventReader(fis);
+
+                while (r.hasNext()) {
+                    final XMLEvent event = r.nextEvent();
+                    if (event.isStartElement()) {
+                        StartElement start = event.asStartElement();
+                        System.out.println(start.getName());
+                        return;
+                    } else if (event.isEndElement()) {
+                    }
+                }
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                safelyClose(r);
+                safelyClose(bis);
+                safelyClose(fis);
+            }
+        }
+    }
+
+    private SortedSet<Location> convertMemosToSortedLocations(Collection<Object> memos) {
+        SortedSet<Location> locations = new TreeSet<Location>(new Comparator<Location>() {
+            public int compare(Location o1, Location o2) {
+                int p1 = o1.getCharacterOffset();
+                int p2 = o2.getCharacterOffset();
+                return p1 > p2 ? 1 : p1 == p2 ? 0 : -1;
+            }
+        });
+        for (Object memo : memos) {
+            if (memo instanceof Location) {
+                locations.add((Location) memo);
+            }
+        }
+        return locations;
     }
 
 // -------------------------- OTHER METHODS --------------------------
