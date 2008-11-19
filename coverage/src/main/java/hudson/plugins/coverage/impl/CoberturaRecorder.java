@@ -30,6 +30,8 @@ import org.codehaus.stax2.XMLInputFactory2;
  */
 public class CoberturaRecorder implements Recorder {
 
+// ------------------------------ FIELDS ------------------------------
+
     /**
      * This field is populated when the recorder is being constructed for a newly built project, for old builds this
      * will be null.
@@ -42,6 +44,38 @@ public class CoberturaRecorder implements Recorder {
      */
     private final transient File sourceCodeRoot;
 
+// -------------------------- STATIC METHODS --------------------------
+
+    private static void safelyClose(XMLEventReader xmlEventReader) {
+        if (xmlEventReader != null) {
+            try {
+                xmlEventReader.close();
+            } catch (XMLStreamException e) {
+                // ignore
+            }
+        }
+    }
+
+    private static void safelyClose(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+    }
+
+// --------------------------- CONSTRUCTORS ---------------------------
+
+    /**
+     * Default constructor, will be used to reconstruct results for old builds.
+     */
+    public CoberturaRecorder() {
+        this.coberturaXmlResults = null;
+        this.sourceCodeRoot = null;
+    }
+
     /**
      * Creates a new CoberturaRecorder for parsing a new build.
      *
@@ -53,13 +87,9 @@ public class CoberturaRecorder implements Recorder {
         this.sourceCodeRoot = sourceCodeRoot;
     }
 
-    /**
-     * Default constructor, will be used to reconstruct results for old builds.
-     */
-    public CoberturaRecorder() {
-        this.coberturaXmlResults = null;
-        this.sourceCodeRoot = null;
-    }
+// ------------------------ INTERFACE METHODS ------------------------
+
+// --------------------- Interface Recorder ---------------------
 
     /**
      * {@inheritDoc}
@@ -183,6 +213,14 @@ public class CoberturaRecorder implements Recorder {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void parseSourceResults(Instance sourceFile, Set<File> measurementFiles, Object memo) {
+    }
+
+// -------------------------- OTHER METHODS --------------------------
+
     private File findFileFromParents(Set<File> sourceRoots, String fileName) {
         File file = null;
         for (File sourceDir : sourceRoots) {
@@ -200,29 +238,4 @@ public class CoberturaRecorder implements Recorder {
         return attribute == null ? null : attribute.getValue();
     }
 
-    private static void safelyClose(XMLEventReader xmlEventReader) {
-        if (xmlEventReader != null) {
-            try {
-                xmlEventReader.close();
-            } catch (XMLStreamException e) {
-                // ignore
-            }
-        }
-    }
-
-    private static void safelyClose(Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void parseSourceResults(Instance sourceFile, Set<File> measurementFiles, Object memo) {
-    }
 }
