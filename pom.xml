@@ -140,7 +140,10 @@
         <module>batch-task</module>
         <module>build-publisher</module>
         <module>build-timeout</module>
+        <!-- work in progress (drulli)
+        <module>plugin-util</module>
         <module>checkstyle</module>
+        -->
         <module>ci-game</module>
         <module>clearcase</module>
         <module>clover</module>
