@@ -1,16 +1,15 @@
 package hudson.plugins.coverage.impl;
 
+import hudson.plugins.coverage.model.Instance;
+import hudson.plugins.coverage.model.Metric;
+import hudson.plugins.coverage.model.measurements.LineCoverage;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collections;
-
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import org.junit.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.hamcrest.CoreMatchers.*;
-
-import hudson.plugins.coverage.model.Instance;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +26,12 @@ public class CoberturaRecorderTest {
                 new CoberturaRecorder(Collections.singleton(resultsFile), resultsFile.getParentFile());
         Instance results = Instance.newInstance(Collections.singleton(instance));
         System.out.println(results);
-        assumeThat(true, is(true));
-        // TODO write some real tests
-        assertThat("write this test", containsString("test written"));
+        assertThat(results.getMeasurement(Metric.LINE_COVERAGE), is(LineCoverage.class));
+        assertThat("Total count of lines",
+                LineCoverage.class.cast(results.getMeasurement(Metric.LINE_COVERAGE)).getCount(),
+                is(59));
+        assertThat("Covered count of lines",
+                LineCoverage.class.cast(results.getMeasurement(Metric.LINE_COVERAGE)).getCover(),
+                is(0));
     }
 }
