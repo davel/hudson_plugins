@@ -16,12 +16,6 @@
  */
 package hudson.ivy;
 
-import fr.jayasoft.ivy.DependencyDescriptor;
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleDescriptor;
-import fr.jayasoft.ivy.ModuleId;
-import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
-import fr.jayasoft.ivy.util.Message;
 import hudson.CopyOnWrite;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -50,6 +44,14 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import org.apache.ivy.Ivy;
+import org.apache.ivy.Ivy.IvyCallback;
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.util.Message;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -76,12 +78,12 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
      * Set the Message Implementation for ivy to avoid logging to err
      */
     static {
-        Message.init (new IvyMessageImpl());
+        Message.setDefaultLogger(new IvyMessageImpl());
     }
 
     /**
      * Contructor
-     * 
+     *
      * @param ivyFile
      *            the ivy.xml file path within the workspace
      * @param ivyConfName
@@ -93,7 +95,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * 
+     *
      * @return the ivy.xml file path within the workspace
      */
     public String getIvyFile() {
@@ -101,7 +103,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * 
+     *
      * @return the Ivy configuration name used
      */
     public String getIvyConfName() {
@@ -109,7 +111,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * 
+     *
      * @return the {@link IvyConfiguration} from the {@link #ivyConfName}
      */
     public IvyConfiguration getIvyConfiguration() {
@@ -122,19 +124,20 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * 
+     *
      * @return the Ivy instance based on the {@link #ivyConfName}
-     * 
+     *
      * @throws ParseException
      * @throws IOException
      */
     public Ivy getIvy() {
-        Message.init (new IvyMessageImpl());
-        Ivy ivy = new Ivy();
+        Message.setDefaultLogger(new IvyMessageImpl());
+        Ivy ivy = Ivy.newInstance();
         IvyConfiguration ivyConf = getIvyConfiguration();
         if (ivyConf != null) {
             File conf = new File(ivyConf.getIvyConfPath());
             try {
+                LOGGER.info("Configure Ivy for Configuration: " + ivyConf.name);
                 ivy.configure(conf);
             } catch (ParseException e) {
                 LOGGER.log(Level.WARNING, "Parsing error while reading the ivy configuration " + ivyConf.getName()
@@ -152,7 +155,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     /**
      * Get the last computed Ivy module descriptior created from the ivy.xml of
      * this trigger
-     * 
+     *
      * @param workspace
      *            the path to the root of the workspace
      * @return the Ivy module descriptior
@@ -168,7 +171,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
     /**
      * Force the creation of the module descriptor from the ivy.xml file
-     * 
+     *
      * @throws ParseException
      * @throws IOException
      */
@@ -177,19 +180,36 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         if (ivy == null) {
             moduleDescriptor = null;
         } else {
-            FilePath ivyF = workspace.child(ivyFile);
+            final FilePath ivyF = workspace.child(ivyFile);
+            moduleDescriptor = (ModuleDescriptor)ivy.execute(new IvyCallback(){
+                @Override
+                public Object doInIvyContext(Ivy ivy, IvyContext context) {
+                    try {
+                        return  ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(),
+                                ivyF.toURI().toURL(), ivy.getSettings().doValidate());
+                    } catch (InterruptedException e) {
+                        LOGGER.log(Level.WARNING, "The Ivy module descriptor parsing of " + ivyF + " has been interrupted", e);
+                        return null;
+                    } catch (MalformedURLException e) {
+                        LOGGER.log(Level.WARNING, "The URL is malformed : " + ivyF, e);
+                        return null;
+                    } catch (ParseException e) {
+                        LOGGER.log(Level.WARNING, "Parsing error while reading the ivy file " + ivyF, e);
+                        return null;
+                    } catch (IOException e) {
+                        LOGGER.log(Level.WARNING, "I/O error while reading the ivy file " + ivyF, e);
+                        return null;
+                    }
+                }
+            } );
+
             try {
-                moduleDescriptor = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy,
-                        ivyF.toURI().toURL(), ivy.doValidate());
                 lastmodified = ivyF.lastModified();
             } catch (InterruptedException e) {
-                LOGGER.log(Level.WARNING, "The Ivy module descriptor parsing of " + ivyF + " has been interrupted", e);
-            } catch (MalformedURLException e) {
-                LOGGER.log(Level.WARNING, "The URL is malformed : " + ivyF, e);
-            } catch (ParseException e) {
-                LOGGER.log(Level.WARNING, "Parsing error while reading the ivy file " + ivyF, e);
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "I/O error while reading the ivy file " + ivyF, e);
+                LOGGER.log(Level.WARNING, "Could not save the last Modified Date of the ivy file:"+ivyF,e);
+            }
+            catch (IOException e1) {
+                LOGGER.log(Level.WARNING,"Could not save the last Modified Date of the ivy file:"+ivyF,e1);
             }
         }
     }
@@ -205,7 +225,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
         /**
          * Contructor
-         * 
+         *
          * @param name
          *            the name of the configuration
          * @param ivyConfPath
@@ -217,7 +237,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         }
 
         /**
-         * 
+         *
          * @return the full path to the ivy configuration file
          */
         public String getIvyConfPath() {
@@ -225,7 +245,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         }
 
         /**
-         * 
+         *
          * @return the name of the configuration
          */
         public String getName() {
@@ -233,7 +253,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         }
 
         /**
-         * 
+         *
          * @return <code>true</code> if the configuration file exists
          */
         public boolean getExists() {
@@ -320,7 +340,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         }
 
         /**
-         * 
+         *
          * @return every existing configuration
          */
         public IvyConfiguration[] getConfigurations() {
@@ -374,7 +394,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
         /**
          * Check that the Ivy configuration file exist
-         * 
+         *
          * @param req
          *            the Stapler request
          * @param rsp
@@ -410,7 +430,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
         /**
          * Check that the ivy.xml file exist
-         * 
+         *
          * @param req
          *            the Stapler request
          * @param rsp
