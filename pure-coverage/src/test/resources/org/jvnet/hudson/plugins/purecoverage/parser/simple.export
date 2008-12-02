@@ -1,0 +1,92 @@
+###############################################################################
+# This is a PureCoverage export file, created 06-Oct-2008 06:16:01 AM         #
+# Coverage data type: adjusted.                                               #
+#                                                                             #
+# Summary of keys and field meanings:                                         #
+#                                                                             #
+# to unused-blocks blocks unused-lines lines unused-funcs funcs files dirs    #
+# di name unused-blocks blocks unused-lines lines unused-funcs funcs files    #
+# fi name unused-blocks blocks unused-lines lines unused-funcs funcs sessions #
+# fu name unused-blocks blocks unused-lines lines calls                       #
+# li line_no hits                                                             #
+# bl line_no hits                                                             #
+# efu name                                                                    #
+# efi name                                                                    #
+# edi name                                                                    #
+#                                                                             #
+# In all of these entries, the character separating the values is a TAB, not  #
+# a space.                                                                    #
+#                                                                             #
+# Values for hits, calls, and sessions stop accumulating once they reach      #
+# 10000, so a value of 10000 should be taken as 10000 or greater.             #
+#                                                                             #
+# 'to'  -- Total coverage summary.                                            #
+# 'di'  -- Coverage summary for one directory, followed by the files in the   #
+#          directory.  Repeated for each directory.                           #
+# 'edi' -- End of information for named directory.                            #
+# 'fi'  -- Coverage summary for one file, followed by the functions in the    #
+#          file.  Repeated for each file within a directory.                  #
+# 'efi' -- End of information for named file.                                 #
+# 'fu'  -- Coverage summary for one function, followed by line and block      #
+#          coverage information for the function.  Repeated for each function #
+#          within the file.                                                   #
+# 'efu' -- End of information for named function.                             #
+# 'li'  -- Use count for the indicated line.  Repeated for each line in the   #
+#          function.  If coverage adjustments are NOT applied, then the       #
+#          hits figure is the true hits figure for the line.  If coverage     #
+#          adjustments ARE applied, then inspected and tested lines will      #
+#          indicate INSP or TEST as appropriate, while other used and unused  #
+#          lines will indicate their counts.  Deadcode lines do not appear    #
+#          in export format when adjustments are applied.                     #
+# 'bl'  -- Use count for the basic block.  Repeated for each block in the     #
+#          function.  Note that a single line may contain multiple blocks,    #
+#          and that a single block may span multiple lines.                   #
+###############################################################################
+to	326567	391372	131726	154530	81351	95371	1142	124
+di	/vobs/ehtl/IDL/src/	63245	63354	41687	41776	8142	8162	20
+fi	eHotels_c.cc	44668	44709	29757	29798	4851	4852	1
+fu	void eHotels::_internal_pretty_print(VISostream&,const eHotels::UserStruct&)	101	101	70	70	0
+bl	7663	0
+bl	7663	0
+bl	7664	0
+li	7663	0
+li	7664	0
+efu	void eHotels::_internal_pretty_print(VISostream&,const eHotels::UserStruct&)
+fu	void eHotels::_internal_pretty_print(VISostream&,const eHotels::Property::ObjectStruct&)	77	77	57	57	0
+bl	34512	0
+bl	34512	0
+li	34586	0
+efu	void eHotels::_internal_pretty_print(VISostream&,const eHotels::Property::ObjectStruct&)
+fu	*unknown_func_7834*	0	1	0	1	1
+bl	7834	1
+li	7834	1
+efu	*unknown_func_7834*
+efi	eHotels_c.cc
+edi	/vobs/ehtl/IDL/src/
+di	noCoverageDirectory	0	0	0	0	0	0	0
+edi	noCoverageDirectory
+di	/vobs/Meridian/IDL/source/	32280	34063	16609	17502	3658	3775	33
+fi	OSMloadBalancerStub.cpp	8401	8951	4314	4586	903	935	1
+fu	CORBA_Object*MeridianLoadBalancer::LoadBalancer::registerReplica(CORBA_Object*,const char*,const char*,MeridianLoadBalancer::LoadMonitor*,MeridianLoadBalancer::LoadAnalyzer*&)	71	71	43	43	0
+bl	6910	0
+bl	6910	0
+li	6980	0
+li	6980	0
+efu	CORBA_Object*MeridianLoadBalancer::LoadBalancer::registerReplica(CORBA_Object*,const char*,const char*,MeridianLoadBalancer::LoadMonitor*,MeridianLoadBalancer::LoadAnalyzer*&)
+efi OSMloadBalancerStub.cpp
+fi	eHotels_c.hh	4074	4074	3146	3146	1751	1751	1
+fu  *unknown_func_0*  0 0 0 0 1
+efu *unknown_func_0*
+fu	eHotels::var&eHotels<Foo>::operator=(Type*)	1	3	2	4	0
+bl	24628	0
+bl	24629	0
+bl	24631	0
+li	24628	0
+li	24629	0
+li	24630	0
+li	24631	0
+efu	eHotels::var&eHotels<Foo>::operator=(Type*)
+fu	fooFunction	1	3	2	4	0
+efu	fooFunction
+efi	eHotels_c.hh
+edi /vobs/Meridian/IDL/source/
