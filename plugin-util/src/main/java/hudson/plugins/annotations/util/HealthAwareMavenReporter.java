@@ -21,6 +21,7 @@ import hudson.tasks.BuildStep;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
@@ -162,7 +163,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings({"serial", "PMD.AvoidFinalLocalVariable"})
     @Override
     public final boolean postExecute(final MavenBuildProxy build, final MavenProject pom, final MojoInfo mojo,
             final BuildListener listener, final Throwable error) throws InterruptedException, IOException {
@@ -176,15 +176,9 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
         }
 
         try {
-            final ParserResult result = perform(build, pom, mojo, logger);
+            ParserResult result = perform(build, pom, mojo, logger);
 
-            build.execute(new BuildCallable<Void, IOException>() {
-                public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                    persistResult(result, mavenBuild);
-
-                    return null;
-                }
-            });
+            build.execute(new MasterBuildWriterCallable(result, createResultWriter()));
 
             if (build.getRootDir().isRemote()) {
                 copyFilesToMaster(logger, build.getProjectRootDir(), build.getRootDir(), result.getAnnotations());
@@ -199,6 +193,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
 
         return true;
     }
+
+    protected abstract MasterBuildResultWriter createResultWriter();
 
 
     /**
@@ -280,14 +276,6 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
     protected abstract ParserResult perform(MavenBuildProxy build, MavenProject pom, MojoInfo mojo, PrintStream logger) throws InterruptedException, IOException;
 
     /**
-     * Persists the result in the build (on the master).
-     *
-     * @param project the created project
-     * @param build the build (on the master)
-     */
-    protected abstract void persistResult(ParserResult project, MavenBuild build);
-
-    /**
      * Logs the specified message.
      *
      * @param logger the logger
@@ -331,13 +319,8 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      * @throws InterruptedException
      *             if the call has been interrupted
      */
-    @SuppressWarnings("serial")
     private Boolean hasResultAction(final MavenBuildProxy build) throws IOException, InterruptedException {
-        return build.execute(new BuildCallable<Boolean, IOException>() {
-            public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
-                return mavenBuild.getAction(getResultActionClass()) != null;
-            }
-        });
+        return build.execute(new MasterBuildDelegate(getResultActionClass()));
     }
 
     /**
@@ -439,6 +422,84 @@ public abstract class HealthAwareMavenReporter extends MavenReporter implements 
      */
     public String getThresholdLimit() {
         return thresholdLimit;
+    }
+// cannot assign instance of hudson.plugins.pmd.PmdReporter$ResultWriter to field hudson.plugins.annotations.util.HealthAwareMavenReporter$MasterBuildWriterCallable.masterBuildResultWriter of type hudson.plugins.annotations.util.HealthAwareMavenReporter$MasterBuildResultWriter in instance of hudson.plugins.annotations.util.HealthAwareMavenReporter$MasterBuildWriterCallable
+
+    /**
+     * Callable on the master node to write the results to the build.
+     */
+    private static final class MasterBuildWriterCallable implements BuildCallable<Void, IOException> {
+        /** Unique ID of this class. */
+        private static final long serialVersionUID = -2741407970463949225L;
+        /** The result to persist. */
+        private final ParserResult result;
+        private final MasterBuildResultWriter masterBuildResultWriter;
+
+        /**
+         * Creates a new instance of {@link MasterBuildWriterCallable}.
+         *
+         * @param result
+         *            the result to persist
+         * @param masterBuildResultWriter
+         *            the writer of the concrete reporter responsible to
+         *            persist the result
+         */
+        private MasterBuildWriterCallable(final ParserResult result, final MasterBuildResultWriter masterBuildResultWriter) {
+            this.result = result;
+            this.masterBuildResultWriter = masterBuildResultWriter;
+        }
+
+        public Void call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+            masterBuildResultWriter.write(result, mavenBuild);
+
+            return null;
+        }
+    }
+
+    /**
+     * Callable on the master node to determine whether an action of the
+     * specified type already has been created. If there is such an action then
+     * the reporter has already been run during this build.
+     */
+    private static final class MasterBuildDelegate implements BuildCallable<Boolean, IOException> {
+        /** Unique ID of this class. */
+        private static final long serialVersionUID = 592073439317146222L;
+        /** The result action class of the corresponding reporter. */
+        private final Class<? extends Action> resultActionClass;
+
+        /**
+         * Instantiates a new master build delegate.
+         *
+         * @param resultActionClass the result action class of the corresponding reporter
+         */
+        private MasterBuildDelegate(final Class<? extends Action> resultActionClass) {
+            this.resultActionClass = resultActionClass;
+        }
+
+        /** {@inheritDoc} */
+        public Boolean call(final MavenBuild mavenBuild) throws IOException, InterruptedException {
+            return mavenBuild.getAction(resultActionClass) != null;
+        }
+    }
+
+    /**
+     * Registers a result of the reporter on the master build.
+     *
+     * @author Ulli Hafner
+     */
+    public static abstract class MasterBuildResultWriter implements Serializable {
+        private static final long serialVersionUID = -3719926139464959936L;
+
+        /**
+         * Creates a new result and registers it for the reporter on the master
+         * build.
+         *
+         * @param project
+         *            the project the annotations project
+         * @param build
+         *            the build the build to persist the result for
+         */
+        protected abstract void write(final ParserResult project, final MavenBuild build);
     }
 }
 

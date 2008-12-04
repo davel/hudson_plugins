@@ -28,7 +28,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
     /** The message of this annotation. */
     private final String message;
     /** The priority of this annotation. */
-    private final Priority priority;
+    private transient Priority actualPriority;
+    private final String priority;
     /** Unique key of this annotation. */
     private final long key;
     /** The ordered list of line ranges that show the origin of the annotation in the associated file. */
@@ -64,7 +65,8 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
      */
     public AbstractAnnotation(final Priority priority, final String message, final int start, final int end,
             final String category, final String type) {
-        this.priority = priority;
+        actualPriority = priority;
+        this.priority = priority.toString();
         this.message = StringUtils.strip(message);
         this.category = StringUtils.defaultString(category);
         this.type = StringUtils.defaultString(type);
@@ -76,6 +78,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         primaryLineNumber = start;
     }
 
+    protected Object readResolve() {
+        actualPriority = Priority.valueOf(priority);
+
+        return this;
+    }
+
     /** {@inheritDoc} */
     public String getMessage() {
         return message;
@@ -83,7 +91,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
 
     /** {@inheritDoc} */
     public Priority getPriority() {
-        return priority;
+        return actualPriority;
     }
 
     /** {@inheritDoc} */
@@ -196,7 +204,7 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
         result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
         result = prime * result + primaryLineNumber;
-        result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+        result = prime * result + ((actualPriority == null) ? 0 : actualPriority.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
@@ -265,12 +273,12 @@ public abstract class AbstractAnnotation implements FileAnnotation, Serializable
         if (primaryLineNumber != other.primaryLineNumber) {
             return false;
         }
-        if (priority == null) {
-            if (other.priority != null) {
+        if (actualPriority == null) {
+            if (other.actualPriority != null) {
                 return false;
             }
         }
-        else if (!priority.equals(other.priority)) {
+        else if (!actualPriority.equals(other.actualPriority)) {
             return false;
         }
         if (type == null) {
