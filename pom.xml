@@ -198,7 +198,7 @@
         <module>scp</module>
         <module>sonar</module>
         <module>ssh-slaves</module>
-        <!-- module>sfee</module --> <!--  not compiling currently  -->
+        <module>sfee</module> <!--  not compiling currently  -->
         <module>svncompat13</module>
         <module>svn-tag</module>
         <module>tasks</module>
