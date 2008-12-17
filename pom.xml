@@ -110,7 +110,7 @@
             <plugin>
                 <groupId>org.jvnet.localizer</groupId>
                 <artifactId>maven-localizer-plugin</artifactId>
-                <version>1.6</version>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <goals>
