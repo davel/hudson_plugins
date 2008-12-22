@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <numExecutors>2</numExecutors>
+  <mode>NORMAL</mode>
+  <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
+  <securityRealm class="hudson.security.SecurityRealm$None"/>
+  <jdks/>
+  <slaves/>
+  <quietPeriod>5</quietPeriod>
+  <views/>
+  <slaveAgentPort>0</slaveAgentPort>
+  <secretKey>fc9e6a56b63cc6dee8f4bbabab10eb20fa637c291d47c773c824728eae4811d5</secretKey>
+</hudson>

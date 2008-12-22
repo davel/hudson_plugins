@@ -1,0 +1,44 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form">
+	<f:section title="Global Nabaztag Settings">
+		<f:entry title="Serial Number" >
+			<input class="setting-input" name="nabaztagSN" type="text"
+				value="${descriptor.nabaztagSN}" />
+		</f:entry>
+		
+		<f:entry title="Nabaztag API Token" >
+			<input class="setting-input" name="nabatzagToken" type="text"
+				value="${descriptor.nabatzagToken}" />
+		</f:entry>
+				
+		<f:entry title="Nabaztag API URL" >
+			<input class="setting-input" name="nabatzagUrl" type="text"
+				value="${descriptor.nabatzagUrl}" />
+		</f:entry>
+		
+		<f:entry title="Nabaztag Voice" >
+			<input class="setting-input" name="nabatzagVoice" type="text"
+				value="${descriptor.nabatzagVoice}" />
+		</f:entry>
+		
+		
+		<f:entry title="Nabaztag Text for Failure" >
+			<input class="setting-input" name="nabatzagFailTTS" type="text"
+				value="${descriptor.nabatzagFailTTS}" />
+		</f:entry>
+		
+		<f:entry title="Nabaztag Text for Success" >
+			<input class="setting-input" name="nabatzagSuccessTTS" type="text"
+				value="${descriptor.nabatzagSuccessTTS}" />
+		</f:entry>
+		
+		<f:entry title="Nabaztag Text for Recover" >
+			<input class="setting-input" name="nabatzagSuccessTTS" type="text"
+				value="${descriptor.nabatzagrecoverTTS}" />
+		</f:entry>
+		
+		
+				
+	</f:section>
+</j:jelly>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<de.stephannoske.hudson.tools.NabatzagPublisher_-DescriptorImpl>
+  <nabatzagToken>sdsdsdsd</nabatzagToken>
+  <nabatzagSN></nabatzagSN>
+  <nabatzagUrl>http://api.nabaztag.com/vl/FR/api.jsp</nabatzagUrl>
+  <nabatzagVoice>lea22s</nabatzagVoice>
+  <nabatzagFAILDpos>posright=6&amp;posleft=6&amp;ears=ok&amp;ttl=600</nabatzagFAILDpos>
+  <nabatzagSUSSCEEDpos>posright=3&amp;posleft=3&amp;ears=ok&amp;ttl=600</nabatzagSUSSCEEDpos>
+  <nabatzagFailTTS>Build Failed in Hudson </nabatzagFailTTS>
+  <nabatzagSuccessTTS>Build was successfull in Hudson </nabatzagSuccessTTS>
+  <nabatzagrecoverTTS>Hudson Build ist back to normal</nabatzagrecoverTTS>
+</de.stephannoske.hudson.tools.NabatzagPublisher_-DescriptorImpl>
