@@ -5,7 +5,12 @@
   <artifactId>nabaztag</artifactId>
   <packaging>hpi</packaging>
   <version>1.0-SNAPSHOT</version>
-  	
+  <scm>
+  	 <connection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/nabaztag/</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/nabaztag/</developerConnection>
+    <tag>HEAD</tag>
+
+  </scm>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/nabaztag</url>	
   <dependencies>
     <!--
