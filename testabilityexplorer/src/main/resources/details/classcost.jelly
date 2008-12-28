@@ -1,0 +1,62 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <script type="text/javascript" src="${rootURL}/plugin/testability-explorer/yui/utilities.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/testability-explorer/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/testability-explorer/yui/dispatcher-min.js"></script>
+
+         <h3>Summary</h3>
+         <table border="1px" class="pane sortable">
+             <thead>
+                 <tr>
+                     <th>Class</th>
+                     <th>Cost</th>
+                 </tr>
+             </thead>
+             <tbody>
+                 <tr>
+                     <th align="left">${it.name}</th>
+                     <td align="right">${it.cost}</td>
+                 </tr>
+             </tbody>
+         </table>
+
+        <script type="text/javascript">
+            var myTabs = new YAHOO.widget.TabView("statistics");
+
+            YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+                label: '${%Methods}',
+                content: '<table class="pane sortable" id="packages">
+                    <tr>
+                      <td class="pane-header">${%Method}</td>
+                      <td class="pane-header">${%Overall}</td>
+                      <td class="pane-header">${%Cyclomatic}</td>
+                      <td class="pane-header">${%Global}</td>
+                      <td class="pane-header">${%Lod}</td>
+                    </tr>
+                    <tbody>
+                      <j:forEach var="mainMethodCost" items="${it.costStack}">
+                        <tr>
+                          <td class="pane">
+                            ${mainMethodCost.name}:${mainMethodCost.line}
+                          </td>
+                          <td class="pane">${mainMethodCost.overall}</td>
+                          <td class="pane">${mainMethodCost.cyclomatic}</td>
+                          <td class="pane">${mainMethodCost.global}</td>
+                          <td class="pane">${mainMethodCost.lod}</td>                              
+                        </tr>
+                      </j:forEach>
+                    </tbody>
+                  </table>',
+                cacheData: true,
+                active: true
+            }), myTabs);
+
+        </script>
+
+        <st:include page="/tabview/css.jelly" />
+
+        <h2>${%Details}</h2>
+        <div id="statistics" class="yui-navset"></div>
+
+</j:jelly>
