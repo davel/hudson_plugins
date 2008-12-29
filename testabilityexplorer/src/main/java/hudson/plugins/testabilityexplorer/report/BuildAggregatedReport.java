@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
 /**
  * A {@link MavenAggregatedReport} that will update an individual build report every time a maven
  * module is finished.
@@ -17,9 +20,9 @@ import java.util.Map;
  */
 public class BuildAggregatedReport extends AbstractBuildReport<MavenModuleSetBuild> implements MavenAggregatedReport
 {
-    public BuildAggregatedReport(MavenModuleSetBuild build, Collection<Statistic> results, ReportBuilder reportBuilder)
+    public BuildAggregatedReport(MavenModuleSetBuild build, Collection<Statistic> results, ReportBuilder reportBuilder, CostDetailBuilder detailBuilder)
     {
-        super(results, reportBuilder);
+        super(results, reportBuilder, detailBuilder);
         setBuild(build);
     }
 

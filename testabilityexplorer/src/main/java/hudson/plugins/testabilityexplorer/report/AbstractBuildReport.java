@@ -29,6 +29,7 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
 {
     private final Collection<Statistic> m_results;
     private final ReportBuilder m_reportBuilder;
+    private final CostDetailBuilder m_detailBuilder;
 
     static final CostTemplate EXCELLENT_COST_TEMPLATE = new CostTemplate()
     {
@@ -54,9 +55,10 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
         }
     };
 
-    public AbstractBuildReport(Collection<Statistic> results, ReportBuilder reportBuilder) {
+    public AbstractBuildReport(Collection<Statistic> results, ReportBuilder reportBuilder, CostDetailBuilder detailBuilder) {
         m_results = results;
         m_reportBuilder = reportBuilder;
+        m_detailBuilder = detailBuilder;
     }
 
     public Collection<Statistic> getResults()
@@ -100,6 +102,21 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
             }
         }
         return total;
+    }
+
+    /**
+     * This will be called implicitly by Stapler framework, if there is a dynamic part in the regular link.<br />
+     * Example: lets say your plugin is called <code>testability</code>. When requesting <code>http://hudson:8080/job/project/build/testability/foo</code>
+     * this method gets called with <code>foo</code> as first parameter.
+     *
+     * @param link the dynamic part of the url after the plugin name
+     * @param request StaplerRequest
+     * @param response StaplerResponse
+     * @return any object that you want to work with in .jelly files
+     */
+    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
+    {
+        return m_detailBuilder.buildDetail(link, getBuild(), getResults());
     }
 
     /** {@inheritDoc} */
@@ -268,5 +285,10 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
 
     ReportBuilder getReportBuilder() {
         return m_reportBuilder;
+    }
+
+    CostDetailBuilder getDetailBuilder()
+    {
+        return m_detailBuilder;
     }
 }

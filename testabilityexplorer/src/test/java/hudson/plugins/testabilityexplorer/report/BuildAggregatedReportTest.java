@@ -31,7 +31,8 @@ public class BuildAggregatedReportTest extends PluginBaseTest
 
         ChartBuilder chartBuilder = new TestabilityChartBuilder();
         ReportBuilder reportBuilder = new TestabilityReportBuilder(chartBuilder, new TemporaryHealthCalculator());
-        BuildAggregatedReport buildAggregatedReport = new BuildAggregatedReport(null, statistics, reportBuilder);
+        CostDetailBuilder costDetailBuilder = new CostDetailBuilder();
+        BuildAggregatedReport buildAggregatedReport = new BuildAggregatedReport(null, statistics, reportBuilder, costDetailBuilder);
         Class<? extends AggregatableAction> actionType = buildAggregatedReport.getIndividualActionType();
         assertTrue(BuildIndividualReport.class.isAssignableFrom(actionType));
     }
@@ -52,7 +53,8 @@ public class BuildAggregatedReportTest extends PluginBaseTest
 
         ChartBuilder chartBuilder = new TestabilityChartBuilder();
         ReportBuilder reportBuilder = new TestabilityReportBuilder(chartBuilder, new TemporaryHealthCalculator());
-        BuildAggregatedReport buildAggregatedReport = new BuildAggregatedReport(null, stats2, reportBuilder);
+        CostDetailBuilder costDetailBuilder = new CostDetailBuilder();
+        BuildAggregatedReport buildAggregatedReport = new BuildAggregatedReport(null, stats2, reportBuilder, costDetailBuilder);
         assertEquals(buildAggregatedReport.getResults().size(), 1);
         buildAggregatedReport.update(null, build);
 
