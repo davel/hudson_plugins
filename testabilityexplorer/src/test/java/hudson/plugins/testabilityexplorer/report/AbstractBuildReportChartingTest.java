@@ -25,7 +25,7 @@ import java.util.*;
 @Test
 public class AbstractBuildReportChartingTest extends PluginBaseTest
 {
-    private static final int MAX_COST_IN_TEST = 900;
+    private static final int MAX_COST_IN_TEST = 999;
 
     public void testOverallTrendChart()
     {
@@ -61,7 +61,7 @@ public class AbstractBuildReportChartingTest extends PluginBaseTest
         AbstractBuildReport abstractBuildReport = createAbstractBuildReport();
         RangedTrend classesTrend = new RangedClassesTrend(buildsAndResults);
         int maxCost = classesTrend.getUpperBoundRangeAxis();
-        assertTrue(maxCost <= MAX_COST_IN_TEST);
+        assertTrue(maxCost <= MAX_COST_IN_TEST + RangedTrend.RANGE_AXIS_SPACE);
 
         JFreeChart chartClasses = abstractBuildReport.createChart(classesTrend);
         assertNotNull(chartClasses);

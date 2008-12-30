@@ -71,7 +71,7 @@ public class RangedClassesTrend extends RangedTrend
             }
         }
 
-        return maxCost > RangedTrend.DEFAULT_RANGE_AXIS ? maxCost + 10 : maxCost;    // add some space on top
+        return maxCost > RangedTrend.DEFAULT_RANGE_AXIS ? maxCost + RangedTrend.RANGE_AXIS_SPACE : maxCost;    // add some space on top
     }
 
     /**

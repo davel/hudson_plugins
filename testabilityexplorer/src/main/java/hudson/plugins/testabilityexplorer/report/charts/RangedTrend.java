@@ -14,7 +14,8 @@ import java.util.ArrayList;
  */
 public abstract class RangedTrend
 {
-    public static final int DEFAULT_RANGE_AXIS     = 100;
+    public static final int DEFAULT_RANGE_AXIS      = 100;
+    public static final int RANGE_AXIS_SPACE        = 10;
 
     private final List<BuildAndResults> m_items;
 
