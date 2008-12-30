@@ -30,47 +30,45 @@ import hudson.util.ColorPalette;
 public class TestabilityChartBuilder implements ChartBuilder
 {
     /** {@inheritDoc} */
-    public JFreeChart createChart(final CategoryDataset dataset)
+    public JFreeChart createChart(final RangedTrend rangedTrend)
     {
-        final JFreeChart chart = ChartFactory.createLineChart(
-            null,                   // chart title
-            null,                   // unused
+        CategoryDataset dataset = rangedTrend.getCategoryDataset();
+        
+        JFreeChart chart = ChartFactory.createLineChart(
+            null,                       // chart title
+            null,                       // unused
             "cost",                    // range axis label
-            dataset,                  // data
-            PlotOrientation.VERTICAL, // orientation
-            true,                     // include legend
-            true,                     // tooltips
-            false                     // urls
+            dataset,                    // data
+            PlotOrientation.VERTICAL,   // orientation
+            true,                       // include legend
+            true,                       // tooltips
+            false                       // urls
         );
 
-        // NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
-
-        final LegendTitle legend = chart.getLegend();
+        LegendTitle legend = chart.getLegend();
         legend.setPosition(RectangleEdge.RIGHT);
 
         chart.setBackgroundPaint(Color.white);
 
-        final CategoryPlot plot = chart.getCategoryPlot();
-
-        // plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
+        CategoryPlot plot = chart.getCategoryPlot();
         plot.setBackgroundPaint(Color.WHITE);
         plot.setOutlinePaint(null);
         plot.setRangeGridlinesVisible(true);
         plot.setRangeGridlinePaint(Color.black);
 
         CategoryAxis domainAxis = new ShiftedCategoryAxis(null);
-        plot.setDomainAxis(domainAxis);
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
         domainAxis.setLowerMargin(0.0);
         domainAxis.setUpperMargin(0.0);
         domainAxis.setCategoryMargin(0.0);
+        plot.setDomainAxis(domainAxis);
 
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        rangeAxis.setUpperBound(100);
+        rangeAxis.setUpperBound(rangedTrend.getUpperBoundRangeAxis());
         rangeAxis.setLowerBound(0);
 
-        final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
+        LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
         renderer.setStroke(new BasicStroke(4.0f));
         ColorPalette.apply(renderer);
 

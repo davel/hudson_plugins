@@ -4,6 +4,9 @@ import hudson.plugins.testabilityexplorer.report.costs.Statistic;
 import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
 import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 import hudson.plugins.testabilityexplorer.report.charts.BuildAndResults;
+import hudson.plugins.testabilityexplorer.report.charts.RangedOverallTrend;
+import hudson.plugins.testabilityexplorer.report.charts.RangedTrend;
+import hudson.plugins.testabilityexplorer.report.charts.RangedClassesTrend;
 import hudson.plugins.testabilityexplorer.helpers.AbstractBuildAction;
 import hudson.plugins.testabilityexplorer.PluginImpl;
 
@@ -30,30 +33,6 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
     private final Collection<Statistic> m_results;
     private final ReportBuilder m_reportBuilder;
     private final CostDetailBuilder m_detailBuilder;
-
-    static final CostTemplate EXCELLENT_COST_TEMPLATE = new CostTemplate()
-    {
-        public int getCost(Statistic statistic)
-        {
-            return statistic.getCostSummary().getExcellent();
-        }
-    };
-
-    static final CostTemplate GOOD_COST_TEMPLATE = new CostTemplate()
-    {
-        public int getCost(Statistic statistic)
-        {
-            return statistic.getCostSummary().getGood();
-        }
-    };
-
-    static final CostTemplate POOR_COST_TEMPLATE = new CostTemplate()
-    {
-        public int getCost(Statistic statistic)
-        {
-            return statistic.getCostSummary().getNeedsWork();
-        }
-    };
 
     public AbstractBuildReport(Collection<Statistic> results, ReportBuilder reportBuilder, CostDetailBuilder detailBuilder) {
         m_results = results;
@@ -148,13 +127,15 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
         List<BuildAndResults> buildsAndResults = retrieveExistingBuildsAndResults(getBuild());
         if (displayClassesTrend)
         {
-            CategoryDataset categoryDataset = buildClassesTrendDataSet(buildsAndResults);
-            ChartUtil.generateGraph(request, response, createChart(categoryDataset), 800, 600);  // todo: calculate height
+            RangedTrend rangedTrend = new RangedClassesTrend(buildsAndResults);
+            JFreeChart chart = createChart(rangedTrend);
+            ChartUtil.generateGraph(request, response, chart, 800, 600);
         }
         else
         {
-            CategoryDataset categoryDataset = buildOverallTrendDataSet(buildsAndResults);
-            ChartUtil.generateGraph(request, response, createChart(categoryDataset), 400, 200);  // todo: calculate height
+            RangedTrend rangedTrend = new RangedOverallTrend(buildsAndResults);
+            JFreeChart chart = createChart(rangedTrend);
+            ChartUtil.generateGraph(request, response, chart, 400, 200);
         }
     }
 
@@ -177,63 +158,13 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
     }
 
     /**
-     * Creates a new JFreeChart based on the specified CategoryDataset.
+     * Creates a new JFreeChart based on the specified RangedTrend.
      *
-     * @return the JFreeChart
+     * @return the JFreeChart chart
      */
-    JFreeChart createChart(CategoryDataset categoryDataset)
+    JFreeChart createChart(RangedTrend rangedTrend)
     {
-        return m_reportBuilder.createGraph(categoryDataset);
-    }
-
-    /**
-     * Builds and returns a {@link CategoryDataset} that will represent the classes testability trend.
-     *
-     * @return CategoryDataset
-     */
-    CategoryDataset buildClassesTrendDataSet(List<BuildAndResults> buildsAndResults)
-    {
-        final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel>();
-
-        for (BuildAndResults buildAndResults : buildsAndResults)
-        {
-            AbstractBuild<?, ?> build = buildAndResults.getBuild();
-            Collection<Statistic> results = buildAndResults.getStatistics();
-
-            ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(build);
-            dsb.add(summarizeCost(results, EXCELLENT_COST_TEMPLATE), "excellent", label);
-            dsb.add(summarizeCost(results, GOOD_COST_TEMPLATE), "good", label);
-            dsb.add(summarizeCost(results, POOR_COST_TEMPLATE), "need work", label);
-        }
-        return dsb.build();
-    }
-
-    /**
-     * Builds and returns a {@link CategoryDataset} that will represent the overall testability trend.
-     * @return CategoryDataset
-     */
-    CategoryDataset buildOverallTrendDataSet(List<BuildAndResults> buildsAndResults)
-    {
-        final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel>();
-
-        final CostTemplate totalCostTemplate = new CostTemplate()
-        {
-            public int getCost(Statistic statistic)
-            {
-                return statistic.getCostSummary().getTotal();
-            }
-        };
-
-        for (BuildAndResults buildAndResults : buildsAndResults)
-        {
-            AbstractBuild<?, ?> build = buildAndResults.getBuild();
-            Collection<Statistic> results = buildAndResults.getStatistics();
-
-            ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(build);
-            dsb.add(summarizeCost(results, totalCostTemplate), "overall", label);
-        }
-
-        return dsb.build();
+        return m_reportBuilder.createGraph(rangedTrend);
     }
 
     /**
@@ -244,22 +175,6 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
     AbstractBuild<?, ?> getPreviousBuild(AbstractBuild<?, ?> build)
     {
         return build.getPreviousBuild();
-    }
-
-    /**
-     * Returns a cost summary using the given collection of Statistic's and a {@link CostTemplate}.
-     * @param statistics Collections of Statistic
-     * @param template a CostTemplate
-     * @return summed up cost as int
-     */
-    private int summarizeCost(Collection<Statistic> statistics, CostTemplate template)
-    {
-        int cost = 0;
-        for (Statistic statistic : statistics)
-        {
-            cost += template.getCost(statistic);
-        }
-        return cost;
     }
 
     @Override

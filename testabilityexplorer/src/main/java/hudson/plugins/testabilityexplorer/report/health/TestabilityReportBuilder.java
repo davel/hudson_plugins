@@ -63,13 +63,13 @@ public class TestabilityReportBuilder extends DrawingReportBuilder
         return new HealthReport(score, description);
     }
 
-    protected int getNumberOfClasses(CostSummary costSummary)
+    private int getNumberOfClasses(CostSummary costSummary)
     {
         // in theory you could just return costSummary.getNumberOfClasses() here, but it is easier for testing if you return just excellent + good + need work
         return (costSummary.getExcellent() + costSummary.getGood() + costSummary.getNeedsWork());
     }
 
-    protected int getNumberOfExcellentClasses(CostSummary costSummary)
+    private int getNumberOfExcellentClasses(CostSummary costSummary)
     {
         return costSummary.getExcellent();
     }

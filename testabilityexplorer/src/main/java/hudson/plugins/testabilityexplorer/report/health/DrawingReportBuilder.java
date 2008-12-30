@@ -1,9 +1,9 @@
 package hudson.plugins.testabilityexplorer.report.health;
 
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.CategoryDataset;
 import hudson.plugins.testabilityexplorer.report.charts.ChartBuilder;
 import hudson.plugins.testabilityexplorer.report.charts.TestabilityChartBuilder;
+import hudson.plugins.testabilityexplorer.report.charts.RangedTrend;
 
 /**
  * A {@link ReportBuilder} that can created Charts.
@@ -20,19 +20,19 @@ public abstract class DrawingReportBuilder implements ReportBuilder
     }
 
     /**
-     * Returns a {@link JFreeChart} based on the given {@link CategoryDataset}. Will
+     * Returns a {@link JFreeChart} based on the given {@link RangedTrend}. Will
      * never return {@code null}.
      *
-     * @throws IllegalArgumentException if the given dataset is null
+     * @throws IllegalArgumentException if the given rangedTrend is {@code null}
      *
-     * @param dataset a CategoryDataset to feed the JFreeChart with
-     * @return CategoryDataset
+     * @param rangedTrend a RangedTrend to feed the JFreeChart with
+     * @return JFreeChart
      */
-    public JFreeChart createGraph(final CategoryDataset dataset)
+    public JFreeChart createGraph(final RangedTrend rangedTrend)
     {
-        if (dataset == null)
+        if (rangedTrend == null)
         {
-            throw new IllegalArgumentException("Parameter dataset must not be null.");
+            throw new IllegalArgumentException("Parameter rangedTrend must not be null.");
         }
 
         ChartBuilder chartBuilder = m_chartBuilder;
@@ -40,6 +40,6 @@ public abstract class DrawingReportBuilder implements ReportBuilder
         {
             chartBuilder = new TestabilityChartBuilder();
         }
-        return chartBuilder.createChart(dataset);
+        return chartBuilder.createChart(rangedTrend);
     }
 }

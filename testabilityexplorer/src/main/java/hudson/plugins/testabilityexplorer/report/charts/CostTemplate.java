@@ -1,4 +1,4 @@
-package hudson.plugins.testabilityexplorer.report;
+package hudson.plugins.testabilityexplorer.report.charts;
 
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
 

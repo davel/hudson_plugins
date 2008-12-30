@@ -12,7 +12,7 @@ import org.jfree.data.xy.XYSeries;
 public interface ChartBuilder
 {
     /**
-     * Creates a {@link JFreeChart} based on the given {@link CategoryDataset}.
+     * Creates a {@link JFreeChart} based on the given {@link RangedTrend}.
      */
-    JFreeChart createChart(final CategoryDataset dataset);
+    JFreeChart createChart(final RangedTrend rangedTrend);
 }

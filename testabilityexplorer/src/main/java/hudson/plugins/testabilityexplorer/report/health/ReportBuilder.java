@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.category.CategoryDataset;
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
+import hudson.plugins.testabilityexplorer.report.charts.RangedTrend;
 
 import java.util.Collection;
 
@@ -19,7 +20,5 @@ public interface ReportBuilder
 {
     HealthReport computeHealth(Collection<Statistic> results);
 
-    JFreeChart createGraph(final CategoryDataset dataset);
-
-    
+    JFreeChart createGraph(final RangedTrend rangedTrend);
 }
