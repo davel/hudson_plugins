@@ -25,7 +25,7 @@ import java.util.*;
 @Test
 public class AbstractBuildReportChartingTest extends PluginBaseTest
 {
-    private static final int MAX_COST_IN_TEST = 999;
+    private static final int MAX_COST_IN_TEST = 900;
 
     public void testOverallTrendChart()
     {
