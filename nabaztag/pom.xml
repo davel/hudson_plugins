@@ -30,6 +30,13 @@
     </dependency>
   </dependencies>
   
+  <distributionManagement>
+    <repository>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository/trunk/www/repository/</url>
+    </repository>
+  </distributionManagement>
+  
   <build>
     <!--
       Since new versions need to overwrite old versions, it's better
@@ -45,6 +52,14 @@
         <extensions>true</extensions>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.jvnet.wagon-svn</groupId>
+        <artifactId>wagon-svn</artifactId>
+        <version>1.8</version>
+      </extension>
+    </extensions>
+    
   </build>
 
   <repositories>
@@ -144,4 +159,5 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  
 </project>
