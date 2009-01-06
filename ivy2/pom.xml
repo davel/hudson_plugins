@@ -4,6 +4,7 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>ivy2</artifactId>
   <packaging>hpi</packaging>
+  <name>Hudson Ivy2 plugin</name>
   <version>1.2-SNAPSHOT</version>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Ivy2+Plugin</url>
 
