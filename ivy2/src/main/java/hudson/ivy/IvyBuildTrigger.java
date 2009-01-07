@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -267,6 +268,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
         FilePath f = workspace.child(ivyFile);
         try {
             if (lastmodified != f.lastModified()) {
+                DESCRIPTOR.invalidateProjectMap();
                 recomputeModuleDescriptor(build.getProject().getWorkspace());
                 Hudson.getInstance().rebuildDependencyGraph();
             }
@@ -284,34 +286,21 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
             return;
         }
 
-        // Create a map of all known ModuleID'S to their Projects
-        // TODO One might introduce some caching for this.
-        List<Project> projects = Hudson.getInstance().getAllItems(Project.class);
-        Map<ModuleId, AbstractProject<?, ?>> projectMap = new HashMap<ModuleId, AbstractProject<?, ?>>();
-        for (Project<?, ?> p : projects) {
-            if (p.isDisabled()) {
-                continue;
-            }
-            IvyBuildTrigger t = (IvyBuildTrigger) p.getPublisher(DESCRIPTOR);
-            if (t != null) {
-                ModuleDescriptor m = t.getModuleDescriptor(p.getWorkspace());
-                if (m != null) {
-                    ModuleId id = m.getModuleRevisionId().getModuleId();
-                    projectMap.put(id, p);
-                }
-            }
-        }
-
-       // Get All Dependencies from ivy.
+        // Get All Dependencies from ivy.
        // Map them to corresponding  hudson projects
 
         DependencyDescriptor[] deps = md.getDependencies();
         List <AbstractProject> dependencies = new ArrayList<AbstractProject>();
         for (DependencyDescriptor depDesc : deps) {
             ModuleId id = depDesc.getDependencyId();
-            AbstractProject p = projectMap.get(id);
-            // Such a project might not exist
-            if (p != null) dependencies.add(p);
+
+            List<AbstractProject> possibleDeps = DESCRIPTOR.getProjectsFor (id);
+            for (AbstractProject p : possibleDeps) {
+                // ignore disabled Projects
+                if (p.isDisabled()) p = null;
+                // Such a project might not exist
+                if (p != null) dependencies.add(p);
+            }
         }
         graph.addDependency(dependencies, owner);
     }
@@ -333,10 +322,58 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
         @CopyOnWrite
         private volatile IvyConfiguration[] configurations = new IvyConfiguration[0];
-
+        private volatile Map<ModuleId, List<AbstractProject>> projectMap=null;
         DescriptorImpl() {
             super(IvyBuildTrigger.class);
             load();
+        }
+
+        /**
+         * Return a List of AbstractProjects that have an IvyBuildtrigger configured with an
+         * ivy file Matching the given ModuleID
+         * @param id    The Module Id to search for
+         * @return a List of Matching Projects
+         */
+        public List<AbstractProject> getProjectsFor(ModuleId searchId) {
+            if (projectMap == null) calculateProjectMap();
+            List<AbstractProject> result = projectMap.get(searchId);
+            if (result == null) result = Collections.emptyList();
+            return result;
+        }
+
+        /**
+         * This method should be called if the cached Project Map may be invalid.
+         * Reason for this maybe:
+         * <ul>
+         *  <li> An Ivy File has Changed
+         *  <li> an Project was renamed
+         * </ul>
+         */
+        public void invalidateProjectMap() {
+            projectMap = null;
+        }
+
+        private void calculateProjectMap() {
+            List<Project> projects = Hudson.getInstance().getAllItems(Project.class);
+            projectMap = new HashMap<ModuleId, List<AbstractProject>>();
+            for (Project<?, ?> p : projects) {
+                if (p.isDisabled()) {
+                    continue;
+                }
+                IvyBuildTrigger t = (IvyBuildTrigger) p.getPublisher(DESCRIPTOR);
+                if (t != null) {
+                    ModuleDescriptor m = t.getModuleDescriptor(p.getWorkspace());
+                    if (m != null) {
+                        ModuleId id = m.getModuleRevisionId().getModuleId();
+                        List<AbstractProject> list = projectMap.get (id);
+                        if (list == null) {
+                            list = new ArrayList<AbstractProject> ();
+                        }
+                        list.add(p);
+                        projectMap.put(id, list);
+                    }
+                }
+            }
         }
 
         /**
@@ -388,7 +425,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
             this.configurations = confs;
 
             save();
-
+            invalidateProjectMap();
             return r;
         }
 
