@@ -71,9 +71,34 @@ public abstract class TestObject<S extends TestObject<S>>
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = mangleId(id);
     }
 
+    /**
+     * Removes the characters in the string that are reserved in a URI
+     * @param id
+     * @return
+     */
+    private String mangleId(String id) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < id.length(); i++) {
+            if (!ignoreChar(id.charAt(i))) {
+                sb.append(id.charAt(i));
+            }
+        }
+        return sb.toString();
+    }
+
+    private static char[] reserved = {'!','*','\'','(',')',';',':','@','&','=','+','$',',','/','?','%','#','[',']'};
+    private static boolean ignoreChar(char c) {
+        for (char rch: reserved) {
+            if (c == rch) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public String getName() {
         return name;
     }
