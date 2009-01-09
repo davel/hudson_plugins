@@ -2,9 +2,9 @@
 	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
 	xmlns:f="/lib/form">
 	<f:section title="Global Nabaztag Settings">
-		<f:entry title="Serial Number" >
-			<input class="setting-input" name="nabaztagSN" type="text"
-				value="${descriptor.nabaztagSN}" />
+		<f:entry title="Serial Number" > 
+			<input class="setting-input" name="nabatzagSerial" type="text"
+				value="${descriptor.nabatzagSerial}" />
 		</f:entry>
 		
 		<f:entry title="Nabaztag API Token" >
@@ -36,6 +36,11 @@
 		<f:entry title="Nabaztag Text for Recover" >
 			<input class="setting-input" name="nabatzagSuccessTTS" type="text"
 				value="${descriptor.nabatzagrecoverTTS}" />
+		</f:entry>
+		
+		<f:entry title="Report On Sucess" >
+			<input class="setting-input" name="reportOnSucess" type="text"
+				value="${descriptor.reportOnSucess}" />
 		</f:entry>
 		
 		
