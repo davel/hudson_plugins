@@ -145,7 +145,7 @@
         <module>clearcase</module>
         <module>clover</module>
         <module>codeplex</module>
-        <module>codeviation</module>
+        <!-- #2819: uses private repo, licensing questions: <module>codeviation</module> -->
         <module>cobertura</module>
         <!--module>coverage</module--><!-- not ready for release yet -->
 	    <module>cvs-tag</module>
