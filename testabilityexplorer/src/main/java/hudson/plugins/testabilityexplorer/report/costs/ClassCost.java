@@ -1,11 +1,14 @@
 package hudson.plugins.testabilityexplorer.report.costs;
 
 import hudson.plugins.testabilityexplorer.report.costs.MethodCost;
+import hudson.plugins.testabilityexplorer.utils.StringUtil;
 
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.io.Serializable;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Encapsulates the testability of a single class.
@@ -36,6 +39,16 @@ public class ClassCost implements Serializable, TestabilityCost
     public String getName()
     {
         return m_name;
+    }
+
+    /**
+     * This will return a shorter version of {@link ClassCost#getName()}. The fully qualified class names of return
+     * values and parameters will be shortened to be just the class name without package.
+     * @return String
+     */
+    public String getDisplayName()
+    {
+        return StringUtil.stripPackages(getName());
     }
 
     public int getCost()

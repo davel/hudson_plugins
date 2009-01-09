@@ -64,6 +64,6 @@ public class CostSummary implements Serializable, TestabilityCost
 
     public int getNumberOfClasses()
     {
-        return getCostStack().size();
+        return getExcellent() + getGood() + getNeedsWork();
     }
 }

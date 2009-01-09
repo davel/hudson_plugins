@@ -65,8 +65,7 @@ public class TestabilityReportBuilder extends DrawingReportBuilder
 
     private int getNumberOfClasses(CostSummary costSummary)
     {
-        // in theory you could just return costSummary.getNumberOfClasses() here, but it is easier for testing if you return just excellent + good + need work
-        return (costSummary.getExcellent() + costSummary.getGood() + costSummary.getNeedsWork());
+        return costSummary.getNumberOfClasses();
     }
 
     private int getNumberOfExcellentClasses(CostSummary costSummary)
