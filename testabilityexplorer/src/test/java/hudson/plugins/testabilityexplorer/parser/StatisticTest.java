@@ -58,25 +58,25 @@ public class StatisticTest extends PluginBaseTest
         assertFalse(methodCosts.isEmpty());
         assertEquals(8, methodCosts.size());
 
-        MethodCost constructor = (MethodCost) methodCosts.toArray() [0];
-        assertEquals(48, constructor.getCyclomatic());
-        assertEquals(1, constructor.getGlobal());
-        assertEquals(43, constructor.getLine());
-        assertEquals(0, constructor.getLod());
-        assertEquals("com.ongame.bo.bofraud.markup.pages.IpLookupResultsPage(org.apache.wicket.PageParameters)", constructor.getName());
-        assertEquals(58, constructor.getOverall());
-        assertEquals("", constructor.getReason());
+        MethodCost method1 = (MethodCost) methodCosts.toArray() [0];
+        assertEquals(50, method1.getCyclomatic());
+        assertEquals(1, method1.getGlobal());
+        assertEquals(76, method1.getLine());
+        assertEquals(0, method1.getLod());
+        assertEquals("void addIpInfo()", method1.getName());
+        assertEquals(60, method1.getOverall());
+        assertEquals("", method1.getReason());
 
-        Collection<MethodCost> costDetails = constructor.getCostStack();
-        assertEquals(40, costDetails.size());
+        Collection<MethodCost> costDetails = method1.getCostStack();
+        assertEquals(37, costDetails.size());
 
         MethodCost costDetail = (MethodCost) costDetails.toArray() [0];
         assertEquals(1, costDetail.getCyclomatic());
-        assertEquals(0, costDetail.getGlobal());
-        assertEquals(2594, costDetail.getLine());
+        assertEquals(1, costDetail.getGlobal());
+        assertEquals(1511, costDetail.getLine());
         assertEquals(0, costDetail.getLod());
-        assertEquals("org.apache.wicket.Component setComponentBorder(org.apache.wicket.IComponentBorder)", costDetail.getName());
-        assertEquals(1, costDetail.getOverall());
+        assertEquals("void setFormComponentValuesFromCookies()", costDetail.getName());
+        assertEquals(11, costDetail.getOverall());
         assertEquals("implicit cost calling all setters", costDetail.getReason());
     }
 

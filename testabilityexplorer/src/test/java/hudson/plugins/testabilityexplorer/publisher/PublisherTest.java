@@ -33,7 +33,7 @@ public class PublisherTest extends PluginBaseTest
         stub(project.getRootDir()).toReturn(root);
         stub(project.getModuleRoot()).toReturn(rootPath);
 
-        Publisher publisher = new FreestylePublisher("reports.xml", "100")
+        Publisher publisher = new FreestylePublisher("reports.xml", "100", "10")
         {
             protected AbstractProject getProject(AbstractBuild build)
             {

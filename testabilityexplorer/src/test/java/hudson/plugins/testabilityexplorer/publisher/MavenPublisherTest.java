@@ -31,11 +31,13 @@ public class MavenPublisherTest
 {
     public void testMavenPublisher()
     {
-        MavenPublisher publisher = new MavenPublisher("report.xml", "100");
+        MavenPublisher publisher = new MavenPublisher("report.xml", "100", "50");
         String filenamePattern = publisher.getReportFilenamePattern();
         assertEquals(filenamePattern, "report.xml");
         int threshold = publisher.getThreshold();
         assertTrue(threshold == 100);
+        int perClassThreshold = publisher.getPerClassThreshold();
+        assertTrue(perClassThreshold == 50);
 
         File root = SystemUtils.getJavaIoTmpDir();
         FilePath rootPath = new FilePath(root);

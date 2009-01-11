@@ -20,9 +20,9 @@ public class StringUtil
      */
     public static String stripPackages(String signature)
     {
+        String stripped = signature;
         if (!StringUtils.isBlank(signature))
         {
-            String stripped = signature;
             String[] tokens = StringUtils.split(stripped, ", ()");
             for (String token : tokens)
             {
@@ -34,6 +34,6 @@ public class StringUtil
             }
 
         }
-        return signature;
+        return stripped;
     }
 }

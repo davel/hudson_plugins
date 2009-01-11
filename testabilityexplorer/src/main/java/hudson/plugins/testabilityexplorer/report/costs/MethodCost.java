@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Encapsulates the testability of a single method.
@@ -21,7 +24,7 @@ public class MethodCost implements Serializable, TestabilityCost
     private int m_lod;
     private int m_overall;
     private String m_reason;
-    private Collection<MethodCost> m_costStack;
+    private List<MethodCost> m_costStack;
 
     public MethodCost(String name, int cyclomatic, int global, int line, int lod, int overall, String reason)
     {
@@ -60,7 +63,7 @@ public class MethodCost implements Serializable, TestabilityCost
      */
     public String getDisplayName()
     {
-        return StringUtil.stripPackages(getName());
+        return StringUtils.abbreviate(getName(), 100);
     }
 
     public int getCyclomatic()
@@ -96,5 +99,20 @@ public class MethodCost implements Serializable, TestabilityCost
     public Collection<MethodCost> getCostStack()
     {
         return m_costStack == null ? new ArrayList<MethodCost>() : Collections.unmodifiableCollection(m_costStack);
+    }
+
+    /**
+     * Sorts the all costs contained in this MethodCost highest first.
+     */
+    public void sort()
+    {
+        if (m_costStack != null)
+        {
+            Collections.sort(m_costStack, MethodCostComparator.getInstance());
+            for (MethodCost methodCost : m_costStack)
+            {
+                methodCost.sort();
+            }
+        }
     }
 }

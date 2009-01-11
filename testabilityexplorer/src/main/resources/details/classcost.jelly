@@ -38,12 +38,35 @@
                       <j:forEach var="mainMethodCost" items="${it.costStack}">
                         <tr>
                           <td class="pane">
-                            ${mainMethodCost.name}:${mainMethodCost.line}
+                            <j:choose>
+                                <j:when test="${mainMethodCost.costStack.size() > 0}">
+                                    <a href="../class.${it.name}:line.${mainMethodCost.line}">${mainMethodCost.displayName}:${mainMethodCost.line}</a>
+                                </j:when>
+                                <j:otherwise>
+                                  ${mainMethodCost.displayName}:${mainMethodCost.line}
+                              </j:otherwise>
+                            </j:choose>
                           </td>
-                          <td class="pane">${mainMethodCost.overall}</td>
-                          <td class="pane">${mainMethodCost.cyclomatic}</td>
-                          <td class="pane">${mainMethodCost.global}</td>
-                          <td class="pane">${mainMethodCost.lod}</td>                              
+                            <j:choose>
+                              <j:when test="${mainMethodCost.overall > 100}">
+                                  <td class="pane"><span style="color:red">${mainMethodCost.overall}</span></td>
+                                  <td class="pane"><span style="color:red">${mainMethodCost.cyclomatic}</span></td>
+                                  <td class="pane"><span style="color:red">${mainMethodCost.global}</span></td>
+                                  <td class="pane"><span style="color:red">${mainMethodCost.lod}</span></td>
+                              </j:when>
+                              <j:when test="${mainMethodCost.overall > 20}">
+                                  <td class="pane"><span style="color:orange">${mainMethodCost.overall}</span></td>
+                                  <td class="pane"><span style="color:orange">${mainMethodCost.cyclomatic}</span></td>
+                                  <td class="pane"><span style="color:orange">${mainMethodCost.global}</span></td>
+                                  <td class="pane"><span style="color:orange">${mainMethodCost.lod}</span></td>
+                              </j:when>
+                              <j:otherwise>
+                                  <td class="pane"><span style="color:green">${mainMethodCost.overall}</span></td>
+                                  <td class="pane"><span style="color:green">${mainMethodCost.cyclomatic}</span></td>
+                                  <td class="pane"><span style="color:green">${mainMethodCost.global}</span></td>
+                                  <td class="pane"><span style="color:green">${mainMethodCost.lod}</span></td>
+                              </j:otherwise>
+                            </j:choose>
                         </tr>
                       </j:forEach>
                     </tbody>

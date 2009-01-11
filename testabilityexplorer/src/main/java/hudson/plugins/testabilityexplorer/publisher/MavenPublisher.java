@@ -68,15 +68,17 @@ public class MavenPublisher extends AbstractMavenReporterImpl
 
     private final String m_reportFilenamePattern;
     private final int m_threshold;
+    private final int m_perClassThreshold;
 
     @DataBoundConstructor
-    public MavenPublisher(String reportFilenamePattern, String threshold)
+    public MavenPublisher(String reportFilenamePattern, String threshold, String perClassThreshold)
     {
         reportFilenamePattern.getClass();
         threshold.getClass();
 
         m_reportFilenamePattern = reportFilenamePattern;
         m_threshold = TypeConverterUtil.toInt(threshold, Integer.MAX_VALUE);
+        m_perClassThreshold = TypeConverterUtil.toInt(perClassThreshold, Integer.MAX_VALUE);
     }
 
     /**
@@ -99,7 +101,7 @@ public class MavenPublisher extends AbstractMavenReporterImpl
 
     public ParseDelegate newParseDelegate()
     {
-        return new ReportParseDelegate(m_reportFilenamePattern, m_threshold);
+        return new ReportParseDelegate(getReportFilenamePattern(), getThreshold(), getPerClassThreshold());
     }
 
     public StatisticsParser newStatisticsParser()
@@ -135,5 +137,16 @@ public class MavenPublisher extends AbstractMavenReporterImpl
     public int getThreshold()
     {
         return m_threshold;
+    }
+
+    /**
+     * Returns the current threshold, for which the build will
+     * become unstable if the testability score is above it, on a
+     * per class basis.
+     * @return int
+     */
+    public int getPerClassThreshold()
+    {
+        return m_perClassThreshold;
     }
 }

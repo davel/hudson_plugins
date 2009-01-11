@@ -24,7 +24,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class BuildIndividualReport extends AbstractBuildReport<AbstractBuild<?, ?>> implements AggregatableAction
 {
-    public BuildIndividualReport(Collection<Statistic> results, ReportBuilder reportBuilder, CostDetailBuilder detailBuilder) {
+    public BuildIndividualReport(Collection<Statistic> results, ReportBuilder reportBuilder, CostDetailBuilder detailBuilder)
+    {
         super(results, reportBuilder, detailBuilder);
     }
 

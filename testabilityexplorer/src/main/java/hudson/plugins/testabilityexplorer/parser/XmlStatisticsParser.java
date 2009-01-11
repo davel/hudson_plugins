@@ -79,7 +79,16 @@ public class XmlStatisticsParser extends StatisticsParser
         {
             IOUtils.closeQuietly(bufferedInputStream);
         }
+        sortByCost(results);
         return results;
+    }
+
+    private void sortByCost(Collection<Statistic> results)
+    {
+        for (Statistic result : results)
+        {
+            result.sort();
+        }
     }
 
     /**

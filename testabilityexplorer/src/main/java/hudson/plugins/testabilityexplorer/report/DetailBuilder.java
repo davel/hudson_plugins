@@ -11,5 +11,5 @@ import java.util.Collection;
  */
 public interface DetailBuilder<T>
 {
-    Object buildDetail(final String link, final AbstractBuild<?, ?> build, final Collection<T> results);
+    Object buildDetail(final String link, final String originalRequestUri, final AbstractBuild<?, ?> build, final Collection<T> results);
 }

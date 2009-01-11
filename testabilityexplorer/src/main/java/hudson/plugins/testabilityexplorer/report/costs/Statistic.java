@@ -36,6 +36,15 @@ public class Statistic implements Serializable
         m_owner = owner;
     }
 
+    public void sort()
+    {
+        CostSummary summary = getCostSummary();
+        for (ClassCost classCost : summary.getCostStack())
+        {
+            classCost.sort();
+        }
+    }
+
     @Override
     public boolean equals(Object o)
     {

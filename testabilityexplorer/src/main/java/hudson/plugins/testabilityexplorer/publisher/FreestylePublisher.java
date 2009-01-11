@@ -30,15 +30,15 @@ public class FreestylePublisher extends AbstractPublisherImpl
 
     private final String m_reportFilenamePattern;
     private final int m_threshold;
+    private final int m_perClassThreshold;
+
 
     @DataBoundConstructor
-    public FreestylePublisher(String reportFilenamePattern, String threshold)
+    public FreestylePublisher(String reportFilenamePattern, String threshold, String perClassThreshold)
     {
-        reportFilenamePattern.getClass();
-        threshold.getClass();
-
         m_reportFilenamePattern = reportFilenamePattern;
         m_threshold = toInt(threshold, Integer.MAX_VALUE);
+        m_perClassThreshold = toInt(perClassThreshold, Integer.MAX_VALUE);
     }
 
     protected int toInt(String value, int defaultValue)
@@ -48,7 +48,7 @@ public class FreestylePublisher extends AbstractPublisherImpl
 
     public ParseDelegate newParseDelegate()
     {
-        return new ReportParseDelegate(getReportFilenamePattern(), getThreshold());
+        return new ReportParseDelegate(getReportFilenamePattern(), getThreshold(), getPerClassThreshold());
     }
 
     public StatisticsParser newStatisticsParser()
@@ -67,14 +67,34 @@ public class FreestylePublisher extends AbstractPublisherImpl
         return new TestabilityReportBuilder(chartBuilder, new TemporaryHealthCalculator());
     }
 
+    /**
+     * Returns the current file pattern to the report files.
+     * @return String
+     */
     public String getReportFilenamePattern()
     {
         return m_reportFilenamePattern;
     }
 
+    /**
+     * Returns the current threshold for which the build will
+     * become unstable if the testability score is above it.
+     * @return int
+     */
     public int getThreshold()
     {
         return m_threshold;
+    }
+
+    /**
+     * Returns the current threshold, for which the build will
+     * become unstable if the testability score is above it, on a
+     * per class basis.
+     * @return int
+     */
+    public int getPerClassThreshold()
+    {
+        return m_perClassThreshold;
     }
 
     public Descriptor<Publisher> getDescriptor()

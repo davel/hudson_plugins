@@ -66,4 +66,18 @@ public class CostSummary implements Serializable, TestabilityCost
     {
         return getExcellent() + getGood() + getNeedsWork();
     }
+
+    /**
+     * Sorts the all costs contained in this summary highest first.
+     */
+    public void sort()
+    {
+        if (m_costStack != null)
+        {
+            for (ClassCost classCost : m_costStack)
+            {
+                classCost.sort();
+            }
+        }
+    }
 }

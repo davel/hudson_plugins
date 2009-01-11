@@ -33,7 +33,7 @@
         <script type="text/javascript">
             var myTabs = new YAHOO.widget.TabView("statistics");
 
-            <j:if test="${result.costSummary.costStack.size() > 1}">
+            <j:if test="${result.costSummary.costStack.size() > 0}">
             YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
                 label: '${%Classes}',
                 content: '<table class="pane sortable" id="packages">
@@ -47,7 +47,17 @@
                               <td class="pane">
                                 <a href="class.${classCost.name}/">${classCost.name}</a>
                               </td>
-                              <td class="pane">${classCost.cost}</td>
+                                <j:choose>
+                                  <j:when test="${classCost.cost > 100}">
+                                      <td class="pane"><span style="color:red">${classCost.cost}</span></td>
+                                  </j:when>
+                                  <j:when test="${classCost.cost > 20}">
+                                      <td class="pane"><span style="color:orange">${classCost.cost}</span></td>
+                                  </j:when>
+                                  <j:otherwise>
+                                      <td class="pane"><span style="color:green">${classCost.cost}</span></td>
+                                  </j:otherwise>
+                                </j:choose>
                             </tr>
                           </j:forEach>
                         </tbody>

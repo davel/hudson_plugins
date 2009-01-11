@@ -95,7 +95,8 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
      */
     public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response)
     {
-        return m_detailBuilder.buildDetail(link, getBuild(), getResults());
+        String originalRequestUri = request.getOriginalRequestURI();
+        return m_detailBuilder.buildDetail(link, originalRequestUri, getBuild(), getResults());
     }
 
     /** {@inheritDoc} */

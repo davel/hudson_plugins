@@ -2,17 +2,23 @@
          xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:bh="/lib/health">
     <f:entry title="Report File Pattern"
              description="
-             This is a file name pattern that can be used to locate the Testability Explorer xml report files
-             (for example &lt;b&gt;dist/reports/testability/report.xml&lt;/b&gt;).
-           The path is relative to &lt;a href='ws/'&gt;the module root&lt;/a&gt;.&lt;br/&gt;.
+             This pattern locates the XML report files (ie. &lt;b&gt;dist/reports/testability/report.xml&lt;/b&gt;). The path is relative to &lt;a href='ws/'&gt;the module root&lt;/a&gt;.&lt;br/&gt;.
            ">
         <f:textbox name="javancss.reportFilenamePattern" value="${instance.reportFilenamePattern}"/>
     </f:entry>
 
-    <f:entry title="Testability Threshold"
+    <f:entry title="Overall Threshold"
              description="
-             Must be an Integer value. If the overall testability cost in this project is higher than the specified threshold, the build will be flagged unstable.
+             Must be an Integer value. If the overall testability cost is higher than the specified threshold, the build will be flagged unstable.
            ">
         <f:textbox name="javancss.threshold" value="${instance.threshold}"/>
     </f:entry>
+
+    <f:entry title="Per-Class Threshold"
+             description="
+             Must be an Integer value. If the testability cost of a class is higher than the specified threshold, the build will be flagged unstable.
+           ">
+        <f:textbox name="javancss.perClassThreshold" value="${instance.perClassThreshold}"/>
+    </f:entry>
+
 </j:jelly>

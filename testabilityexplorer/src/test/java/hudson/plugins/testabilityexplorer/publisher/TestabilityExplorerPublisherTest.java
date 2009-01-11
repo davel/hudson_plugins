@@ -21,7 +21,7 @@ public class TestabilityExplorerPublisherTest extends PluginBaseTest
 {
     public void testPublisher()
     {
-        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100");
+        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100", "50");
         ParseDelegate parseDelegate = testabilityExplorerPublisher.newParseDelegate();
         assertNotNull(parseDelegate);
 
@@ -42,7 +42,7 @@ public class TestabilityExplorerPublisherTest extends PluginBaseTest
 
     public void testToInt()
     {
-        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100");
+        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100", "88");
         assertEquals(testabilityExplorerPublisher.toInt("1", 0), 1);
         assertEquals(testabilityExplorerPublisher.toInt("x", 0), 0);
         assertEquals(testabilityExplorerPublisher.toInt("", 0), 0);

@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.util.*;
 
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
+import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
+import hudson.plugins.testabilityexplorer.report.costs.ClassCost;
 import hudson.plugins.testabilityexplorer.report.BuildIndividualReport;
 import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
+import hudson.plugins.testabilityexplorer.parser.XmlStatisticsParser;
 
 /**
  * Scans for report files using the specified <code>reportFilenamePattern</code>. Any report files
@@ -22,11 +25,13 @@ public class ReportParseDelegate implements ParseDelegate
 {
     private final String m_reportFilenamePattern;
     private final int m_threshold;
+    private final int m_perClassThreshold;
 
-    public ReportParseDelegate(String reportFilenamePattern, int threshold)
+    public ReportParseDelegate(String reportFilenamePattern, int threshold, int perClassThreshold)
     {
         m_reportFilenamePattern = reportFilenamePattern;
         m_threshold = threshold;
+        m_perClassThreshold = perClassThreshold;
     }
 
     /**
@@ -41,13 +46,15 @@ public class ReportParseDelegate implements ParseDelegate
         for (FilePath filePath : filesToParse)
         {
             final String pathStr = filePath.getRemote();
-            StatisticsParser parser = build.getStatisticsParser();
+            final StatisticsParser parser = build.getStatisticsParser();
             results = parser.parse(new File(pathStr));
         }
 
         boolean successful = isSuccessful(results);
-        flagBuild(isSuccessful(results), build);
+        flagBuild(successful, build);
+
         build.addAction(new BuildIndividualReport(results, build.getReportBuilder(), build.getDetailBuilder()));
+
         return successful;
     }
 
@@ -93,23 +100,39 @@ public class ReportParseDelegate implements ParseDelegate
     }
 
     /**
-     * Returns <code>true</code> if none of the {@link Statistic}'s in the given collection has a higher
-     * total testability cost that the threshold in this {@link ReportParseDelegate}.
+     * Returns <code>true</code> if:
+     * <ul>
+     *  <li>none of the {@link Statistic}'s in the given collection has a higher total testability cost than the threshold in this {@link ReportParseDelegate}
+     *  <li>none of the ClassCost's in the given {@link Statistic}'s has a higher individual testability cost than the per-class threshold in this {@link ReportParseDelegate}
+     * </ul>
      * @param results a collection of {@link Statistic}'s
      * @return boolean
      */
-    private boolean isSuccessful(Collection<Statistic> results)
+    boolean isSuccessful(Collection<Statistic> results)
     {
         boolean successful = true;
         if (results != null)
         {
             for (Statistic result : results)
             {
-                int total = result.getCostSummary().getTotal();
+                CostSummary costSummary = result.getCostSummary();
+                int total = costSummary.getTotal();
                 successful = total <= m_threshold;
+
                 if (!successful)
                 {
                     break;
+                }
+
+                for (ClassCost classCost : costSummary.getCostStack())
+                {
+                    int perClassCost = classCost.getCost();
+                    successful = perClassCost <= m_perClassThreshold;
+
+                    if (!successful)
+                    {
+                        break;
+                    }
                 }
             }
         }

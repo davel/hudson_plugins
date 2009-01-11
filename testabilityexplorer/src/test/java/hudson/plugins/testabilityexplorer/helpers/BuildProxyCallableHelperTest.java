@@ -68,7 +68,7 @@ public class BuildProxyCallableHelperTest extends PluginBaseTest
         ReportBuilder reportBuilder = new TestabilityReportBuilder(chartBuilder, new TemporaryHealthCalculator());
         BuildProxy buildProxy = createBuildProxy(SystemUtils.getJavaIoTmpDir(), new XmlStatisticsParser(new DefaultConverterSelector()), reportBuilder);
 
-        ReportParseDelegate parseDelegate = new ReportParseDelegate(REPORT_FILE_NAME, 100);
+        ReportParseDelegate parseDelegate = new ReportParseDelegate(REPORT_FILE_NAME, 100, 80);
         List<FilePath> pathList = parseDelegate.getFilesToParse(buildProxy);
         assertNotNull(pathList);
         assertEquals(pathList.size(), 1);

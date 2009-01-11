@@ -6,6 +6,7 @@ import hudson.plugins.testabilityexplorer.utils.StringUtil;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +20,7 @@ public class ClassCost implements Serializable, TestabilityCost
 {
     private String m_name;
     private int m_cost;
-    private Collection<MethodCost> m_costStack;
+    private List<MethodCost> m_costStack;
 
     public ClassCost(String name, int cost)
     {
@@ -41,16 +42,6 @@ public class ClassCost implements Serializable, TestabilityCost
         return m_name;
     }
 
-    /**
-     * This will return a shorter version of {@link ClassCost#getName()}. The fully qualified class names of return
-     * values and parameters will be shortened to be just the class name without package.
-     * @return String
-     */
-    public String getDisplayName()
-    {
-        return StringUtil.stripPackages(getName());
-    }
-
     public int getCost()
     {
         return m_cost;
@@ -59,6 +50,21 @@ public class ClassCost implements Serializable, TestabilityCost
     public Collection<MethodCost> getCostStack()
     {
         return Collections.unmodifiableCollection(m_costStack);
+    }
+
+    /**
+     * Sorts the all costs contained in this ClassCost highest first.
+     */
+    public void sort()
+    {
+        if (m_costStack != null)
+        {
+            Collections.sort(m_costStack, MethodCostComparator.getInstance());
+            for (MethodCost methodCost : m_costStack)
+            {
+                methodCost.sort();
+            }            
+        }
     }
 
     @Override
