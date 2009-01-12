@@ -1,6 +1,7 @@
 package de.stephannoske.hudson.tools;
 
 import hudson.Launcher;
+import hudson.ProxyConfiguration;
 import hudson.model.AbstractBuild;
 import hudson.model.Build;
 import hudson.model.BuildListener;
@@ -8,14 +9,18 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.tasks.Publisher;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -268,23 +273,39 @@ public class NabatzagPublisher extends Publisher {
     private void sendRequest(final String message, final String earpos) {
 	final String requestString = buildRequest(message, earpos);
 	log.info(" sending nabatztag request : " + requestString);
-	final HttpClient client = new HttpClient();
 
-	final GetMethod method = new GetMethod(requestString);
-
-	try {
-	    synchronized (this) {
-		client.executeMethod(method);
-		final String result = method.getResponseBodyAsString();
-		log.info(" API call result : " + result);
-	    }
-
-	} catch (final Exception e) {
-	    e.getMessage();
+    URLConnection cnx = null;
+    InputStream inputStream = null;
+    BufferedReader bufferedReader = null;
+    try {
+    	cnx = ProxyConfiguration.open(new URL(requestString));
+    	cnx.connect();
+    	inputStream = cnx.getInputStream();
+    	bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+    	StringBuilder result = new StringBuilder();
+        String strLine;
+		while ((strLine = bufferedReader.readLine()) != null)
+			result.append(strLine);
+		log.info(" API call result : " + result.toString());
+    } catch (MalformedURLException dontCare) {
+    	log.error("URL is malformed.", dontCare);
+	} catch (IOException notImportant) {
+    	log.error("IOException while reading API call result.", notImportant);
 	} finally {
-	    method.releaseConnection();
-	}
-
+		if (bufferedReader != null)
+			try {
+				bufferedReader.close();
+			} catch (IOException e) {
+		    	log.error("IOException while closing API connection.", e);
+			}
+		if (inputStream != null)
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				log.error("IOException while closing API connection.", e);
+			}
+    }
+	
     }
 
 }
