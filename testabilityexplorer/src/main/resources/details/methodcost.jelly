@@ -1,0 +1,75 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/utilities.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/tabview-min.js"></script>
+    <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/dispatcher-min.js"></script>
+
+         <h3>Summary</h3>
+         <table border="1px" class="pane sortable">
+             <thead>
+                 <tr>
+                     <th>Method</th>
+                     <th>Line</th>
+                     <th>Cost</th>
+                 </tr>
+             </thead>
+             <tbody>
+                 <tr>
+                     <td align="right">${it.name}</td>
+                     <td align="right">${it.line}</td>
+                     <td align="right">${it.overall}</td>
+                 </tr>
+             </tbody>
+         </table>
+
+        <script type="text/javascript">
+            var myTabs = new YAHOO.widget.TabView("statistics");
+
+            YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+                label: '${%Methods}',
+                content: '<table class="pane sortable" id="packages">
+                    <tr>
+                      <td class="pane-header">${%Line}</td>
+                      <td class="pane-header">${%Cost}</td>
+                      <td class="pane-header">${%Reason}</td>
+                      <td class="pane-header">${%Method}</td>
+                    </tr>
+                    <tbody>
+                      <j:forEach var="subCost" items="${it.costStack}">
+                        <tr>
+                            <j:choose>
+                              <j:when test="${mainMethodCost.overall > 100}">
+                                  <td class="pane"><span style="color:red">${subCost.line}</span></td>
+                                  <td class="pane"><span style="color:red">${subCost.overall}</span></td>
+                                  <td class="pane"><span style="color:red">${subCost.reason}</span></td>
+                              </j:when>
+                              <j:when test="${mainMethodCost.overall > 20}">
+                                  <td class="pane"><span style="color:orange">${subCost.line}</span></td>
+                                  <td class="pane"><span style="color:orange">${subCost.overall}</span></td>
+                                  <td class="pane"><span style="color:orange">${subCost.reason}</span></td>
+                              </j:when>
+                              <j:otherwise>
+                                  <td class="pane"><span style="color:green">${subCost.line}</span></td>
+                                  <td class="pane"><span style="color:green">${subCost.overall}</span></td>
+                                  <td class="pane"><span style="color:green">${subCost.reason}</span></td>
+                              </j:otherwise>
+                            </j:choose>
+                          <td class="pane">
+                                  ${subCost.displayName}
+                          </td>
+                        </tr>
+                      </j:forEach>
+                    </tbody>
+                  </table>',
+                cacheData: true,
+                active: true
+            }), myTabs);
+
+        </script>
+
+        <st:include page="/tabview/css.jelly" />
+
+        <h2>${%Details}</h2>
+        <div id="statistics" class="yui-navset"></div>
+
+</j:jelly>

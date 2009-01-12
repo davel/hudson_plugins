@@ -7,7 +7,7 @@
 
     <l:main-panel>
 
-      jdfjkds
+      <st:include it="${it.methodCost}" page="/details/methodcost.jelly" />
 
     </l:main-panel>
 
