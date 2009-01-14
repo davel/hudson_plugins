@@ -8,13 +8,21 @@ import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormFieldValidator;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
@@ -29,7 +37,6 @@ import antlr.ANTLRException;
 public class UrlChangeTrigger extends Trigger<BuildableItem> {
 
     URL url;
-    String oldMd5;
     
     private static final int readBufferSize = 8*1024;
     /** Extracts the MD5 string from the specified input stream; this MD5 should
@@ -73,18 +80,55 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
     
     public UrlChangeTrigger(URL url) {
         this.url = url;
+    }
+    
+    @Override
+    public void start(BuildableItem project, boolean newInstance) {
+    	super.start(project, newInstance);
         try {
             this.tabs = CronTabList.create("* * * * *");
         } catch (ANTLRException e) {
             throw new RuntimeException("Bug! couldn't schedule poll");
-        }
+        }   	
+    }
+
+    private static final Logger LOGGER =
+        Logger.getLogger(UrlChangeTrigger.class.getName());
+
+    private File getFingerprintFile() {
+	return new File(job.getRootDir(), "url-change-trigger-oldmd5");
     }
 
     @Override
     public void run() {
         try {
+            LOGGER.log(Level.FINER, "Testing the file {0}", url);
             String currentMd5 = getMd5(url.openStream());
+
+	    String oldMd5;
+	    File file = getFingerprintFile();
+	    if (!file.exists()) {
+		oldMd5 = "null";
+	    } else {
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		try {
+		    oldMd5 = br.readLine();
+		} finally {
+		    br.close();
+		}
+	    }
             if (!currentMd5.equals(oldMd5)) {
+            	LOGGER.log(Level.FINE, 
+            			"Differences found in the file {0}. >{1}< != >{2}<",
+            			new Object[] {
+                                    url, oldMd5, currentMd5,
+            			});
+		PrintWriter w = new PrintWriter(new FileOutputStream(file));
+		try {
+		    w.println(currentMd5);
+		} finally {
+		    w.close();
+		}
                 oldMd5 = currentMd5;
                 job.scheduleBuild();
             }
