@@ -63,7 +63,7 @@ public class MethodCost implements Serializable, TestabilityCost
      */
     public String getDisplayName()
     {
-        return StringUtils.abbreviate(getName(), 100);
+        return StringUtils.abbreviate(getName(), 130);
     }
 
     public int getCyclomatic()

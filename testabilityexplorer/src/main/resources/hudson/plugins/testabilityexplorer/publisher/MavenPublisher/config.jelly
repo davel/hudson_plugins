@@ -2,7 +2,7 @@
          xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:bh="/lib/health">
     <f:entry title="Report File Pattern"
              description="
-             This pattern locates the XML report files (ie. &lt;b&gt;target/reports/testability/report.xml&lt;/b&gt;). The path is relative to &lt;a href='ws/'&gt;the module root&lt;/a&gt;.&lt;br/&gt;.
+             This pattern locates the XML report files (ie. &lt;b&gt;target/reports/testability/report.xml&lt;/b&gt;). Basedir of the fileset is the &lt;a href='ws/'&gt;the module root&lt;/a&gt;.&lt;br/&gt;.
            ">
         <f:textbox name="javancss.reportFilenamePattern" value="${instance.reportFilenamePattern}"/>
     </f:entry>

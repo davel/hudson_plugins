@@ -84,10 +84,19 @@ public class RangedClassesTrend extends RangedTrend
     {
         final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel>();
 
+        Collection<Statistic> previousNonEmptyResults = null; // this is needed so that the graphline will not be interrupted
         for (BuildAndResults buildAndResults : getItems())
         {
             AbstractBuild<?, ?> build = buildAndResults.getBuild();
             Collection<Statistic> results = buildAndResults.getStatistics();
+            if (results.isEmpty())
+            {
+                results = previousNonEmptyResults != null ? previousNonEmptyResults : results;
+            }
+            else
+            {
+                previousNonEmptyResults = results;
+            }
 
             ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(build);
             dsb.add(summarizeCost(results, EXCELLENT_COST_TEMPLATE), "excellent", label);

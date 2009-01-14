@@ -54,6 +54,25 @@ public class AbstractBuildReportChartingTest extends PluginBaseTest
         assertNotNull(chartOverall);
     }
 
+    public void testGraphLineConsistency()
+    {
+        LinkedList<BuildAndResults> buildsAndResults = new LinkedList(createBuildAndResults());
+        buildsAndResults.add(0, new BuildAndResults(createBuild(0, GregorianCalendar.getInstance()), null));
+
+        RangedTrend classesTrend = new RangedClassesTrend(buildsAndResults);
+        CategoryDataset categoryDataset = classesTrend.getCategoryDataset();
+
+        assertEquals(categoryDataset.getRowCount(), 3);
+        for (int i = 0; i < 3; i++)
+        {
+            Number value4 = categoryDataset.getValue(i, 5);
+            Number value5 = categoryDataset.getValue(i, 6);
+            Number value6 = categoryDataset.getValue(i, 7);
+            assertEquals(value4, value5);
+            assertFalse(value5.intValue() == value6.intValue());
+        }
+    }
+
     public void testClassesTrendChart()
     {
         List<BuildAndResults> buildsAndResults = createBuildAndResults();
@@ -148,7 +167,15 @@ public class AbstractBuildReportChartingTest extends PluginBaseTest
             CostSummary costSummary = new CostSummary(excellent, good, needWork, total);
             Collection<Statistic> stats = createStatistics(false, costSummary);
 
-            buildsAndResults.add(new BuildAndResults(build, stats));
+            // add some invalid build
+            if (i == 5)
+            {
+                buildsAndResults.add(new BuildAndResults(build, null));
+            }
+            else
+            {
+                buildsAndResults.add(new BuildAndResults(build, stats));
+            }
         }
         return buildsAndResults;
     }
