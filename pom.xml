@@ -137,6 +137,7 @@
     <modules>
         <module>accurev</module>
         <module>active-directory</module>
+        <module>audit-trail</module>
         <module>batch-task</module>
         <module>build-publisher</module>
         <module>build-timeout</module>
@@ -197,6 +198,7 @@
         <module>rubyMetrics</module>
         <module>sametime</module>
         <module>scp</module>
+        <module>sidebar-link</module>
         <module>sonar</module>
         <module>ssh-slaves</module>
         <module>sfee</module> <!--  not compiling currently  -->
