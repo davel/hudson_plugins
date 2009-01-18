@@ -11,11 +11,5 @@
   <name>URL Change Trigger</name>
   <description>This plugin allows you to trigger a Hudson build when the content of an URL changes.</description>
   <packaging>hpi</packaging>
-  <version>1.1</version>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/url-change-trigger-1.1</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/url-change-trigger-1.1</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/url-change-trigger/tags/url-change-trigger-1.1</url>
-  </scm>
+  <version>1.2-SNAPSHOT</version>
 </project>
