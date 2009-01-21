@@ -1,0 +1,25 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="${%LDAP Email Lookup}">
+    <f:entry title="${%Server}" help="/plugin/ldapemail/help-config.html">
+      <f:textbox name="server" value="${it.config.server}"/>
+    </f:entry>
+    <f:entry title="${%BaseDN}">
+      <f:textbox name="baseDN" value="${it.config.baseDN}"/>
+    </f:entry>
+    <f:entry title="${%BindDN}">
+      <f:textbox name="bindDN" value="${it.config.bindDN}"/>
+    </f:entry>
+    <f:entry title="${%Bind Password}">
+      <f:textbox name="bindPassword" value="${it.config.bindPassword}"/>
+    </f:entry>
+    <f:entry title="${%Email Attribute}">
+      <f:textbox name="emailAttribute" value="${it.config.emailAttribute}"/>
+    </f:entry>
+    <f:entry title="${%Search Attribute}">
+      <f:textbox name="searchAttribute" value="${it.config.searchAttribute}"/>
+    </f:entry>
+    <f:entry title="${%Perform Search}" help="/plugin/ldapemail/help-perform.html">
+      <f:checkbox name="performSearch" checked="${it.config.isPerformSearch()}"/>
+    </f:entry>
+  </f:section>
+</j:jelly>

@@ -9,8 +9,7 @@
 
 	<name>LDAP Email Plugin</name>
 	<description>
-		Hudson plugin that resolves email addresses through LDAP
-		lookups.
+		Hudson plugin that resolves email addresses through LDAP lookups.
 	</description>
 	
 	<url>http://hudson.gotdns.com/wiki/display/HUDSON/LDAP+Email+Plugin</url>

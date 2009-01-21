@@ -5,13 +5,16 @@
 package com.mtvi.plateng.hudson.ldap;
 
 import hudson.Plugin;
+import hudson.Util;
 import hudson.XmlFile;
+import hudson.model.Descriptor.FormException;
 import hudson.model.Hudson;
 import hudson.tasks.MailAddressResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+import net.sf.json.JSONObject;
 
 /**
  * Entry point of for the LDAP Email plugin. Loads configuration from
@@ -27,6 +30,8 @@ public class PluginImpl extends Plugin {
      */
     private static final Logger LOGGER = Logger.getLogger("hudson." + PluginImpl.class.getName());
 
+    public Configuration config;
+
     /**
      * Plugin lifecycle method. Loads configuration and adds configured instance
      * of LdapMailAddressResolver to MailAddressResolver list.
@@ -36,7 +41,7 @@ public class PluginImpl extends Plugin {
      */
     @Override
     public void start() throws Exception {
-        Configuration config = loadConfiguration();
+        config = loadConfiguration();
         MailAddressResolver.LIST.add(new LdapMailAddressResolver(config));
     }
 
@@ -48,12 +53,7 @@ public class PluginImpl extends Plugin {
      * @throws IOException if the file can't be read.
      */
     protected Configuration loadConfiguration() throws IOException {
-        Hudson hudson = Hudson.getInstance();
-        File rootDirectory = hudson.getRootDir();
-        String fileName = LdapMailAddressResolver.class.getName() + ".xml";
-        File file = new File(rootDirectory, fileName);
-        LOGGER.info(String.format("Loading configuration from %s", file.getAbsolutePath()));
-        XmlFile xmlFile = new XmlFile(Hudson.XSTREAM, file);
+        XmlFile xmlFile = getConfigXml();
         Configuration config = null;
         if (xmlFile.exists()) {
             config = (Configuration) xmlFile.read();
@@ -63,5 +63,24 @@ public class PluginImpl extends Plugin {
             config = new Configuration();
         }
         return config;
+    }
+
+    @Override
+    public void configure(JSONObject formData) throws IOException {
+        config.setServer(Util.fixEmptyAndTrim(formData.optString("server")));
+        config.setBaseDN(Util.fixEmptyAndTrim(formData.optString("baseDN")));
+        config.setBindDN(Util.fixEmptyAndTrim(formData.optString("bindDN")));
+        config.setBindPassword(Util.fixEmptyAndTrim(formData.optString("bindPassword")));
+        config.setEmailAttribute(Util.fixEmptyAndTrim(formData.optString("emailAttribute")));
+        config.setSearchAttribute(Util.fixEmptyAndTrim(formData.optString("searchAttribute")));
+        config.setPerformSearch(formData.optBoolean("performSearch", false));
+        getConfigXml().write(config);
+    }
+
+    @Override
+    protected XmlFile getConfigXml() {
+        return new XmlFile(Hudson.XSTREAM,
+                           new File(Hudson.getInstance().getRootDir(),
+                                    LdapMailAddressResolver.class.getName() + ".xml"));
     }
 }
