@@ -69,7 +69,7 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
                     // TODO: how to report dependency changes to Hudson (change set)?
                     
                     // trigger a build
-                    job.scheduleBuild();
+                    scheduleBuild(job);
                 }
             }
         }

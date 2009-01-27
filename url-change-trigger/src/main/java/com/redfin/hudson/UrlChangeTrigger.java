@@ -130,7 +130,7 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
 		    w.close();
 		}
                 oldMd5 = currentMd5;
-                job.scheduleBuild();
+                scheduleBuild(job);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
