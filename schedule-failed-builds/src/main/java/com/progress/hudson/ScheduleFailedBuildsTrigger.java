@@ -33,7 +33,7 @@ public class ScheduleFailedBuildsTrigger extends Trigger<BuildableItem> {
     @Override
     public void run() {      
         if(FailedBuildsQueue.needsBuild(job)){          
-                scheduleBuild(job);
+                job.scheduleBuild();
         }
     }  
     
