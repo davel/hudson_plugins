@@ -19,19 +19,27 @@ package hudson.plugins.mipi;
 * under the License.
 */
 
+import hudson.Launcher;
+import hudson.Util;
 import hudson.maven.MavenModule;
 import hudson.maven.MavenModuleSet;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
 import hudson.model.Descriptor;
+import hudson.model.Result;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.Publisher;
 import hudson.util.FormFieldValidator;
 import net.sf.json.JSONObject;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -81,6 +89,74 @@ public class InvocationReportPublisher
     public String getInvokerResults()
     {
         return invokerResults;
+    }
+
+    public boolean perform( AbstractBuild build, Launcher launcher, BuildListener listener )
+        throws InterruptedException, IOException
+    {
+        listener.getLogger().println( Messages.InvocationReportPublisher_Recording() );
+        InvocationResultAction action;
+
+        try
+        {
+            final long buildTime = build.getTimestamp().getTimeInMillis();
+            final long nowMaster = System.currentTimeMillis();
+
+            InvocationResult result = build.getProject().getWorkspace().act( new FileCallable<InvocationResult>()
+            {
+                public InvocationResult invoke( File ws, VirtualChannel channel )
+                    throws IOException
+                {
+                    final long nowSlave = System.currentTimeMillis();
+
+                    FileSet fs = Util.createFileSet( ws, invokerResults );
+                    DirectoryScanner ds = fs.getDirectoryScanner();
+
+                    String[] files = ds.getIncludedFiles();
+                    if ( files.length == 0 )
+                    {
+                        // no test result. Most likely a configuration error or fatal problem
+                        throw new AbortException( Messages.InvocationReportPublisher_NoInvocationReportFound() );
+                    }
+
+                    return new InvocationResult( buildTime + ( nowSlave - nowMaster ), ds );
+                }
+            } );
+
+            action = new InvocationResultAction( build, result, listener );
+            if ( result.getPassCount() == 0 && result.getFailCount() == 0 )
+            {
+                throw new AbortException( Messages.InvocationReportPublisher_ResultIsEmpty() );
+            }
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace( listener.error( "Failed to archive JUnit reports" ) );
+            build.setResult( Result.FAILURE );
+            return true;
+        }
+        catch ( AbortException e )
+        {
+            if ( build.getResult() == Result.FAILURE )
+            // most likely a build failed before it gets to the test phase.
+            // don't report confusing error message.
+            {
+                return true;
+            }
+
+            listener.getLogger().println( e.getMessage() );
+            build.setResult( Result.FAILURE );
+            return true;
+        }
+
+        build.getActions().add( action );
+
+        if ( action.getResult().getFailCount() > 0 )
+        {
+            build.setResult( Result.UNSTABLE );
+        }
+
+        return true;
     }
 
 // ------------------------ INTERFACE METHODS ------------------------
