@@ -20,8 +20,7 @@ package hudson.plugins.mipi;
 */
 
 import hudson.Plugin;
-
-import java.util.logging.Logger;
+import hudson.tasks.BuildStep;
 
 /**
  * Entry point for the Maven Invoker Plugin Invocations Hudson Plugin.
@@ -32,12 +31,13 @@ import java.util.logging.Logger;
 public class PluginImpl
     extends Plugin
 {
-    private static final Logger LOGGER = Logger.getLogger( PluginImpl.class.getName() );
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start()
         throws Exception
     {
-        super.start();    //To change body of overridden methods use File | Settings | File Templates.
+        BuildStep.PUBLISHERS.addRecorder( InvocationReportPublisher.DESCRIPTOR );
     }
 }
