@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.277</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>mipi</artifactId>
+  <packaging>hpi</packaging>
+  <version>1.4-SNAPSHOT</version>
+  <name>Hudson Maven Invoker Plugin Invocations plugin</name>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/mipi+Plugin</url>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <version>1.0-alpha-18</version>
+        <executions>
+          <execution>
+            <goals>
+              <!-- Generate the xpp3 reader code -->
+              <goal>xpp3-reader</goal>
+              <!-- Generate the xpp3 writer code -->
+              <goal>xpp3-writer</goal>
+              <!-- Generate the Java sources for the model itself -->
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <models>
+            <model>src/main/mdo/invocation.mdo</model>
+          </models>
+          <version>1.0.0</version>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
