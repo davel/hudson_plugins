@@ -62,8 +62,17 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
+    /**
+     * The name of a copy of the ivy file relative to the projects root dir since the 
+     * workspace may not always be accessible.
+     */
+    private static final String BACKUP_IVY_FILE_NAME = "ivy.xml";
+
     private static final Logger LOGGER = Logger.getLogger(IvyBuildTrigger.class.getName());
 
+    /**
+     * The name of the ivy file relative to the workspace as configured by the user.
+     */
     private String ivyFile = "ivy.xml";
 
     private long lastmodified = 0;
@@ -83,7 +92,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * Contructor
+     * Constructor
      *
      * @param ivyFile
      *            the ivy.xml file path within the workspace
@@ -154,64 +163,65 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
     }
 
     /**
-     * Get the last computed Ivy module descriptior created from the ivy.xml of
+     * Get the last computed Ivy module descriptor created from the ivy.xml of
      * this trigger
-     *
-     * @param workspace
-     *            the path to the root of the workspace
-     * @return the Ivy module descriptior
-     * @throws ParseException
-     * @throws IOException
+     * @param p the project this Trigger belongs to 
+     * @return the Ivy module descriptor
      */
-    public ModuleDescriptor getModuleDescriptor(FilePath workspace) {
+    public ModuleDescriptor getModuleDescriptor(AbstractProject p) {
         if (moduleDescriptor == null) {
-            recomputeModuleDescriptor(workspace);
+            recomputeModuleDescriptor(p);
         }
         return moduleDescriptor;
     }
 
     /**
-     * Force the creation of the module descriptor from the ivy.xml file
+     * Force the creation of the module descriptor
      *
      * @throws ParseException
      * @throws IOException
      */
-    public void recomputeModuleDescriptor(FilePath workspace) {
+    private void recomputeModuleDescriptor(AbstractProject p) {
+        LOGGER.fine ("Recomputing Moduledescriptor for Project "+p.getFullDisplayName());
         Ivy ivy = getIvy();
         if (ivy == null) {
-            moduleDescriptor = null;
-        } else {
-            final FilePath ivyF = workspace.child(ivyFile);
-            moduleDescriptor = (ModuleDescriptor)ivy.execute(new IvyCallback(){
-                @Override
-                public Object doInIvyContext(Ivy ivy, IvyContext context) {
-                    try {
-                        return  ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(),
-                                ivyF.toURI().toURL(), ivy.getSettings().doValidate());
-                    } catch (InterruptedException e) {
-                        LOGGER.log(Level.WARNING, "The Ivy module descriptor parsing of " + ivyF + " has been interrupted", e);
-                        return null;
-                    } catch (MalformedURLException e) {
-                        LOGGER.log(Level.WARNING, "The URL is malformed : " + ivyF, e);
-                        return null;
-                    } catch (ParseException e) {
-                        LOGGER.log(Level.WARNING, "Parsing error while reading the ivy file " + ivyF, e);
-                        return null;
-                    } catch (IOException e) {
-                        LOGGER.log(Level.WARNING, "I/O error while reading the ivy file " + ivyF, e);
-                        return null;
-                    }
+            setModuleDescriptor(null);
+            return;
+        }
+        copyIvyFileFromWorkspaceIfNecessary (p);
+        // Calculate Moduledescriptor from the backupcopy 
+        final File ivyF = new File(p.getRootDir(), BACKUP_IVY_FILE_NAME);
+        if (!ivyF.exists()) {
+            setModuleDescriptor(null);
+            return;
+        }
+        if (moduleDescriptor != null && ivyF.lastModified() == lastmodified) return;
+        setModuleDescriptor((ModuleDescriptor) ivy.execute(new IvyCallback(){
+            public Object doInIvyContext(Ivy ivy, IvyContext context) {
+                try {
+                    return  ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy.getSettings(),
+                            ivyF.toURI().toURL(), ivy.getSettings().doValidate());
+                } catch (MalformedURLException e) {
+                    LOGGER.log(Level.WARNING, "The URL is malformed : " + ivyF, e);
+                    return null;
+                } catch (ParseException e) {
+                    LOGGER.log(Level.WARNING, "Parsing error while reading the ivy file " + ivyF, e);
+                    return null;
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "I/O error while reading the ivy file " + ivyF, e);
+                    return null;
                 }
-            } );
+            }
+        }));
+    }
 
-            try {
-                lastmodified = ivyF.lastModified();
-            } catch (InterruptedException e) {
-                LOGGER.log(Level.WARNING, "Could not save the last Modified Date of the ivy file:"+ivyF,e);
-            }
-            catch (IOException e1) {
-                LOGGER.log(Level.WARNING,"Could not save the last Modified Date of the ivy file:"+ivyF,e1);
-            }
+    private void setModuleDescriptor (ModuleDescriptor d) {
+        ModuleDescriptor old = moduleDescriptor;
+        moduleDescriptor = d;
+        if (old == moduleDescriptor) return;
+        if ((old==null) || !old.equals(moduleDescriptor)) {
+            DESCRIPTOR.invalidateProjectMap();
+            Hudson.getInstance().rebuildDependencyGraph();
         }
     }
 
@@ -264,24 +274,52 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
     @Override
     public boolean perform(Build<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        FilePath workspace = build.getProject().getWorkspace();
-        FilePath f = workspace.child(ivyFile);
-        try {
-            if (lastmodified != f.lastModified()) {
-                DESCRIPTOR.invalidateProjectMap();
-                recomputeModuleDescriptor(build.getProject().getWorkspace());
-                Hudson.getInstance().rebuildDependencyGraph();
-            }
-        } catch (IOException e) {
-            e.printStackTrace(listener.error("Failed to read the ivy file " + f));
-        } catch (InterruptedException e) {
-            e.printStackTrace(listener.error("Interuption of the read the ivy file " + f));
-        }
+        recomputeModuleDescriptor(build.getProject());
         return true;
     }
 
+    /**
+     *  Workaround for a bug in p.getWorkspace prior to 1.279
+     * @param p
+     * @return
+     */
+    private FilePath getWorkspace (AbstractProject p) {
+        try {
+            return p.getWorkspace();
+        } catch (NullPointerException e) {
+            LOGGER.warning("Caught a problem in AbstractProject.getWorkspace!" );
+            return null;
+        }
+    }
+    
+    /**
+     * 
+     * @param workspace Workspace root Directory
+     * @param rootDir The Projects root dir where the backup copy is stored
+     *      */
+    private void copyIvyFileFromWorkspaceIfNecessary(AbstractProject p) {
+        FilePath workspace = getWorkspace (p);
+        File rootDir = p.getRootDir();
+        if (workspace == null) return; // If the workspace is null we can not copy a new ivy file
+        FilePath f = workspace.child(ivyFile);
+        try {
+                // TODO: We could possible avoid copying the file each time
+                // Copy the ivy file from the workspace (possible at a slave) to the projects dir (at Master)
+                FilePath backupCopy = new FilePath (
+                        new File (rootDir, BACKUP_IVY_FILE_NAME));
+                f.copyTo (backupCopy);
+                new File (rootDir, BACKUP_IVY_FILE_NAME).setLastModified(f.lastModified());
+                return;
+        } catch (IOException e) {
+            LOGGER.warning("Failed to read the ivy file " + f);
+        } catch (InterruptedException e) {
+            LOGGER.warning("Interupted when reading the ivy file " + f);
+        }
+    }
+
     public void buildDependencyGraph(AbstractProject owner, DependencyGraph graph) {
-        ModuleDescriptor md = getModuleDescriptor(owner.getWorkspace());
+        ModuleDescriptor md;
+        md = getModuleDescriptor(owner);
         if (md == null) {
             return;
         }
@@ -322,7 +360,7 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
 
         @CopyOnWrite
         private volatile IvyConfiguration[] configurations = new IvyConfiguration[0];
-        private volatile Map<ModuleId, List<AbstractProject>> projectMap=null;
+        private transient volatile Map<ModuleId, List<AbstractProject>> projectMap=null;
         DescriptorImpl() {
             super(IvyBuildTrigger.class);
             load();
@@ -362,7 +400,15 @@ public class IvyBuildTrigger extends Publisher implements DependecyDeclarer {
                 }
                 IvyBuildTrigger t = (IvyBuildTrigger) p.getPublisher(DESCRIPTOR);
                 if (t != null) {
-                    ModuleDescriptor m = t.getModuleDescriptor(p.getWorkspace());
+                    ModuleDescriptor m;
+                    
+                    try {
+                        m = t.getModuleDescriptor(p);
+                    } catch (Exception e) { // This does sometimes fail with an exception instead of returning null for an offline slave
+                        LOGGER.log(Level.WARNING,"Calculating the Modules Descriptor failed for project "+p.getFullDisplayName(),e);
+                        m =  null;
+                    }
+                    
                     if (m != null) {
                         ModuleId id = m.getModuleRevisionId().getModuleId();
                         List<AbstractProject> list = projectMap.get (id);
