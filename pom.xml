@@ -164,6 +164,7 @@
         <module>googlecode</module>
         <module>groovy</module>
         <module>hello-world</module>
+        <module>harvest</module>
         <module>hudsontrayapp</module>
         <module>ircbot</module>
         <module>ivy</module>
