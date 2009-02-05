@@ -30,16 +30,16 @@ under the License.
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>mipi</artifactId>
+  <artifactId>mibsr</artifactId>
   <version>1.4-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/mipi+Plugin</url>
 
-  <name>Hudson Maven Invoker Plugin Invocations plugin</name>
+  <name>Hudson Maven Invoker Build Set Reporting plugin</name>
   <description>
-    Maven Invoker Plugin Invocations plugin for Hudson. The Maven Invoker Plugin Invocations plugin allows reporting
-    of invocations of maven using the Maven Invoker Plugin as test results in Hudson.
+    Maven Invoker Build Set Reporting plugin for Hudson. The Maven Invoker Build Set Reporting plugin allows reporting
+    of build sets (invoked using the Maven Invoker Plugin) as test results in Hudson.
   </description>
   <inceptionYear>2009</inceptionYear>
 
