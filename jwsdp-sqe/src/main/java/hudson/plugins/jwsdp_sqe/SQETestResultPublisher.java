@@ -15,7 +15,12 @@ import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.IOException2;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -88,6 +93,8 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
 
                     int counter=0;
 
+                    SAXParser parser = createParser();
+
                     // archive report files
                     for (String file : includedFiles) {
                         File src = new File(ws, file);
@@ -95,6 +102,14 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
                         if(src.lastModified()<buildTime) {
                             listener.getLogger().println("Skipping "+src+" because it's not up to date");
                             continue;       // not up to date.
+                        }
+
+                        // verify that this is indeed an XML file, while we still know the original file name.
+                        try {
+                            parser.parse(src,new DefaultHandler());
+                        } catch (SAXException e) {
+                            listener.getLogger().println("Skipping "+src+" because it doesn't look like an XML file");
+                            continue;
                         }
 
                         try {
@@ -105,6 +120,21 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
                     }
                     return null;
                 }
+
+                private SAXParser createParser() throws IOException {
+                    SAXParser parser;
+                    try {
+                        SAXParserFactory spf = SAXParserFactory.newInstance();
+                        spf.setNamespaceAware(true);
+                        parser = spf.newSAXParser();
+                    } catch (ParserConfigurationException e) {
+                        throw new IOException2(e);
+                    } catch (SAXException e) {
+                        throw new IOException2(e);
+                    }
+                    return parser;
+                }
+                
                 private static final long serialVersionUID = 1L;
             });
         } catch (AbortException e) {
