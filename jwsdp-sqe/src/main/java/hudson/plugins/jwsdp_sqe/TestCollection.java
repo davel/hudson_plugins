@@ -59,6 +59,8 @@ public abstract class TestCollection<
      * For Digester.
      */
     public void add(C t) {
+        if(!t.isFilled())
+            throw new IllegalStateException("Incomplete test data. Is this file correctly formatted?");
         tests.put(t.getId(),t);
         totalCount += t.getTotalCount();
         failCount += t.getFailCount();

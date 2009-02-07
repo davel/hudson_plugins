@@ -66,6 +66,14 @@ public abstract class TestObject<S extends TestObject<S>>
     /*package*/ TestObject() {
     }
 
+    /**
+     * Returns true only if all the mandatory fields are populated. This is used to make sure
+     * that we are parsing the right report.
+     */
+    public boolean isFilled() {
+        return id!=null;
+    }
+
     public String getId() {
         return id;
     }

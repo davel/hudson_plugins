@@ -1,9 +1,9 @@
 package hudson.plugins.jwsdp_sqe;
 
-import hudson.model.Build;
 import hudson.model.AbstractBuild;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  * @author Kohsuke Kawaguchi
  */
-public final class Report extends TestCollection<Report,Suite> {
+public class Report extends TestCollection<Report,Suite> {
     // parent doesn't exist. so specify dummy
 
     private final SQETestAction owner;
@@ -45,6 +45,10 @@ public final class Report extends TestCollection<Report,Suite> {
      * Loads SQE report file into this {@link Report} object.
      */
     public void add( File reportXml ) throws IOException, SAXException {
+        add(new InputSource(reportXml.toURI().toURL().toExternalForm()));
+    }
+    
+    public void add( InputSource reportXml ) throws IOException, SAXException {
         Digester digester = new Digester();
         digester.setClassLoader(getClass().getClassLoader());
 
@@ -55,7 +59,7 @@ public final class Report extends TestCollection<Report,Suite> {
         digester.addObjectCreate("*/testcase",TestCase.class);
         digester.addSetNext("*/testsuite","add");
         digester.addSetNext("*/test","add");
-        if(owner.considerTestAsTestObject())
+        if(considersTestAsTestObject())
             digester.addCallMethod("*/test", "setconsiderTestAsTestObject");
         digester.addSetNext("*/testcase","add");
 
@@ -67,6 +71,10 @@ public final class Report extends TestCollection<Report,Suite> {
         digester.addBeanPropertySetter("*/status","statusMessage");
 
         digester.parse(reportXml);
+    }
+
+    protected boolean considersTestAsTestObject() {
+        return owner.considerTestAsTestObject();
     }
 
     public String getChildTitle() {
