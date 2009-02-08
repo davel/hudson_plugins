@@ -6,6 +6,8 @@ import hudson.plugins.crap4j.calculation.HealthBuilder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.StaplerRequest;
 
 public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
@@ -29,12 +31,12 @@ public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
 	}
 	
 	@Override
-	public Crap4JPublisher newInstance(StaplerRequest req) throws FormException {
+	public Crap4JPublisher newInstance(StaplerRequest req, JSONObject object) throws FormException {
         return req.bindParameters(Crap4JPublisher.class, "crap_");
 	}
 	
 	@Override
-	public boolean configure(StaplerRequest req) throws FormException {
+	public boolean configure(StaplerRequest req, JSONObject object) throws FormException {
         try {
         	double healthThreshold = Double.parseDouble(req.getParameter("crap_publisher.health.threshold"));
         	this.healthBuilder = new HealthBuilder(healthThreshold);
@@ -45,7 +47,7 @@ public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
             throw new FormException("health threshold field must be a positive Double",
                     "crap_publisher.health.threshold");
         }
-		return super.configure(req);
+		return super.configure(req, object);
 	}
 	
 	@SuppressWarnings("unchecked")

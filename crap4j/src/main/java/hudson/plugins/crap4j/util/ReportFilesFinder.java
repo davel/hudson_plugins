@@ -8,8 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.selectors.FileSelector;
+import org.apache.tools.ant.types.selectors.FilenameSelector;
 
 public class ReportFilesFinder implements FileCallable<FoundFile[]> {
 
@@ -34,12 +37,9 @@ public class ReportFilesFinder implements FileCallable<FoundFile[]> {
 	}
 
     private String[] getRelativePaths(File workspaceRoot) {
-        FileSet fileSet = new FileSet();
-        org.apache.tools.ant.Project project = new org.apache.tools.ant.Project();
-        fileSet.setProject(project);
-        fileSet.setDir(workspaceRoot);
-        fileSet.setIncludes(this.pattern);
-        return fileSet.getDirectoryScanner(project).getIncludedFiles();
+    	FileSetBuilder builder = new FileSetBuilder(workspaceRoot);
+    	FileSet fileSet = builder.createFileSetFor(this.pattern);
+        return fileSet.getDirectoryScanner().getIncludedFiles();
     }
 
     private FoundFile[] getFoundFiles(File workspaceRoot) {

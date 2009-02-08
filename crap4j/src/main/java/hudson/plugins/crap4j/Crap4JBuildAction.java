@@ -74,7 +74,7 @@ public class Crap4JBuildAction implements StaplerProxy, HealthReportingAction {
 	}
 	
     public final void doGraphMap(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        if (ChartUtil.awtProblem) {
+        if (null != ChartUtil.awtProblemCause) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
@@ -88,7 +88,7 @@ public class Crap4JBuildAction implements StaplerProxy, HealthReportingAction {
     }
     
     public final void doGraph(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        if (ChartUtil.awtProblem) {
+        if (null != ChartUtil.awtProblemCause) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }

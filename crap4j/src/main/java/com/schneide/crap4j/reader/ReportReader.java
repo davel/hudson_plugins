@@ -16,6 +16,7 @@ import com.schneide.crap4j.reader.model.ICrapReport;
 import com.schneide.crap4j.reader.model.IMethod;
 import com.schneide.crap4j.reader.model.IMethodCrapData;
 import com.schneide.crap4j.reader.model.IOverallStatistics;
+import com.schneide.crap4j.reader.util.NumericalParser;
 
 public class ReportReader {
 
@@ -138,13 +139,14 @@ public class ReportReader {
 	
 	private ParsedStatistics parseStatistics(Element rootElement) {
 		Element statsElement = rootElement.getChild("stats"); //$NON-NLS-1$
+		NumericalParser parser = new NumericalParser();
 		ParsedStatistics result = new ParsedStatistics(
 				readTextualContent(statsElement, "name"),
-				Integer.parseInt(readTextualContent(statsElement, "methodCount")),
-				Integer.parseInt(readTextualContent(statsElement, "crapMethodCount")),
-				Integer.parseInt(readTextualContent(statsElement, "crapLoad")),
-				Double.parseDouble(readTextualContent(statsElement, "totalCrap")),
-				Double.parseDouble(readTextualContent(statsElement, "crapMethodPercent")));
+				parser.parseInt(readTextualContent(statsElement, "methodCount")),
+				parser.parseInt(readTextualContent(statsElement, "crapMethodCount")),
+				parser.parseInt(readTextualContent(statsElement, "crapLoad")),
+				parser.parseDouble(readTextualContent(statsElement, "totalCrap")),
+				parser.parseDouble(readTextualContent(statsElement, "crapMethodPercent")));
 		return result;
 	}
 
@@ -161,10 +163,11 @@ public class ReportReader {
 
 	private IMethodCrapData parseMethodCrap(Element methodElement) {
 		IMethod method = parseMethod(methodElement);
-		double crap = Double.parseDouble(readTextualContent(methodElement, "crap")); //$NON-NLS-1$
-		int crapLoad = Integer.parseInt(readTextualContent(methodElement, "crapLoad")); //$NON-NLS-1$
-		double coverage = Double.parseDouble(readTextualContent(methodElement, "coverage")); //$NON-NLS-1$
-		double complexity = Double.parseDouble(readTextualContent(methodElement, "complexity")); //$NON-NLS-1$
+		NumericalParser parser = new NumericalParser();
+		double crap = parser.parseDouble(readTextualContent(methodElement, "crap")); //$NON-NLS-1$
+		int crapLoad = parser.parseInt(readTextualContent(methodElement, "crapLoad")); //$NON-NLS-1$
+		double coverage = parser.parseDouble(readTextualContent(methodElement, "coverage")); //$NON-NLS-1$
+		double complexity = parser.parseDouble(readTextualContent(methodElement, "complexity")); //$NON-NLS-1$
 		return new MethodCrapData(method,
 				crap, crapLoad, coverage, complexity);
 	}

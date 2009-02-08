@@ -1,9 +1,9 @@
 package hudson.plugins.crap4j;
 
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.plugins.crap4j.calculation.HealthBuilder;
@@ -74,11 +74,14 @@ public class Crap4JPublisher extends Publisher {
     }
 
 	@Override
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
         PrintStream logger = listener.getLogger();
         log(logger, "Collecting Crap4J analysis files...");
 
+        log(logger, "Searching for report files within " + this.reportPattern);
+        log(logger, "Using the new FileSetBuilder");
+        
         ReportFilesFinder finder = new ReportFilesFinder(this.reportPattern);
         FoundFile[] reports = build.getProject().getWorkspace().act(finder);
         if (0 == reports.length) {
