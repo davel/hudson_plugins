@@ -4,7 +4,7 @@
 >
 	<f:entry
 	    title="XML Crap Report filename pattern"
-	    description="The pattern to look for crap xml reports"
+	    description="The pattern(s) to look for crap xml reports. Use commas as separators."
 	    help="/plugin/crap4j/help-config-crapreport.html"
     >
     	<f:textbox name="crap_reportPattern" value="${instance.reportPattern}"/>
