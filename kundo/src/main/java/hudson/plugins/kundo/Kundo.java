@@ -21,7 +21,13 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
-
+
+/**
+ * I have to recognise all the other Hudson Plugin developers
+ * without their source code I wouldn't have had any idea what
+ * was going on. Thanks for the inspiration, and in several
+ * places the code.
+ */
 public class Kundo extends Builder {
     /**
      * The phases, optional properties, and other Kundo options.
