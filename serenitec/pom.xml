@@ -14,6 +14,7 @@
     <description>Execute the Serenitec refactoring solution on your project and
     generate reports on its activities.
     </description>
+    <url>http://hudson.gotdns.com/wiki/display/HUDSON/Serenitec+Plugin</url>
     <licenses>
         <license>
             <name>BSD Style</name>
