@@ -1,0 +1,37 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This jelly script is used for per-project configuration.
+
+    See global.jelly for a general discussion about jelly script.
+  -->
+	
+	<f:entry title="Project Path"
+	         description="Rhapsody Project Path" 
+	         help="${rootURL}/plugin/RhapsodyBuilder/help-projectPath.html">
+    <f:textbox field="projectPath" />
+	</f:entry>
+	<f:entry title="Components"
+	         description="List all components that shall be generated or compiled (comma separated)." 
+	         help="${rootURL}/plugin/RhapsodyBuilder/help-components.html">
+    <f:textbox field="components" />
+	</f:entry>
+
+	<f:entry title="Rhapsody Configuration"
+	         description="The Configuration that shall be used to generate and make the Components !" 
+	         help="${rootURL}/plugin/RhapsodyBuilder/help-rhapsodyConfiguration.html">
+    <f:textbox field="rhapsodyConfiguration" />
+	</f:entry>
+	
+	<f:entry title="Generate"
+	         description="Indicates if the components shall be generated." 
+	         help="${rootURL}/plugin/RhapsodyBuilder/help-generate.html">
+    <f:checkbox name="RhapsodyBuilder.generate" checked="${instance.generate}"/>
+	</f:entry>
+	
+	<f:entry title="Make"
+	         description="Indicates if the components shall be compiled." 
+	         help="${rootURL}/plugin/RhapsodyBuilder/help-make.html">
+    <f:checkbox name="RhapsodyBuilder.make" checked="${instance.make}"/>
+	</f:entry>
+	
+</j:jelly>
