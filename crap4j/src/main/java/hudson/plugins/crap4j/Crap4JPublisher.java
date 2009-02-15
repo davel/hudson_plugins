@@ -7,6 +7,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.plugins.crap4j.calculation.HealthBuilder;
+import hudson.plugins.crap4j.model.CrapReportMerger;
 import hudson.plugins.crap4j.model.ProjectCrapBean;
 import hudson.plugins.crap4j.util.FoundFile;
 import hudson.plugins.crap4j.util.ReportFilesFinder;
@@ -17,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,28 +92,54 @@ public class Crap4JPublisher extends Publisher {
             log(logger, "No crap4j report files were found. Configuration error?");
             return false;
         }
-        Reader reportReader = new BufferedReader(
-        		new InputStreamReader(
-        				reports[0].getFile().read(),
-        				reports[0].getEncoding()));
-        ReportReader parser = new ReportReader(reportReader);
-        ICrapReport report = parser.parseData();
-
-        ProjectCrapBean previousCrap = null;
-        CrapBuildResult previousResult = CrapBuildResult.getPrevious(build);
-        if (null != previousResult) {
-        	previousCrap = previousResult.getResultData();
-        }
-        ProjectCrapBean reportBean = new ProjectCrapBean(
-        		previousCrap,
-        		report.getStatistics(),
-        		report.getDetails().getMethodCrapManager().getAllCrapData());
-        log(logger, "Got a report bean with " + reportBean.getCrapMethodCount() + " crap methods out of " + reportBean.getMethodCount() + " methods.");
+        ProjectCrapBean previousCrap = getPreviousProjectCrapBean(build);
+        ProjectCrapBean reportBean = createCurrentProjectCrapBean(logger,
+				reports, previousCrap);
         build.getActions().add(new Crap4JBuildAction(
         		build,
         		new CrapBuildResult(build, reportBean),
         		this.healthBuilder));
 		return true;
+	}
+
+	private ProjectCrapBean getPreviousProjectCrapBean(AbstractBuild<?, ?> build) {
+        CrapBuildResult previousResult = CrapBuildResult.getPrevious(build);
+        if (null != previousResult) {
+        	return previousResult.getResultData();
+        }
+		return null;
+	}
+
+	private ProjectCrapBean createCurrentProjectCrapBean(PrintStream logger,
+			FoundFile[] reports, ProjectCrapBean previousCrap)
+			throws UnsupportedEncodingException, IOException {
+		ProjectCrapBean[] currentBeans = loadProjectCrapBeans(logger, reports, previousCrap);
+		if (1 == currentBeans.length) {
+			return currentBeans[0];
+		}
+		CrapReportMerger merger = new CrapReportMerger();
+		return merger.mergeReports(previousCrap, currentBeans);
+	}
+	
+	private ProjectCrapBean[] loadProjectCrapBeans(PrintStream logger,
+			FoundFile[] reports, ProjectCrapBean previousCrap)
+			throws UnsupportedEncodingException, IOException {
+		List<ProjectCrapBean> result = new ArrayList<ProjectCrapBean>();
+		for (FoundFile currentReportFile : reports) {
+			Reader reportReader = new BufferedReader(
+	        		new InputStreamReader(
+	        				currentReportFile.getFile().read(),
+	        				currentReportFile.getEncoding()));
+	        ReportReader parser = new ReportReader(reportReader);
+	        ICrapReport report = parser.parseData();
+	        ProjectCrapBean reportBean = new ProjectCrapBean(
+	        		previousCrap,
+	        		report.getStatistics(),
+	        		report.getDetails().getMethodCrapManager().getAllCrapData());
+	        log(logger, "Got a report bean with " + reportBean.getCrapMethodCount() + " crap methods out of " + reportBean.getMethodCount() + " methods.");
+	        result.add(reportBean);
+		}
+		return result.toArray(new ProjectCrapBean[result.size()]);
 	}
 
 	public String getReportPattern() {

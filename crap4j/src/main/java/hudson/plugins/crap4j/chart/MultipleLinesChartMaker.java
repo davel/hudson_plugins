@@ -6,22 +6,23 @@ import java.awt.BasicStroke;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-public class LineChartMaker extends AbstractChartMaker {
+public class MultipleLinesChartMaker extends AbstractChartMaker {
 	
-	public LineChartMaker() {
+	public MultipleLinesChartMaker() {
 		super();
 	}
 	
 	@Override
 	protected JFreeChart createRawChart(CategoryDataset dataset,
 			String rangeAxisTitle) {
-        return ChartFactory.createLineChart(
+        JFreeChart result = ChartFactory.createLineChart(
                 null,                   // chart title
                 null,                   // unused
                 rangeAxisTitle,          // range axis label
@@ -31,6 +32,10 @@ public class LineChartMaker extends AbstractChartMaker {
                 true,                     // tooltips
                 false                     // urls
         );
+        NumberAxis secondAxis = new NumberAxis("second axis");
+        result.getCategoryPlot().setRangeAxis(1, secondAxis);
+        result.getCategoryPlot().setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+        return result;
 	}
 	
 	@Override

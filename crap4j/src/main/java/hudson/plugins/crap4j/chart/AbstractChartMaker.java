@@ -42,13 +42,16 @@ public abstract class AbstractChartMaker {
         domainAxis.setUpperMargin(0.0);
         domainAxis.setCategoryMargin(0.0);
         
-        setupRangeAxis((NumberAxis) plot.getRangeAxis());
+        int axisCount = plot.getRangeAxisCount();
+        for (int i = 0; i < axisCount; i++) {
+            setupRangeAxis(i, (NumberAxis) plot.getRangeAxis(i));
+		}
 
         // crop extra space around the graph
         plot.setInsets(new RectangleInsets(PADDING, 0, 0, PADDING));
 	}
 	
-	protected void setupRangeAxis(NumberAxis rangeAxis) {
+	protected void setupRangeAxis(int axisID, NumberAxis rangeAxis) {
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         rangeAxis.setLowerBound(0);
 	}

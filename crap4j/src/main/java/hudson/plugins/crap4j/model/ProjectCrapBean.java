@@ -30,10 +30,16 @@ public class ProjectCrapBean implements Serializable {
 	public ProjectCrapBean(
 			ProjectCrapBean previousCrap,
 			IOverallStatistics statistics,
-			IMethodCrapData... data) {
+			IMethodCrapData... allMethodData) {
+		this(previousCrap, statistics, extractCrapMethods(statistics, allMethodData));
+	}
+	
+	public ProjectCrapBean(
+			ProjectCrapBean previousCrap,
+			IOverallStatistics statistics,
+			IMethodCrap... crapMethodData) {
 		super();
-		checkParameters(statistics, data);
-		this.crapMethods = extractCrapMethods(data);
+		this.crapMethods = crapMethodData;
 		this.name = statistics.getName();
 		this.totalCrap = statistics.getTotalCrap();
 		this.methodCount = statistics.getMethodCount();
@@ -85,7 +91,8 @@ public class ProjectCrapBean implements Serializable {
 		this.fixedCrapMethods = new WeakReference<IMethodCrap[]>(comparison.getFixedCrapMethods());
 	}
 	
-	private static IMethodCrap[] extractCrapMethods(IMethodCrapData... data) {
+	private static IMethodCrap[] extractCrapMethods(IOverallStatistics statistics, IMethodCrapData... data) {
+		checkParameters(statistics, data);
 		List<MethodCrapBean> crapBeans = new ArrayList<MethodCrapBean>();
 		for (int i = 0; i < data.length; i++) {
 			if (data[i].isCrappy()) {
@@ -95,7 +102,7 @@ public class ProjectCrapBean implements Serializable {
 		return crapBeans.toArray(new MethodCrapBean[crapBeans.size()]);
 	}
 
-	private void checkParameters(IOverallStatistics statistics, IMethodCrapData... data) {
+	private static void checkParameters(IOverallStatistics statistics, IMethodCrapData... data) {
 		if (statistics.getMethodCount() == data.length) {
 			return;
 		}

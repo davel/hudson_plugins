@@ -26,5 +26,6 @@ public abstract class ChartSeriesDefinition {
 	
 	public AbstractChartMaker getChartMaker() {
 		return new LineChartMaker();
+		//return new MultipleLinesChartMaker();
 	}
 }

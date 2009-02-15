@@ -173,7 +173,12 @@ public class ReportReader {
 	}
 
 	private String readTextualContent(Element element, String subTagName) {
-		return element.getChildText(subTagName).trim();
+		String childText = element.getChildText(subTagName);
+		if (null == childText) {
+			System.err.println("Got null content for " + subTagName);
+			return null;
+		}
+		return childText.trim();
 	}
 
 	private class MethodCrapData extends GenericCrapData<IMethod> implements IMethodCrapData {
