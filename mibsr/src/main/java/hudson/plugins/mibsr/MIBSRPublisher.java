@@ -10,10 +10,15 @@ import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
+import hudson.util.FormFieldValidator;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * TODO javadoc.
@@ -114,6 +119,27 @@ public class MIBSRPublisher
         {
             return MIBSRHealthMetrics.values();
         }
+        /**
+         * Performs on-the-fly validation on the file mask wildcard.
+         */
+        public void doCheck( StaplerRequest req, StaplerResponse rsp )
+            throws IOException, ServletException
+        {
+            new FormFieldValidator.WorkspaceFileMask( req, rsp ).process();
+        }
+
+        public String applyDefaultIncludes( String invokerResults )
+        {
+            if ( invokerResults == null || invokerResults.trim().length() == 0 )
+            {
+                return "**/target/invoker-reports/INVOCATION-*.xml";
+            }
+            else
+            {
+                return invokerResults.trim();
+            }
+        }
+
     }
 
 }

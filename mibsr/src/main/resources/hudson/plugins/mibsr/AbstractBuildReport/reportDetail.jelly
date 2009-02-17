@@ -1,0 +1,45 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <h1>Results</h1>
+
+    <table border="1px" class="pane sortable">
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th title="Class count">Classes</th>
+                <th title="Function count">Functions</th>
+                <th title="Javadoc count">Javadocs</th>
+                <th title="Non-commenting Source Statements">NCSS</th>
+                <th title="Javadoc line count">JLC</th>
+                <th title="Single-line comment line count">SLCLC</th>
+                <th title="Multi-line comment line count">MLCLC</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th align="left">Totals</th>
+                <th align="right">${it.totals.classes}</th>
+                <th align="right">${it.totals.functions}</th>
+                <th align="right">${it.totals.javadocs}</th>
+                <th align="right">${it.totals.ncss}</th>
+                <th align="right">${it.totals.javadocLines}</th>
+                <th align="right">${it.totals.singleCommentLines}</th>
+                <th align="right">${it.totals.multiCommentLines}</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            <j:forEach var="r" items="${it.results}">
+                <tr>
+                    <th align="left">${r.name}</th>
+                    <td align="right">${r.classes}</td>
+                    <td align="right">${r.functions}</td>
+                    <td align="right">${r.javadocs}</td>
+                    <td align="right">${r.ncss}</td>
+                    <td align="right">${r.javadocLines}</td>
+                    <td align="right">${r.singleCommentLines}</td>
+                    <td align="right">${r.multiCommentLines}</td>
+                </tr>
+            </j:forEach>
+        </tbody>
+    </table>
+</j:jelly>
