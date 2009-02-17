@@ -1,0 +1,71 @@
+<!--
+  One entry
+
+  <%@attribute name="name" required="true" %>
+  <%@attribute name="metrics" required="true" %>
+  <%@attribute name="value" required="true" %>
+  <%@attribute name="firstRow" required="true" %>
+  <%@attribute name="healthyDescription" required="true" %>
+  <%@attribute name="unhealthyDescription" required="true" %>
+  <%@attribute name="unstableDescription" required="false" %>
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <table width="100%">
+        <col width="25%"/>
+        <col/>
+        <col width="24px"/>
+        <col width="15%"/>
+        <col width="24px"/>
+        <col width="15%"/>
+        <col width="24px"/>
+        <col width="15%"/>
+
+        <tbody>
+            <tr>
+                <td>
+                    <select class="setting-input" name="${attrs.name}.metric">
+                        <j:forEach var="i" items="${attrs.metrics}">
+                            <f:option selected="${i==attrs.value.metric}" value="${i}">${i.name}</f:option>
+                        </j:forEach>
+                    </select>
+                </td>
+                <td>
+                    <j:if test="${!attrs.firstRow}">
+                        <f:repeatableDeleteButton/>
+                    </j:if>
+                </td>
+                <th>
+                    <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%"
+                         title="${attrs.healthyDescription}"/>
+                </th>
+                <td>
+                    <f:textbox name="${attrs.name}.healthy"
+                               value="${attrs.value.healthy}"/>
+                </td>
+                <th>
+                    <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%"
+                         title="${attrs.unhealthyDescription}"/>
+                </th>
+                <td>
+                    <f:textbox name="${attrs.name}.unhealthy"
+                               value="${attrs.value.unhealthy}"/>
+                </td>
+                <j:if test="${attrs.unstableDescription!=null}">
+                    <th>
+                        <img src="${rootURL}/images/16x16/yellow.gif" alt="0%"
+                             title="${attrs.unstableDescription}"/>
+                    </th>
+                    <td>
+                        <f:textbox name="${attrs.name}.unstable"
+                                   value="${attrs.value.unstable}"/>
+                    </td>
+                </j:if>
+                <j:if test="${attrs.unstableDescription==null}">
+                    <th/>
+                    <td/>
+                </j:if>
+            </tr>
+        </tbody>
+    </table>
+</j:jelly>
