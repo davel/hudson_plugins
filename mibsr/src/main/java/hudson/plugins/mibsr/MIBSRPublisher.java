@@ -132,7 +132,7 @@ public class MIBSRPublisher
         {
             if ( invokerResults == null || invokerResults.trim().length() == 0 )
             {
-                return "**/target/invoker-reports/INVOCATION-*.xml";
+                return "**/target/invoker-reports/BUILD-*.xml";
             }
             else
             {
