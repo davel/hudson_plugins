@@ -73,6 +73,7 @@ public class MIBSRGhostwriter
                 }
                 action.setBuildHealth( r );
             }
+           
             build.getActions().add( action );
             if ( results.getFailCount() > 0 || results.getErrorCount() > 0 )
             {

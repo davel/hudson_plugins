@@ -27,7 +27,7 @@ public class BuildJobs
 
     private AbstractBuild<?, ?> owner;
 
-    private Collection<BuildJob> buildJobs;
+    private Collection<BuildJob> buildJobs = new ArrayList<BuildJob>( );
 
     private String name;
 
