@@ -1,44 +1,112 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <h1>Summary</h1>
+  <table border="1px">
+    <thead>
+      <tr>
+        <th colspan="2"></th>
+        <th colspan="2">Count</th>
+        <th colspan="2">Duration</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th align="left" colspan="2">Total</th>
+        <th align="right" colspan="2">${it.totals.totalCount}</th>
+        <th align="right" colspan="2">${it.totals.totalTime}s</th>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr>
+        <th align="left" colspan="2">Passing tests</th>
+        <td/>
+        <td align="right">${it.totals.passCount}</td>
+        <td/>
+        <th align="right">${it.totals.passTime}s</th>
+      </tr>
+      <j:if test="${it.totals.skipCount != 0}">
+        <tr>
+          <th align="left" colspan="2">Skipped tests</th>
+          <td/>
+          <td align="right">${it.totals.skipCount}</td>
+          <td/>
+          <th align="right">${it.totals.skipTime}s</th>
+        </tr>
+      </j:if>
+      <j:if test="${it.totals.errorCount != 0}">
+        <tr>
+          <th align="left" colspan="2">Tests in error</th>
+          <td/>
+          <td align="right">${it.totals.errorCount}</td>
+          <td/>
+          <th align="right">${it.totals.errorTime}s</th>
+        </tr>
+      </j:if>
+      <j:if test="${it.totals.failCount != 0}">
+        <tr>
+          <th align="left" colspan="2">Failing tests</th>
+        </tr>
+        <j:if test="${it.totals.failInitCount != 0}">
+          <tr>
+            <th/>
+            <th align="left">Pre-build</th>
+            <td align="right">${it.totals.failInitCount}</td>
+            <td/>
+            <td align="right">${it.totals.failInitTime}s</td>
+            <td/>
+          </tr>
+        </j:if>
+        <j:if test="${it.totals.failRunCount != 0}">
+          <tr>
+            <th/>
+            <th align="left">In-build</th>
+            <td align="right">${it.totals.failRunCount}</td>
+            <td/>
+            <td align="right">${it.totals.failRunTime}s</td>
+            <td/>
+          </tr>
+        </j:if>
+        <j:if test="${it.totals.failValidateCount != 0}">
+          <tr>
+            <th/>
+            <th align="left">Post-build</th>
+            <td align="right">${it.totals.failValidateCount}</td>
+            <td/>
+            <td align="right">${it.totals.failValidateTime}s</td>
+            <td/>
+          </tr>
+        </j:if>
+      </j:if>
+      <tr>
+        <th/>
+        <th align="left">Failing test total</th>
+        <td/>
+        <td align="right">${it.totals.failCount}</td>
+        <td/>
+        <td align="right">${it.totals.failTime}s</td>
+      </tr>
+
+    </tbody>
+  </table>
   <h1>Results</h1>
 
   <table border="1px" class="pane sortable">
     <thead>
       <tr>
-        <th></th>
-        <th title="Pass count">Passing</th>
-        <th title="Function count">Skipped</th>
-        <th title="Javadoc count">Error</th>
-        <th title="Non-commenting Source Statements">Failing</th>
-        <th title="Failing during preparation">Fail Pre Run</th>
-        <th title="Failing during run">Fail In Run</th>
-        <th title="Failing during validation">Fail Post Run</th>
-        <th title="Total number of integration tests">Total</th>
+        <th>Project</th>
+        <th>Type</th>
+        <th>Result</th>
+        <th>Time</th>
       </tr>
     </thead>
-    <tfoot>
-      <tr>
-        <th align="left">Totals</th>
-        <th align="right">${it.totals.passCount}</th>
-        <th align="right">${it.totals.skipCount}</th>
-        <th align="right">${it.totals.errorCount}</th>
-        <th align="right">${it.totals.failCount}</th>
-        <th align="right">${it.totals.failInitCount}</th>
-        <th align="right">${it.totals.failRunCount}</th>
-        <th align="right">${it.totals.failValidateCount}</th>
-        <th align="right">${it.totals.totalCount}</th>
-      </tr>
-    </tfoot>
     <tbody>
       <j:forEach var="r" items="${it.results}">
-        <tr>
+        <tr class="${it.totals.getCssClass(r)}">
           <th align="left">${r.project}</th>
-          <td align="right">${r.name}</td>
-          <td align="right">${r.description}</td>
-          <td align="right">${r.result}</td>
-          <td align="right">${r.failureMessage}</td>
-          <td align="right">${r.time}</td>
           <td align="right">${r.type}</td>
+          <td align="right">${r.result}</td>
+          <td align="right">${r.time}</td>
         </tr>
       </j:forEach>
     </tbody>

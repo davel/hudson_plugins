@@ -40,6 +40,12 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>>
         return result.getBuildJobs();
     }
 
+    public BuildJob getDynamic( String name, StaplerRequest req, StaplerResponse resp )
+    {
+        return result.getDynamic( name, req, resp );
+    }
+
+
     public BuildJobs getTotals()
     {
         return result;

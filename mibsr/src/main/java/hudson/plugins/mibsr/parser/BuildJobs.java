@@ -5,14 +5,20 @@ import hudson.util.IOException2;
 import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * TODO javadoc.
@@ -27,9 +33,41 @@ public class BuildJobs
 
     private AbstractBuild<?, ?> owner;
 
-    private Collection<BuildJob> buildJobs = new ArrayList<BuildJob>();
+    private SortedMap<String, BuildJob> buildJobs = new TreeMap<String, BuildJob>();
 
     private String name;
+
+    public final Set<String> SUCCESSFUL = fixedTreeSet( BuildJob.Result.SUCCESS );
+
+    public final Set<String> UNSUCCESSFUL =
+        fixedTreeSet( BuildJob.Result.ERROR, BuildJob.Result.FAILURE_PRE_HOOK, BuildJob.Result.FAILURE_BUILD,
+                      BuildJob.Result.FAILURE_POST_HOOK );
+
+    public final Set<String> SKIPPED = fixedTreeSet( BuildJob.Result.SKIPPED );
+
+
+    private static <T> Set<T> fixedTreeSet( T... elements )
+    {
+        return Collections.unmodifiableSet( new TreeSet<T>( Arrays.asList( elements ) ) );
+    }
+
+
+    /**
+     * Gets the version of a string that's URL-safe.
+     */
+    public static String makeSafe( String unsafe )
+    {
+        StringBuffer buf = new StringBuffer( unsafe );
+        for ( int i = 0; i < buf.length(); i++ )
+        {
+            char ch = buf.charAt( i );
+            if ( !Character.isJavaIdentifierPart( ch ) )
+            {
+                buf.setCharAt( i, '_' );
+            }
+        }
+        return buf.toString();
+    }
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -46,7 +84,7 @@ public class BuildJobs
             {
                 fis = new FileInputStream( inFile );
                 bis = new BufferedInputStream( fis );
-                results.buildJobs.add( reader.read( bis ) );
+                results.add( reader.read( bis ) );
             }
             catch ( XmlPullParserException e )
             {
@@ -69,7 +107,17 @@ public class BuildJobs
 
     public void add( BuildJob r )
     {
-        buildJobs.add( r );
+        String key = makeSafe( r.getProject() );
+        if ( buildJobs.containsKey( key ) )
+        {
+            int num = 1;
+            while ( buildJobs.containsKey( key + num ) )
+            {
+                num++;
+            }
+            key = key + num;
+        }
+        buildJobs.put( key, r );
     }
 
     public static BuildJobs total( BuildJobs... results )
@@ -92,7 +140,7 @@ public class BuildJobs
             BuildJobs merged = new BuildJobs();
             for ( BuildJobs result : results )
             {
-                merged.buildJobs.addAll( result.buildJobs );
+                merged.addAll( result.buildJobs.values() );
             }
             return merged;
         }
@@ -102,6 +150,11 @@ public class BuildJobs
 
     public BuildJobs()
     {
+    }
+
+    public BuildJob getDynamic( String name, StaplerRequest req, StaplerResponse resp )
+    {
+        return buildJobs.get( name );
     }
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -191,7 +244,7 @@ public class BuildJobs
     public void set( BuildJobs that )
     {
         this.name = that.name;
-        this.buildJobs = new ArrayList<BuildJob>( that.buildJobs );
+        this.buildJobs = new TreeMap<String, BuildJob>( that.buildJobs );
     }
 
     public int getPassCount()
@@ -202,7 +255,7 @@ public class BuildJobs
     private int getCount( String... resultTypes )
     {
         int total = 0;
-        for ( BuildJob result : buildJobs )
+        for ( BuildJob result : buildJobs.values() )
         {
             for ( String resultType : resultTypes )
             {
@@ -218,7 +271,7 @@ public class BuildJobs
     private double getTime( String... resultTypes )
     {
         double total = 0;
-        for ( BuildJob result : buildJobs )
+        for ( BuildJob result : buildJobs.values() )
         {
             for ( String resultType : resultTypes )
             {
@@ -306,7 +359,7 @@ public class BuildJobs
     public double getTotalTime()
     {
         double total = 0;
-        for ( BuildJob result : buildJobs )
+        for ( BuildJob result : buildJobs.values() )
         {
             total += result.getTime();
         }
@@ -315,12 +368,15 @@ public class BuildJobs
 
     public Collection<BuildJob> getBuildJobs()
     {
-        return buildJobs;
+        return buildJobs.values();
     }
 
     public void addAll( Collection<BuildJob> results )
     {
-        buildJobs.addAll( results );
+        for ( BuildJob job : results )
+        {
+            add( job );
+        }
     }
 
     public void clear()
@@ -343,5 +399,22 @@ public class BuildJobs
             return "result-failed";
         }
         return "result-failed";
+    }
+
+    public static enum ResultType
+    {
+        SUCCESS( BuildJob.Result.SUCCESS ),
+        SKIPPED( BuildJob.Result.SKIPPED ),
+        ERROR( BuildJob.Result.ERROR ),
+        FAILURE_PRE_HOOK( BuildJob.Result.FAILURE_PRE_HOOK ),
+        FAILURE_BUILD( BuildJob.Result.FAILURE_BUILD ),
+        FAILURE_POST_HOOK( BuildJob.Result.FAILURE_POST_HOOK ),;
+
+        private final String xmlValue;
+
+        ResultType( String xmlValue )
+        {
+            this.xmlValue = xmlValue;
+        }
     }
 }

@@ -1,7 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-  <h1>Results</h1>
+  <h1>Summary</h1>
   <table border="1px">
     <thead>
       <tr>
@@ -103,7 +103,9 @@
     <tbody>
       <j:forEach var="r" items="${it.results}">
         <tr class="${it.totals.getCssClass(r)}">
-          <th align="left">${r.project}</th>
+          <th align="left">
+            <a href="${it.totals.makeSafe(r.project)}/">${r.project}</a>
+          </th>
           <td align="right">${r.type}</td>
           <td align="right">${r.result}</td>
           <td align="right">${r.time}</td>
