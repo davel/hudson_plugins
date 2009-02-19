@@ -52,12 +52,12 @@ public class GraphHelper
         rsp.sendRedirect2( req.getContextPath() + "/images/headless.png" );
     }
 
-    public static JFreeChart buildChart( CategoryDataset dataset )
+    public static JFreeChart buildChart( CategoryDataset dataset, String yAxisLabel )
     {
 
         final JFreeChart chart = ChartFactory.createLineChart( null,                   // chart title
                                                                null,                   // unused
-                                                               "line count",                    // range axis label
+                                                               yAxisLabel,                    // range axis label
                                                                dataset,                  // data
                                                                PlotOrientation.VERTICAL, // orientation
                                                                true,                     // include legend

@@ -27,7 +27,7 @@ public class BuildJobs
 
     private AbstractBuild<?, ?> owner;
 
-    private Collection<BuildJob> buildJobs = new ArrayList<BuildJob>( );
+    private Collection<BuildJob> buildJobs = new ArrayList<BuildJob>();
 
     private String name;
 
@@ -196,101 +196,121 @@ public class BuildJobs
 
     public int getPassCount()
     {
+        return getCount( BuildJob.Result.SUCCESS );
+    }
+
+    private int getCount( String... resultTypes )
+    {
         int total = 0;
         for ( BuildJob result : buildJobs )
         {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.SUCCESS ) )
+            for ( String resultType : resultTypes )
             {
-                total++;
+                if ( result.getResult().equalsIgnoreCase( resultType ) )
+                {
+                    total++;
+                }
             }
         }
         return total;
+    }
+
+    private double getTime( String... resultTypes )
+    {
+        double total = 0;
+        for ( BuildJob result : buildJobs )
+        {
+            for ( String resultType : resultTypes )
+            {
+                if ( result.getResult().equalsIgnoreCase( resultType ) )
+                {
+                    total += result.getTime();
+                }
+            }
+        }
+        return Math.round( total * 10.0 ) / 10.0;
+    }
+
+    public double getPassTime()
+    {
+        return getTime( BuildJob.Result.SUCCESS );
     }
 
     public int getSkipCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.SKIPPED ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.SKIPPED );
+    }
+
+    public double getSkipTime()
+    {
+        return getTime( BuildJob.Result.SKIPPED );
     }
 
     public int getErrorCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.ERROR ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.ERROR );
     }
 
+    public double getErrorTime()
+    {
+        return getTime( BuildJob.Result.ERROR );
+    }
 
     public int getFailInitCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_PRE_HOOK ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.FAILURE_PRE_HOOK );
+    }
+
+    public double getFailInitTime()
+    {
+        return getTime( BuildJob.Result.FAILURE_PRE_HOOK );
     }
 
     public int getFailRunCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_BUILD ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.FAILURE_BUILD );
+    }
+
+    public double getFailRunTime()
+    {
+        return getTime( BuildJob.Result.FAILURE_BUILD );
     }
 
     public int getFailValidateCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_POST_HOOK ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.FAILURE_POST_HOOK );
+    }
+
+    public double getFailValidateTime()
+    {
+        return getTime( BuildJob.Result.FAILURE_POST_HOOK );
     }
 
     public int getFailCount()
     {
-        int total = 0;
-        for ( BuildJob result : buildJobs )
-        {
-            if ( result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_PRE_HOOK )
-                || result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_BUILD )
-                || result.getResult().equalsIgnoreCase( BuildJob.Result.FAILURE_POST_HOOK ) )
-            {
-                total++;
-            }
-        }
-        return total;
+        return getCount( BuildJob.Result.FAILURE_PRE_HOOK, BuildJob.Result.FAILURE_BUILD,
+                         BuildJob.Result.FAILURE_POST_HOOK );
+    }
+
+    public double getFailTime()
+    {
+        return getTime( BuildJob.Result.FAILURE_PRE_HOOK, BuildJob.Result.FAILURE_BUILD,
+                        BuildJob.Result.FAILURE_POST_HOOK );
     }
 
     public int getTotalCount()
     {
         return buildJobs.size();
+    }
+
+    public double getTotalTime()
+    {
+        double total = 0;
+        for ( BuildJob result : buildJobs )
+        {
+            total += result.getTime();
+        }
+        return Math.round( total * 10.0 ) / 10.0;
     }
 
     public Collection<BuildJob> getBuildJobs()
@@ -306,5 +326,22 @@ public class BuildJobs
     public void clear()
     {
         buildJobs.clear();
+    }
+
+    public String getCssClass( BuildJob result )
+    {
+        if ( BuildJob.Result.SUCCESS.equalsIgnoreCase( result.getResult() ) )
+        {
+            return "result-passed";
+        }
+        if ( BuildJob.Result.SKIPPED.equalsIgnoreCase( result.getResult() ) )
+        {
+            return "result-skipped";
+        }
+        if ( BuildJob.Result.ERROR.equalsIgnoreCase( result.getResult() ) )
+        {
+            return "result-failed";
+        }
+        return "result-failed";
     }
 }

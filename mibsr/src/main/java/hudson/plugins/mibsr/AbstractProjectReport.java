@@ -122,8 +122,8 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>>
 
         populateDataSetBuilder( dataSetBuilder );
 
-        ChartUtil.generateGraph( req, rsp, GraphHelper.buildChart( dataSetBuilder.build() ), getGraphWidth(),
-                                 getGraphHeight() );
+        ChartUtil.generateGraph( req, rsp, GraphHelper.buildChart( dataSetBuilder.build(), "line count" ),
+                                 getGraphWidth(), getGraphHeight() );
     }
 
     /**

@@ -7,9 +7,9 @@ import hudson.plugins.helpers.GraphHelper;
 import hudson.plugins.mibsr.parser.BuildJobs;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
+import org.apache.maven.plugin.invoker.model.BuildJob;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.apache.maven.plugin.invoker.model.BuildJob;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -126,8 +126,8 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>>
 
         populateDataSetBuilder( dataSetBuilder );
 
-        ChartUtil.generateGraph( req, rsp, GraphHelper.buildChart( dataSetBuilder.build() ), getGraphWidth(),
-                                 getGraphHeight() );
+        ChartUtil.generateGraph( req, rsp, GraphHelper.buildChart( dataSetBuilder.build(), "# of tests" ),
+                                 getGraphWidth(), getGraphHeight() );
     }
 
 
