@@ -12,9 +12,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.logging.Level;
 
 import net.sf.json.JSONObject;
@@ -188,8 +190,8 @@ public class NabatzagPublisher extends Publisher {
 		buf.append("voice=" + DESCRIPTOR.getNabatzagVoice());
 		buf.append("&");
 		buf.append("" + earpos);
-	
-		return buf.toString().replace(" ", "%20");
+		
+		return buf.toString();
     }
 
     public Descriptor<Publisher> getDescriptor() {
@@ -207,30 +209,24 @@ public class NabatzagPublisher extends Publisher {
 		// Build FAILURE
 		if ((build.getResult() == Result.FAILURE)
 			|| (build.getResult() == Result.UNSTABLE)) {
-		    log.finest("Nabaztag FAILURE");
 		    msg = DESCRIPTOR.getNabatzagFailTTS() + name;
+		    log.finest("Nabaztag Build FAILURE");
 		    sendRequest(msg, DESCRIPTOR.getNabatzagFAILDpos(), listener);
 		}
-	
-		// Build RECOVER
-		if ((build.getResult() == Result.SUCCESS)
-			&& (build.getPreviousBuild() != null)
-			&& (build.getPreviousBuild().getResult() == Result.FAILURE)) {
-		    // Build RECOVERY
-		    log.finest("Nabaztag Build RECOVERY");
-		    msg = DESCRIPTOR.getNabatzagRecoverTTS() + name;
-		    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
-		}
-	
-		// Build SUCCESS
-		if (DESCRIPTOR.reportOnSucess && (build.getResult() == Result.SUCCESS)) {
-		    msg = DESCRIPTOR.getNabatzagSuccessTTS() + name;
-		    if (build.getPreviousBuild().getResult() == Result.FAILURE) {
-	
-			log.finest("Nabaztag Build RECOVERY");
-			msg = DESCRIPTOR.getNabatzagRecoverTTS() + name;
+		
+		if (build.getResult() == Result.SUCCESS) {
+			if (build.getPreviousBuild() != null
+					&& build.getPreviousBuild().getResult() == Result.FAILURE) {
+				// Build RECOVERY
+				msg = DESCRIPTOR.getNabatzagRecoverTTS() + name;
+				log.finest("Nabaztag Build RECOVERY");
+			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
+			} else if (DESCRIPTOR.reportOnSucess) {
+				// Build SUCESS
+				msg = DESCRIPTOR.getNabatzagSuccessTTS() + name;
+				log.finest("Nabaztag Build SUCCESS");
+			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
 		    }
-		    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
 		}
 	
 		return true;
@@ -242,23 +238,28 @@ public class NabatzagPublisher extends Publisher {
      * @param listener 
      */
     private void sendRequest(final String message, final String earpos, BuildListener listener) {
-		final String requestString = buildRequest(message, earpos);
-		log.finest(" sending nabatztag request : " + requestString);
-	
+    	String urlEncodedMessage = null;
 	    URLConnection cnx = null;
 	    InputStream inputStream = null;
 	    BufferedReader bufferedReader = null;
 	    try {
+	    	urlEncodedMessage = URLEncoder.encode(message, "UTF-8");
+			String requestString = buildRequest(urlEncodedMessage, earpos);
+			log.finest(" sending nabatztag request : " + requestString);
 	    	cnx = ProxyConfiguration.open(new URL(requestString));
 	    	cnx.connect();
 	    	inputStream = cnx.getInputStream();
 	    	bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 	    	StringBuilder result = new StringBuilder();
 	        String strLine;
-			while ((strLine = bufferedReader.readLine()) != null)
+			while ((strLine = bufferedReader.readLine()) != null) {
 				result.append(strLine);
+			}
 			log.finest("API call result : " + result.toString());
 			listener.getLogger().println("Nabaztag has been sucessfully notified.");
+	    } catch (UnsupportedEncodingException notFatal) {
+	    	log.log(Level.WARNING, "URL is malformed.", notFatal);
+			listener.error("Unable to url encode the Nabaztag message.");
 	    } catch (MalformedURLException dontCare) {
 	    	log.log(Level.WARNING, "URL is malformed.", dontCare);
 			listener.error("Unable to build a valid Nabaztag API call.");

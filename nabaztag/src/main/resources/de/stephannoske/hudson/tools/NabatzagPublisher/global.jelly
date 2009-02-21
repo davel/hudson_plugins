@@ -12,37 +12,39 @@
 				value="${descriptor.nabatzagToken}" />
 		</f:entry>
 
-		<f:entry title="Nabaztag API URL">
-			<input class="setting-input" name="nabatzagUrl" type="text"
-				value="${descriptor.nabatzagUrl}" />
-		</f:entry>
-
-		<f:entry title="Nabaztag Voice">
-			<input class="setting-input" name="nabatzagVoice" type="text"
-				value="${descriptor.nabatzagVoice}" />
-		</f:entry>
-
-
-		<f:entry title="Nabaztag Text for Failure">
-			<input class="setting-input" name="nabatzagFailTTS" type="text"
-				value="${descriptor.nabatzagFailTTS}" />
-		</f:entry>
-
-		<f:entry title="Nabaztag Text for Success">
-			<input class="setting-input" name="nabatzagSuccessTTS" type="text"
-				value="${descriptor.nabatzagSuccessTTS}" />
-		</f:entry>
-
-		<f:entry title="Nabaztag Text for Recover">
-			<input class="setting-input" name="nabatzagRecoverTTS" type="text"
-				value="${descriptor.nabatzagRecoverTTS}" />
-		</f:entry>
-
 		<f:entry title="Report On Sucess">
 			<f:checkbox name="reportOnSucess" title="Report On Sucess"
 				checked="${descriptor.isReportOnSucess()}">
 			</f:checkbox>
 		</f:entry>
+		
+		<f:advanced>
+			<f:entry title="Nabaztag API URL">
+				<input class="setting-input" name="nabatzagUrl" type="text"
+					value="${descriptor.nabatzagUrl}" />
+			</f:entry>
+	
+			<f:entry title="Nabaztag Voice">
+				<input class="setting-input" name="nabatzagVoice" type="text"
+					value="${descriptor.nabatzagVoice}" />
+			</f:entry>
+	
+	
+			<f:entry title="Nabaztag Text for Failure">
+				<input class="setting-input" name="nabatzagFailTTS" type="text"
+					value="${descriptor.nabatzagFailTTS}" />
+			</f:entry>
+	
+			<f:entry title="Nabaztag Text for Success">
+				<input class="setting-input" name="nabatzagSuccessTTS" type="text"
+					value="${descriptor.nabatzagSuccessTTS}" />
+			</f:entry>
+	
+			<f:entry title="Nabaztag Text for Recover">
+				<input class="setting-input" name="nabatzagRecoverTTS" type="text"
+					value="${descriptor.nabatzagRecoverTTS}" />
+			</f:entry>
+		</f:advanced>
 
 	</f:section>
 </j:jelly>
