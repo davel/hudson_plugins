@@ -9,13 +9,7 @@
 
   <artifactId>nabaztag</artifactId>
   <packaging>hpi</packaging>
-  <version>1.5</version>
+  <version>1.6-SNAPSHOT</version>
   <name>nabaztag</name>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Nabaztag+Plugin</url>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/nabaztag-1.5</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/nabaztag-1.5</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/nabaztag/tags/nabaztag-1.5</url>
-  </scm>
 </project>
