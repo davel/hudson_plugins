@@ -12,15 +12,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -37,9 +47,9 @@ public class NabatzagPublisher extends Publisher {
 		public String nabatzagVoice = "lea22s";
 		public String nabatzagFAILDpos = "posright=6&posleft=6&ears=ok&ttl=600";
 		public String nabatzagSUSSCEEDpos = "posright=3&posleft=3&ears=ok&ttl=600";
-		public String nabatzagFailTTS = "Build Failed in Hudson ";
-		public String nabatzagSuccessTTS = "Build was successfull in Hudson ";
-		public String nabatzagRecoverTTS = "Hudson Build ist back to normal";
+		public String nabatzagFailTTS = "Build Failed in Hudson ${projectName} ${buildNumber}";
+		public String nabatzagSuccessTTS = "Build was successfull in Hudson ${projectName} ${buildNumber}";
+		public String nabatzagRecoverTTS = "Hudson Build is back to normal ${projectName} ${buildNumber}";
 		public boolean reportOnSucess = false;
 	
 		protected DescriptorImpl() {
@@ -48,15 +58,13 @@ public class NabatzagPublisher extends Publisher {
 		}
 	
 		public boolean configure(final StaplerRequest req, JSONObject json)
-		throws FormException {
-		    // to persist global configuration information,
-		    // set that to properties and call save().
+				throws FormException {
 		    nabatzagVoice = req.getParameter("nabatzagVoice");
 		    nabatzagSerial = req.getParameter("nabatzagSerial");
 		    nabatzagUrl = req.getParameter("nabatzagUrl");
 		    nabatzagToken = req.getParameter("nabatzagToken");
-		    String reportOnSucessParameter = req.getParameter("reportOnSucess");
-		    reportOnSucess = reportOnSucessParameter != null && reportOnSucessParameter.equals("on");
+		    String reportOnSuccessParameter = req.getParameter("reportOnSucess");
+		    reportOnSucess = reportOnSuccessParameter != null && reportOnSuccessParameter.equals("on");
 			nabatzagFailTTS = req.getParameter("nabatzagFailTTS");
 			nabatzagSuccessTTS = req.getParameter("nabatzagSuccessTTS");
 			nabatzagRecoverTTS = req.getParameter("nabatzagRecoverTTS");
@@ -69,7 +77,7 @@ public class NabatzagPublisher extends Publisher {
 		public String getDisplayName() {
 		    return "Nabatzag Publisher ";
 		}
-	
+		
 		public String getNabatzagFAILDpos() {
 		    return nabatzagFAILDpos;
 		}
@@ -202,48 +210,67 @@ public class NabatzagPublisher extends Publisher {
     public boolean perform(final AbstractBuild<?, ?> build,
 	    final Launcher launcher, final BuildListener listener)
     throws InterruptedException, IOException {
-		final String name = " " + build.getProject().getName() + " "
-		+ build.getNumber();
+    	if (!isSNAndTokenDefined()) {
+			listener.getLogger().println("Nabaztag Serial Number or Token are not defined, notification has not been sent.");
+    		return false;
+    	}
 		String msg;
-	
+		
 		// Build FAILURE
 		if ((build.getResult() == Result.FAILURE)
-			|| (build.getResult() == Result.UNSTABLE)) {
-		    msg = DESCRIPTOR.getNabatzagFailTTS() + name;
+				|| (build.getResult() == Result.UNSTABLE)) {
+			msg = DESCRIPTOR.getNabatzagFailTTS();
 		    log.finest("Nabaztag Build FAILURE");
-		    sendRequest(msg, DESCRIPTOR.getNabatzagFAILDpos(), listener);
-		}
-		
-		if (build.getResult() == Result.SUCCESS) {
+		    sendRequest(msg, DESCRIPTOR.getNabatzagFAILDpos(), build, listener);
+		} else if (build.getResult() == Result.SUCCESS) {
+			
+			// Build RECOVERY
 			if (build.getPreviousBuild() != null
 					&& build.getPreviousBuild().getResult() == Result.FAILURE) {
-				// Build RECOVERY
-				msg = DESCRIPTOR.getNabatzagRecoverTTS() + name;
+				msg = DESCRIPTOR.getNabatzagRecoverTTS();
 				log.finest("Nabaztag Build RECOVERY");
-			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
-			} else if (DESCRIPTOR.reportOnSucess) {
-				// Build SUCESS
-				msg = DESCRIPTOR.getNabatzagSuccessTTS() + name;
+			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), build, listener);
+			}
+
+			// Build SUCCESS
+			else if (DESCRIPTOR.reportOnSucess) {
+				msg = DESCRIPTOR.getNabatzagSuccessTTS();
 				log.finest("Nabaztag Build SUCCESS");
-			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), listener);
-		    }
+			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), build, listener);
+			} else {
+				listener.getLogger().println("User has choosed not to be notified of success, notification has not been sent.");
+			}
+		} else {
+			listener.getLogger().println("Build result not handled by Nabaztag notifier, notification has not been sent.");
 		}
 	
 		return true;
     }
 
-    /**
+    private boolean isSNAndTokenDefined() {
+    	return DESCRIPTOR.nabatzagSerial != null && DESCRIPTOR.nabatzagSerial.length() > 0
+    		&& DESCRIPTOR.nabatzagToken != null && DESCRIPTOR.nabatzagToken.length() > 0;
+	}
+
+	/**
      * @param message
      * @param earpos
+	 * @param build 
      * @param listener 
+	 * @param build 
      */
-    private void sendRequest(final String message, final String earpos, BuildListener listener) {
+    private void sendRequest(final String message, final String earpos, AbstractBuild<?,?> build, BuildListener listener) {
+    	String substituedMessage = StringUtils.replaceEach(
+    			message,
+    			new String[]{"${projectName}", "${buildNumber}"},
+    			new String[]{build.getProject().getName(), String.valueOf(build.getNumber())}
+    	);
     	String urlEncodedMessage = null;
 	    URLConnection cnx = null;
 	    InputStream inputStream = null;
 	    BufferedReader bufferedReader = null;
 	    try {
-	    	urlEncodedMessage = URLEncoder.encode(message, "UTF-8");
+	    	urlEncodedMessage = URLEncoder.encode(substituedMessage, "UTF-8");
 			String requestString = buildRequest(urlEncodedMessage, earpos);
 			log.finest(" sending nabatztag request : " + requestString);
 	    	cnx = ProxyConfiguration.open(new URL(requestString));
@@ -256,7 +283,7 @@ public class NabatzagPublisher extends Publisher {
 				result.append(strLine);
 			}
 			log.finest("API call result : " + result.toString());
-			listener.getLogger().println("Nabaztag has been sucessfully notified.");
+			analyseResult(result.toString(), listener);
 	    } catch (UnsupportedEncodingException notFatal) {
 	    	log.log(Level.WARNING, "URL is malformed.", notFatal);
 			listener.error("Unable to url encode the Nabaztag message.");
@@ -265,7 +292,7 @@ public class NabatzagPublisher extends Publisher {
 			listener.error("Unable to build a valid Nabaztag API call.");
 		} catch (IOException notImportant) {
 	    	log.log(Level.WARNING, "IOException while reading API call result.", notImportant);
-			listener.error("Nabaztag has not been sucessfully notified.");
+			listener.error("Nabaztag has not been successfully notified.");
 		} finally {
 			if (bufferedReader != null)
 				try {
@@ -281,5 +308,57 @@ public class NabatzagPublisher extends Publisher {
 				}
 	    }
     }
+
+	private void analyseResult(String string, BuildListener listener) {
+		List<String> expectedCommands = new ArrayList<String>(3);
+		expectedCommands.add("EARPOSITIONSENT");
+		expectedCommands.add("POSITIONEAR");
+		expectedCommands.add("TTSSENT");
+		List<String> unExpectedCommands = new ArrayList<String>();
+		
+		XMLStreamReader xmlStreamReader;
+		try {
+			xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(string));
+			while (xmlStreamReader.hasNext()) {
+				int next = xmlStreamReader.next();
+				if (next == XMLStreamConstants.START_ELEMENT) {
+					String currentElement = xmlStreamReader.getName().getLocalPart();
+					if (currentElement.equals("message")) {
+						String elementText = xmlStreamReader.getElementText();
+						if (expectedCommands.contains(elementText)) {
+							expectedCommands.remove(elementText);
+						} else {
+							unExpectedCommands.add(elementText);
+						}
+					}
+				}
+			}
+		} catch (XMLStreamException e) {
+	    	log.log(Level.WARNING, "Unable to read xml result.", e);
+		} catch (FactoryConfigurationError e) {
+	    	log.log(Level.WARNING, "Unable to create xml parser to read xml result.", e);
+		}
+
+		boolean success = true;
+		StringBuilder out = new StringBuilder();
+		if (expectedCommands.size() > 0) {
+			success = false;
+			out.append("Following expected confirmations has not been received: ");
+			out.append(expectedCommands.toString());
+			out.append("\n");
+		}
+		if (unExpectedCommands.size() > 0) {
+			success = false;
+			out.append("Following unexpected messages has been received: ");
+			out.append(unExpectedCommands.toString());
+			out.append(". ");
+		}
+		if (success) {
+			listener.getLogger().println("Nabaztag has been successfully notified.");
+		} else {
+			listener.getLogger().println("Nabaztag has not been successfully notified: ");
+			listener.getLogger().println(out.toString());
+		}
+	}
 
 }
