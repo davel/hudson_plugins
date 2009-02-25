@@ -146,7 +146,7 @@ public class CodePlexTfsScm extends SCM {
     }
 
     @Override
-    public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) {
+    public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
         return getScm().processWorkspaceBeforeDeletion(project, workspace, node);
     }
 
