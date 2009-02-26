@@ -1,12 +1,11 @@
 package hudson.plugins.javanet_trigger_installer;
 
+import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.SCMedItem;
 import hudson.plugins.javanet_trigger_installer.Task.Update;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
-import hudson.Extension;
-import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**

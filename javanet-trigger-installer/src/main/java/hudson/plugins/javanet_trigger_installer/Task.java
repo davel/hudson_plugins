@@ -1,7 +1,7 @@
 package hudson.plugins.javanet_trigger_installer;
 
-import hudson.model.Project;
 import hudson.model.AbstractProject;
+import hudson.model.Project;
 import hudson.scm.CVSSCM;
 import hudson.scm.SCM;
 import hudson.scm.SubversionSCM;

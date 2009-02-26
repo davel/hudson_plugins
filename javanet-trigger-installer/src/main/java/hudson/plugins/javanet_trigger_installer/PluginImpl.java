@@ -2,8 +2,6 @@ package hudson.plugins.javanet_trigger_installer;
 
 import hudson.Plugin;
 import hudson.triggers.Trigger;
-import hudson.triggers.Triggers;
-import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.http.HttpServletResponse;
