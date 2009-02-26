@@ -7,6 +7,7 @@ import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.Extension;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * {@link Trigger} for java.net CVS change notification e-mail.
@@ -14,6 +15,10 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Kohsuke Kawaguchi
  */
 public class JavaNetScmTrigger extends Trigger<SCMedItem> {
+    @DataBoundConstructor
+    public JavaNetScmTrigger() {
+    }
+
     @Override
     public void start(SCMedItem project, boolean newInstance) {
         super.start(project, newInstance);
