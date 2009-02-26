@@ -71,7 +71,7 @@ public class GoogleCodeSCM extends SCM {
                         String path = directory;
                         String[] remoteLocations = new String[] {"http://" + property.getProjectName() + ".googlecode.com/svn/" + path};
                         String[] localLocations = new String[] {"."};
-                        configuredScm = new SubversionSCM(remoteLocations, localLocations, true, new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR));
+                        configuredScm = new SubversionSCM(remoteLocations, localLocations, true, new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR),null);
                     } else {
                         throw new RuntimeException("The project does not have a google code property. Please report this to the plugin author.");
                     }
