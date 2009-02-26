@@ -12,7 +12,6 @@ import java.io.IOException;
 /**
  *
  * @author Kohsuke Kawaguchi
- * @plugin
  */
 public class PluginImpl extends Plugin {
 
@@ -20,8 +19,6 @@ public class PluginImpl extends Plugin {
     private SyncThread sync;
 
     public void start() throws Exception {
-        Triggers.TRIGGERS.add(JavaNetScmTrigger.DESCRIPTOR);
-
         // start a thread that talks to java.net
         worker = new Worker();
         worker.start();
@@ -45,7 +42,7 @@ public class PluginImpl extends Plugin {
     /**
      * Runs the synchronizer now.
      */
-    public void doSyncNow(StaplerRequest req, StaplerResponse rsp) throws IOException {
+    public void doSyncNow(StaplerResponse rsp) throws IOException {
         sync.run();
         rsp.setStatus(HttpServletResponse.SC_OK);
         rsp.setContentType("text/plain");

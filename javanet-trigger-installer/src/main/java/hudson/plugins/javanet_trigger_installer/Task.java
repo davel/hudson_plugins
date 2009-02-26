@@ -6,6 +6,7 @@ import hudson.scm.CVSSCM;
 import hudson.scm.SCM;
 import hudson.scm.SubversionSCM;
 import hudson.scm.SubversionSCM.ModuleLocation;
+import hudson.triggers.Trigger;
 import org.kohsuke.jnt.JNMailingList;
 import org.kohsuke.jnt.JNProject;
 import org.kohsuke.jnt.JavaNet;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
  */
 abstract class Task {
 
-    final AbstractProject project;
+    final AbstractProject<?,?> project;
 
 
     public Task(AbstractProject project) {
@@ -44,15 +45,15 @@ abstract class Task {
 
         protected void execute(JNMailingList list) throws ProcessingException, IOException {
             if(getSubscriptionAddress(list)!=null) {
-                if(project.getTriggers().containsKey(JavaNetScmTrigger.DESCRIPTOR))
+                if(project.getTrigger(JavaNetScmTrigger.class)!=null)
                     return;
                 LOGGER.info(project.getName()+" is apparently hooked to the java.net SCM change trigger");
                 project.addTrigger(new JavaNetScmTrigger());
             } else {
-                if(!project.getTriggers().containsKey(JavaNetScmTrigger.DESCRIPTOR))
+                if(project.getTrigger(JavaNetScmTrigger.class)==null)
                     return;
                 LOGGER.info(project.getName()+" is apparently removed from the java.net SCM change trigger");
-                project.removeTrigger(JavaNetScmTrigger.DESCRIPTOR);
+                project.removeTrigger(Trigger.all().get(JavaNetScmTrigger.DescriptorImpl.class));
             }
         }
     }
@@ -67,7 +68,7 @@ abstract class Task {
 
         protected void execute(JNMailingList list) throws ProcessingException, IOException {
             // shall we subscribe or unsubscribe?
-            boolean subscribe = project.getTriggers().containsKey(JavaNetScmTrigger.DESCRIPTOR);
+            boolean subscribe = project.getTrigger(JavaNetScmTrigger.class)!=null;
 
             String adrs = getSubscriptionAddress(list);
             if(adrs !=null) {

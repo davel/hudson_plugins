@@ -5,6 +5,7 @@ import hudson.model.SCMedItem;
 import hudson.plugins.javanet_trigger_installer.Task.Update;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
+import hudson.Extension;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -13,11 +14,6 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Kohsuke Kawaguchi
  */
 public class JavaNetScmTrigger extends Trigger<SCMedItem> {
-
-    public TriggerDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-
     @Override
     public void start(SCMedItem project, boolean newInstance) {
         super.start(project, newInstance);
@@ -31,13 +27,8 @@ public class JavaNetScmTrigger extends Trigger<SCMedItem> {
         new Update(job.asProject()).scheduleHighPriority();
     }
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
+    @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
-        public DescriptorImpl() {
-            super(JavaNetScmTrigger.class);
-        }
-
         public boolean isApplicable(Item item) {
             return item instanceof SCMedItem;
         }
@@ -48,10 +39,6 @@ public class JavaNetScmTrigger extends Trigger<SCMedItem> {
 
         public String getHelpFile() {
             return "/plugin/javanet-trigger-installer/help.html";
-        }
-
-        public Trigger newInstance(StaplerRequest staplerRequest) throws FormException {
-            return new JavaNetScmTrigger();
         }
     }
 }
