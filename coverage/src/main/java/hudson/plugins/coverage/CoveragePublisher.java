@@ -9,6 +9,9 @@ import hudson.model.Descriptor;
 import hudson.plugins.helpers.AbstractPublisherImpl;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.tasks.Publisher;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
+
 
 /**
  * Generic code coverage {@link hudson.tasks.Publisher}.
@@ -17,6 +20,17 @@ import hudson.tasks.Publisher;
  * @since 1.0
  */
 public class CoveragePublisher extends AbstractPublisherImpl {
+
+    private CoverageHealthTarget[] targets;
+
+    @DataBoundConstructor
+    public CoveragePublisher(CoverageHealthTarget... targets) {
+        this.targets = targets == null ? new CoverageHealthTarget[0] : targets;
+    }
+
+    public CoverageHealthTarget[] getTargets() {
+        return targets;
+    }
 
     /**
      * {@inheritDoc}
