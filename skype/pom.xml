@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.287</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>skype</artifactId>
+  <version>1.0.6</version>
+  <packaging>hpi</packaging>
+  <name>Hudson Skype Plugin</name>
+  <description>Integrates Hudson to Skype</description>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Skype+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>udagawa</id>
+      <email>k.udagawa_at_gmail.com</email>
+      <url>http://d.hatena.ne.jp/udagawa/</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+9</timezone>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.swt.win32.win32</groupId>
+      <artifactId>x86</artifactId>
+      <version>3.3.0-v3346</version>
+    </dependency>
+    <dependency>
+      <groupId>com.skype</groupId>
+      <artifactId>skype</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <!-- add for skype4java by udagawa -->
+    <repository>
+      <id>internal</id>
+      <name>skype-libs</name>
+      <url>file:libs</url>
+    </repository>
+  </repositories>
+
+</project>

@@ -1,0 +1,6 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.skype</groupId>
+  <artifactId>skype</artifactId>
+  <version>1.0.0</version>
+</project>

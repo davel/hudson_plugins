@@ -1,0 +1,28 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form">
+	<f:entry title="Chat Name"
+		>
+		<f:textbox name="skype.chatNameTestError" value="${instance.chatName}" />
+	</f:entry>
+	<f:entry
+		title="Unit Test(Regular expression)"
+		description="Specify a regular expression using the syntax supported by the Java &lt;a href='http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html'>Pattern&lt;a> class."
+		>
+		<j:set var="unitTestPattern" value="${instance.unitTestPattern}"/>
+		<j:if test="${instance.unitTestPattern== null}">
+			<j:set var="unitTestPattern" value="${descriptor.defaultUnitTestPattern}"/>
+		</j:if>
+		<f:textbox name="skype.unitTestPattern" value="${unitTestPattern}" />
+	</f:entry>
+	<f:entry
+		title="Test report XMLs"
+		description="&lt;a href='http://ant.apache.org/manual/CoreTypes/fileset.html'>Fileset 'includes'&lt;/a>"
+		>
+		<j:set var="testFilePattern" value="${instance.testFilePattern}"/>
+		<j:if test="${instance.testFilePattern== null}">
+			<j:set var="testFilePattern" value="${descriptor.defaultTestFilePattern}"/>
+		</j:if>
+		<f:textbox name="skype.testFilePattern" value="${testFilePattern}" />
+	</f:entry>
+</j:jelly>

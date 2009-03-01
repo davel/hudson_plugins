@@ -1,0 +1,18 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form">
+	<f:entry
+		title="Chat Name">
+		<f:textbox name="skype.chatNameBuildError" value="${instance.chatName}" />
+	</f:entry>
+	<f:entry
+		title="Error String(Regular expression)"
+		description="Specify a regular expression using the syntax supported by the Java &lt;a href='http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html'>Pattern&lt;a> class."
+		>
+		<j:set var="errorStringPattern" value="${instance.errorStringPattern}"/>
+		<j:if test="${instance.errorStringPattern == null}">
+			<j:set var="errorStringPattern" value="${descriptor.defaultErrorStringPattern}"/>
+		</j:if>
+		<f:textbox name="skype.errorStringPattern" value="${errorStringPattern}" />
+	</f:entry>
+</j:jelly>
