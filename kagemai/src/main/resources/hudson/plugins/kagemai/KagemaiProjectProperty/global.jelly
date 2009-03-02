@@ -1,0 +1,47 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="${%Kagemai}">    
+    <f:entry title="${%Kagemai Site}">
+      <script type="text/javascript">
+        function checkLogin(base) {
+          var baseUrl = escape(Form.findMatchingInput(base,'kagemai.baseUrl').value);
+          var basicUserName = escape(Form.findMatchingInput(base,'kagemai.basicUserName').value);
+          var basicPassword = escape(Form.findMatchingInput(base,'kagemai.basicPassword').value);
+          var u = "${rootURL}/jobProperty/KagemaiProjectProperty/loginCheck?";
+          u += "baseUrl=" + baseUrl;
+          u += "&amp;basicUserName=" + basicUserName;
+          u += "&amp;basicPassword=" + basicPassword;
+          return u;
+        }
+      </script>
+      <f:repeatable name="kagemaiSite" var="site" items="${descriptor.sites}">
+        <table width="100%">        
+          <f:entry title="${%URL}" help="/plugin/kagemai/help-global-baseurl.html">
+            <f:textbox name="kagemai.baseUrl" value="${site.baseUrl}" 
+                       checkUrl="checkLogin(this)" />
+          </f:entry>          
+          <f:advanced>
+            <f:entry title="${%Encode}" help="/plugin/kagemai/help-global-encode.html">
+              <f:textbox name="kagemai.encode" value="${site.encode}" />
+            </f:entry>
+            <f:section title="${%HTTP Basic Authentication}">
+              <f:entry title="${%User Name}">
+                <f:textbox name="kagemai.basicUserName" value="${site.basicUserName}" 
+                           onchange="Form.findMatchingInput(this,'kagemai.baseUrl').onchange()" />
+              </f:entry>
+              <f:entry title="${%Password}">
+                <input class="setting-input" name="kagemai.basicPassword" 
+                       type="password" value="${site.basicPassword}" 
+                       onchange="Form.findMatchingInput(this,'kagemai.baseUrl').onchange()" />
+              </f:entry>
+            </f:section>
+          </f:advanced>          
+          <f:entry title="">
+            <div align="right">
+              <f:repeatableDeleteButton />
+            </div>
+          </f:entry>
+        </table>  
+      </f:repeatable>
+    </f:entry>
+  </f:section>
+</j:jelly>
