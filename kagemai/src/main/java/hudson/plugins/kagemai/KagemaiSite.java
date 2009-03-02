@@ -67,4 +67,5 @@ public class KagemaiSite {
 		}
 		return null;
 	}
+
 }
