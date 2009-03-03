@@ -64,7 +64,9 @@ public class KagemaiPublisher extends Publisher {
 		if ((!bugIds.isEmpty()) && kagemaiSession != null) {
 			issues = kagemaiSession.getIssuesMap(bugIds);
 		}
-		Collections.sort(issues);
+		if (issues.size() > 0) {
+			Collections.sort(issues);
+		}
 		KagemaiBuildAction action = new KagemaiBuildAction(build, issues, mpp
 				.getSiteName(), mpp.getProjectId());
 		build.addAction(action);
