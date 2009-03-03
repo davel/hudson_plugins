@@ -162,6 +162,7 @@
         <module>git</module>
         <module>googleanalytics</module>
         <module>googlecode</module>
+        <module>greenballs</module>
         <module>groovy</module>
         <module>hello-world</module>
         <module>harvest</module>
