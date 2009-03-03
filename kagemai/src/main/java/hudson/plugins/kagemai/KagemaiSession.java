@@ -63,7 +63,11 @@ public class KagemaiSession {
 				result = true;
 			}
 		} catch (HttpException e) {
+			LOGGER.log(Level.WARNING, "can not connect kagemai site", e);
 		} catch (IOException e) {
+			LOGGER
+					.log(Level.WARNING, "error in kagemai response processing",
+							e);
 		} finally {
 			method.releaseConnection();
 		}
@@ -89,8 +93,14 @@ public class KagemaiSession {
 	}
 
 	private void setAuthentication() {
+		int port;
+		if (baseUrl.getPort() == -1) {
+			port = baseUrl.getDefaultPort();
+		} else {
+			port = baseUrl.getPort();
+		}
 		client.getState().setCredentials(
-				new AuthScope(baseUrl.getHost(), baseUrl.getPort()),
+				new AuthScope(baseUrl.getHost(), port),
 				new UsernamePasswordCredentials(basicUserName, basicPassword));
 	}
 

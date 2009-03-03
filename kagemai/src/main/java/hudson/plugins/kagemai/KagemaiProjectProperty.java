@@ -170,6 +170,10 @@ public class KagemaiProjectProperty extends JobProperty<Job<?, ?>> {
 					String basicPassword = Util.fixEmpty(request
 							.getParameter("basicPassword"));
 
+					if (StringUtils.isEmpty(baseUrl)) {
+						ok();
+						return;
+					}
 					KagemaiSession session = new KagemaiSession(
 							new URL(baseUrl), basicUserName, basicPassword);
 					if (session.isConnect()) {
