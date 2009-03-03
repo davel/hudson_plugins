@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>kagemai</artifactId>
-  <version>1.2</version>
+  <version>1.3-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson kagemai plugin</name>
   <description>Integrates Hudson to Kagemai</description>
@@ -21,10 +21,4 @@
        <version>3.1</version>
      </dependency>
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/kagemai-1.2</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/kagemai-1.2</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/kagemai/tags/kagemai-1.2</url>
-  </scm>
 </project>
