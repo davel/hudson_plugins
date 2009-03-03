@@ -111,6 +111,7 @@ public class KagemaiSession {
 		}
 		method.setParameter("project", projectId);
 		method.setParameter("action", "view_report");
+		method.setParameter("jp_enc_test", "日");
 		return method;
 	}
 
@@ -131,6 +132,7 @@ public class KagemaiSession {
 			try {
 				method = createMethod();
 				method.setParameter("id", String.valueOf(i));
+				client.getParams().setContentCharset(encode);
 				if (client.executeMethod(method) == HttpStatus.SC_OK) {
 					BufferedReader br = new BufferedReader(
 							new InputStreamReader(method
