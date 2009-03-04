@@ -6,10 +6,10 @@
   -->
   <f:section title="Schedule failed builds">  
   
-  	<f:entry title="Retry interval (minutes)" help="${rootURL}/plugin/schedule-failed-builds/help-interval.html">
+  	<f:entry title="Retry interval (minutes)" help="/plugin/schedule-failed-builds/help-interval.html">
     	<f:textbox name="scheduleFailedBuildsPublisher.interval" value="${instance.interval}" />    	
 	</f:entry>
-	<f:entry title="Max. retries" help="${rootURL}/plugin/schedule-failed-builds/help-retries.html">    	
+	<f:entry title="Max. retries" help="/plugin/schedule-failed-builds/help-retries.html">    	
     	<f:textbox name="scheduleFailedBuildsPublisher.maxRetries" value="${instance.maxRetries}" />
 	</f:entry>
   </f:section>
