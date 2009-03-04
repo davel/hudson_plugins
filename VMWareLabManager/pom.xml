@@ -4,11 +4,12 @@
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>VMWareLabManager</artifactId>
   <packaging>hpi</packaging>
+  <name>VMWare Labamanger Integration</name>
   <version>1.0-SNAPSHOT</version>
   
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
-    <hudson.version>1.279</hudson.version>
+    <hudson.version>1.287</hudson.version>
   </properties>
 
   <dependencies>
@@ -26,6 +27,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <developers>
+  	<developer>
+  		<id>tofuAtJava</id>
+  		<name>Thomas Fürer</name>
+  		<email>tfuerer.javanet@googlemail.com</email>
+  	</developer>
+  	<developer>
+  		<id>_tehLexx</id>
+  		<name>Alexander Floh</name>
+  	</developer>
+  </developers>
   
   <build>
     <!--

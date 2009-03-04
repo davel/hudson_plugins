@@ -1,13 +1,3 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:section title="VMWare LabManager">
-    <f:entry title="Host Name">
-    	<f:textbox field="hostname" />
-    <f:entry/>
-    <f:entry title="Username">
-    	<f:textbox field="username" />
-    <f:entry/>
-    <f:entry title="Password">
-    	<f:password field="password" />
-    <f:entry/>
-  </f:section>
+  
 </j:jelly>
