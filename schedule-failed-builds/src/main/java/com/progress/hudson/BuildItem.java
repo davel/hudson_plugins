@@ -68,10 +68,10 @@ public class BuildItem{
   }
 
   private void setRetriesLeft(Integer retriesLeft) {
-    if(this.retriesLeft!=-1){
+    if(retriesLeft!=-1){
       //only set if not infinite (-1)
       this.retriesLeft = retriesLeft;
-    }
+    }    
   }
 
   private Long getNextInterval() {
