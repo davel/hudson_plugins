@@ -169,21 +169,34 @@ public class Statistic implements Serializable {
     }
 
     public static Collection<Statistic> merge(Collection<Statistic>... results) {
+        Collection<Statistic> newResults = new ArrayList<Statistic>();
         if (results.length == 0) {
             return Collections.emptySet();
         } else if (results.length == 1) {
             return results[0];
         } else {
-            Map<String, Statistic> merged = new HashMap<String, Statistic>();
+            
+            List<String> indivNames = new ArrayList<String>();
             for (Collection<Statistic> result : results) {
                 for (Statistic individual : result) {
-                    if (!merged.containsKey(individual.name)) {
-                        merged.put(individual.name, new Statistic(individual.name));
+                    if (!indivNames.contains(individual.name)) {
+                        indivNames.add(individual.name);
                     }
-                    merged.get(individual.name).add(individual);
                 }
             }
-            return merged.values();
+
+            for (String indivName : indivNames) {
+                Statistic indivStat = new Statistic(indivName);
+                for (Collection<Statistic> result : results) {
+                    for (Statistic individual : result) {
+                        if (indivName.equals(individual.name)) {
+                            indivStat.add(individual);
+                        }
+                    }
+                }
+                newResults.add(indivStat);
+            }
+            return newResults;
         }
     }
 
