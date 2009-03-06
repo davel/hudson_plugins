@@ -7,8 +7,9 @@
             </div>
 
             <j:set var="relativeUrlPath" value="${from.urlName}/"/>
+            <a href="javancss/">
             <st:include it="${from}" page="normalGraph.jelly"/>
-
+            </a>
             <div style="text-align:right">
                 <a href="${relativeUrlPath}enlargedGraph">enlarge</a>
             </div>
