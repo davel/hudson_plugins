@@ -1,0 +1,60 @@
+<!--
+/*******************************************************************************
+* Copyright (c) 2009 Thales Corporate Services SAS                             *
+* Author : Gregory Boissinot                                                   *
+*                                                                              *
+* Permission is hereby granted, free of charge, to any person obtaining a copy *
+* of this software and associated documentation files (the "Software"), to deal*
+* in the Software without restriction, including without limitation the rights *
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell    *
+* copies of the Software, and to permit persons to whom the Software is        *
+* furnished to do so, subject to the following conditions:                     *
+*                                                                              *
+* The above copyright notice and this permission notice shall be included in   *
+* all copies or substantial portions of the Software.                          *
+*                                                                              *
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR   *
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     *
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  *
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       *
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,*
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
+* THE SOFTWARE.                                                                *
+*******************************************************************************/
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  
+   <f:entry title="SCons Version">
+    <select class="setting-input" name="scons.sconsName">
+      <option>(Default)</option>
+      <j:forEach var="inst" items="${descriptor.installations}">
+        <f:option selected="${inst.name==instance.sconsName}">${inst.name}</f:option>
+      </j:forEach>
+    </select>
+   </f:entry>
+  
+   <f:advanced>
+     <f:entry title="Options" help="/plugin/scons/SConsBuilder/options.html">
+       <f:expandableTextbox name="scons.options" value="${instance.options}" />           		   
+     </f:entry>
+  
+     <f:entry title="Variables" help="/plugin/scons/SConsBuilder/variables.html">
+       <f:expandableTextbox name="scons.variables" value="${instance.variables}" />
+     </f:entry>                
+        
+     <f:entry title="Targets" help="/plugin/scons/SConsBuilder/targets.html">
+       <f:expandableTextbox name="scons.targets" value="${instance.targets}" />            		          
+     </f:entry> 
+     
+     <f:entry title="SConscript root directory" help="/plugin/scons/SConsBuilder/rootSconscriptDirectory.html">
+       <f:textbox name="scons.rootSconsscriptDirectory" value="${instance.rootSconsscriptDirectory}" />            		          
+     </f:entry> 
+
+     <f:entry title="SConscript file" help="/plugin/scons/SConsBuilder/sconscript.html">
+       <f:textbox name="scons.sconsscript" value="${instance.sconsscript}" />            		          
+     </f:entry> 
+     
+   </f:advanced>
+  
+</j:jelly>
