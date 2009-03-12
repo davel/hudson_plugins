@@ -2,7 +2,7 @@
   <l:layout>
     <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
-      <h1>${%Issues List}</h1>
+      <h1>${%Issue List}</h1>
       <ul>
         ${it.issuesList}
       </ul>
