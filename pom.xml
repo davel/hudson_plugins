@@ -142,6 +142,7 @@
         <module>build-publisher</module>
         <module>build-timeout</module>
         <module>checkstyle</module>
+        <module>changelog-history</module>
         <module>ci-game</module>
         <module>clearcase</module>
         <module>clover</module>
@@ -149,10 +150,10 @@
         <!-- #2819: uses private repo, licensing questions: <module>codeviation</module> -->
         <module>cobertura</module>
         <!--module>coverage</module--><!-- not ready for release yet -->
-	    <module>cvs-tag</module>
+        <module>cvs-tag</module>
         <module>deploy</module>
-	    <module>disk-usage</module>
-	    <module>dry</module>
+        <module>disk-usage</module>
+        <module>dry</module>
         <module>email-ext</module>
         <module>emma</module>
         <module>emotional-hudson</module>
@@ -194,7 +195,7 @@
         <module>port-allocator</module>
         <module>pmd</module>
         <module>promoted-builds</module>
-	    <module>rake</module>
+        <module>rake</module>
         <module>redmine</module>
         <module>ruby</module>
         <module>rubyMetrics</module>
