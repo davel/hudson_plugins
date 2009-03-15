@@ -15,7 +15,8 @@ public class NumericalParser {
 	
 	public NumericalParser(Locale locale) {
 		super();
-		this.formatSymbols = DecimalFormatSymbols.getInstance(locale);
+		this.formatSymbols = new DecimalFormatSymbols(locale);
+		//this.formatSymbols = DecimalFormatSymbols.getInstance(locale);
 	}
 	
 	public double parseDouble(String text) {
