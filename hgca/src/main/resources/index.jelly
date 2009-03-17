@@ -1,0 +1,3 @@
+<div>
+  This plugin allows for specifying arbitrary pattern/URL pairs, used to turn text in the changelogs matching those patterns into links to the paired URL. 
+</div>

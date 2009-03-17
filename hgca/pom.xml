@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.jvnet.hudson.plugins</groupId>
+  <artifactId>hgca</artifactId>
+  <name>Hudson Generic Changelog Annotator Plugin</name>
+  <packaging>hpi</packaging>
+  <version>0.1-SNAPSHOT</version>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/HGCA+Plugin</url>
+  
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.291</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  
+  <licenses>
+    <license>
+      <name>MIT license</name>
+      <comments>All source code is under the MIT license.</comments>
+    </license>
+  </licenses>
+
+
+  <properties>
+    <!-- which version of Hudson is this plugin built against? -->
+    
+  </properties>
+  <repositories>
+  	<repository>
+  		<id>m.g.o-public</id>
+  		<url>http://maven.glassfish.org/content/groups/public/</url>
+  		<snapshots>
+  			<enabled>false</enabled>
+  		</snapshots>
+  	</repository>
+  </repositories>
+  <pluginRepositories>
+  	<pluginRepository>
+  		<id>m.g.o-public</id>
+  		<url>http://maven.glassfish.org/content/groups/public/</url>
+  	</pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+  </dependencies>
+  
+  <build>
+    <!--
+      Since new versions need to overwrite old versions, it's better
+      not to have version number in the .hpi file name.
+    -->
+    <finalName>${project.artifactId}</finalName>
+    <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <scm>
+    <connection>scm:svn:https://guest@shttps://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/hgca</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/hgca</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/hgca</url>
+  </scm>
+
+</project>
