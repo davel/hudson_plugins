@@ -23,26 +23,6 @@
   </licenses>
 
 
-  <properties>
-    <!-- which version of Hudson is this plugin built against? -->
-    
-  </properties>
-  <repositories>
-  	<repository>
-  		<id>m.g.o-public</id>
-  		<url>http://maven.glassfish.org/content/groups/public/</url>
-  		<snapshots>
-  			<enabled>false</enabled>
-  		</snapshots>
-  	</repository>
-  </repositories>
-  <pluginRepositories>
-  	<pluginRepository>
-  		<id>m.g.o-public</id>
-  		<url>http://maven.glassfish.org/content/groups/public/</url>
-  	</pluginRepository>
-  </pluginRepositories>
-
   <dependencies>
   </dependencies>
   
