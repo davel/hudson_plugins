@@ -3,6 +3,7 @@ package hudson.plugins.testabilityexplorer;
 import hudson.Plugin;
 import hudson.maven.MavenReporters;
 import hudson.tasks.BuildStep;
+import hudson.tasks.Publisher;
 import hudson.plugins.testabilityexplorer.publisher.FreestylePublisher;
 import hudson.plugins.testabilityexplorer.publisher.MavenPublisher;
 
@@ -27,11 +28,12 @@ public class PluginImpl extends Plugin
 
     protected void addPublisher()
     {
-        BuildStep.PUBLISHERS.add(FreestylePublisher.DESCRIPTOR);
+        Publisher.all().add(FreestylePublisher.DESCRIPTOR);
     }
 
     protected void addReporter()
     {
+
         MavenReporters.LIST.add(MavenPublisher.DESCRIPTOR);
     }
 }

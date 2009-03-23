@@ -70,7 +70,7 @@ public class AbstractMavenReporterImplTest extends PluginBaseTest
         final FilePath rootPath = new FilePath(root);
         stub(mavenBuild.getProject()).toReturn(null);
 
-        MavenPublisher publisher = new MavenPublisher(REPORT_FILE_NAME, "10", "50")
+        MavenPublisher publisher = new MavenPublisher(REPORT_FILE_NAME,"","", "10", "50")
         {
             @Override
             FilePath getModuleRoot(AbstractProject project)

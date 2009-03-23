@@ -4,12 +4,12 @@
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/tabview-min.js"></script>
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/dispatcher-min.js"></script>
 
-         <h3>Summary</h3>
+    <h3>${%Summary}</h3>
          <table border="1px" class="pane sortable">
              <thead>
                  <tr>
-                     <th>Class</th>
-                     <th>Cost</th>
+			 <th>${%Class}</th>
+			 <th>${%Cost}</th>
                  </tr>
              </thead>
              <tbody>

@@ -4,17 +4,53 @@
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/utilities.js"></script>
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/tabview-min.js"></script>
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/dispatcher-min.js"></script>
-             
-    <j:forEach var="result" items="${it.results}">
-        <h3>Summary</h3>
+
+   <!-- TODO: Add global summary this should be the same summation as in the graphical report -->
+   <h2>${%Summary}</h2>  
         <table border="1px" class="pane sortable">
             <thead>
                 <tr>
-                    <th>Number of Classes</th>
-                    <th>Excellent</th>
-                    <th>Good</th>
-                    <th>Needs Work</th>
-                    <th>Total</th>
+			<th>${%Number of Classes}</th>
+			<th>${%Excellent}</th>
+			<th>${%Good}</th>
+			<th>${%Needs Work}</th>
+			<th>${%Total}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th align="left">${it.numberOfClasses}</th>
+                    <td align="right">${it.excellent}</td>
+                    <td align="right">${it.good}</td>
+                    <td align="right">${it.needsWork}</td>
+                    <td align="right">${it.totals}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br /><br />
+   <j:if test="${it.results.size() >0}">
+	 <st:include page="/tabview/css.jelly" />
+        <script type="text/javascript">
+            var myTabs = new YAHOO.widget.TabView("statistics");
+	</script>
+<h2>${%Details}</h2>
+        <div id="statistics" class="yui-navset"/>
+   </j:if>
+    <j:forEach var="result" items="${it.results}">
+            <j:if test="${it.results.size() > 1}">
+        <script type="text/javascript">
+            YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
+label: '<j:choose><j:when test="${null != result.displayName}">${result.displayName}</j:when><j:otherwise>${%Classes}</j:otherwise></j:choose>',
+content: '        <h3>${%Summary}</h3>
+        <table border="1px" class="pane sortable">
+            <thead>
+                <tr>
+		<th>${%Number of Classes}</th>
+		<th>${%Excellent}</th>
+		<th>${%Good}</th>
+		<th>${%Needs Work}</th>
+		<th>${%Total}</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,14 +64,41 @@
             </tbody>
         </table>
 
-        <br /><br />
-
+        <br /><br /><table class="pane sortable" id="packages">
+                        <tr>
+                          <td class="pane-header">${%Class}</td>
+                          <td class="pane-header" style="width:2em">${%Cost}</td>
+                        </tr>
+                        <tbody>
+                          <j:forEach var="classCost" items="${result.costSummary.costStack}">
+                            <tr>
+                              <td class="pane">
+                                <a href="class.${classCost.name}/">${classCost.name}</a>
+                              </td>
+                                <j:choose>
+                                  <j:when test="${classCost.cost > 100}">
+                                      <td class="pane"><span style="color:red">${classCost.cost}</span></td>
+                                  </j:when>
+                                  <j:when test="${classCost.cost > 20}">
+                                      <td class="pane"><span style="color:orange">${classCost.cost}</span></td>
+                                  </j:when>
+                                  <j:otherwise>
+                                      <td class="pane"><span style="color:green">${classCost.cost}</span></td>
+                                  </j:otherwise>
+                                </j:choose>
+                            </tr>
+                          </j:forEach>
+                        </tbody>
+                      </table>',
+                cacheData: true,
+                active: true
+            }), myTabs);
+        </script>
+            </j:if>
+            <j:if test="${it.results.size() == 1}">
         <script type="text/javascript">
-            var myTabs = new YAHOO.widget.TabView("statistics");
-
-            <j:if test="${result.costSummary.costStack.size() > 0}">
             YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-                label: '${%Classes}',
+label: '<j:choose><j:when test="${null != result.displayName}">${result.displayName}</j:when><j:otherwise>${%Classes}</j:otherwise></j:choose>',
                 content: '<table class="pane sortable" id="packages">
                         <tr>
                           <td class="pane-header">${%Class}</td>
@@ -65,14 +128,7 @@
                 cacheData: true,
                 active: true
             }), myTabs);
-            </j:if>
-
         </script>
-
-        <st:include page="/tabview/css.jelly" />
-
-        <h2>${%Details}</h2>
-        <div id="statistics" class="yui-navset"></div>       
-
+            </j:if>
     </j:forEach>
 </j:jelly>

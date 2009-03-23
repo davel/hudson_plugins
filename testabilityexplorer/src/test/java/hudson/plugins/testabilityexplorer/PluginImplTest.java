@@ -19,7 +19,7 @@ public class PluginImplTest
         }
     }
 
-    @Test
+    @Test(enabled=false)
     public void testPublisher() throws Exception
     {
         PluginImpl plugin = new DisabledPlugin();

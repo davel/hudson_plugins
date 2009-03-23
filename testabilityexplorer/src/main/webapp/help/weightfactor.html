@@ -1,0 +1,5 @@
+Testability explorer will use a weighted average for its cost aggregation.
+The formula for this will use an exponent 1.5 to do this. Thus an normal weight calculation would be sum(value^(1+1.5)/sum(value^1.5).
+By setting this option to a value different from 1.5 you can tweak the weighted average.
+Remark setting the factor higher than 10 usually makes no sense, as your average will be reasonably close to your maximum cost.
+If you set it too high you'll end up having 0 as cost due to overflow!

@@ -1,15 +1,14 @@
 package hudson.plugins.testabilityexplorer.report.costs;
 
-import hudson.plugins.testabilityexplorer.report.costs.MethodCost;
+import org.apache.commons.lang.StringUtils;
+
 import hudson.plugins.testabilityexplorer.utils.StringUtil;
 
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.io.Serializable;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Encapsulates the testability of a single class.
@@ -19,12 +18,16 @@ import org.apache.commons.lang.StringUtils;
 public class ClassCost implements Serializable, TestabilityCost
 {
     private String m_name;
+    private String m_packageName;
     private int m_cost;
     private List<MethodCost> m_costStack;
 
     public ClassCost(String name, int cost)
     {
         m_name = name;
+        if(StringUtils.isNotBlank(m_name)){
+            m_packageName = StringUtil.getPackage(m_name);
+        }
         m_cost = cost;
     }
 
@@ -40,6 +43,10 @@ public class ClassCost implements Serializable, TestabilityCost
     public String getName()
     {
         return m_name;
+    }
+
+    public String getPackageName(){
+        return m_packageName;
     }
 
     public int getCost()
@@ -63,7 +70,7 @@ public class ClassCost implements Serializable, TestabilityCost
             for (MethodCost methodCost : m_costStack)
             {
                 methodCost.sort();
-            }            
+            }
         }
     }
 

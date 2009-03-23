@@ -1,21 +1,25 @@
 package hudson.plugins.testabilityexplorer.publisher;
 
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import org.apache.commons.lang.SystemUtils;
+import org.testng.annotations.Test;
+
+import hudson.FilePath;
 import hudson.maven.MavenReporterDescriptor;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.FilePath;
 import hudson.plugins.testabilityexplorer.PluginImpl;
-import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
-import hudson.plugins.testabilityexplorer.parser.XmlStatisticsParser;
 import hudson.plugins.testabilityexplorer.helpers.ParseDelegate;
 import hudson.plugins.testabilityexplorer.helpers.ReportParseDelegate;
-import hudson.plugins.testabilityexplorer.report.ProjectIndividualReport;
+import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
+import hudson.plugins.testabilityexplorer.parser.XmlStatisticsParser;
 import hudson.plugins.testabilityexplorer.report.CostDetailBuilder;
+import hudson.plugins.testabilityexplorer.report.ProjectIndividualReport;
 import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 import hudson.plugins.testabilityexplorer.report.health.TestabilityReportBuilder;
 
@@ -31,7 +35,7 @@ public class MavenPublisherTest
 {
     public void testMavenPublisher()
     {
-        MavenPublisher publisher = new MavenPublisher("report.xml", "100", "50");
+        MavenPublisher publisher = new MavenPublisher("report.xml", "","","100", "50");
         String filenamePattern = publisher.getReportFilenamePattern();
         assertEquals(filenamePattern, "report.xml");
         int threshold = publisher.getThreshold();

@@ -2,9 +2,7 @@ package hudson.plugins.testabilityexplorer.report.costs;
 
 import hudson.model.AbstractBuild;
 
-import java.io.*;
-
-import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
+import java.io.Serializable;
 
 /**
  * Encapsulates a full Testability Explorer report.
@@ -14,6 +12,12 @@ import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
 public class Statistic implements Serializable
 {
     private AbstractBuild<?, ?> m_owner;
+    /*
+     * Apparently the mavenBuild is not correctly persisting the state of the owner object?
+     * We always get an empty project reference. So hereby we explicitly save the project attribute
+     * we need.
+     */
+    private String m_displayName;
     private CostSummary m_costSummary;
 
     public Statistic(CostSummary costSummary)
@@ -34,15 +38,15 @@ public class Statistic implements Serializable
     public void setOwner(AbstractBuild<?, ?> owner)
     {
         m_owner = owner;
+        if(null!=owner.getProject()){
+            m_displayName = owner.getProject().getDisplayName();
+        }
     }
 
     public void sort()
     {
         CostSummary summary = getCostSummary();
-        for (ClassCost classCost : summary.getCostStack())
-        {
-            classCost.sort();
-        }
+        summary.sort();
     }
 
     @Override
@@ -82,5 +86,14 @@ public class Statistic implements Serializable
     public int hashCode()
     {
         return m_owner != null ? m_owner.toString().hashCode() : 0;
+    }
+
+
+    /**
+     * Getter for m_displayName.
+     * @return the m_displayName
+     */
+    public String getDisplayName() {
+        return m_displayName;
     }
 }

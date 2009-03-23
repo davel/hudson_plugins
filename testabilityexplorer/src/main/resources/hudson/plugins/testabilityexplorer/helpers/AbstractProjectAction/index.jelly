@@ -5,7 +5,7 @@
        <l:main-panel>
            <h1>${it.displayName}</h1>
            <j:if test="${it.graphActive}">
-               <h4>Classes Trend</h4>
+	   <h4>${%Classes Trend}</h4>
                <st:include page="normalGraph.jelly"/>
            </j:if>
            <st:include page="reportDetail.jelly"/>

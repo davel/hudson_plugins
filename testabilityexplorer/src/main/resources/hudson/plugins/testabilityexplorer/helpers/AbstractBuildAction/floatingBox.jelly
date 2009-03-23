@@ -9,7 +9,7 @@
            <st:include page="normalGraph.jelly"/>
 
            <div style="text-align:right">
-               <a href="enlargedGraph">enlarge</a>
+		   <a href="enlargedGraph">${%enlarge}</a>
            </div>
        </div>
    </j:if>

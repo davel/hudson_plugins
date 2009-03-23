@@ -1,21 +1,17 @@
 package hudson.plugins.testabilityexplorer.report;
 
+import hudson.maven.AggregatableAction;
+import hudson.maven.MavenAggregatedReport;
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
+import hudson.maven.MavenModuleSetBuild;
 import hudson.model.AbstractBuild;
-import hudson.model.HealthReport;
-import hudson.util.ChartUtil;
-import hudson.util.DataSetBuilder;
-import hudson.maven.*;
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
 import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 
-import java.util.*;
-import java.io.IOException;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.CategoryDataset;
-import org.apache.commons.lang.StringUtils;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Connects a {@link Statistic} with a {@link AbstractBuild}.

@@ -1,27 +1,27 @@
 package hudson.plugins.testabilityexplorer.report;
 
-import hudson.plugins.testabilityexplorer.report.costs.Statistic;
-import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
-import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
-import hudson.plugins.testabilityexplorer.report.charts.BuildAndResults;
-import hudson.plugins.testabilityexplorer.report.charts.RangedOverallTrend;
-import hudson.plugins.testabilityexplorer.report.charts.RangedTrend;
-import hudson.plugins.testabilityexplorer.report.charts.RangedClassesTrend;
-import hudson.plugins.testabilityexplorer.helpers.AbstractBuildAction;
-import hudson.plugins.testabilityexplorer.PluginImpl;
-
-import java.util.*;
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
+import org.jfree.chart.JFreeChart;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
+import hudson.plugins.testabilityexplorer.PluginImpl;
+import hudson.plugins.testabilityexplorer.helpers.AbstractBuildAction;
+import hudson.plugins.testabilityexplorer.report.charts.BuildAndResults;
+import hudson.plugins.testabilityexplorer.report.charts.RangedClassesTrend;
+import hudson.plugins.testabilityexplorer.report.charts.RangedOverallTrend;
+import hudson.plugins.testabilityexplorer.report.charts.RangedTrend;
+import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
+import hudson.plugins.testabilityexplorer.report.costs.Statistic;
+import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 import hudson.util.ChartUtil;
-import hudson.util.DataSetBuilder;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.apache.commons.lang.StringUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.CategoryDataset;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract {@link AbstractBuildAction} class that is capable of rendering different build reports.
@@ -56,7 +56,35 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
         }
     }
 
+    protected void mergeStatistics(Collection<Statistic> statistics, double weightFactor) {
+        if (null != statistics) {
+            for (Statistic statistic : statistics) {
+                if (m_results.isEmpty()) {
+                    m_results.add(statistic);
+                } else {
+                    boolean merged = false;
+                    //check if we need to update existing statistics
+                    for (Statistic stat : m_results) {
+                        if ((null == stat.getOwner() && null == statistic.getOwner())
+                                || (null != stat.getOwner() && stat.getOwner().equals(
+                                        statistic.getOwner()))) {
+                            stat.getCostSummary().merge(statistic.getCostSummary(), weightFactor);
+                            merged = true;
+                        }
+                    }
+                    if (!merged) {
+                        m_results.add(statistic);
+                    }
+                }
+            }
+            for (Statistic stat : m_results) {
+                stat.sort();
+            }
+        }
+    }
+
     /** {@inheritDoc} */
+    @Override
     public String getSummary()
     {
         String summary = "";
@@ -67,6 +95,58 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
             summary = " (Total: " + getTotals() + ")";
         }
         return summary;
+    }
+
+    public int getNumberOfClasses(){
+        int numberOfClasses = 0;
+        for (Statistic statistic : getResults())
+        {
+            CostSummary summary = statistic.getCostSummary();
+            if (summary != null)
+            {
+                numberOfClasses += summary.getNumberOfClasses();
+            }
+        }
+        return numberOfClasses;
+    }
+
+    public int getExcellent(){
+        int excellent = 0;
+        for (Statistic statistic : getResults())
+        {
+            CostSummary summary = statistic.getCostSummary();
+            if (summary != null)
+            {
+                excellent += summary.getExcellent();
+            }
+        }
+        return excellent;
+    }
+
+    public int getGood(){
+        int good = 0;
+        for (Statistic statistic : getResults())
+        {
+            CostSummary summary = statistic.getCostSummary();
+            if (summary != null)
+            {
+                good += summary.getGood();
+            }
+        }
+        return good;
+    }
+
+    public int getNeedsWork(){
+        int needsWork = 0;
+        for (Statistic statistic : getResults())
+        {
+            CostSummary summary = statistic.getCostSummary();
+            if (summary != null)
+            {
+                needsWork += summary.getNeedsWork();
+            }
+        }
+        return needsWork;
     }
 
     public int getTotals()

@@ -4,21 +4,30 @@
              description="
              This pattern locates the XML report files (ie. &lt;b&gt;target/reports/testability/report.xml&lt;/b&gt;). Basedir of the fileset is the &lt;a href='ws/'&gt;the module root&lt;/a&gt;.&lt;br/&gt;.
            ">
-        <f:textbox name="javancss.reportFilenamePattern" value="${instance.reportFilenamePattern}"/>
+          <f:textbox name="testability.reportFilenamePattern" value="${instance.reportFilenamePattern}"/>
     </f:entry>
+	<f:advanced>
+    <f:entry help="/plugin/testabilityexplorer/help/aggregateFiles.html">
+	<f:checkbox name="testability.aggregateFiles" checked="${instance.aggregateFiles}" onclick=""/>
+	<label class="attach-previous">${%Aggregate result files if pattern matches multiple files}</label>
+    </f:entry>
+    		<f:entry title="${%WeightFactor}" help="/plugin/testabilityexplorer/help/weightfactor.html">
+      			<f:textbox name="testability.weightFactor" value="${instance.weightFactor}"/>
+    		</f:entry>
+  	</f:advanced>
 
     <f:entry title="Overall Threshold"
              description="
              Must be an Integer value. If the overall testability cost is higher than the specified threshold, the build will be flagged unstable.
            ">
-        <f:textbox name="javancss.threshold" value="${instance.threshold}"/>
+        <f:textbox name="testability.threshold" value="${instance.threshold}"/>
     </f:entry>
 
     <f:entry title="Per-Class Threshold"
              description="
              Must be an Integer value. If the testability cost of a class is higher than the specified threshold, the build will be flagged unstable.
            ">
-        <f:textbox name="javancss.perClassThreshold" value="${instance.perClassThreshold}"/>
+        <f:textbox name="testability.perClassThreshold" value="${instance.perClassThreshold}"/>
     </f:entry>
 
 </j:jelly>

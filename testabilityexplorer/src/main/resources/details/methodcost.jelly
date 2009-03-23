@@ -4,13 +4,13 @@
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/tabview-min.js"></script>
     <script type="text/javascript" src="${rootURL}/plugin/testabilityexplorer/yui/dispatcher-min.js"></script>
 
-         <h3>Summary</h3>
+    <h3>${%Summary}</h3>
          <table border="1px" class="pane sortable">
              <thead>
                  <tr>
-                     <th>Method</th>
-                     <th>Line</th>
-                     <th>Cost</th>
+			 <th>${%Method}</th>
+			 <th>${%Line}</th>
+			 <th>${%Cost}</th>
                  </tr>
              </thead>
              <tbody>
@@ -26,7 +26,7 @@
             var myTabs = new YAHOO.widget.TabView("statistics");
 
             YAHOO.plugin.Dispatcher.delegate (new YAHOO.widget.Tab({
-                label: '${%Methods}',
+                label: '${%Warnings}',
                 content: '<table class="pane sortable" id="packages">
                     <tr>
                       <td class="pane-header">${%Line}</td>

@@ -1,8 +1,9 @@
 package hudson.plugins.testabilityexplorer.parser.converters;
 
 import org.xmlpull.v1.XmlPullParser;
-import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
+
 import hudson.plugins.testabilityexplorer.report.costs.ClassCost;
+import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
 import hudson.plugins.testabilityexplorer.report.costs.TestabilityCost;
 
 /**

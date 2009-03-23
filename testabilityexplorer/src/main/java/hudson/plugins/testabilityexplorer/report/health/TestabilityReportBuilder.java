@@ -1,9 +1,9 @@
 package hudson.plugins.testabilityexplorer.report.health;
 
+import hudson.model.HealthReport;
 import hudson.plugins.testabilityexplorer.report.charts.ChartBuilder;
 import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
-import hudson.model.HealthReport;
 
 import java.util.Collection;
 
@@ -35,7 +35,7 @@ public class TestabilityReportBuilder extends DrawingReportBuilder
             allClasses += getNumberOfClasses(result.getCostSummary());
             excellentClasses += getNumberOfExcellentClasses(result.getCostSummary());
         }
-        
+
         HealthCalculator healthCalculator = m_healthCalculator;
         if (m_healthCalculator == null)
         {

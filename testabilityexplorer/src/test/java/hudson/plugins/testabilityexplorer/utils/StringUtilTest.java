@@ -1,10 +1,11 @@
 package hudson.plugins.testabilityexplorer.utils;
 
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
-import java.util.Map;
+import org.testng.annotations.Test;
+
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Tests the StringUtil class.
@@ -24,6 +25,30 @@ public class StringUtilTest
             String actual = StringUtil.stripPackages(source);
             assertEquals(actual, expected);
         }
+    }
+
+    public void testGetPackage(){
+        Map<String, String> data = getPackageTestData();
+        for (Map.Entry<String, String> entry : data.entrySet())
+        {
+            String source = entry.getKey();
+            String expected = entry.getValue();
+            String actual = StringUtil.getPackage(source);
+            assertEquals(actual, expected);
+        }
+    }
+
+    private Map<String,String> getPackageTestData(){
+        Map<String,String> data = new LinkedHashMap<String, String>();
+        data.put("com.ongame.platform.opapi.migration.impl.OpapiMigrationServiceImpl", "com.ongame.platform.opapi.migration.impl");
+        data.put("com.ongame.platform.Aloha", "com.ongame.platform");
+        data.put("  com.ongame.platform.Aloha", "com.ongame.platform");
+        data.put("  com.ongame.platform.Aloha  ", "com.ongame.platform");
+        data.put("  com.ongame.platform.  Aloha", "com.ongame.platform");
+        data.put("com.ongame.platform.Aloha;", "com.ongame.platform");
+        data.put("  com.ongame.platform;Aloha  ", "com.ongame");
+        data.put(" Just for fun ", "Just for fun");
+        return data;
     }
 
     private Map<String, String> getTestData()

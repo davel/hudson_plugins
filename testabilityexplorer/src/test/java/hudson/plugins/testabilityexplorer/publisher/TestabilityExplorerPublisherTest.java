@@ -1,15 +1,20 @@
 package hudson.plugins.testabilityexplorer.publisher;
 
-import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
-import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
-import hudson.plugins.testabilityexplorer.helpers.ParseDelegate;
-import hudson.plugins.testabilityexplorer.PluginBaseTest;
-import hudson.tasks.Publisher;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import org.testng.annotations.Test;
+
+import hudson.maven.MavenModuleSet;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.maven.MavenModuleSet;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+import hudson.plugins.testabilityexplorer.PluginBaseTest;
+import hudson.plugins.testabilityexplorer.helpers.ParseDelegate;
+import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
+import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
+import hudson.tasks.Publisher;
 
 /**
  * Tests the {@link FreestylePublisher}.
@@ -17,11 +22,11 @@ import static org.testng.Assert.*;
  * @author reik.schatz
  */
 @Test
-public class TestabilityExplorerPublisherTest extends PluginBaseTest
-{
-    public void testPublisher()
-    {
-        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100", "50");
+public class TestabilityExplorerPublisherTest extends PluginBaseTest {
+
+    public void testPublisher() {
+        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "",
+                "", "100", "50");
         ParseDelegate parseDelegate = testabilityExplorerPublisher.newParseDelegate();
         assertNotNull(parseDelegate);
 
@@ -36,22 +41,21 @@ public class TestabilityExplorerPublisherTest extends PluginBaseTest
 
         Descriptor<Publisher> publisherDescriptor = testabilityExplorerPublisher.getDescriptor();
         assertNotNull(publisherDescriptor);
-        assertEquals(publisherDescriptor.getDisplayName(), TestabilityExplorerDescriptor.DISPLAY_NAME);
+        assertEquals(publisherDescriptor.getDisplayName(),
+                TestabilityExplorerDescriptor.DISPLAY_NAME);
     }
 
-
-    public void testToInt()
-    {
-        FreestylePublisher testabilityExplorerPublisher = new FreestylePublisher("reports.xml", "100", "88");
+    public void testToInt() {
+        AbstractPublisherImpl testabilityExplorerPublisher = new FreestylePublisher("reports.xml",
+                "", "", "100", "88");
         assertEquals(testabilityExplorerPublisher.toInt("1", 0), 1);
         assertEquals(testabilityExplorerPublisher.toInt("x", 0), 0);
         assertEquals(testabilityExplorerPublisher.toInt("", 0), 0);
         assertEquals(testabilityExplorerPublisher.toInt("9999", 0), 9999);
         assertEquals(testabilityExplorerPublisher.toInt("999999999999999999999999999999", 0), 0);
     }
-    
-    public void testApplicable()
-    {
+
+    public void testApplicable() {
         TestabilityExplorerDescriptor testabilityExplorerDescriptor = new TestabilityExplorerDescriptor();
         assertTrue(testabilityExplorerDescriptor.isApplicable(FreeStyleProject.class));
         assertFalse(testabilityExplorerDescriptor.isApplicable(MavenModuleSet.class));
