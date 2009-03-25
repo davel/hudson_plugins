@@ -139,6 +139,7 @@
         <module>active-directory</module>
         <module>audit-trail</module>
         <module>batch-task</module>
+        <module>bazaar</module>
         <module>build-publisher</module>
         <module>build-timeout</module>
         <module>checkstyle</module>
