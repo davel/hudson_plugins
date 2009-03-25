@@ -4,6 +4,8 @@ import hudson.model.Hudson;
 import hudson.model.PeriodicWork;
 import hudson.model.Project;
 import hudson.plugins.javanet_trigger_installer.Task.Check;
+import hudson.Extension;
+import hudson.util.TimeUnit2;
 
 /**
  * Runs periodically to update the project setting
@@ -11,13 +13,18 @@ import hudson.plugins.javanet_trigger_installer.Task.Check;
  *
  * @author Kohsuke Kawaguchi
  */
+@Extension
 public class SyncThread extends PeriodicWork {
-    public SyncThread() {
-        super("java.net SCM trigger setting sync");
+    public long getRecurrencePeriod() {
+        return TimeUnit2.DAYS.toMillis(1);
     }
 
-    protected void execute() {
+    protected void doRun() {
         for( Project p : Hudson.getInstance().getProjects() )
             new Check(p).schedule();
+    }
+
+    public static SyncThread get() {
+        return all().get(SyncThread.class);
     }
 }
