@@ -7,9 +7,9 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>tuxdroid</artifactId>
+  <artifactId>nabaztag</artifactId>
   <packaging>hpi</packaging>
-  <version>1.0</version>
-  <name>tuxdroid</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/TuxDroid+Plugin</url>
+  <version>1.6-SNAPSHOT</version>
+  <name>nabaztag</name>
+  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Nabaztag+Plugin</url>
 </project>
