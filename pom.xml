@@ -91,13 +91,13 @@
             <plugin>
                 <groupId>org.jvnet.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <version>1.31</version>
+                <version>1.34</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.kohsuke.stapler</groupId>
                 <artifactId>maven-stapler-plugin</artifactId>
-                <version>1.11</version>
+                <version>1.12</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
