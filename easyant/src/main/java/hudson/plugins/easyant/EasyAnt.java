@@ -1,22 +1,27 @@
 package hudson.plugins.easyant;
 
 import hudson.CopyOnWrite;
+import hudson.EnvVars;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Project;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormFieldValidator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.ServletException;
+
+import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -24,6 +29,7 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * A builder for EasyAnt scripts
+ * 
  * @author Jean Louis Boudart
  */
 public class EasyAnt extends Builder {
@@ -66,7 +72,7 @@ public class EasyAnt extends Builder {
 	}
 
 	public boolean perform(Build<?, ?> build, Launcher launcher,
-			BuildListener listener) throws InterruptedException {
+			BuildListener listener) throws InterruptedException, IOException {
 		Project proj = build.getProject();
 
 		ArgumentListBuilder args = new ArgumentListBuilder();
@@ -92,8 +98,7 @@ public class EasyAnt extends Builder {
 		}
 		args.addKeyValuePairs("-D", build.getBuildVariables());
 		args.addTokenized(normalizedTargets);
-
-		Map<String, String> env = build.getEnvVars();
+		EnvVars env = build.getEnvironment();
 		if (ai != null)
 			env.put("EASYANT_HOME", ai.getEasyantHome());
 
@@ -111,8 +116,7 @@ public class EasyAnt extends Builder {
 
 		FilePath rootLauncher = null;
 		if (buildFile != null && buildFile.trim().length() != 0) {
-			String rootBuildScriptReal = Util.replaceMacro(buildFile, build
-					.getEnvVars());
+			String rootBuildScriptReal = Util.replaceMacro(buildFile, env);
 			rootLauncher = new FilePath(proj.getModuleRoot(), new File(
 					rootBuildScriptReal).getParent());
 		} else {
@@ -136,15 +140,23 @@ public class EasyAnt extends Builder {
 
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+	@Extension
 	public static final class DescriptorImpl extends
-			Descriptor<Builder> {
+			BuildStepDescriptor<Builder> {
 
 		@CopyOnWrite
 		private volatile EasyAntInstallation[] installations = new EasyAntInstallation[0];
 
-		private DescriptorImpl() {
-			super(EasyAnt.class);
+		public DescriptorImpl() {
 			load();
+		}
+
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		protected DescriptorImpl(Class<? extends EasyAnt> clazz) {
+			super(clazz);
 		}
 
 		public String getHelpFile() {
@@ -159,12 +171,19 @@ public class EasyAnt extends Builder {
 			return installations;
 		}
 
-		
-		  public boolean configure(StaplerRequest req) { installations =
-		  req.bindParametersToList
-		  (EasyAntInstallation.class,"easyant.").toArray(new
-		  EasyAntInstallation[0]); save(); return true; }
-		 
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject json)
+				throws FormException {
+			installations = req.bindJSONToList(EasyAntInstallation.class,
+					json.get("inst")).toArray(new EasyAntInstallation[0]);
+			save();
+			return true;
+		}
+
+		public EasyAnt newInstance(StaplerRequest req, JSONObject formData)
+				throws FormException {
+			return (EasyAnt) req.bindJSON(clazz, formData);
+		}
 
 		/**
 		 * Checks if the specified Hudson EASYANT_HOME is valid.

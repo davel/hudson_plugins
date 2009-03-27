@@ -9,6 +9,6 @@ import hudson.tasks.BuildStep;
  */
 public class PluginImpl extends Plugin {
     public void start() throws Exception {
-        BuildStep.BUILDERS.add(EasyAnt.DESCRIPTOR);
+       // BuildStep.BUILDERS.add(EasyAnt.DESCRIPTOR);
     }
 }
