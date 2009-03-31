@@ -30,10 +30,4 @@
         </plugin>
       </plugins>
     </build>
-    <dependencies>
-      <dependency>
-        <groupId>org.jvnet.hudson.main</groupId>
-        <artifactId>maven-plugin</artifactId>
-      </dependency>
-    </dependencies>
 </project>

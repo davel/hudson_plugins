@@ -72,7 +72,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <dependencyManagement>
+    <!--dependencyManagement>
       <dependencies>
         <dependency>
           <groupId>org.jvnet.hudson.main</groupId>
@@ -80,7 +80,7 @@
           <version>1.295</version>
         </dependency>
       </dependencies>
-    </dependencyManagement>
+    </dependencyManagement-->
 
     <build>
         <!--
