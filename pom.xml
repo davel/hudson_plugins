@@ -77,7 +77,7 @@
         <dependency>
           <groupId>org.jvnet.hudson.main</groupId>
           <artifactId>maven-plugin</artifactId>
-          <version>1.291-SNAPSHOT</version>
+          <version>1.295</version>
         </dependency>
       </dependencies>
     </dependencyManagement>
