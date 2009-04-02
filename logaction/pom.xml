@@ -5,7 +5,7 @@
   <artifactId>hudson-logaction-plugin</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Centralized Job(Re)Action</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
@@ -31,9 +31,9 @@
 but this is centralized configured</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Centralized+Job(Re)Action+plugin</url>
   <scm>
-  	<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</connection>
-  	<developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</developerConnection>
-  	<url>https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</url>
+  	<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.0</connection>
+  	<developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.0</developerConnection>
+  	<url>https://hudson.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.0</url>
   </scm>
   <organization>
   	<name>Fox Mobile Distribution GmbH</name>
