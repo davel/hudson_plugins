@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="${%LogAction}">
+      <f:entry title="">
+          <f:checkbox name="logaction.enabled" checked="${descriptor.enabled}" />
+          ${%This Plugin is working}
+      </f:entry>
+       <f:entry title="restart on failure">
+          <f:checkbox name="logaction.restartEnabled" checked="${descriptor.restartEnabled}" />
+          ${%This Restart is occures on Pattern in joboutput}
+          <f:textbox name="logaction.restartPattern" value="${descriptor.restartPattern}"/>
+          ${%This Restart sets folowing description}
+          <f:textbox name="logaction.restartDescription" value="${descriptor.restartDescription}"/>
+          ${%This Restart has following delay}
+          <f:textbox name="logaction.restartDelay" value="${descriptor.restartDelay}"/>
+      </f:entry>
+  </f:section>
+</j:jelly>
