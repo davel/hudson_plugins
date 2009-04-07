@@ -10,6 +10,7 @@
   <artifactId>schedule-failed-builds</artifactId>
   <name>Retry Failed Builds</name>
   <description>This plugin allows you to trigger a Hudson n minutes after a build failed.</description>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Retry+Failed+Builds+Plugin</url>
   <packaging>hpi</packaging>
   <version>1.1-SNAPSHOT</version>
 </project>
