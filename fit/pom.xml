@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.jvnet.localizer</groupId>
       <artifactId>localizer</artifactId>
-      <version>1.5</version>
+      <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>com.c2.fit</groupId>
@@ -55,7 +55,7 @@
       <plugin>
         <groupId>org.jvnet.hudson.tools</groupId>
         <artifactId>maven-hpi-plugin</artifactId>
-        <version>1.17-SNAPSHOT</version>
+        <version>1.34</version>
         <extensions>true</extensions>
       </plugin>
     	<plugin>
