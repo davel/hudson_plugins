@@ -240,6 +240,7 @@
         <module>ws7</module>
         <module>xvnc</module>
         <module>pvcs_scm</module>
+        <module>backup</module>
     </modules>
 
     <properties>
