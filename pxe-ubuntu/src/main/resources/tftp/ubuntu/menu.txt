@@ -17,5 +17,5 @@ label install
 	append vga=normal initrd=ubuntu-${RELEASE}/amd64/initrd.gz -- quiet
 
 label mainmenu
-    menu label ^Back..
+    menu label ^Back to main menu
     kernel vesamenu.c32
