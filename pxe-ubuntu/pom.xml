@@ -38,36 +38,14 @@
       <version>${hudson.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.kohsuke.loopy</groupId>
+      <artifactId>loopy</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <properties>
     <hudson.version>1.300-SNAPSHOT</hudson.version>
   </properties>
-
-  <profiles>
-    <profile>
-      <!-- this profile downloads all the net install binaries -->
-      <id>download</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.kohsuke.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <executions>
-              <!-- download installers -->
-              <execution>
-                <phase>generate-resources</phase>
-                <goals>
-                  <goal>execute</goal>
-                </goals>
-                <configuration>
-                  <source>${project.basedir}/src/build-script/download.groovy</source>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
