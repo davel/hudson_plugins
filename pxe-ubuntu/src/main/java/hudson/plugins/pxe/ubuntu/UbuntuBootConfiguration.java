@@ -14,6 +14,8 @@ import org.kohsuke.loopy.FileEntry;
 import org.kohsuke.loopy.iso9660.ISO9660FileSystem;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +38,8 @@ public class UbuntuBootConfiguration extends BootConfiguration {
      * Location of the CD/DVD image file.
      */
     public final File iso;
+
+    private volatile String release;
 
     @DataBoundConstructor
     public UbuntuBootConfiguration(File iso) {
@@ -51,8 +57,25 @@ public class UbuntuBootConfiguration extends BootConfiguration {
     /**
      * This returns string like "Ubuntu-Server 8.10 "Intrepid Ibex" - Release i386 (20081028.1)"
      */
-    public String getRelease() throws IOException {
-        return getReleaseInfo(iso);
+    public String getRelease() {
+        if(release==null)
+            try {
+                release = getReleaseInfo(iso);
+            } catch (IOException e) {
+                release = "Broken Ubuntu image at "+iso;
+            }
+        return release;
+    }
+
+    protected String getIdSeed() {
+        // try to extract a short name from the release information
+        Pattern p = Pattern.compile("Ubuntu[^ ]* ([0-9.]+).+?(i386|amd64)?");
+        Matcher m = p.matcher(getRelease());
+        if(m.find()) {
+            if(m.group(2)!=null)    return "ubuntu"+m.group(1)+'.'+m.group(2);
+            else                    return "ubuntu"+m.group(1);
+        }
+        return "ubuntu";
     }
 
     /**
@@ -122,6 +145,18 @@ public class UbuntuBootConfiguration extends BootConfiguration {
             if(fs!=null)
                 fs.close();
         }
+    }
+
+    public ISO9660Tree doImage() {
+        return new ISO9660Tree(iso);
+    }
+
+    public void doIndex(StaplerRequest req, StaplerResponse rsp) throws IOException {
+        rsp.sendRedirect("./image/");
+    }
+
+    public String getDisplayName() {
+        return getRelease();
     }
 
     @Extension
