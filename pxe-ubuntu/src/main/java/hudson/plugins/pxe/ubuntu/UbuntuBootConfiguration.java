@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -144,10 +143,6 @@ public class UbuntuBootConfiguration extends BootConfiguration {
             } catch (FormValidation e) {
                 return e;
             }
-        }
-
-        public List<Release> getReleases() {
-            return Release.RELEASES;
         }
     }
 
