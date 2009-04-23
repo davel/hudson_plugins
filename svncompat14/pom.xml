@@ -11,5 +11,5 @@
   <version>1.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson SVN 1.4 Compatibility plugin</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/SVNCompat14+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/SVNCompat14+Plugin</url>
 </project>

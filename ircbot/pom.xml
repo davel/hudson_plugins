@@ -14,7 +14,7 @@
   <version>1.8-SNAPSHOT</version>
   <name>Hudson IRC Plugin</name>
   <description>A Build status publisher that notifies channels on a IRC server</description>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/IRC+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/IRC+Plugin</url>
   <licenses>
   	<license><name>MIT license</name><comments>All source code is under the MIT license.</comments></license>
   </licenses>

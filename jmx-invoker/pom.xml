@@ -15,7 +15,7 @@
     <description>
         Plugin for Hudson that invokes a JMX operation upon a successful build.
     </description>
-    <url>http://hudson.gotdns.com/wiki/display/HUDSON/JMX+Invoker+Plugin</url>
+    <url>http://wiki.hudson-ci.org/display/HUDSON/JMX+Invoker+Plugin</url>
     
     <build>
         <defaultGoal>package</defaultGoal>

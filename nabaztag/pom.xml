@@ -11,5 +11,5 @@
   <packaging>hpi</packaging>
   <version>1.6-SNAPSHOT</version>
   <name>nabaztag</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Nabaztag+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Nabaztag+Plugin</url>
 </project>

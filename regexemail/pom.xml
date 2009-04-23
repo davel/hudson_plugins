@@ -12,7 +12,7 @@
 		Hudson plugin that resolves email addresses based on a regular expression.
 	</description>
 	
-	<url>http://hudson.gotdns.com/wiki/display/HUDSON/Regex+Email+Plugin</url>
+	<url>http://wiki.hudson-ci.org/display/HUDSON/Regex+Email+Plugin</url>
 
 	<groupId>com.mtvi.plateng.hudson</groupId>
 	<artifactId>regexemail</artifactId>

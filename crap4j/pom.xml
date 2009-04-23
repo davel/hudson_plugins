@@ -12,7 +12,7 @@
   <packaging>hpi</packaging>
   <version>0.7-SNAPSHOT</version>
   <name>Hudson Crap4J plugin</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Crap4J+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Crap4J+Plugin</url>
   
   <dependencies>
     <dependency>

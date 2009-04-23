@@ -12,5 +12,5 @@
 	<packaging>hpi</packaging>
 	<version>0.2-SNAPSHOT</version>
 	<name>Hudson Kundo plugin</name>
-	<url>http://hudson.gotdns.com/wiki/display/HUDSON/Kundo+Plugin</url>
+	<url>http://wiki.hudson-ci.org/display/HUDSON/Kundo+Plugin</url>
 </project>

@@ -12,7 +12,7 @@
   <packaging>hpi</packaging>
   <name>Hudson kagemai plugin</name>
   <description>Integrates Hudson to Kagemai</description>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Kagemai+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Kagemai+Plugin</url>
 
   <dependencies>
     <dependency>

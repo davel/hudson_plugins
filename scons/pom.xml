@@ -12,7 +12,7 @@
   <version>0.2-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson SCons plugin</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/SCons+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/SCons+Plugin</url>
 
   <licenses>
 	<license>

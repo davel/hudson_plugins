@@ -12,5 +12,5 @@
   <packaging>hpi</packaging>
   <version>1.02-SNAPSHOT</version>
   <name>Emotional Hudson plugin</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Emotional+Hudson+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Emotional+Hudson+Plugin</url>
 </project>

@@ -14,7 +14,7 @@
   <name>FTP publisher plugin</name>
   <version>0.9</version>
   <description>Make it possible to upload artifacts and other resources to a ftp server.</description>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/FTP-Publisher+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/FTP-Publisher+Plugin</url>
 
   
   <dependencies>

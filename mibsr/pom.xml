@@ -34,7 +34,7 @@ under the License.
   <version>1.4-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/mipi+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/mipi+Plugin</url>
 
   <name>Hudson Maven Invoker Build Set Reporting plugin</name>
   <description>
