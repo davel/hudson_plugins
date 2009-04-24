@@ -125,7 +125,6 @@
                 <!-- upload the plugin to java.net and make an announcement as well -->
                 <configuration>
                     <goals>deploy hpi:upload hpi:announce</goals>
-                    <remoteTagging>true</remoteTagging><!-- work around http://jira.codehaus.org/browse/SCM-406 -->
                 </configuration>
             </plugin>
             <plugin>
