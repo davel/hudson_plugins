@@ -27,13 +27,13 @@ package org.jvnet.hudson.plugins.flexteam;
 
 
 import hudson.Plugin;
-
+import hudson.model.Hudson;
 
 
 public class PluginImpl extends Plugin {
 	
 
     public void start() throws Exception {
- 
+    	Hudson.getInstance().getActions().add(new SidebarAction());
     }
 }
