@@ -1,0 +1,10 @@
+*1.0.7 BUG FIX
+
+-[BUG]skypeTestError.groovy
+--error fixed on Groovy 1.6.x.
+-[BUG]skypeTestError.groovy
+--XML parse error catch.
+
+*1.0.6 Initail Release
+
+-initial commit hudson repository.
