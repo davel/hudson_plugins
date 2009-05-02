@@ -125,31 +125,37 @@ def class SkypeTestErrorPlugin {
 		skypeConfig.build.getProject().getWorkspace().list(skypeConfig.testFilePattern).each { fileName ->
 			def file = new File(fileName.toString());
 			if (file.lastModified() > skypeConfig.build.due().getTimeInMillis()) {
-				if (unitTests.nunit) {
-					// xlst
-					transformer.hudsonHome = skypeConfig.build.getEnvVars().HUDSON_HOME
-					file = transformer.convertNunitToJunit(fileName.toString(), skypeConfig.build.getRootDir().toString());
-				}
-				if (debug) {
-					println("check file = " + file)
-				}
-				new File(file).withReader("UTF-8") { reader ->
-					def xml = new XmlSlurper().parse(reader);
-
-					// junit(ant report, mvn report) and flexunit support. report inlcudes testsuite. testsuite/testcase/failure
-					if (unitTests.junit || unitTests.flexunit) {
-						xml.testcase.each { testcase ->
-							checkTestCase(testcase);
-						}
+				try {
+					if (unitTests.nunit) {
+						// xlst
+						transformer.hudsonHome = skypeConfig.build.getEnvVars().HUDSON_HOME
+						file = transformer.convertNunitToJunit(fileName.toString(), skypeConfig.build.getRootDir().toString());
 					}
+					if (debug) {
+						println("check file = " + file)
+					}
+					new File(file.toString()).withReader("UTF-8") { reader ->
+						def xml = new XmlSlurper().parse(reader);
 
-					// phpunit(phing phpunit2 task) and nunit support.  report inlcudes testsuites. testsuites/testsuite/testcase/failure
-					if (unitTests.phpunit || unitTests.nunit) {
-						xml.testsuite.each { suite ->
-							suite.testcase.each { testcase ->
+						// junit(ant report, mvn report) and flexunit support. report inlcudes testsuite. testsuite/testcase/failure
+						if (unitTests.junit || unitTests.flexunit) {
+							xml.testcase.each { testcase ->
 								checkTestCase(testcase);
 							}
 						}
+
+						// phpunit(phing phpunit2 task) and nunit support.  report inlcudes testsuites. testsuites/testsuite/testcase/failure
+						if (unitTests.phpunit || unitTests.nunit) {
+							xml.testsuite.each { suite ->
+								suite.testcase.each { testcase ->
+									checkTestCase(testcase);
+								}
+							}
+						}
+					}
+				} catch (Exception igrnoe) {
+					if (debug) {
+						println(ignore);
 					}
 				}
 			}

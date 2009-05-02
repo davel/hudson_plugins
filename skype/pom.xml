@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>skype</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   <packaging>hpi</packaging>
   <name>Hudson Skype Plugin</name>
   <description>Integrates Hudson to Skype</description>
