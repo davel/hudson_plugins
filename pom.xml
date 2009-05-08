@@ -204,6 +204,7 @@
         <module>jwsdp-sqe</module>
         <module>locks-and-latches</module>
         <module>maven1-snapshot-plugin</module>
+        <module>m2release</module>
         <module>mercurial</module>
         <module>msbuild</module>
         <module>nant</module>
