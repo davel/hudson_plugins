@@ -1,0 +1,9 @@
+started
+[workspace] $ windmill firefox http://www.google.com test=./tests exit report=true
+Leopard libedit detected.
+report is not a windmill argument. Sticking in functest registry.
+Started ['/Applications/Firefox.app/Contents/MacOS/firefox-bin', '-profile', '/var/folders/YO/YOAvf2hSGt0+VnBIAKuImE+++TM/-Tmp-/tmpKVoirA.mozrunner', 'http://www.google.com/windmill-serv/start.html']
+Server running...
+/Users/adam/Documents/projects/HudsonWindmillPlugin/work/jobs/aga/workspace/tests is not a valid python module path or filename
+Build was aborted
+finished: ABORTED

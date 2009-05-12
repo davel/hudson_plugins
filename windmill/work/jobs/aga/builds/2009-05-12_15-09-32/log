@@ -1,0 +1,2 @@
+started
+[workspace] $ windmill firefox http://www.google.com test=./tests exit report=true ssl
