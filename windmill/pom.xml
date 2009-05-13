@@ -9,7 +9,7 @@
   
   <artifactId>HudsonWindmillPlugin</artifactId>
   <packaging>hpi</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>HudsonWindmillPlugin</name>
   
   <repositories>
@@ -18,4 +18,10 @@
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </repository>
   </repositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/HudsonWindmillPlugin-1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/HudsonWindmillPlugin-1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/HudsonWindmillPlugin/tags/HudsonWindmillPlugin-1.0</url>
+  </scm>
 </project>
