@@ -1,0 +1,32 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.304</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  
+  <artifactId>local-groovy-cli</artifactId>
+  <packaging>hpi</packaging>
+  <name>Demo CLI command to run the entire Groovy on CLI</name>
+
+  <!--<build>-->
+    <!--<plugins>-->
+      <!--<plugin>-->
+        <!--<groupId>org.codehaus.groovy.maven</groupId>-->
+        <!--<artifactId>gmaven-plugin</artifactId>-->
+        <!--<version>1.0-rc-5-kohsuke-1</version>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<goals>-->
+              <!--<goal>generateStubs</goal>-->
+              <!--<goal>compile</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
+    <!--</plugins>-->
+  <!--</build>-->
+
+</project>
