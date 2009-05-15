@@ -17,7 +17,7 @@
     <dependency>
       <groupId>javanettasks</groupId>
       <artifactId>javanettasks</artifactId>
-      <version>1.0.14</version>
+      <version>1.0.21</version>
     </dependency>
   </dependencies>
   
