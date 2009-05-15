@@ -1,30 +1,21 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-
-  <j:invokeStatic var="status" className="org.kohsuke.jnt.FileStatus" method="values" />
-  <j:set var="helpURL" value="/plugin/javanet-uploader" />
-
-  <f:entry title="${%java.net project name}">
-    <input class="setting-input" name="jnuploader.project"
-      type="text" value="${instance.project}" />
+  <f:entry title="${%java.net project name}" field="project">
+    <f:textbox />
   </f:entry>
   <f:entry title="${%Files to upload}">
-    <f:repeatable var="e" items="${instance.entries}">
+    <f:repeatable field="entries">
       <table width="100%">
-        <f:entry title="${%Source}" help="${helpURL}/help-source">
-          <f:textbox name="jnuploader.entry.sourceFile" value="${e.sourceFile}" />
+        <f:entry title="${%Source}" field="sourceFile">
+          <f:textbox />
         </f:entry>
-        <f:entry title="${%Destination}" help="${helpURL}/help-destination">
-          <f:textbox name="jnuploader.entry.filePath" value="${e.filePath}" />
+        <f:entry title="${%Destination}" field="filePath">
+          <f:textbox />
         </f:entry>
-        <f:entry title="${%Description}" help="${helpURL}/help-description">
-          <f:textbox name="jnuploader.entry.description" value="${e.description}" />
+        <f:entry title="${%Description}" field="description">
+          <f:textbox />
         </f:entry>
-        <f:entry title="${%Status}" help="${helpURL}/help-status">
-          <select class="setting-input" name="jnuploader.entry.status">
-            <j:forEach var="kind" items="${status}">
-              <f:option selected="${e.status==kind}">${kind}</f:option>
-            </j:forEach>
-          </select>
+        <f:entry title="${%Status}" field="status">
+          <f:enum>${it}</f:enum>
         </f:entry>
 
         <f:entry title="">

@@ -1,57 +1,55 @@
 package hudson.plugins.javanet_uploader;
 
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.FilePath;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Result;
+import hudson.model.AbstractProject;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import hudson.tasks.BuildStepDescriptor;
 import org.kohsuke.jnt.JNFile;
 import org.kohsuke.jnt.JNFileFolder;
 import org.kohsuke.jnt.JNProject;
 import org.kohsuke.jnt.JavaNet;
 import org.kohsuke.jnt.ProcessingException;
-import org.kohsuke.jnt.FileStatus;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.DataBoundConstructor;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * {@link Publisher} that uploads files to java.net documents and files section.
  *
  * @author Kohsuke Kawaguchi
  */
-public class JNUploaderPublisher extends Publisher {
+public class JNUploaderPublisher extends Recorder {
 
     /**
      * Name of the java.net project to post a file to.
      */
-    private String project;
+    public final String project;
 
-    private final List<Entry> entries = new ArrayList<Entry>();
+    private final List<Entry> entries;
 
-    JNUploaderPublisher() {
-    }
-
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
+    @DataBoundConstructor
+    public JNUploaderPublisher(String project, List<Entry> entries) {
         this.project = project;
+        this.entries = entries;
     }
 
     public List<Entry> getEntries() {
         return entries;
     }
 
-    public boolean perform(Build build, Launcher launcher, BuildListener listener) throws InterruptedException {
+    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws InterruptedException {
         if(build.getResult()== Result.FAILURE) {
             // build failed. don't post
             return true;
@@ -67,7 +65,7 @@ public class JNUploaderPublisher extends Publisher {
                 return true;
             }
 
-            Map<String,String> envVars = build.getEnvVars();
+            EnvVars envVars = build.getEnvironment();
 
             for (Entry e : entries) {
                 if(e.sourceFile.trim().length()==0) {
@@ -136,8 +134,7 @@ public class JNUploaderPublisher extends Publisher {
         InputStream in = src.read();
         try {
             folder.uploadFile(fileName,
-                            Util.replaceMacro(e.description,envVars),
-                            FileStatus.parse(e.status), in, "application/octet-stream");
+                            Util.replaceMacro(e.description,envVars), e.status, in, "application/octet-stream");
         } finally {
             in.close();
         }
@@ -153,25 +150,14 @@ public class JNUploaderPublisher extends Publisher {
         return folder;
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public static final Descriptor<Publisher> DESCRIPTOR = new Descriptor<Publisher>(JNUploaderPublisher.class) {
+    @Extension
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public String getDisplayName() {
             return "Publish artifacts to java.net";
         }
 
-        public String getHelpFile() {
-            return "/plugin/javanet-uploader/help.html";
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
         }
-
-        public Publisher newInstance(StaplerRequest req) {
-            JNUploaderPublisher pub = new JNUploaderPublisher();
-            req.bindParameters(pub,"jnuploader.");
-            pub.getEntries().addAll(req.bindParametersToList(Entry.class,"jnuploader.entry."));
-
-            return pub;
-        }
-    };
+    }
 }
