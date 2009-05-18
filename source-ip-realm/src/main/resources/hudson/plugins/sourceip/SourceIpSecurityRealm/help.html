@@ -1,0 +1,12 @@
+<div>
+    Automatically authenticate every user by using their IP addresses.
+    For example, you can use this on your publicly visible Hudson instance
+    to allow the administrator permission to anyone accessing from localhost.
+
+    <p>
+    In this way, your server only need one authentication mechanism (like publickey-based ssh),
+    and people can administer Hudson by doing port forwarding like
+    <tt>ssh -L 8080:localhost:80 kohsuke@server</tt> from anywhere and then
+    accessing <tt>localhost:8080</tt> in the browser (this connection goes through
+    the SSH tunnel, and Hudson on port 80 will see inbound connection from localhost.)
+</div>
