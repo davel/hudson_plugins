@@ -56,6 +56,13 @@ public class SourceIpSecurityRealm extends SecurityRealm {
     }
 
     /**
+     * There's no way to log out, because authentication is automatic.
+     */
+    public boolean canLogOut() {
+        return false;
+    }
+
+    /**
      * The incoming request is "authenticated" automatically as an user that represents the remote IP address.
      * There's no real authentication involved here (in the sense that no one sends a password), so we
      * create {@link Authentication#isAuthenticated() an pre-authenticated Authentication object} right
