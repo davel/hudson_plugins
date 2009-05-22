@@ -60,30 +60,55 @@ var DEFAULT_HUDSON_URL = "";
 var DEFAULT_POLLING_INTERVAL_MINUTES = 5;
 // var DEFAULT_POLLING_INTERVAL_MINUTES = 1;
 
-var hudsonUrl = DEFAULT_HUDSON_URL;
+/**
+ * Default to a local Hudson instance on port 8080
+ */
+var DEFAULT_HUDSON_URL = "localhost";
+// var defaultHudsonUrl = "http://simile.mit.edu/hudson/";
+// var defaultHudsonUrl = "http://build.sourcelabs.org/hudson/";
+// var DEFAULT_HUDSON_URL = "http://localhost:8080/";
+
 var pollingIntervalMinutes = DEFAULT_POLLING_INTERVAL_MINUTES;
 var updateFailCount = 0;
-var httpRequest;
-var strurls = "";				// the urls as a single string
-var hudsonUrls = new Array();	// array of urls
 
+var hudsonViewUrls = "";			    // the urls as a single string
+var hudsonViewList = new Array();	// array of urls
+var hudsonViewData = new Array();	// hash of views and jobs
+
+var contentDivElements = new Array();
+
+var viewPoller = null;
 
 function view_onOpen() {
     initializeStoredOptions();
+	viewPoller = new MockPolling(renderView);
 
     // load urls setting from data base
-    strurls = options.getValue("hudsonUrlsProp");
-    if (strurls != "") {
-      // split urls between each comma
-      hudsonUrls = strurls.split(",");
-      hudsonUrl = hudsonUrls[0]; // @TODO: loop thru all urls
-      updateStatus();
-    }
+	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
+    hudsonViewUrls = options.getValue("hudsonUrlsProp");
+	
+hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
+
+	// split urls between each comma
+	hudsonViewList = hudsonViewUrls.split(",");
+
+	for (viewUrlIndex in hudsonViewList) {
+		var viewUrl = hudsonViewList[viewUrlIndex];
+		if (viewUrl.length > 0) {
+			hudsonViewData.push(new View(viewUrl));
+		}
+	}
+
+	if (hudsonViewData.length> 0) {
+		updateStatus();
+	} else {
+		
+	}
 }
 
 function initializeStoredOptions() {
-  options.putDefaultValue('hudsonUrlsProp', DEFAULT_HUDSON_URL);
-  options.putDefaultValue('intervalMinutesProp', DEFAULT_POLLING_INTERVAL_MINUTES);
+	options.putDefaultValue('hudsonUrlsProp', "");
+	options.putDefaultValue('intervalMinutesProp', DEFAULT_POLLING_INTERVAL_MINUTES);
 }
 
 /**
@@ -92,37 +117,107 @@ function initializeStoredOptions() {
  */
 function onOptionChanged() {
 
-  // stop any current timer
-  if (g_updateStatusTimer) {
-    view.clearTimeout(g_updateStatusTimer);
-    g_updateStatusTimer = null;
-  }
+	// stop any current timer
+	if (g_updateStatusTimer) {
+		view.clearTimeout(g_updateStatusTimer);
+		g_updateStatusTimer = null;
+	}
 
-  // remove the "configure your hudson url" msg, if still there
-  jobList.removeAllElements();
+	// remove the "configure your hudson url" msg, if still there
+	contentDiv.removeAllElements();
 
-  hudsonUrl = options.getValue('hudsonUrlsProp');
-  pollingIntervalMinutes = options.getValue('intervalMinutesProp');
+	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
+    hudsonViewUrls = options.getValue("hudsonUrlsProp");
 
-  updateStatus();
+	// split urls between each comma
+	hudsonViewList = hudsonViewUrls.split(",");
+	hudsonViewData = [];
+	for (viewUrlIndex in hudsonViewList) {
+		var viewUrl = hudsonViewList[viewUrlIndex];
+		hudsonViewData.push(new View(viewUrl));
+	}
+
+	updateStatus();
 }
 
 /**
  * delete all previous jobs and statuses and recreate with latest jobs and statuses
  */ 
-function createElements() {
-  errorDiv.visible = false;
-  contentDiv.visible = true;
+function renderView(view) {
 
-  jobList.removeAllElements();
-  for (var i=0; i<jobs.length;++i) {
-    var job = jobs[i];
-    var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
-    var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='130' src='images/" + job.color + ".gif'/>";
-    jobList.appendElement("<item name='"+job.name+"' height='20'>" + jobLink + jobImg + "</item>");
+	if (hudsonViewData.length >= 1) {
+
+		errorDiv.visible = false;
+		contentDiv.visible = true;
+		contentDiv.removeAllElements();
+
+		// set the new job status info for view in view hash
+		for (viewIndex in hudsonViewData) {
+			var existingView = hudsonViewData[viewIndex];
+			if (view.url == existingView.url) {
+				hudsonViewData[viewIndex] = view;
+				break;
+			}
+		}
+
+		var listboxY = 0;
+
+		// each view is rendered as listbox
+		for (viewIndex in hudsonViewData) {
+			var view = hudsonViewData[viewIndex];
+			var viewListbox = contentDiv.appendElement("<listbox height='85' name='"+view.getUrl+"' width='87%' y='"+listboxY+"' background='#CCCCCC' itemHeight='20' itemOverColor='#CCFFCC' itemSelectedColor='#99FF99' />");
+			var viewLink = "<a width='120' height='16' x='0' href='" + view.url + "'>[+] " + view.url + "</a>";
+			var viewImg = "<img name='" + view.name + "Img' width='16' height='16' x='130' src='images/" + view.color + ".gif'/>";
+			var header = viewListbox.appendElement("<item name='"+view.getUrl+"' background='#AAAAAA'>" + viewLink + viewImg + "</item>");
+
+			var jobs = view.getJobs();
+
+			// each job in the view is rendered as an item in the view listbox
+			for (jobIndex in jobs) {
+				var job = jobs[jobIndex];
+				var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
+				var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='130' src='images/" + job.color + ".gif'/>";
+				viewListbox.appendElement("<item name='"+job.name+"'>" + jobLink + jobImg + "</item>");
+			}
+
+			listboxY += (jobs.length+1) * 20;
+		}
+
+	} else {
+		errorDiv.visible = true;
+		contentDiv.visible = false;
+	}	
+
+}
+
+function updateStatus() {
+
+	setViewPollTime();
+
+    if (hudsonViewData.length >= 1) {
+		for (viewIndex in hudsonViewData) {
+			var viewToUpdate = hudsonViewData[viewIndex];
+			viewPoller.updateViewStatus(viewToUpdate);
+		}
+    } else {
+		errorDiv.visible = true;
+		contentDiv.visible = false;
+	}
+
+	debug.trace('polling complete...');
+
+	// make sure updateStatus gets called again
+	// registerUpdateStatus();
+}
+
+function setViewPollTime() {
+  var currentTime = new Date();
+  var hours = currentTime.getHours();
+  var minutes = currentTime.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
   }
-
-  contentDiv.height = jobs.length * 20;
+  lastPollTime.value = hours + ":" + minutes;
 }
 
 /**
@@ -146,68 +241,6 @@ function registerUpdateStatus() {
 }
 
 /**
- * send request to hudson url using ajax
- * 
- * @param {String} url The url to hudson dashboard
- */ 
-function updateStatus() {
-
-  // make sure we don't get a cached request by changing the url every poll
-  var apiUrl = hudsonUrl + "api/json" + "?noCache="+Math.random();
-  httpRequest = new XMLHttpRequest();
-  httpRequest.open("GET", apiUrl, true);
-  httpRequest.onreadystatechange = parseJSON;
-  httpRequest.send(null);
-
-  setViewPollTime();
-
-  // make sure updateStatus gets called again
-  registerUpdateStatus();
-}
-
-function setViewPollTime() {
-  var currentTime = new Date();
-  var hours = currentTime.getHours();
-  var minutes = currentTime.getMinutes();
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  lastPollTime.value = hours + ":" + minutes;
-}
-
-function parseJSON() {
-  if (httpRequest.readyState == 4) {
-    var nextRefreshTime = 2 * 60 * 1000;  // in error cases try after 2 min
-    if (httpRequest.status == 200) {
-      try {
-
-        // clear the old results
-        jobs = [];
-        var jsonObj = eval("(" + httpRequest.responseText + ")");
-        jobs = jsonObj.jobs;
-        updateFailCount = 0;  // successfully parsed stuff
-        createElements();
-      } catch(e) {
-        jobs = null;
-        updateFailCount++;
-      }
-    } else {
-      updateFailCount++;
-    }
-
-    httpRequest = null;
-
-    if (updateFailCount > 3) {
-      debug.trace("network failure");
-      // too many failures so stop retrying
-      jobList.removeAllElements();
-      contentDiv.visible = false;
-      errorDiv.visible = true;
-    }
-  }
-}
-
-/**
  * change size of view
  * 
  * @param {Number} val on how much to change size, can be negative
@@ -223,5 +256,12 @@ function changeViewSize(val) {
 }
 
 function onOpenOptionsClick() {
-  pluginHelper.ShowOptionsDialog();
+    pluginHelper.ShowOptionsDialog();
 } 
+
+// clear all items
+function clearContentDivElements(){
+    contentDiv.height = 0;
+    contentDiv.removeAllElements();
+    contentDivElements = null;
+}

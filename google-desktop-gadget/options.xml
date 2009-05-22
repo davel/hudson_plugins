@@ -8,12 +8,11 @@
       onclick="updateUrlButton_onclick()" color="#222222" downImage="stock_images\button_down.png"
       image="stock_images\button_up.png" overImage="stock_images\button_over.png"
       caption="Add URL"/>
-    <label enabled="true" height="30" hitTest="htclient" width="76%" x="29"
-      y="193" onclick="label_onclick()" bold="true" trimming="word"
-      wordwrap="true">&URL_LABEL;
+    <label enabled="true" height="30" width="76%" x="29" y="193" onclick="label_onclick()"
+      bold="true" trimming="word" wordwrap="true">&URL_LABEL;
     </label>
     <label height="30" width="430" x="0" y="31" align="center" trimming="word"
-     >&OPTIONS_HEADER;
+      wordwrap="true">&OPTIONS_HEADER;
     </label>
     <combobox height="250" name="intervalMinutes" width="50" x="35" y="77"
       background="#FFFFFF" itemSeparator="true" selectedIndex="0"
