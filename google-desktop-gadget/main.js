@@ -87,7 +87,7 @@ function view_onOpen() {
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 	
-hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
+ hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
 
 	// split urls between each comma
 	hudsonViewList = hudsonViewUrls.split(",");
@@ -95,7 +95,7 @@ hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
 		if (viewUrl.length > 0) {
-			hudsonViewData.push(new View(viewUrl));
+			hudsonViewData.push(new HudsonView(viewUrl));
 		}
 	}
 
@@ -134,7 +134,7 @@ function onOptionChanged() {
 	hudsonViewData = [];
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
-		hudsonViewData.push(new View(viewUrl));
+		hudsonViewData.push(new HudsonView(viewUrl));
 	}
 
 	updateStatus();
@@ -143,7 +143,7 @@ function onOptionChanged() {
 /**
  * delete all previous jobs and statuses and recreate with latest jobs and statuses
  */ 
-function renderView(view) {
+function renderView(updatedHudsonView) {
 
 	if (hudsonViewData.length >= 1) {
 
@@ -151,12 +151,14 @@ function renderView(view) {
 		contentDiv.visible = true;
 		contentDiv.removeAllElements();
 
-		// set the new job status info for view in view hash
-		for (viewIndex in hudsonViewData) {
-			var existingView = hudsonViewData[viewIndex];
-			if (view.url == existingView.url) {
-				hudsonViewData[viewIndex] = view;
-				break;
+		// if view is defined, set the new job status info for view in view hash
+		if (updatedHudsonView) {
+			for (viewIndex in hudsonViewData) {
+				var existingView = hudsonViewData[viewIndex];
+				if (updatedHudsonView.url == existingView.url) {
+					hudsonViewData[viewIndex] = updatedHudsonView;
+					break;
+				}
 			}
 		}
 
@@ -164,23 +166,33 @@ function renderView(view) {
 
 		// each view is rendered as listbox
 		for (viewIndex in hudsonViewData) {
-			var view = hudsonViewData[viewIndex];
-			var viewListbox = contentDiv.appendElement("<listbox height='85' name='"+view.getUrl+"' width='87%' y='"+listboxY+"' background='#CCCCCC' itemHeight='20' itemOverColor='#CCFFCC' itemSelectedColor='#99FF99' />");
-			var viewLink = "<a width='120' height='16' x='0' href='" + view.url + "'>[+] " + view.url + "</a>";
-			var viewImg = "<img name='" + view.name + "Img' width='16' height='16' x='130' src='images/" + view.color + ".gif'/>";
-			var header = viewListbox.appendElement("<item name='"+view.getUrl+"' background='#AAAAAA'>" + viewLink + viewImg + "</item>");
 
-			var jobs = view.getJobs();
+			var listboxWidth = view.width - 10;
+			var imgX = view.width - 30;
 
-			// each job in the view is rendered as an item in the view listbox
-			for (jobIndex in jobs) {
-				var job = jobs[jobIndex];
-				var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
-				var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='130' src='images/" + job.color + ".gif'/>";
-				viewListbox.appendElement("<item name='"+job.name+"'>" + jobLink + jobImg + "</item>");
+			var viewToRender = hudsonViewData[viewIndex];
+
+			var viewListbox = contentDiv.appendElement("<listbox height='85' name='" + viewToRender.url + "' width='" + listboxWidth + "' y='" + listboxY + "' background='#FFFFFF' itemHeight='20' itemOverColor='#AAAAAA' itemSelectedColor='#FFFFFF' />");
+			var viewExpander = "<a width='20' height='16' x='0' onclick='toggleViewCollapse(" + viewToRender.id + ")'>[+]</a>";
+			var viewLink = "<a width='100' height='16' x='20' href='" + view.url + "'>" + viewToRender.url +"</a>";
+			var viewImg = "<img name='" + viewToRender.url + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + viewToRender.color + ".gif'/>";
+			var header = viewListbox.appendElement("<item name='"+viewToRender.url+"' background='#AAAAAA'>" + viewExpander + viewLink + viewImg + "</item>");
+
+			if (viewToRender.expanded) {
+				var jobs = viewToRender.getJobs();
+
+				// each job in the view is rendered as an item in the view listbox
+				for (jobIndex in jobs) {
+					var job = jobs[jobIndex];
+					var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
+					var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
+					viewListbox.appendElement("<item name='"+job.name+"' valign='center'>" + jobLink + jobImg + "</item>");
+				}
+				
+				listboxY += (jobs.length+1) * 20;
+			} else {
+				listboxY += 20;
 			}
-
-			listboxY += (jobs.length+1) * 20;
 		}
 
 	} else {
@@ -188,6 +200,21 @@ function renderView(view) {
 		contentDiv.visible = false;
 	}	
 
+}
+
+function getViewById(id) {
+	for (viewIndex in hudsonViewData) {
+		var existingView = hudsonViewData[viewIndex];
+		if (id == existingView.id) {
+			return existingView;
+		}
+	}
+}
+
+function toggleViewCollapse(viewId) {
+	var hudsonView = getViewById(viewId);
+	hudsonView.toogleExpanded();
+	renderView(hudsonView);
 }
 
 function updateStatus() {
@@ -211,13 +238,13 @@ function updateStatus() {
 }
 
 function setViewPollTime() {
-  var currentTime = new Date();
-  var hours = currentTime.getHours();
-  var minutes = currentTime.getMinutes();
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  lastPollTime.value = hours + ":" + minutes;
+	var currentTime = new Date();
+	var hours = currentTime.getHours();
+	var minutes = currentTime.getMinutes();
+	if (minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	lastPollTime.value = hours + ":" + minutes;
 }
 
 /**
@@ -240,21 +267,6 @@ function registerUpdateStatus() {
   g_updateStatusTimer = view.setTimeout(updateStatus, timeout);
 }
 
-/**
- * change size of view
- * 
- * @param {Number} val on how much to change size, can be negative
- */ 
-function changeViewSize(val) {
-    var zoomHeight = view.height;
-    view.resizable = 'true';
-    var normalHeight = view.height;
-    var koeff = zoomHeight/normalHeight;
-    view.resizable = 'zoom';
-    var newViewHeight = view.height + val*koeff;
-    view.height = newViewHeight
-}
-
 function onOpenOptionsClick() {
     pluginHelper.ShowOptionsDialog();
 } 
@@ -264,4 +276,36 @@ function clearContentDivElements(){
     contentDiv.height = 0;
     contentDiv.removeAllElements();
     contentDivElements = null;
+}
+
+function sb_onchange() {
+//	configureLinkListBox.height=Math.max(configureLinkListBox.length*configureLinkListBox.itemHeight, contentDiv.height);
+//	sb.max = configureLinkListBox.height - contentDiv.height;
+//	if (configureLinkListBox.height > (configureLinkListBox.length * configureLinkListBox.itemHeight) ) {
+//		sb.visible = false;
+//	} else {
+//		sb.visible = true;
+//	}
+//	configureLinkListBox.y=Math.min(0, -sb.value)  
+}
+
+function view_onSize() {
+	//Minimum SIze
+	//120x60
+
+	main.height = Math.max(view.height,60);
+	main.width = Math.max(view.width, 120);
+	contentDiv.height = Math.max(main.height - 20,20);
+	contentDiv.width =  Math.max(main.width,120);
+
+//	configureLinkListBox.width = contentDiv.width - 10
+//	configureLinkListBox.itemWidth = taskList.width;
+
+//	sb.height = contentDiv.height;
+//	sb.width = 10
+//	sb.x = contentDiv.width - 10;
+//	sb.max = Math.max(contentDiv.height);
+//	sb.value = 0;
+	// sb_onchange();
+	renderView();
 }

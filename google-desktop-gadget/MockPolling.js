@@ -14,11 +14,11 @@
 
 	this.setJobStatus = function(view) {
 
-		var v1j1 = new Job();
+		var v1j1 = new HudsonJob();
 		v1j1.name = "Job 1";
 		v1j1.color = "blue";
 		v1j1.url = view.url + "/job1.html";
-		var v1j2 = new Job();
+		var v1j2 = new HudsonJob();
 		v1j2.name = "Job 2";
 		v1j2.color = "red";
 		v1j2.url = view.url + "/job2.html";

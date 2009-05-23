@@ -1,39 +1,47 @@
-﻿<view height="220" resizable="true" showCaptionAlways="true" width="200"
+﻿<view height="220" resizable="true" showCaptionAlways="true" width="250"
   onopen="view_onOpen();" onoptionchanged="onOptionChanged();"
- >
-    <contentArea height="100%" name="contentArea" width="100%"/>
-    <img height="23" name="img1" width="26" x="100" y="6" src="images\hudson.png"
-     />
-    <label enabled="true" height="15" name="jobLabel" width="53" x="14"
-      y="19" onclick="jobLabel_onclick()" bold="true">&TABLE_HEAD_JOB;
-    </label>
-    <label height="15" name="statusLabel" width="50" x="125" y="20" bold="true"
-     >&TABLE_HEAD_STATUS;
-    </label>
-    <div height="275" name="contentDiv" width="100%" visible="true"
-      x="8" y="36" autoscroll="true" background="#FFFFFF">
-        <listbox height="100%" name="configureLinkListBox" width="87%" x="0" y="0"
-          background="#FFFFFF" itemHeight="20" itemOverColor="#FFFFFF"
-          itemSelectedColor="#FFFFFF">
-            <item></item>
-            <item>
-                <a wordwrap="true" onclick="plugin.ShowOptionsDialog()">Click here to configure your Hudson URLs
-                </a>
-            </item>
-        </listbox>
-    </div>
-    <label height="15" name="updateLabel" tooltip="&UPDATED_TOOLTIP;" width="137"
-      x="15" y="6">&UPDATED_TOOLTIP;
-    </label>
-    <edit height="16" name="lastPollTime" width="40" x="125" y="6" readonly="true"
-      value="13:15"/>
-    <div height="50" name="errorDiv" width="100%" x="5" y="50" background="#FF2222" visible="false">
-        <label height="40" name="labelNetworkFailure" width="185" x="5" y="5"
-          wordwrap="true">&NETWORK_FAILURE;
+  onsize="view_onSize();">
+    <div height="220" name="main" width="250" x="1" y="0" background="#FFFFFF">
+        <label height="20" name="updateLabel" tooltip="&UPDATED_TOOLTIP;" width="200"
+          x="30" y="3">&UPDATED_TOOLTIP;
         </label>
+        <edit height="16" name="lastPollTime" width="40" x="120" y="3" readonly="true"
+          value="13:15"/>
+        <img height="23" name="hudsonImg" width="26" x="2" y="2" src="images\hudson.png"
+         />
+        <div height="200" name="contentDiv" width="250" x="0" y="20" autoscroll="true"
+          background="#FFFFFF">
+            <listbox height="100%" name="configureLinkListBox" width="100%" x="0"
+              y="0" background="#FFFFFF" itemHeight="20" itemOverColor="#CCCCCC"
+              itemSelectedColor="#FFFFFF">
+                <item height="20">
+                    <scrollbar height="130" name="sb" width="10" x="240" y="0" lineStep="20"
+                      max="120" orientation="vertical" pageStep="20" visible="true"
+                      background="images/scroll_background.png"
+                      leftImage="images/scrollup_dis.png" leftDownImage="images/scrollup_d.png"
+                      leftOverImage="images/scrollup_o.png"
+                      rightImage="images/scrolldown_dis.png"
+                      rightDownImage="images/scrolldown_d.png"
+                      rightOverImage="images/scrolldown_o.png"
+                      thumbDownImage="images/scroll_d.png"
+                      thumbImage="images/scrollbar_u.png" thumbOverImage="images/scrollbar_o.png"
+                      onchange="sb_onchange()"/>
+                </item>
+                <item height="20">
+                    <a onclick="plugin.ShowOptionsDialog()" wordwrap="true">Click here to configure your Hudson URLs
+                    </a>
+                </item>
+            </listbox>
+        </div>
+        <div height="50" name="errorDiv" width="100%" visible="false" x="5"
+          y="50" background="#FF2222">
+            <label height="40" name="labelNetworkFailure" width="185" x="5" y="5"
+              wordwrap="true">&NETWORK_FAILURE;
+            </label>
+        </div>
     </div>
     <script src="main.js" />
     <script src="MockPolling.js" />
-    <script src="View.js" />
-    <script src="Job.js" />
+    <script src="HudsonView.js" />
+    <script src="HudsonJob.js" />
 </view>
