@@ -11,5 +11,12 @@
   <packaging>hpi</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Hudson Staging plugin</name>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.jvnet.hudson.main</groupId>
+      <artifactId>maven-plugin</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>
