@@ -13,7 +13,8 @@ Copyright (c) 2008 Jeff Black
 
   <SET_OPTIONS_TEXT>Configure this gadget</SET_OPTIONS_TEXT>
   <OPTIONS_TEXT>Options</OPTIONS_TEXT>
-  <OPTIONS_HEADER>Please fill all the fields with valid data.</OPTIONS_HEADER>
+  <OPTIONS_HEADER>Enter the hudson urls that you want to monitor.  These can be the main dashboard url of a hudson server or the url of a specific view defined for a hudson server.</OPTIONS_HEADER>
+  <OPTIONS_URL_LIST>Hudson URLs to monitor</OPTIONS_URL_LIST>
 
   <STATUS_UPDATING>updating...</STATUS_UPDATING>
   <STATUS_UPDATED>Updated</STATUS_UPDATED>
@@ -21,7 +22,7 @@ Copyright (c) 2008 Jeff Black
 
   <JOB_LABEL_TEXT>Job list</JOB_LABEL_TEXT>
   <TIMEOUT_LABEL>Polling interval in minutes</TIMEOUT_LABEL>
-  <URL_LABEL>Enter a Hudson URL, http://server[:port]/.  This can be the main dashboard URL or any view URL.</URL_LABEL>
+  <URL_LABEL>Enter a Hudson URL, http://server[:port]/[view]</URL_LABEL>
 
   <ERR_URL_EMPTY>Hudson url is not valid.</ERR_URL_EMPTY>
   <ADD_URL>Add New Hudson URL</ADD_URL>

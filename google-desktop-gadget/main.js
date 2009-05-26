@@ -15,26 +15,6 @@ limitations under the License.
 */ 
 
 /**
- * list of hudson jobs to check status
- * @type Array
- */ 
-var jobs = new Array();
-
-/**
- * Amount of time to wait until displaying 'timed out' message
- * @type Number
- */
-var TIMEOUT_MS = 10000;  // 10 seconds
-
-/**
- * How often to check for new messages, under normal circumstances
- * @type Number
- */
-var BASE_UPDATE_INTERVAL_MS = 300000;  // 300 seconds
-// var BASE_UPDATE_INTERVAL_MS = 20000;  // 20 seconds
-// var BASE_UPDATE_INTERVAL_MS = 1000;  // 1 seconds
-
-/**
  * How often to check for new job status, if we're offline
  * @type Number
  */
@@ -58,24 +38,11 @@ var DEFAULT_HUDSON_URL = "";
  * Default to a polling every 5 minutes
  */
 var DEFAULT_POLLING_INTERVAL_MINUTES = 5;
-// var DEFAULT_POLLING_INTERVAL_MINUTES = 1;
-
-/**
- * Default to a local Hudson instance on port 8080
- */
-var DEFAULT_HUDSON_URL = "localhost";
-// var defaultHudsonUrl = "http://simile.mit.edu/hudson/";
-// var defaultHudsonUrl = "http://build.sourcelabs.org/hudson/";
-// var DEFAULT_HUDSON_URL = "http://localhost:8080/";
-
 var pollingIntervalMinutes = DEFAULT_POLLING_INTERVAL_MINUTES;
-var updateFailCount = 0;
 
 var hudsonViewUrls = "";			    // the urls as a single string
 var hudsonViewList = new Array();	// array of urls
 var hudsonViewData = new Array();	// hash of views and jobs
-
-var contentDivElements = new Array();
 
 var viewPoller = null;
 
@@ -87,7 +54,7 @@ function view_onOpen() {
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 	
- hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
+  hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
 
 	// split urls between each comma
 	hudsonViewList = hudsonViewUrls.split(",");
@@ -99,10 +66,8 @@ function view_onOpen() {
 		}
 	}
 
-	if (hudsonViewData.length> 0) {
+	if (hudsonViewData.length > 0) {
 		updateStatus();
-	} else {
-		
 	}
 }
 
@@ -123,9 +88,6 @@ function onOptionChanged() {
 		g_updateStatusTimer = null;
 	}
 
-	// remove the "configure your hudson url" msg, if still there
-	contentDiv.removeAllElements();
-
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 
@@ -137,7 +99,9 @@ function onOptionChanged() {
 		hudsonViewData.push(new HudsonView(viewUrl));
 	}
 
-	updateStatus();
+	if (hudsonViewData.length > 0) {
+		updateStatus();
+	}
 }
 
 /**
@@ -147,8 +111,6 @@ function renderView(updatedHudsonView) {
 
 	if (hudsonViewData.length >= 1) {
 
-		errorDiv.visible = false;
-		contentDiv.visible = true;
 		contentListbox.removeAllElements();
 
 		// if view is defined, set the new job status info for view in view hash
@@ -190,9 +152,6 @@ function renderView(updatedHudsonView) {
 			}
 		}
 
-	} else {
-		errorDiv.visible = true;
-		contentDiv.visible = false;
 	}	
 
 }
@@ -223,23 +182,37 @@ function toggleViewCollapse(viewId) {
 }
 
 function updateStatus() {
-
 	setViewPollTime();
-
     if (hudsonViewData.length >= 1) {
 		for (viewIndex in hudsonViewData) {
 			var viewToUpdate = hudsonViewData[viewIndex];
 			viewPoller.updateViewStatus(viewToUpdate);
 		}
-    } else {
-		errorDiv.visible = true;
-		contentDiv.visible = false;
 	}
-
 	debug.trace('polling complete...');
 
 	// make sure updateStatus gets called again
-	// registerUpdateStatus();
+	registerUpdateStatus();
+}
+
+/**
+ * Sets a timeout for updateStatus to be called depending on the
+ * online/offline state
+ */
+function registerUpdateStatus() {
+	var timeout;
+	if (framework.system.network.online == false) {
+		timeout = CHECK_ONLINE_STATUS_INTERVAL_MS;
+	} else {
+		timeout = pollingIntervalMinutes * 60000;
+	}
+
+	if (g_updateStatusTimer) {
+		view.clearTimeout(g_updateStatusTimer);
+		g_updateStatusTimer = null;
+	}
+
+	g_updateStatusTimer = view.setTimeout(updateStatus, timeout);
 }
 
 function setViewPollTime() {
@@ -252,36 +225,9 @@ function setViewPollTime() {
 	lastPollTime.value = hours + ":" + minutes;
 }
 
-/**
- * Sets a timeout for updateStatus to be called depending on the
- * online/offline state
- */
-function registerUpdateStatus() {
-  var timeout;
-  if (framework.system.network.online == false) {
-    timeout = CHECK_ONLINE_STATUS_INTERVAL_MS;
-  } else {
-    timeout = pollingIntervalMinutes * 60000;
-  }
-
-  if (g_updateStatusTimer) {
-    view.clearTimeout(g_updateStatusTimer);
-    g_updateStatusTimer = null;
-  }
-
-  g_updateStatusTimer = view.setTimeout(updateStatus, timeout);
-}
-
 function onOpenOptionsClick() {
     pluginHelper.ShowOptionsDialog();
 } 
-
-// clear all items
-function clearContentDivElements(){
-    contentDiv.height = 0;
-    contentDiv.removeAllElements();
-    contentDivElements = null;
-}
 
 function sb_onchange() {
 	var viewCount = getViewCount();
