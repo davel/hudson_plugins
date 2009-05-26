@@ -11,12 +11,18 @@
          />
         <div height="200" name="contentDiv" width="250" x="0" y="20" autoscroll="true"
           background="#FFFFFF">
-            <listbox height="100%" name="configureLinkListBox" width="100%" x="0"
+            <listbox height="200" name="contentListbox" width="250" x="0"
               y="0" background="#FFFFFF" itemHeight="20" itemOverColor="#CCCCCC"
               itemSelectedColor="#FFFFFF">
                 <item height="20">
-                    <scrollbar height="130" name="sb" width="10" x="240" y="0" lineStep="20"
-                      max="120" orientation="vertical" pageStep="20" visible="true"
+                </item>
+                <item height="20">
+                    <a onclick="plugin.ShowOptionsDialog()" wordwrap="true">Click here to configure your Hudson URLs
+                    </a>
+                </item>
+            </listbox>
+            <scrollbar height="200" name="contentScrollbar" width="10" x="240" y="0" lineStep="20"
+                      max="120" orientation="vertical" pageStep="20"
                       background="images/scroll_background.png"
                       leftImage="images/scrollup_dis.png" leftDownImage="images/scrollup_d.png"
                       leftOverImage="images/scrollup_o.png"
@@ -26,16 +32,10 @@
                       thumbDownImage="images/scroll_d.png"
                       thumbImage="images/scrollbar_u.png" thumbOverImage="images/scrollbar_o.png"
                       onchange="sb_onchange()"/>
-                </item>
-                <item height="20">
-                    <a onclick="plugin.ShowOptionsDialog()" wordwrap="true">Click here to configure your Hudson URLs
-                    </a>
-                </item>
-            </listbox>
         </div>
-        <div height="50" name="errorDiv" width="100%" visible="false" x="5"
-          y="50" background="#FF2222">
-            <label height="40" name="labelNetworkFailure" width="185" x="5" y="5"
+        <div height="200" name="errorDiv" width="250" visible="false" x="0"
+          y="20" background="#FF2222">
+            <label height="40" name="labelNetworkFailure" width="250" x="5" y="5"
               wordwrap="true">&NETWORK_FAILURE;
             </label>
         </div>

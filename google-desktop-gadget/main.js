@@ -149,7 +149,7 @@ function renderView(updatedHudsonView) {
 
 		errorDiv.visible = false;
 		contentDiv.visible = true;
-		contentDiv.removeAllElements();
+		contentListbox.removeAllElements();
 
 		// if view is defined, set the new job status info for view in view hash
 		if (updatedHudsonView) {
@@ -163,35 +163,30 @@ function renderView(updatedHudsonView) {
 		}
 
 		var listboxY = 0;
+		var listboxWidth = view.width - 10;
+		var imgX = view.width - 30;
 
-		// each view is rendered as listbox
+		// add the view as a list element header in the listbox
 		for (viewIndex in hudsonViewData) {
-
-			var listboxWidth = view.width - 10;
-			var imgX = view.width - 30;
 
 			var viewToRender = hudsonViewData[viewIndex];
 
-			var viewListbox = contentDiv.appendElement("<listbox height='85' name='" + viewToRender.url + "' width='" + listboxWidth + "' y='" + listboxY + "' background='#FFFFFF' itemHeight='20' itemOverColor='#AAAAAA' itemSelectedColor='#FFFFFF' />");
 			var viewExpander = "<a width='20' height='16' x='0' onclick='toggleViewCollapse(" + viewToRender.id + ")'>[+]</a>";
 			var viewLink = "<a width='100' height='16' x='20' href='" + view.url + "'>" + viewToRender.url +"</a>";
 			var viewImg = "<img name='" + viewToRender.url + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + viewToRender.color + ".gif'/>";
-			var header = viewListbox.appendElement("<item name='"+viewToRender.url+"' background='#AAAAAA'>" + viewExpander + viewLink + viewImg + "</item>");
+			var header = contentListbox.appendElement("<item name='"+viewToRender.url+"' background='#AAAAAA'>" + viewExpander + viewLink + viewImg + "</item>");
 
 			if (viewToRender.expanded) {
 				var jobs = viewToRender.getJobs();
 
-				// each job in the view is rendered as an item in the view listbox
+				// each job in the view is rendered as an item under the view element in the listbox
 				for (jobIndex in jobs) {
 					var job = jobs[jobIndex];
 					var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
 					var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
-					viewListbox.appendElement("<item name='"+job.name+"' valign='center'>" + jobLink + jobImg + "</item>");
+					contentListbox.appendElement("<item name='"+job.name+"' valign='center'>" + jobLink + jobImg + "</item>");
 				}
 				
-				listboxY += (jobs.length+1) * 20;
-			} else {
-				listboxY += 20;
 			}
 		}
 
@@ -209,6 +204,16 @@ function getViewById(id) {
 			return existingView;
 		}
 	}
+}
+
+function getViewCount() {
+	var count = 0;
+	for (viewIndex in hudsonViewData) {
+		count += 1;
+		var existingView = hudsonViewData[viewIndex];
+		count += existingView.getJobs().length;
+	}
+	return count;
 }
 
 function toggleViewCollapse(viewId) {
@@ -279,33 +284,35 @@ function clearContentDivElements(){
 }
 
 function sb_onchange() {
-//	configureLinkListBox.height=Math.max(configureLinkListBox.length*configureLinkListBox.itemHeight, contentDiv.height);
-//	sb.max = configureLinkListBox.height - contentDiv.height;
-//	if (configureLinkListBox.height > (configureLinkListBox.length * configureLinkListBox.itemHeight) ) {
-//		sb.visible = false;
-//	} else {
-//		sb.visible = true;
-//	}
-//	configureLinkListBox.y=Math.min(0, -sb.value)  
+	var viewCount = getViewCount();
+
+	contentListbox.height = Math.max(viewCount * contentListbox.itemHeight, contentDiv.height);
+	contentScrollbar.max = contentListbox.height - contentDiv.height;
+	if (contentListbox.height > (viewCount * contentListbox.itemHeight) ) {
+		contentScrollbar.visible = false;
+	} else {
+		contentScrollbar.visible = true;
+	}
+	contentListbox.y = Math.min(0, -contentScrollbar.value)  
 }
 
 function view_onSize() {
 	//Minimum SIze
 	//120x60
 
-	main.height = Math.max(view.height,60);
+	main.height = Math.max(view.height, 60);
 	main.width = Math.max(view.width, 120);
-	contentDiv.height = Math.max(main.height - 20,20);
-	contentDiv.width =  Math.max(main.width,120);
+	contentDiv.height = Math.max(main.height - 20, 20);
+	contentDiv.width =  Math.max(main.width, 120);
 
-//	configureLinkListBox.width = contentDiv.width - 10
-//	configureLinkListBox.itemWidth = taskList.width;
+	contentListbox.width = contentDiv.width - 10
+	contentListbox.itemWidth = contentListbox.width;
 
-//	sb.height = contentDiv.height;
-//	sb.width = 10
-//	sb.x = contentDiv.width - 10;
-//	sb.max = Math.max(contentDiv.height);
-//	sb.value = 0;
-	// sb_onchange();
+	contentScrollbar.height = contentDiv.height;
+	contentScrollbar.width = 10
+	contentScrollbar.x = contentDiv.width - 10;
+	contentScrollbar.max = Math.max(contentDiv.height);
+	contentScrollbar.value = 0;
+	sb_onchange();
 	renderView();
 }
