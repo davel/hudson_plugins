@@ -1,81 +1,69 @@
 ﻿function NetworkPolling(callback) {
 
-	/**
-	 * Amount of time to wait until displaying 'timed out' message
-	 * @type Number
-	 */
-	var TIMEOUT_MS = 10000;  // 10 seconds
-
-	/**
-	 * How often to check for new messages, under normal circumstances
-	 * @type Number
-	 */
-	var BASE_UPDATE_INTERVAL_MS = 300000;  // 300 seconds
-	// var BASE_UPDATE_INTERVAL_MS = 20000;  // 20 seconds
-	// var BASE_UPDATE_INTERVAL_MS = 1000;  // 1 seconds
-
-	/**
-	 * How often to check for new job status, if we're offline
-	 * @type Number
-	 */
-	var CHECK_ONLINE_STATUS_INTERVAL_MS = 30000;  // 30 seconds
-
-	var updateFailCount = 0;
-	var httpRequest;
-
 	// constructor
 	this.parentCallback = callback;
 
 	// methods
-	this.updateViewStatus = function(view) {
-		var v = this.updateNetworkStatus(view);
-        this.parentCallback(v);
-    }
+	this.updateViewStatus = function(hudsonView) {
+
+		// make sure we don't get a cached request by changing the url every poll
+		var apiUrl = hudsonView.url + "/api/json" + "?noCache="+Math.random();
+
+		var _this = this;
+
+		var httpRequest = new XMLHttpRequest();
+		httpRequest.open("GET", apiUrl, true);
+		httpRequest.onreadystatechange = function() {
+			if (httpRequest.readyState == 4) {
+				if (httpRequest.status == 200) {
+					_this.parseJSONResponse(hudsonView, httpRequest.responseText);
+				} else {
+					// only try once here, gadget will retry after normal polling period
+					_this.handleErrorCode(hudsonView, httpRequest.status);
+				}
+				// httpRequest = null;
+			}
+		};
+		httpRequest.send();
+	}
 
 	/**
-	 * send request to hudson url using ajax
+	 * Parse response from hudson url
 	 * 
 	 * @param {String} url The url to hudson dashboard
 	 */ 
-	function updateNetworkStatus() {
-		// make sure we don't get a cached request by changing the url every poll
-		var apiUrl = hudsonUrl + "api/json" + "?noCache="+Math.random();
-		httpRequest = new XMLHttpRequest();
-		httpRequest.open("GET", apiUrl, true);
-		httpRequest.onreadystatechange = parseJSONResponse;
-		httpRequest.send(null);
-	}
+	this.parseJSONResponse = function(hudsonView, jsonResponse) {
 
-	function parseJSONResponse() {
-	  if (httpRequest.readyState == 4) {
-		var nextRefreshTime = 2 * 60 * 1000;  // in error cases try after 2 min
-		if (httpRequest.status == 200) {
-		  try {
-
-			// clear the old results
-			jobs = [];
-			var jsonObj = eval("(" + httpRequest.responseText + ")");
+		try {
+			var jsonObj = eval("(" + jsonResponse + ")");
 			var viewName = jsonObj.name;
 			jobs = jsonObj.jobs;
-			updateFailCount = 0;  // successfully parsed stuff
-			createElements();
 
-		  } catch(e) {
-			jobs = null;
-			updateFailCount++;
-		  }
-		} else {
-		  updateFailCount++;
+			var viewJobs = new Array();
+
+			for (var i=0; i<jobs.length;++i) {
+				var job = jobs[i];
+				var hudsonJob = new HudsonJob();
+				hudsonJob.name = job.name;
+				hudsonJob.url = job.url;
+				hudsonJob.color = job.color;
+				viewJobs.push(hudsonJob);
+			}
+
+			hudsonView.setJobs(viewJobs);
+			// TODO: calculate rollup status color
+			hudsonView.color = "blue";
+
+		} catch(e) {
+			hudsonView.setNetworkStatus = "unparseable";
 		}
 
-		httpRequest = null;
+		this.parentCallback(hudsonView);
+	}
 
-		if (updateFailCount > 3) {
-		  debug.trace("network failure");
-		  // too many failures so stop retrying
-		  hudsonViewJobList1.removeAllElements();
-		  contentDiv.visible = false;
-		  errorDiv.visible = true;
-		}
+	this.handleErrorCode = function(hudsonView, status) {
+		hudsonView.setJobs([]);
+		hudsonView.setNetworkStatus(status);
+		this.parentCallback(hudsonView);
 	}
 }

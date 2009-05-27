@@ -18,13 +18,13 @@ limitations under the License.
  * How often to check for new job status, if we're offline
  * @type Number
  */
-var CHECK_ONLINE_STATUS_INTERVAL_MS = 30000;  // 30 seconds
+var CHECK_ONLINE_STATUS_INTERVAL_MS = 30 * 1000;  // 30 seconds
 
 /**
  * Keeps track of the current updateStatus timer. Used to ensure that
  * we don't have multiple updateStatus timers at the same time.
  */
-var g_updateStatusTimer = null;
+var timerToken = null;
 
 /**
  * Default to a local Hudson instance on port 8080
@@ -37,7 +37,7 @@ var DEFAULT_HUDSON_URL = "";
 /**
  * Default to a polling every 5 minutes
  */
-var DEFAULT_POLLING_INTERVAL_MINUTES = 5;
+var DEFAULT_POLLING_INTERVAL_MINUTES = 1;
 var pollingIntervalMinutes = DEFAULT_POLLING_INTERVAL_MINUTES;
 
 var hudsonViewUrls = "";			    // the urls as a single string
@@ -48,13 +48,13 @@ var viewPoller = null;
 
 function view_onOpen() {
     initializeStoredOptions();
-	viewPoller = new MockPolling(renderView);
 
     // load urls setting from data base
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 	
-  hudsonViewUrls = "http://mocktest/hudson,http://mocktest2/hudson2";
+  hudsonViewUrls = "http://hudson.jboss.org/hudson/view/Infinispan/, http://hudson.jboss.org/hudson, http://simile.mit.edu/hudson";
+//  hudsonViewUrls = "http://simile.mit.edu/hudsonxxx";
 
 	// split urls between each comma
 	hudsonViewList = hudsonViewUrls.split(",");
@@ -62,7 +62,9 @@ function view_onOpen() {
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
 		if (viewUrl.length > 0) {
-			hudsonViewData.push(new HudsonView(viewUrl));
+//			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
+			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
+			hudsonViewData.push(hudsonView);
 		}
 	}
 
@@ -83,9 +85,9 @@ function initializeStoredOptions() {
 function onOptionChanged() {
 
 	// stop any current timer
-	if (g_updateStatusTimer) {
-		view.clearTimeout(g_updateStatusTimer);
-		g_updateStatusTimer = null;
+	if (timerToken) {
+		view.clearTimeout(timerToken);
+		timerToken = null;
 	}
 
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
@@ -94,9 +96,14 @@ function onOptionChanged() {
 	// split urls between each comma
 	hudsonViewList = hudsonViewUrls.split(",");
 	hudsonViewData = [];
+
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
-		hudsonViewData.push(new HudsonView(viewUrl));
+		if (viewUrl.length > 0) {
+//			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
+			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
+			hudsonViewData.push(hudsonView);
+		}
 	}
 
 	if (hudsonViewData.length > 0) {
@@ -133,10 +140,10 @@ function renderView(updatedHudsonView) {
 
 			var viewToRender = hudsonViewData[viewIndex];
 
-			var viewExpander = "<a width='20' height='16' x='0' onclick='toggleViewCollapse(" + viewToRender.id + ")'>[+]</a>";
-			var viewLink = "<a width='100' height='16' x='20' href='" + view.url + "'>" + viewToRender.url +"</a>";
-			var viewImg = "<img name='" + viewToRender.url + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + viewToRender.color + ".gif'/>";
-			var header = contentListbox.appendElement("<item name='"+viewToRender.url+"' background='#AAAAAA'>" + viewExpander + viewLink + viewImg + "</item>");
+			var viewExpander = "<button width='20' height='16' x='0' y='2' image='images/document_add.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
+			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + view.url + "'>" + viewToRender.url + "</a>";
+			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.color + ".gif'/>";
+			var header = contentListbox.appendElement("<item background='#DDDDDD'>" + viewExpander + viewLink + viewImg + "</item>");
 
 			if (viewToRender.expanded) {
 				var jobs = viewToRender.getJobs();
@@ -144,9 +151,9 @@ function renderView(updatedHudsonView) {
 				// each job in the view is rendered as an item under the view element in the listbox
 				for (jobIndex in jobs) {
 					var job = jobs[jobIndex];
-					var jobLink = "<a width='120' height='16' x='0' href='" + job.url + "'>" + job.name + "</a>";
-					var jobImg = "<img name='" + job.name + "Img' width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
-					contentListbox.appendElement("<item name='"+job.name+"' valign='center'>" + jobLink + jobImg + "</item>");
+					var jobLink = "<a width='120' height='16' x='10' href='" + job.url + "'>" + job.name + "</a>";
+					var jobImg = "<img width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
+					contentListbox.appendElement("<item valign='center'>" + jobLink + jobImg + "</item>");
 				}
 				
 			}
@@ -186,7 +193,7 @@ function updateStatus() {
     if (hudsonViewData.length >= 1) {
 		for (viewIndex in hudsonViewData) {
 			var viewToUpdate = hudsonViewData[viewIndex];
-			viewPoller.updateViewStatus(viewToUpdate);
+			viewToUpdate.updateViewStatus();
 		}
 	}
 	debug.trace('polling complete...');
@@ -201,24 +208,27 @@ function updateStatus() {
  */
 function registerUpdateStatus() {
 	var timeout;
-	if (framework.system.network.online == false) {
-		timeout = CHECK_ONLINE_STATUS_INTERVAL_MS;
+	if (framework.system.network.online) {
+		timeout = pollingIntervalMinutes * 60 * 1000;
 	} else {
-		timeout = pollingIntervalMinutes * 60000;
+		timeout = CHECK_ONLINE_STATUS_INTERVAL_MS;
 	}
 
-	if (g_updateStatusTimer) {
-		view.clearTimeout(g_updateStatusTimer);
-		g_updateStatusTimer = null;
+	if (timerToken) {
+		view.clearTimeout(timerToken);
+		timerToken = null;
 	}
 
-	g_updateStatusTimer = view.setTimeout(updateStatus, timeout);
+	timerToken = view.setTimeout(updateStatus, timeout);
 }
 
 function setViewPollTime() {
 	var currentTime = new Date();
 	var hours = currentTime.getHours();
 	var minutes = currentTime.getMinutes();
+	if (hours < 10) {
+		hours = "0" + hours;
+	}
 	if (minutes < 10) {
 		minutes = "0" + minutes;
 	}
@@ -253,6 +263,8 @@ function view_onSize() {
 
 	contentListbox.width = contentDiv.width - 10
 	contentListbox.itemWidth = contentListbox.width;
+
+	forceRefresh.x = main.width - 33;
 
 	contentScrollbar.height = contentDiv.height;
 	contentScrollbar.width = 10

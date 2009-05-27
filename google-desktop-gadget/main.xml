@@ -3,17 +3,20 @@
   onsize="view_onSize();">
     <div height="220" name="main" width="250" x="1" y="0" background="#FFFFFF">
         <label height="20" name="updateLabel" tooltip="&UPDATED_TOOLTIP;" width="200"
-          x="30" y="3">&UPDATED_TOOLTIP;
+          x="26" y="3">&UPDATED_TOOLTIP;
         </label>
-        <edit height="16" name="lastPollTime" width="40" x="120" y="3" readonly="true"
+        <edit height="16" name="lastPollTime" width="40" x="114" y="4" readonly="true"
           value="13:15"/>
         <img height="23" name="hudsonImg" width="26" x="2" y="2" src="images\hudson.png"
+         />
+        <button height="20" name="forceRefresh" tooltip="Refresh" width="20"
+          x="180" y="2" onclick="updateStatus();" image="images\refresh.gif"
          />
         <div height="200" name="contentDiv" width="250" x="0" y="20" autoscroll="true"
           background="#FFFFFF">
             <listbox height="200" name="contentListbox" width="250" x="0" y="0" background="#FFFFFF"
-              itemHeight="20" itemOverColor="#CCCCCC" itemSelectedColor="#FFFFFF">
-                <item height="40">
+              itemWidth="250" itemHeight="20">
+                <item height="20" width="250">
                     <a onclick="plugin.ShowOptionsDialog()" wordwrap="true">Click here to configure your Hudson URLs
                     </a>
                 </item>
@@ -36,6 +39,7 @@
     </div>
     <script src="main.js" />
     <script src="MockPolling.js" />
+    <script src="NetworkPolling.js" />
     <script src="HudsonView.js" />
     <script src="HudsonJob.js" />
 </view>

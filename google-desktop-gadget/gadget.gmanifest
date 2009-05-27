@@ -5,7 +5,7 @@
 		<aboutText>&GADGET_ABOUT_TEXT;</aboutText>
 		<smallIcon>icon_small.png</smallIcon>
 		<icon>icon_large.png</icon>
-		<version>1.0</version>
+		<version>1.5</version>
 		<author>Jeff Black</author>
 		<authorWebsite>http://hudson.gotdns.com/wiki/display/HUDSON/Hudson+Google+Desktop+Gadget</authorWebsite>
 		<id>b2494e1d-1ce9-4bd7-a008-ddb4435cf785</id>
