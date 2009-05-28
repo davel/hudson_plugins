@@ -10,7 +10,7 @@
   
   <artifactId>windmill</artifactId>
   <packaging>hpi</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <name>HudsonWindmillPlugin</name>
   
   <repositories>
