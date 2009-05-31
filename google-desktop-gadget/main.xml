@@ -3,14 +3,14 @@
   onsize="view_onSize();">
     <div height="220" name="main" width="250" x="1" y="0" background="#FFFFFF">
         <label height="20" name="updateLabel" tooltip="&UPDATED_TOOLTIP;" width="200"
-          x="26" y="3">&UPDATED_TOOLTIP;
+          x="25" y="3">&UPDATED_TOOLTIP;
         </label>
-        <edit height="16" name="lastPollTime" width="40" x="114" y="4" readonly="true"
+        <edit height="16" name="lastPollTime" width="40" x="70" y="4" readonly="true"
           value="13:15"/>
-        <img height="23" name="hudsonImg" width="26" x="2" y="2" src="images\hudson.png"
+        <img height="25" name="hudsonImg" width="25" x="0" y="0" src="images\hudson-25x25px.jpg"
          />
         <button height="20" name="forceRefresh" tooltip="Refresh" width="20"
-          x="180" y="2" onclick="updateStatus();" image="images\refresh.gif"
+          x="180" y="0" onclick="updateStatus();" image="images\refresh.gif"
          />
         <div height="200" name="contentDiv" width="250" x="0" y="20" autoscroll="true"
           background="#FFFFFF">

@@ -33,6 +33,6 @@ Copyright (c) 2008 Jeff Black
   <TABLE_HEAD_JOB>Job</TABLE_HEAD_JOB>
   <TABLE_HEAD_STATUS>Status</TABLE_HEAD_STATUS>
 
-  <UPDATED_TOOLTIP>Last update time:</UPDATED_TOOLTIP>
+  <UPDATED_TOOLTIP>Updated:</UPDATED_TOOLTIP>
   <NETWORK_FAILURE>Error fetching hudson status from server, please check your network connection and try again.</NETWORK_FAILURE>
 </strings>

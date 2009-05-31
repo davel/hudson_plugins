@@ -132,8 +132,8 @@ function renderView(updatedHudsonView) {
 		}
 
 		var listboxY = 0;
-		var listboxWidth = view.width - 10;
-		var imgX = view.width - 30;
+		var imgX = view.width - 26;
+		var listboxWidth = imgX - 5;
 
 		// add the view as a list element header in the listbox
 		for (viewIndex in hudsonViewData) {
@@ -264,7 +264,7 @@ function view_onSize() {
 	contentListbox.width = contentDiv.width - 10
 	contentListbox.itemWidth = contentListbox.width;
 
-	forceRefresh.x = main.width - 33;
+	forceRefresh.x = main.width - 25;
 
 	contentScrollbar.height = contentDiv.height;
 	contentScrollbar.width = 10
