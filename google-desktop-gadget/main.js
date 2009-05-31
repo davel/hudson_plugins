@@ -141,7 +141,7 @@ function renderView(updatedHudsonView) {
 			var viewToRender = hudsonViewData[viewIndex];
 
 			var viewExpander = "<button width='20' height='16' x='0' y='2' image='images/document_add.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
-			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + view.url + "'>" + viewToRender.url + "</a>";
+			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + viewToRender.url + "'>" + viewToRender.url + "</a>";
 			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.color + ".gif'/>";
 			var header = contentListbox.appendElement("<item background='#DDDDDD'>" + viewExpander + viewLink + viewImg + "</item>");
 
@@ -151,7 +151,7 @@ function renderView(updatedHudsonView) {
 				// each job in the view is rendered as an item under the view element in the listbox
 				for (jobIndex in jobs) {
 					var job = jobs[jobIndex];
-					var jobLink = "<a width='120' height='16' x='10' href='" + job.url + "'>" + job.name + "</a>";
+					var jobLink = "<a width='" + listboxWidth + "' height='16' x='10' href='" + job.url + "'>" + job.name + "</a>";
 					var jobImg = "<img width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
 					contentListbox.appendElement("<item valign='center'>" + jobLink + jobImg + "</item>");
 				}

@@ -4,7 +4,7 @@
 	this.url = url;
 	this.color = "";
 	this.jobs = new Array();
-	this.expanded = new Boolean(false);
+	this.expanded = true;
 	this.networkStatus = 200;
 	this.poller = poller;
 
