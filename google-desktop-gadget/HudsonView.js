@@ -17,6 +17,11 @@
     }
 
 	this.getColor = function() {
+
+		if (this.networkStatus != 200) {
+			return "warning";
+		}
+
 		var rollupColor = "blue";
 		jobColors:
 		for (jobIndex in this.jobs) {
@@ -64,8 +69,5 @@
 
 	this.setNetworkStatus = function(status) {
 		this.networkStatus = status;
-		if (status != 200) {
-			this.color = "warning";
-		}
 	}
 }
