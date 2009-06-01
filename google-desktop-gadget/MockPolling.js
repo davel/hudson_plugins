@@ -30,7 +30,6 @@
 		v1Jobs.push(v1j1);
 		v1Jobs.push(v1j2);
 		hudsonView.setJobs(v1Jobs);
-		hudsonView.color = "blue";
 		hudsonView.setNetworkStatus = 200;
 
 		return hudsonView;
@@ -51,7 +50,6 @@
 		}
 
 		hudsonView.setJobs(jobs);
-		hudsonView.color = "red";
 		hudsonView.setNetworkStatus = 200;
 
 		return hudsonView;

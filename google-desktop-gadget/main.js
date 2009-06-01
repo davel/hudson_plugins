@@ -44,8 +44,6 @@ var hudsonViewUrls = "";			    // the urls as a single string
 var hudsonViewList = new Array();	// array of urls
 var hudsonViewData = new Array();	// hash of views and jobs
 
-var viewPoller = null;
-
 function view_onOpen() {
     initializeStoredOptions();
 
@@ -62,8 +60,8 @@ function view_onOpen() {
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
 		if (viewUrl.length > 0) {
-//			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
-			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
+			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
+//			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
 			hudsonViewData.push(hudsonView);
 		}
 	}
@@ -142,7 +140,7 @@ function renderView(updatedHudsonView) {
 
 			var viewExpander = "<button width='20' height='16' x='0' y='2' image='images/document_add.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
 			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + viewToRender.url + "'>" + viewToRender.url + "</a>";
-			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.color + ".gif'/>";
+			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.getColor() + ".gif'/>";
 			var header = contentListbox.appendElement("<item background='#DDDDDD'>" + viewExpander + viewLink + viewImg + "</item>");
 
 			if (viewToRender.expanded) {

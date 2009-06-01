@@ -51,8 +51,6 @@
 			}
 
 			hudsonView.setJobs(viewJobs);
-			// TODO: calculate rollup status color
-			hudsonView.color = "blue";
 
 		} catch(e) {
 			hudsonView.setNetworkStatus = "unparseable";
