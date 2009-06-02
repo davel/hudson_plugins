@@ -26,7 +26,7 @@ under the License.
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.282</version>
+    <version>1.309</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -50,6 +50,19 @@ under the License.
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
+  </properties>
 
   <build>
     <plugins>
