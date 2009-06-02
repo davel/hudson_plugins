@@ -51,7 +51,6 @@ function view_onOpen() {
 
 	if (populateViewDataFromOptions() > 0) {
 		updateStatus();
-		view_onSize();
 	}
 }
 
@@ -68,17 +67,14 @@ function populateViewDataFromOptions() {
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 	
-    hudsonViewUrls = "http://hudson.jboss.org/hudson/view/Infinispan/, http://hudson.jboss.org/hudson, http://simile.mit.edu/hudson";
-//  hudsonViewUrls = "http://simile.mit.edu/hudsonxxx";
-
 	// urls are stored comma separated
 	hudsonViewList = hudsonViewUrls.split(",");
 
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
 		if (viewUrl.length > 0) {
-			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
-//			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
+			// var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
+			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
 			hudsonViewData.push(hudsonView);
 		}
 	}
@@ -132,15 +128,14 @@ function renderView(updatedHudsonView) {
 
 			var viewToRender = hudsonViewData[viewIndex];
 
-			var viewExpander = "<button name='expanderImg' width='16' height='16' x='0' y='2' image='images/document_delete.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
+			var viewExpander = "<button name='expanderImg' width='16' height='16' x='0' y='2' image='images/document_add.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
 			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + viewToRender.url + "'>" + viewToRender.url + "</a>";
 			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.getColor() + ".gif'/>";
 			var header = contentListbox.appendElement("<item background='#DDDDDD'>" + viewExpander + viewLink + viewImg + "</item>");
 
 			if (viewToRender.expanded) {
 
-				header.children("expanderImg").image="images/document_add.gif";
-
+				header.children("expanderImg").image="images/document_delete.gif";
 				var jobs = viewToRender.getJobs();
 
 				// each job in the view is rendered as an item under the view element in the listbox
@@ -162,6 +157,8 @@ function renderView(updatedHudsonView) {
 			animateFadeIn();
 		}
 	}	
+	
+	sb_onchange();
 
 }
 
@@ -197,8 +194,8 @@ function updateStatus() {
 			var viewToUpdate = hudsonViewData[viewIndex];
 			viewToUpdate.updateViewStatus();
 		}
+		debug.trace('polling complete...');
 	}
-	debug.trace('polling complete...');
 
 	// make sure updateStatus gets called again
 	registerUpdateStatus();

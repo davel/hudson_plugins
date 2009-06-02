@@ -30,12 +30,6 @@
               thumbDownImage="images/scroll_d.png" thumbImage="images/scrollbar_u.png"
               thumbOverImage="images/scrollbar_o.png" onchange="sb_onchange()"/>
         </div>
-        <div height="200" name="errorDiv" width="250" visible="false" x="0"
-          y="20" background="#FF2222">
-            <label height="200" name="labelNetworkFailure" width="250" x="0" y="0"
-              wordwrap="true">&NETWORK_FAILURE;
-            </label>
-        </div>
     </div>
     <script src="main.js" />
     <script src="MockPolling.js" />

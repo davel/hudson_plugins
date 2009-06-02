@@ -1,4 +1,13 @@
-﻿function MockPolling(callback) {
+/*
+ * This test class is for testing various gui use cases
+ *
+ * Live urls to use for additional non-mocked testing:
+ *   http://hudson.jboss.org/hudson/view/Infinispan
+ *   http://hudson.jboss.org/hudson
+ *   http://simile.mit.edu/hudson
+ *
+ */
+function MockPolling(callback) {
 
 	// constructor
 	this.parentCallback = callback;
