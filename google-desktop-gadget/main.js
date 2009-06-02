@@ -69,7 +69,7 @@ function populateViewDataFromOptions() {
 	
 	// urls are stored comma separated
 	hudsonViewList = hudsonViewUrls.split(",");
-
+	hudsonViewData = [];
 	for (viewUrlIndex in hudsonViewList) {
 		var viewUrl = hudsonViewList[viewUrlIndex];
 		if (viewUrl.length > 0) {
