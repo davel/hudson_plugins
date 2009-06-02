@@ -6,7 +6,13 @@ import hudson.plugins.coverage.model.measurements.LineCoverage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
+import org.codehaus.stax2.XMLInputFactory2;
+import org.codehaus.stax2.XMLEventReader2;
+import org.codehaus.stax2.LocationInfo;
+import org.codehaus.stax2.XMLStreamReader2;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collections;

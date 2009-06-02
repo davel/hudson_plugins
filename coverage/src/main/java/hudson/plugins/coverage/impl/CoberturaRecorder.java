@@ -1,31 +1,19 @@
 package hudson.plugins.coverage.impl;
 
-import java.io.BufferedInputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import javax.xml.namespace.QName;
-import javax.xml.stream.Location;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
 import hudson.plugins.coverage.model.Instance;
 import hudson.plugins.coverage.model.JavaModel;
 import hudson.plugins.coverage.model.Recorder;
 import org.codehaus.stax2.XMLInputFactory2;
+import org.codehaus.stax2.XMLOutputFactory2;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.*;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -164,9 +152,25 @@ public class CoberturaRecorder implements Recorder {
                                         String className = getAttributeValue(start, "name");
                                         String fileName = getAttributeValue(start, "filename");
                                         if (fileName != null && className != null) {
+                                            StringWriter sw = new StringWriter();
+                                            XMLOutputFactory2 of = (XMLOutputFactory2) XMLOutputFactory2.newInstance();
+                                            of.configureForSpeed();
+                                            XMLEventWriter writer = of.createXMLEventWriter(sw);
+                                            writer.add(start);
+                                            int depth = 1;
+                                            while (depth >= 1 && r.hasNext()) {
+                                                final XMLEvent event1 = r.nextEvent();
+                                                if (event1.isStartElement()) {
+                                                    depth++;
+                                                } else if (event1.isEndElement()) {
+                                                    depth--;
+                                                }
+                                                writer.add(event1);
+                                            }
+                                            writer.close();
                                             packageInstance.findOrCreateChild(JavaModel.FILE, fileName,
                                                     findFileFromParents(sourceRoots, fileName))
-                                                    .addRecorder(this, measurementFile, start.getLocation());
+                                                    .addRecorder(this, measurementFile, sw.toString());
                                         }
                                         System.out.println("class " + className + " (" + fileName + ")");
                                     }
@@ -235,16 +239,13 @@ public class CoberturaRecorder implements Recorder {
      */
     public void parseSourceResults(Instance sourceFile, File measurementFile, Collection<Object> memos) {
         if (sourceFile.getElement().isFileLevel() && measurementFile.isFile() && memos != null && !memos.isEmpty()) {
-            SortedSet<Location> locations = convertMemosToSortedLocations(memos);
+            Collection<String> results = Collection.class.cast(memos);
 
             // arse arse arse... how to efficiently re-read this file
 
-            FileReader fis = null;
-            FileInputStream bis = null;
             XMLEventReader r = null;
             try {
-                fis = new FileReader(measurementFile);
-                r = newXMLInputFactory().createXMLEventReader(fis);
+                r = newXMLInputFactory().createXMLEventReader(new StringReader(result));
 
                 while (r.hasNext()) {
                     final XMLEvent event = r.nextEvent();
@@ -261,8 +262,6 @@ public class CoberturaRecorder implements Recorder {
                 e.printStackTrace();
             } finally {
                 safelyClose(r);
-                safelyClose(bis);
-                safelyClose(fis);
             }
         }
     }
@@ -300,6 +299,48 @@ public class CoberturaRecorder implements Recorder {
         final QName qName = new QName(start.getName().getNamespaceURI(), localPart);
         final Attribute attribute = start.getAttributeByName(qName);
         return attribute == null ? null : attribute.getValue();
+    }
+
+    static final class FileResult {
+        private final ClassResult[] classes;
+
+        public FileResult(ClassResult[] classes) {
+            this.classes = classes;
+        }
+    }
+
+
+    static final class ClassResult {
+        private final String name;
+        private final MethodResult[] methods;
+
+        public ClassResult(String name, MethodResult[] methods) {
+            this.name = name;
+            this.methods = methods;
+        }
+    }
+
+    static final class MethodResult {
+        private final String name;
+        private final LineResult[] lines;
+
+        public MethodResult(String name, LineResult[] lines) {
+            this.name = name;
+            this.lines = lines;
+        }
+    }
+
+    static final class LineResult {
+        private final ConditionResult[] conditions;
+
+        public LineResult(ConditionResult[] conditions) {
+            this.conditions = conditions;
+        }
+    }
+
+    static final class ConditionResult {
+
+
     }
 
 }
