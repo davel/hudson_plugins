@@ -1,6 +1,6 @@
 ﻿function HudsonView(url, poller) {
 
-	this.id = Math.floor(Math.random()*100+1);
+	this.id = Math.floor(Math.random()*1000+1);
 	this.url = url;
 	this.jobs = new Array();
 	this.expanded = true;
