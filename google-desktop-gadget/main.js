@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (C) 2007 Olga Khylkouskaya
+Copyright (C) 2009 Jeff Black
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -44,17 +44,34 @@ var hudsonViewUrls = "";			    // the urls as a single string
 var hudsonViewList = new Array();	// array of urls
 var hudsonViewData = new Array();	// hash of views and jobs
 
+var animatedJobStatusElements = new Array();
+
 function view_onOpen() {
     initializeStoredOptions();
 
-    // load urls setting from data base
+	if (populateViewDataFromOptions() > 0) {
+		updateStatus();
+		view_onSize();
+	}
+}
+
+function initializeStoredOptions() {
+	options.putDefaultValue('hudsonUrlsProp', "");
+	options.putDefaultValue('intervalMinutesProp', DEFAULT_POLLING_INTERVAL_MINUTES);
+}
+
+/**
+ * Populate the views we need to poll from options
+ */
+function populateViewDataFromOptions() {
+    // load options from database
 	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
     hudsonViewUrls = options.getValue("hudsonUrlsProp");
 	
-  hudsonViewUrls = "http://hudson.jboss.org/hudson/view/Infinispan/, http://hudson.jboss.org/hudson, http://simile.mit.edu/hudson";
+    hudsonViewUrls = "http://hudson.jboss.org/hudson/view/Infinispan/, http://hudson.jboss.org/hudson, http://simile.mit.edu/hudson";
 //  hudsonViewUrls = "http://simile.mit.edu/hudsonxxx";
 
-	// split urls between each comma
+	// urls are stored comma separated
 	hudsonViewList = hudsonViewUrls.split(",");
 
 	for (viewUrlIndex in hudsonViewList) {
@@ -66,19 +83,11 @@ function view_onOpen() {
 		}
 	}
 
-	if (hudsonViewData.length > 0) {
-		updateStatus();
-	}
-}
-
-function initializeStoredOptions() {
-	options.putDefaultValue('hudsonUrlsProp', "");
-	options.putDefaultValue('intervalMinutesProp', DEFAULT_POLLING_INTERVAL_MINUTES);
+	return hudsonViewData.length;
 }
 
 /**
- * force a refresh if hudson url or polling interval changes
- * 
+ * Force a refresh if hudson url or polling interval changes
  */
 function onOptionChanged() {
 
@@ -88,23 +97,7 @@ function onOptionChanged() {
 		timerToken = null;
 	}
 
-	pollingIntervalMinutes = options.getValue("intervalMinutesProp");
-    hudsonViewUrls = options.getValue("hudsonUrlsProp");
-
-	// split urls between each comma
-	hudsonViewList = hudsonViewUrls.split(",");
-	hudsonViewData = [];
-
-	for (viewUrlIndex in hudsonViewList) {
-		var viewUrl = hudsonViewList[viewUrlIndex];
-		if (viewUrl.length > 0) {
-//			var hudsonView = new HudsonView(viewUrl, new MockPolling(renderView));
-			var hudsonView = new HudsonView(viewUrl, new NetworkPolling(renderView));
-			hudsonViewData.push(hudsonView);
-		}
-	}
-
-	if (hudsonViewData.length > 0) {
+	if (populateViewDataFromOptions() > 0) {
 		updateStatus();
 	}
 }
@@ -117,6 +110,7 @@ function renderView(updatedHudsonView) {
 	if (hudsonViewData.length >= 1) {
 
 		contentListbox.removeAllElements();
+		animatedJobStatusElements = [];
 
 		// if view is defined, set the new job status info for view in view hash
 		if (updatedHudsonView) {
@@ -138,25 +132,35 @@ function renderView(updatedHudsonView) {
 
 			var viewToRender = hudsonViewData[viewIndex];
 
-			var viewExpander = "<button width='20' height='16' x='0' y='2' image='images/document_add.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
+			var viewExpander = "<button name='expanderImg' width='16' height='16' x='0' y='2' image='images/document_delete.gif' onclick='toggleViewCollapse(" + viewToRender.id + ")'/>";
 			var viewLink = "<a width='" + listboxWidth + "' height='16' x='20' href='" + viewToRender.url + "'>" + viewToRender.url + "</a>";
 			var viewImg = "<img width='16' height='16' x='" + imgX + "' y='2' tooltip='" + viewToRender.getNetworkStatus() + "' src='images/" + viewToRender.getColor() + ".gif'/>";
 			var header = contentListbox.appendElement("<item background='#DDDDDD'>" + viewExpander + viewLink + viewImg + "</item>");
 
 			if (viewToRender.expanded) {
+
+				header.children("expanderImg").image="images/document_add.gif";
+
 				var jobs = viewToRender.getJobs();
 
 				// each job in the view is rendered as an item under the view element in the listbox
 				for (jobIndex in jobs) {
 					var job = jobs[jobIndex];
 					var jobLink = "<a width='" + listboxWidth + "' height='16' x='10' href='" + job.url + "'>" + job.name + "</a>";
-					var jobImg = "<img width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
-					contentListbox.appendElement("<item valign='center'>" + jobLink + jobImg + "</item>");
+					var jobImg = "<img name='jobImg' width='16' height='16' x='" + imgX + "' y='2' src='images/" + job.color + ".gif'/>";
+					var jobElement = contentListbox.appendElement("<item valign='center'>" + jobLink + jobImg + "</item>");
+
+					if (job.color.substr(job.color.length-6) == "_anime") {
+						animatedJobStatusElements.push(jobElement.children("jobImg"));
+					}
 				}
 				
 			}
 		}
 
+		if (animatedJobStatusElements.length > 0) {
+			animateFadeIn();
+		}
 	}	
 
 }
@@ -187,7 +191,7 @@ function toggleViewCollapse(viewId) {
 }
 
 function updateStatus() {
-	setViewPollTime();
+	setLastUpdatedTime();
     if (hudsonViewData.length >= 1) {
 		for (viewIndex in hudsonViewData) {
 			var viewToUpdate = hudsonViewData[viewIndex];
@@ -220,7 +224,7 @@ function registerUpdateStatus() {
 	timerToken = view.setTimeout(updateStatus, timeout);
 }
 
-function setViewPollTime() {
+function setLastUpdatedTime() {
 	var currentTime = new Date();
 	var hours = currentTime.getHours();
 	var minutes = currentTime.getMinutes();
@@ -272,3 +276,39 @@ function view_onSize() {
 	sb_onchange();
 	renderView();
 }
+
+// TODO:remove these functions when google desktop supports animated gifs
+
+var anim;
+
+function animateFadeIn() {
+		anim = beginAnimation("fadeIn()", 0, 255, 500);
+}
+
+function animateFadeOut() {
+		anim = beginAnimation("fadeOut()", 255, 0, 500);
+}
+
+function fadeIn() {
+	for (eIndex in animatedJobStatusElements) {
+		animatedJobStatusElements[eIndex].opacity = event.value;
+	}
+	if (event.value == 255) {
+		cancelAnimation(anim);
+		anim = null;
+		animateFadeOut();
+	}
+}
+
+function fadeOut() {
+	for (eIndex in animatedJobStatusElements) {
+		animatedJobStatusElements[eIndex].opacity = event.value;
+	}
+	if (event.value == 0) {
+		cancelAnimation(anim);
+		anim = null;
+		animateFadeIn();
+	}
+}
+
+// TODO:remove these functions when google desktop supports animated gifs

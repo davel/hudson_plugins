@@ -1,8 +1,5 @@
 ﻿function MockPolling(callback) {
 
-	// private variables
-	var value = 0;
-
 	// constructor
 	this.parentCallback = callback;
 
