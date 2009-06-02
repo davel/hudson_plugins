@@ -2,8 +2,7 @@ package hudson.plugins.mibsr;
 
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReportingAction;
-import hudson.plugins.helpers.AbstractBuildAction;
-import hudson.plugins.helpers.GraphHelper;
+import hudson.plugins.mibsr.GraphHelper;
 import hudson.plugins.mibsr.parser.BuildJobs;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
@@ -12,6 +11,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -22,10 +22,20 @@ import java.util.Collection;
  * @since 09-Jan-2008 21:19:37
  */
 public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>>
-    extends AbstractBuildAction<T>
-    implements HealthReportingAction
+    implements HealthReportingAction, Serializable
 {
     private final BuildJobs result;
+
+    /**
+     * Unique identifier for this class.
+     */
+    private static final long serialVersionUID = 31415926L;
+
+    /**
+     * The owner of this Action.  Ideally I'd like this to be final and set in the constructor, but Maven does not
+     * let us do that, so we need a setter.
+     */
+    private T build = null;
 
     /**
      * Constructs a new AbstractBuildReport.
@@ -200,4 +210,37 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>>
         return 200;
     }
 
+    /**
+     * Getter for property 'build'.
+     *
+     * @return Value for property 'build'.
+     */
+    public synchronized T getBuild()
+    {
+        return build;
+    }
+
+    /**
+     * Write once setter for property 'build'.
+     *
+     * @param build Value to set for property 'build'.
+     */
+    public synchronized void setBuild( T build )
+    {
+        // Ideally I'd prefer to use and AtomicReference... but I'm unsure how it would work with the serialization fun
+        if ( this.build == null && this.build != build )
+        {
+            this.build = build;
+        }
+    }
+
+    /**
+     * Override to control when the floating box should be displayed.
+     *
+     * @return <code>true</code> if the floating box should be visible.
+     */
+    public boolean isFloatingBoxActive()
+    {
+        return true;
+    }
 }

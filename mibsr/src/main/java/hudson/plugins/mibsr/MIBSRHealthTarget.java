@@ -1,6 +1,6 @@
 package hudson.plugins.mibsr;
 
-import hudson.plugins.helpers.health.HealthTarget;
+import hudson.plugins.mibsr.health.HealthTarget;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**

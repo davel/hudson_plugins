@@ -3,8 +3,7 @@ package hudson.plugins.mibsr;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
-import hudson.plugins.helpers.AbstractProjectAction;
-import hudson.plugins.helpers.GraphHelper;
+import hudson.plugins.mibsr.GraphHelper;
 import hudson.plugins.mibsr.parser.BuildJobs;
 import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
@@ -23,13 +22,16 @@ import java.util.Collections;
  * @since 09-Jan-2008 21:22:45
  */
 public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>>
-    extends AbstractProjectAction<T>
     implements ProminentProjectAction
 {
+    /**
+     * The owner of this action.
+     */
+    private final T project;
 
     public AbstractProjectReport( T project )
     {
-        super( project );
+        this.project = project;
     }
 
     /**
@@ -229,4 +231,23 @@ public abstract class AbstractProjectReport<T extends AbstractProject<?, ?>>
         return 200;
     }
 
+    /**
+     * Getter for property 'project'.
+     *
+     * @return Value for property 'project'.
+     */
+    public T getProject()
+    {
+        return project;
+    }
+
+    /**
+     * Override to control when the floating box should be displayed.
+     *
+     * @return <code>true</code> if the floating box should be visible.
+     */
+    public boolean isFloatingBoxActive()
+    {
+        return true;
+    }
 }

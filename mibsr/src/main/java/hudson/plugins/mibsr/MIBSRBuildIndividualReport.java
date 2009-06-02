@@ -1,17 +1,8 @@
 package hudson.plugins.mibsr;
 
-import hudson.maven.AggregatableAction;
-import hudson.maven.MavenAggregatedReport;
-import hudson.maven.MavenBuild;
-import hudson.maven.MavenModule;
-import hudson.maven.MavenModuleSetBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.plugins.mibsr.parser.BuildJobs;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * TODO javadoc.
@@ -21,7 +12,6 @@ import java.util.Map;
  */
 public class MIBSRBuildIndividualReport
     extends AbstractBuildReport<AbstractBuild<?, ?>>
-    implements AggregatableAction
 {
 
     private HealthReport healthReport;
@@ -44,15 +34,6 @@ public class MIBSRBuildIndividualReport
         {
             getTotals().setOwner( this.getBuild() );
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public MavenAggregatedReport createAggregatedAction( MavenModuleSetBuild build,
-                                                         Map<MavenModule, List<MavenBuild>> moduleBuilds )
-    {
-        return new MIBSRBuildAggregatedReport( build, moduleBuilds );
     }
 
     /**

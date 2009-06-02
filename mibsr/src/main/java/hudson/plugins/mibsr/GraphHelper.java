@@ -1,4 +1,4 @@
-package hudson.plugins.helpers;
+package hudson.plugins.mibsr;
 
 import hudson.util.ChartUtil;
 import hudson.util.ShiftedCategoryAxis;

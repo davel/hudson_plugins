@@ -1,4 +1,4 @@
-package hudson.plugins.helpers.health;
+package hudson.plugins.mibsr.health;
 
 import hudson.model.HealthReport;
 import hudson.model.Result;

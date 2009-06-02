@@ -1,6 +1,6 @@
 package hudson.plugins.mibsr;
 
-import hudson.plugins.helpers.health.HealthMetric;
+import hudson.plugins.mibsr.health.HealthMetric;
 import org.apache.commons.beanutils.Converter;
 
 /**

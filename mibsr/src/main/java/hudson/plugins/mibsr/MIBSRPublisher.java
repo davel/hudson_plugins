@@ -1,13 +1,21 @@
 package hudson.plugins.mibsr;
 
-import hudson.maven.MavenModule;
-import hudson.maven.MavenModuleSet;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Extension;
+import hudson.matrix.MatrixConfiguration;
+import hudson.matrix.MatrixProject;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.model.Descriptor;
-import hudson.plugins.helpers.AbstractPublisherImpl;
-import hudson.plugins.helpers.Ghostwriter;
-import hudson.plugins.helpers.health.HealthMetric;
+import hudson.model.FreeStyleProject;
+import hudson.model.HealthReport;
+import hudson.model.Result;
+import hudson.plugins.mibsr.health.HealthMetric;
+import hudson.plugins.mibsr.parser.BuildJobs;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.util.FormFieldValidator;
@@ -18,7 +26,9 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * TODO javadoc.
@@ -27,7 +37,7 @@ import java.io.IOException;
  * @since 08-Jan-2008 21:24:06
  */
 public class MIBSRPublisher
-    extends AbstractPublisherImpl
+    extends Publisher
 {
 
     private String reportFilenamePattern;
@@ -60,14 +70,46 @@ public class MIBSRPublisher
         return false;
     }
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+    /**
+     * {@inheritDoc}
+     */
+    public boolean perform( final AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener )
+        throws InterruptedException, IOException
+    {
+
+        MIBSRBuildIndividualReport action =
+            build.getProject().getModuleRoot().act( new Worker( build, listener, reportFilenamePattern ) );
+        if ( action != null )
+        {
+            if ( targets != null && targets.length > 0 )
+            {
+                HealthReport r = null;
+                for ( MIBSRHealthTarget target : targets )
+                {
+                    r = HealthReport.min( r, target.evaluateHealth( action, PluginImpl.DISPLAY_NAME + ": " ) );
+                }
+                action.setBuildHealth( r );
+            }
+
+            build.getActions().add( action );
+
+            BuildJobs results = action.getTotals();
+
+            if ( results.getFailCount() > 0 || results.getErrorCount() > 0 )
+            {
+                build.setResult( Result.UNSTABLE );
+            }
+        }
+
+        return true;  // never stop the build
+    }
 
     /**
      * {@inheritDoc}
      */
-    public Descriptor<Publisher> getDescriptor()
+    public boolean prebuild( AbstractBuild<?, ?> build, BuildListener listener )
     {
-        return DESCRIPTOR;
+        return true;
     }
 
     /**
@@ -78,19 +120,12 @@ public class MIBSRPublisher
         return new MIBSRProjectIndividualReport( project );
     }
 
-    protected Ghostwriter newGhostwriter()
-    {
-        return new MIBSRGhostwriter( reportFilenamePattern, targets );
-    }
-
+    @Extension
     public static final class DescriptorImpl
         extends BuildStepDescriptor<Publisher>
     {
 
-        /**
-         * Do not instantiate DescriptorImpl.
-         */
-        private DescriptorImpl()
+        public DescriptorImpl()
         {
             super( MIBSRPublisher.class );
         }
@@ -112,13 +147,16 @@ public class MIBSRPublisher
 
         public boolean isApplicable( Class<? extends AbstractProject> aClass )
         {
-            return !MavenModuleSet.class.isAssignableFrom( aClass ) && !MavenModule.class.isAssignableFrom( aClass );
+            return MatrixProject.class.isAssignableFrom( aClass )
+                || MatrixConfiguration.class.isAssignableFrom( aClass ) || FreeStyleProject.class.isAssignableFrom(
+                aClass );
         }
 
         public HealthMetric[] getMetrics()
         {
             return MIBSRHealthMetrics.values();
         }
+
         /**
          * Performs on-the-fly validation on the file mask wildcard.
          */
@@ -142,4 +180,44 @@ public class MIBSRPublisher
 
     }
 
+    private static class Worker
+        implements FilePath.FileCallable<MIBSRBuildIndividualReport>, Serializable
+    {
+        private final AbstractBuild<?, ?> build;
+
+        private final BuildListener listener;
+
+        private String reportFilenamePattern;
+
+        public Worker( AbstractBuild<?, ?> build, BuildListener listener, String reportFilenamePattern )
+        {
+            this.build = build;
+            this.listener = listener;
+            this.reportFilenamePattern = reportFilenamePattern;
+        }
+
+        public MIBSRBuildIndividualReport invoke( File file, VirtualChannel virtualChannel )
+            throws IOException
+        {
+            FilePath[] paths;
+            try
+            {
+                paths = build.getProject().getModuleRoot().list( reportFilenamePattern );
+            }
+            catch ( InterruptedException e )
+            {
+                IOException ioe = new IOException( e.getMessage() );
+                ioe.initCause( e );
+                throw ioe;
+            }
+
+            String[] fileNames = new String[paths.length];
+            for ( int i = 0; i < paths.length; i++ )
+            {
+                fileNames[i] = paths[i].getRemote();
+            }
+
+            return new MIBSRBuildIndividualReport( BuildJobs.parse( fileNames ) );
+        }
+    }
 }
