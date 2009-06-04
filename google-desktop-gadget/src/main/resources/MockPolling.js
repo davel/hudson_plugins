@@ -1,5 +1,10 @@
-/*
- * This test class is for testing various gui use cases
+﻿/*
+ * This class is for testing various gui use cases
+ *
+ * For select a testable usecase for this class, use these view urls:
+ *   http://www.twojob.com
+ *   http://www.unreachable.com
+ *   http://www.random.com
  *
  * Live urls to use for additional non-mocked testing:
  *   http://hudson.jboss.org/hudson/view/Infinispan
@@ -12,16 +17,32 @@ function MockPolling(callback) {
 	// constructor
 	this.parentCallback = callback;
 
+	this.unreachableToggle = true;
+
 	// methods
 	this.updateViewStatus = function(hudsonView) {
-		// var v = this.setJobStatus(hudsonView);
-		var v = this.setRandomJobStatus(hudsonView);
-		// var v = this.setUnreachableViewStatus(hudsonView);
+		var v;
+
+		var mockType = hudsonView.url.split(".")[1];
+		switch (mockType) {
+		case 'twojob':
+			v = this.setTwoJobStatus(hudsonView);
+			break;
+		case 'unreachable':
+			v = this.setUnreachableViewStatus(hudsonView);
+			break;
+		case 'random':
+			v = this.setRandomJobStatus(hudsonView);
+			break;
+		default:
+			v = this.setRandomJobStatus(hudsonView);
+			break;
+		}
 
         this.parentCallback(v);
     }
 
-	this.setJobStatus = function(hudsonView) {
+	this.setTwoJobStatus = function(hudsonView) {
 
 		var v1j1 = new HudsonJob();
 		v1j1.name = "Job-1";
@@ -63,7 +84,13 @@ function MockPolling(callback) {
 
 	this.setUnreachableViewStatus = function(hudsonView) {
 		hudsonView.setJobs([]);
-		hudsonView.setNetworkStatus(404);
+		if (this.unreachableToggle) {
+			hudsonView.setNetworkStatus(404);
+		} else {
+			hudsonView.setNetworkStatus(200);
+		}
+		this.unreachableToggle = !this.unreachableToggle;
+
 		return view;
 	}
 

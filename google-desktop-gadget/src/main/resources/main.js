@@ -30,9 +30,6 @@ var timerToken = null;
  * Default to a local Hudson instance on port 8080
  */
 var DEFAULT_HUDSON_URL = "";
-// var defaultHudsonUrl = "http://simile.mit.edu/hudson/";
-// var defaultHudsonUrl = "http://build.sourcelabs.org/hudson/";
-// var DEFAULT_HUDSON_URL = "http://localhost:8080/";
 
 /**
  * Default to a polling every 5 minutes
