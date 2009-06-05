@@ -51,12 +51,18 @@ public class Changelog extends hudson.scm.ChangeLogSet.Entry {
 		return Collections.unmodifiableList(list);
 	}
 	
+	public Collection<Path> getAffectedFiles() {
+		return Collections.unmodifiableList(paths);
+	}
+	
+	/*
 	@Override
 	public Collection<AffectedFile> getAffectedFiles() {
 		List<AffectedFile> tmp = new ArrayList<AffectedFile>();
 		tmp.addAdd(paths);
 		return tmp;
 	}
+	*/
 	
 	@Override
 	public String getMsg() {
@@ -147,7 +153,7 @@ public class Changelog extends hudson.scm.ChangeLogSet.Entry {
 	 * @author Sam NG
 	 *
 	 */
-	public static class Path implements AffectedFile {
+	public static class Path /* implements hudson.scm.ChangeLogSet.AffectedFile */ {
 		
 		/** The filepath of the modified file
 		 * 
