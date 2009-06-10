@@ -216,6 +216,7 @@
         <module>perforce</module>
         <module>polarion</module>
         <module>port-allocator</module>
+        <module>powershell</module>
         <module>pmd</module>
         <module>promoted-builds</module>
         <module>rake</module>
