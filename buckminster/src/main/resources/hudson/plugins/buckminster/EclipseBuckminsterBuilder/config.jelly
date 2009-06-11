@@ -1,0 +1,30 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This jelly script is used for per-project configuration.
+
+    See global.jelly for a general discussion about jelly script.
+  -->
+  <!--f:entry title="Eclipse Home" help="${rootURL}/plugin/buckminster-builder/help-projectEclipseHome.html"-->
+    <!--
+      Creates an text field that shows the value of the "eclipseHome" property.
+      When submitted, it will be passed to the corresponding constructor parameter.
+    -->
+    <!--f:textbox field="eclipseHome" />
+	</f:entry-->
+   <f:entry title="${%Buckminster Installation}">
+
+    <select class="setting-input" name="eclipse.installationName">
+      <!--option value="">(Default)</option-->
+      <j:forEach var="inst" items="${descriptor.installations}">
+        <f:option selected="${inst.name==instance.getInstallation().name}">${inst.name}</f:option>
+      </j:forEach>
+    </select>
+  </f:entry>
+  <f:entry title="${%Commands}" help="${rootURL}/plugin/buckminster-builder/help-projectCommands.html">
+    <!--
+      Creates an text field that shows the value of the "commands" property.
+      When submitted, it will be passed to the corresponding constructor parameter.
+    -->
+    <f:textarea name="eclipse.commands" value="${instance.getCommands()}" />
+   </f:entry>
+</j:jelly>
