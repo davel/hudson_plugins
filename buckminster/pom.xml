@@ -3,7 +3,7 @@
   <artifactId>buckminster</artifactId>
   <packaging>hpi</packaging>
   <name>Buckminster Builder</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
@@ -155,4 +155,10 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/buckminster-1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/buckminster-1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/buckminster/tags/buckminster-1.0</url>
+  </scm>
 </project>
