@@ -1,7 +1,8 @@
 package hudson.plugins.crap4j;
 
-import hudson.maven.AbstractMavenProject;
 import hudson.model.AbstractProject;
+import hudson.model.FreeStyleProject;
+import hudson.matrix.MatrixProject;
 import hudson.plugins.crap4j.calculation.HealthBuilder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
@@ -53,6 +54,6 @@ public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-        return (!AbstractMavenProject.class.isAssignableFrom(jobType));
+        return (FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType));
 	}
 }
