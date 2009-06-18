@@ -12,12 +12,20 @@
     <!--f:textbox field="eclipseHome" />
 	</f:entry-->
    <f:entry title="${%Buckminster Installation}">
-
     <select class="setting-input" name="eclipse.installationName">
       <!--option value="">(Default)</option-->
       <j:forEach var="inst" items="${descriptor.installations}">
         <f:option selected="${inst.name==instance.getInstallation().name}">${inst.name}</f:option>
       </j:forEach>
+    </select>
+  </f:entry>
+  
+  <f:entry title="${%Buckminster Log Level}">
+    <select class="setting-input" name="eclipse.logLevel">
+    	<f:option value="info" selected="${instance.isSelected('info')}">Info (Default)</f:option>
+    	<f:option value="error" selected="${instance.isSelected('error')}">Error</f:option>
+    	<f:option value="warning" selected="${instance.isSelected('warning')}">Warning</f:option>
+    	<f:option value="debug" selected="${instance.isSelected('debug')}">Debug</f:option>      
     </select>
   </f:entry>
   <f:entry title="${%Commands}" help="${rootURL}/plugin/buckminster-builder/help-projectCommands.html">

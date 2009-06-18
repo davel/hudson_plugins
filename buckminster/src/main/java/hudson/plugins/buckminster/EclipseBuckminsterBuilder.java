@@ -49,12 +49,13 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class EclipseBuckminsterBuilder extends Builder {
 
-	private final String installationName, commands;
+	private final String installationName, commands, logLevel;
 
 	@DataBoundConstructor
-	public EclipseBuckminsterBuilder(String installationName, String commands) {
+	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel) {
 		this.installationName = installationName;
 		this.commands = commands;
+		this.logLevel = logLevel;
 	}
 
 	/**
@@ -68,6 +69,16 @@ public class EclipseBuckminsterBuilder extends Builder {
 		return commands;
 	}
 
+	public String getLogLevel(){
+		if(logLevel!=null && logLevel.length()!=0)
+			return logLevel;
+		return "info";
+	}
+	
+	public boolean isSelected(String item){
+		return getLogLevel().equals(item);
+	}
+	
 	public EclipseInstallation getInstallation() {
 		for (EclipseInstallation si : DESCRIPTOR.getInstallations()) {
 			if (installationName != null
@@ -156,9 +167,9 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 		commandList.add(workspace);
 
-		// TODO: add log level setting
-		// commandList.add("--loglevel");
-		// commandList.add("debug");
+
+		 commandList.add("--loglevel");
+		 commandList.add(getLogLevel());
 
 		// Tell Buckminster about the command file
 		commandList.add("-S");
