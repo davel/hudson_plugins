@@ -7,7 +7,6 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.AbstractProject;
 import hudson.tasks.Publisher;
@@ -65,7 +64,7 @@ public class JNUploaderPublisher extends Recorder {
                 return true;
             }
 
-            EnvVars envVars = build.getEnvironment();
+            EnvVars envVars = build.getEnvironment(listener);
 
             for (Entry e : entries) {
                 if(e.sourceFile.trim().length()==0) {
@@ -91,7 +90,7 @@ public class JNUploaderPublisher extends Recorder {
                     JNFileFolder folder = project.getFolder(folderPath);
                     if(folder!=null) {
                         // this looks like a valid folder name, so just upload into it
-                        upload(folder, src[0].getName(), src[0], e, envVars);
+                        upload(folder, src[0].getName(), src[0], e, envVars, listener);
                     } else {
                         // assume that this is a full path name
                         int idx = folderPath.lastIndexOf('/');
@@ -104,14 +103,14 @@ public class JNUploaderPublisher extends Recorder {
 
                         folder = getFolder(project, folderPath);
 
-                        upload(folder, fileName, src[0], e, envVars);
+                        upload(folder, fileName, src[0], e, envVars, listener);
                     }
                 } else {
                     String folderPath = Util.replaceMacro(e.filePath,envVars);
                     JNFileFolder folder = getFolder(project,folderPath);
 
                     for( FilePath s : src )
-                        upload(folder, s.getName(), s, e, envVars);
+                        upload(folder, s.getName(), s, e, envVars, listener);
                 }
             }
         } catch (ProcessingException e) {
@@ -125,18 +124,30 @@ public class JNUploaderPublisher extends Recorder {
         return true;
     }
 
-    private void upload(JNFileFolder folder, String fileName, FilePath src, Entry e, Map<String, String> envVars) throws ProcessingException, IOException {
+    private void upload(JNFileFolder folder, String fileName, FilePath src, Entry e, Map<String, String> envVars, BuildListener listener) throws ProcessingException, IOException, InterruptedException {
         JNFile file = folder.getFiles().get(fileName);
         if( file!=null ) {
             file.delete();
         }
 
-        InputStream in = src.read();
-        try {
-            folder.uploadFile(fileName,
-                            Util.replaceMacro(e.description,envVars), e.status, in, "application/octet-stream");
-        } finally {
-            in.close();
+        // java.net upload occasionally fails for no good reason, so retry for a few times under a certain situation
+        for( int retryCount=0; ; retryCount++) {
+            InputStream in = src.read();
+            try {
+                folder.uploadFile(fileName,
+                                Util.replaceMacro(e.description,envVars), e.status, in, "application/octet-stream");
+                return;
+            } catch (ProcessingException x) {
+                if(x.getMessage().contains("timed out") && retryCount<3) {
+                    // retry for a few times in case of time out
+                    listener.error("Upload timed out. Retrying after 10 seconds");
+                    Thread.sleep(10*1000);
+                    continue;
+                }
+                throw x;
+            } finally {
+                in.close();
+            }
         }
     }
 
