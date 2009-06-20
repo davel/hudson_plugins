@@ -9,15 +9,18 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.RetentionStrategy;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
 
-public class LabManagerSlaveConfiguration extends Slave {
+public class VMLabMgrSlaveConfiguration extends Slave {
+  @Extension
+  public static final class DescriptorImpl extends SlaveDescriptor {
+    public String getDisplayName() {
+      return "VMWare LabManager Slave";
+    }
+  }
   private static final long serialVersionUID = 1L;
 
   private String hostname;
@@ -25,27 +28,14 @@ public class LabManagerSlaveConfiguration extends Slave {
   private String password;
   
   @DataBoundConstructor
-  public LabManagerSlaveConfiguration(String name, String nodeDescription, String remoteFS, String numExecutors, Mode mode, String label, ComputerLauncher launcher, RetentionStrategy retentionStrategy, List<? extends NodeProperty<?>> nodeProperties) throws IOException, FormException {
+  public VMLabMgrSlaveConfiguration(String name, String nodeDescription, String remoteFS, String numExecutors, Mode mode, String label, ComputerLauncher launcher, RetentionStrategy retentionStrategy, List<? extends NodeProperty<?>> nodeProperties) throws IOException, FormException {
     super(name, nodeDescription, remoteFS, numExecutors, mode, label, launcher, retentionStrategy, nodeProperties);
   }
 
-  @Extension
-  public static final class DescriptorImpl extends SlaveDescriptor {
-      public String getDisplayName() {
-        return "VMWare LabManager Integration";
-//          return Messages.DumbSlave_displayName();
-      }
-  }
 
   @Override
   public Computer createComputer() {
-    try {
-      return new VMComputer(this, new URL(MessageFormat.format("https://{0}/LabManager/SOAP/LabManager.asmx", hostname)));
-    } catch (MalformedURLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      return null;
-    } 
+      return new VMLabMgrComputer(this);
   }
   
   public String getHostname() {
@@ -70,6 +60,11 @@ public class LabManagerSlaveConfiguration extends Slave {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void terminate() {
+    // TODO Auto-generated method stub
+    
   }
   
 }
