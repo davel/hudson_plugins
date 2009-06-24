@@ -63,24 +63,30 @@ public class NCoverArchiver extends Recorder {
      * Path to the coverage directory in the workspace.
      */
     private final String coverageDir;
+
+    /**
+     * The file to use as the index of the directory.
+     */
+    private final String indexFileName;
+
     /**
      * If true, retain coverage for all the successful builds.
      */
     private final boolean keepAll;
-    
-    /**
-     * The file to use as the index of the directory.
-     */
-    private final String indexFileName = "fullcoveragereport.html";
-    
+        
     @DataBoundConstructor
-    public NCoverArchiver(String coverage_dir, boolean keep_all) {
+    public NCoverArchiver(String coverage_dir, String index_file_name, boolean keep_all) {
         this.coverageDir = coverage_dir;
+	this.indexFileName = index_file_name;
         this.keepAll = keep_all;
     }
 
     public String getCoverageDir() {
         return coverageDir;
+    }
+
+    public String getIndexFileName() {
+	return indexFileName;
     }
 
     public boolean isKeepAll() {

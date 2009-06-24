@@ -4,6 +4,7 @@
 
     See global.jelly for a general discussion about jelly script.
   -->
+
   <f:entry title="Coverage HTML Directory" help="${rootURL}/plugin/NCover/help-projectConfig.html">
     <!--
       Creates a text field that shows the value of the "name" property.
@@ -11,7 +12,12 @@
     -->
     <f:textbox name="ncover.coverage_dir" value="${instance.coverageDir}"/>
   </f:entry>
-  <f:entry title="Keep past coverage reports">
-    <f:checkbox name="ncover.keep_all" value="${instance.keepAll}"/>
+
+  <f:entry title="Report(s) to display (comma separated)" help="${rootURL}/plugin/NCover/help-projectConfig.html">
+    <f:textbox name="ncover.index_file_name" value="${instance.indexFileName}" default="fullcoveragereport.html"/>
+  </f:entry>
+
+  <f:entry title="Keep past coverage reports" help="${rootURL}/plugin/NCover/help-projectConfig.html">
+    <f:checkbox name="ncover.keep_all" checked="${instance.keepAll}"/>
   </f:entry>
 </j:jelly>
