@@ -31,7 +31,7 @@ public final class GithubLinkAction implements Action {
      * @see hudson.model.Action#getIconFileName()
      */
     public String getIconFileName() {
-        return "/plugin/github/github-octocat.png";
+        return "/plugin/github/logov3.png";
     }
 
     /*
