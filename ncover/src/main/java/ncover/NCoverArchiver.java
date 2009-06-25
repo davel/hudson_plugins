@@ -43,6 +43,7 @@ import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
@@ -113,6 +114,19 @@ public class NCoverArchiver extends Recorder {
 
         FilePath ncover = build.getParent().getWorkspace().child(coverageDir);
         FilePath target = new FilePath(keepAll ? getDir(build) : getNCoverDir(build.getProject()));
+        
+        // The index name might be a comma separated list of names, so let's figure out all the pages we should index.
+        // Why yes, this would be one line of Python: reports = [report.strip() for report in indexFileName.split(",") if report]
+        String[] csvReports = indexFileName.split(",");
+        ArrayList<String> reports = new ArrayList<String>();
+        for (int i=0; i<csvReports.length; i++) {
+            String report = csvReports[i];
+            if (!report.isEmpty()) {
+                report = report.trim();
+                reports.add(report);
+                listener.getLogger().println("Report: '"+report+"'");
+            }
+        }
 
         try {
             if (!ncover.exists()) {
@@ -135,7 +149,8 @@ public class NCoverArchiver extends Recorder {
                 return true;
             }
             // Okay we succeeded, copy the desired page to index.html so it is the default page.
-            new FilePath(target, indexFileName).copyTo(new FilePath(target, "index.html"));
+            //TODO: Eventually we need to generate an HTML page with ALL the reports.
+            new FilePath(target, reports.get(0)).copyTo(new FilePath(target, "index.html"));
         } catch (IOException e) {
             Util.displayIOException(e,listener);
             e.printStackTrace(listener.fatalError("NCover failure"));
