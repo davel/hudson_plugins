@@ -1,10 +1,8 @@
 ﻿<strings>
   <GADGET_NAME>Hudson Status Gadget</GADGET_NAME>
   <GADGET_DESCRIPTION>Checks status of each job in Hudson</GADGET_DESCRIPTION>
-  <GADGET_ABOUT_TEXT>Hudson Status Gadget
-Copyright (c) 2008 Jeff Black
-  </GADGET_ABOUT_TEXT>
-  <GADGET_COPYRIGHT>Copyright (c) 2008 Jeff Black. All Rights Reserved</GADGET_COPYRIGHT>
+  <GADGET_ABOUT_TEXT>Hudson Status Gadget</GADGET_ABOUT_TEXT>
+  <GADGET_COPYRIGHT>Copyright (c) 2009 Jeff Black. All Rights Reserved</GADGET_COPYRIGHT>
 
   <JSON_JOBS>jobs</JSON_JOBS>
   <JSON_JOB_NAME>job</JSON_JOB_NAME>

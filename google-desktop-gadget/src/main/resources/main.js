@@ -290,7 +290,8 @@ function fadeIn() {
 	if (event.value == 255) {
 		cancelAnimation(anim);
 		anim = null;
-		animateFadeOut();
+		setTimeout("animateFadeOut()", 500);
+//		animateFadeOut();
 	}
 }
 
@@ -301,7 +302,8 @@ function fadeOut() {
 	if (event.value == 0) {
 		cancelAnimation(anim);
 		anim = null;
-		animateFadeIn();
+		setTimeout("animateFadeIn()", 100);
+//		animateFadeIn();
 	}
 }
 
