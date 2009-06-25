@@ -1,6 +1,3 @@
-/*
- * $Id$ 
- */
 package com.coravy.hudson.plugins.github;
 
 import org.apache.commons.lang.StringUtils;
