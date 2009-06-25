@@ -10,5 +10,11 @@
   
   <artifactId>ncover</artifactId>
   <packaging>hpi</packaging>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/0.1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/0.1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/ncover/tags/0.1.0</url>
+  </scm>
 </project>
