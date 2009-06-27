@@ -41,7 +41,10 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -98,7 +101,16 @@ public class NCoverArchiver extends Recorder {
      * Gets the directory where the NCover coverage is stored for the given project.
      */
     private static File getNCoverDir(AbstractItem project) {
-        return new File(project.getRootDir(),"ncover");
+        return new File(project.getRootDir(), "ncover");
+    }
+    
+    private static File getResourcesDir(AbstractItem project) {
+        return new File(project.getRootDir(), "reporting");
+    }
+    
+    private static void writeFile(ArrayList<String> lines, File path) {
+        // TODO: Implement!
+        return;
     }
 
     /**
@@ -108,12 +120,43 @@ public class NCoverArchiver extends Recorder {
         return new File(run.getRootDir(),"ncover");
     }
 
+    public ArrayList<String> readFile(File filePath) throws java.io.FileNotFoundException, java.io.IOException {
+        // Another Python one-liner: open(filePath).readlines(). Oh well.
+        FileReader fr = new FileReader(filePath);
+        BufferedReader br = new BufferedReader(fr);
+        ArrayList<String> aList = new ArrayList<String>();
+        
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            aList.add(line);
+        }
+        
+        br.close();
+        fr.close();
+        
+        return aList;
+    }
+    
     @Override
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
         listener.getLogger().println("Publishing NCover HTML report...");
 
         FilePath ncover = build.getParent().getWorkspace().child(coverageDir);
         FilePath target = new FilePath(keepAll ? getDir(build) : getNCoverDir(build.getProject()));
+        
+        // Grab the contents of the header and footer as arrays
+        ArrayList<String> headerLines;
+        ArrayList<String> footerLines;
+        try {
+             headerLines = readFile(new File(getResourcesDir(build.getProject()), "header.html"));
+             footerLines = readFile(new File(getResourcesDir(build.getProject()), "footer.html"));
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+            return false;
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return false;
+        }
         
         // The index name might be a comma separated list of names, so let's figure out all the pages we should index.
         // Why yes, this would be one line of Python: reports = [report.strip() for report in indexFileName.split(",") if report]
@@ -125,8 +168,14 @@ public class NCoverArchiver extends Recorder {
                 report = report.trim();
                 reports.add(report);
                 listener.getLogger().println("Report: '"+report+"'");
+                String tabNo = "tab" + (i+1);
+                String tabItem = "<li id=\""+tabNo+"\" class=\"unselected\" onclick=\"updateBody('"+tabNo+"');\" value=\""+report+"\">"+report+"</li>";
+                headerLines.add(tabItem);
             }
         }
+        
+        listener.getLogger().println("Debug: " + headerLines.get(0));
+        //ArrayList<String> = readFile()
 
         try {
             if (!ncover.exists()) {
@@ -148,9 +197,7 @@ public class NCoverArchiver extends Recorder {
                 build.setResult(Result.FAILURE);
                 return true;
             }
-            // Okay we succeeded, copy the desired page to index.html so it is the default page.
-            //TODO: Eventually we need to generate an HTML page with ALL the reports.
-            new FilePath(target, reports.get(0)).copyTo(new FilePath(target, "index.html"));
+            
         } catch (IOException e) {
             Util.displayIOException(e,listener);
             e.printStackTrace(listener.fatalError("NCover failure"));
@@ -161,6 +208,11 @@ public class NCoverArchiver extends Recorder {
         // add build action, if coverage is recorded for each build
         if(keepAll)
             build.addAction(new NCoverBuildAction(build));
+        
+        // Now add the footer.
+        headerLines.addAll(footerLines);
+        // And write this as the index.html
+        writeFile(headerLines, new File(target.toString(), "index.html"));
         
         return true;
     }
