@@ -30,7 +30,7 @@
     <f:repeatable var="e" items="${instance.archivedJobList}">
       <table width="100%">
 
-	   <f:entry title="Job" help="/plugin/copyarchiver/CopyArchiver/jobName.html">
+	   <f:entry title="Job to aggregate" help="/plugin/copyarchiver/CopyArchiver/jobName.html">
 	   
 	    <select class="setting-input" name="copyarchiver.entry.jobName">
 	      <j:forEach var="inst" items="${descriptor.jobs}">
@@ -40,7 +40,7 @@
 	    
 	   </f:entry>
 
-  	   <f:entry title="Pattern" help="/plugin/copyarchiver/CopyArchiver/pattern.html">
+  	   <f:entry title="Artifacts to copy" help="/plugin/copyarchiver/CopyArchiver/pattern.html">
     	<f:textbox name="copyarchiver.entry.pattern" value="${e.pattern}" />
   	   </f:entry>
 
@@ -54,8 +54,29 @@
    </f:repeatable>  
   </f:entry>    
 
-  <f:entry title="Shared directory" help="/plugin/copyarchiver/CopyArchiver/sharedDirectory.html">
-    <f:textbox name="copyarchiver.sharedDirectoryPath" value="${instance.sharedDirectoryPath}" />
-  </f:entry>
+
+  <f:section>
+	  <f:entry title="Shared directory" help="/plugin/copyarchiver/CopyArchiver/sharedDirectory.html">
+	    <f:textbox name="copyarchiver.sharedDirectoryPath" value="${instance.sharedDirectoryPath}" />
+	  </f:entry>
+	  
+	  <f:entry>
+	    <f:nested>
+    		<table style="width:100%">
+		  		<f:optionalBlock 
+		              name="copyarchiver.useTimestamp" 
+		              title="Change the date format" 
+		              checked="${instance.useTimestamp==true}"
+		              help="/plugin/copyarchiver/CopyArchiver/changeDateFormat.html">
+		        	<f:entry title="Date format">
+		 				<f:textbox name="copyarchiver.datePattern" value="${instance.datePattern}" 
+		 				checkUrl="'${rootURL}/plugin/copyarchiver/dateTimePatternCheck?value='+escape(this.value)"/>
+		        	</f:entry>        		        
+		  		</f:optionalBlock>
+		  	 </table>
+		  </f:nested>
+	  </f:entry>
+ </f:section>
+  
        	 
 </j:jelly>

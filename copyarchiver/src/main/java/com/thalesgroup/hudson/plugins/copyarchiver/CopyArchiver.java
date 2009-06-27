@@ -23,7 +23,10 @@
 
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
+import hudson.AbortException;
+import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -31,18 +34,17 @@ import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Project;
 import hudson.model.Result;
-import hudson.model.Run;
 import hudson.tasks.Publisher;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -54,13 +56,15 @@ public class CopyArchiver extends Publisher implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	public static final CopyArchiverDescriptor DESCRIPTOR = new CopyArchiverDescriptor();
-	
-	
+		
 	private String sharedDirectoryPath;
 	
-    private final List<ArchivedJobEntry> archivedJobList   = new ArrayList<ArchivedJobEntry>();	
+	private boolean useTimestamp;
 	
-    
+	private String datePattern;
+	
+    private final List<ArchivedJobEntry> archivedJobList   = new ArrayList<ArchivedJobEntry>();	
+	    
     public String getSharedDirectoryPath() {
 		return sharedDirectoryPath;
 	}
@@ -68,6 +72,14 @@ public class CopyArchiver extends Publisher implements Serializable{
 	public void setSharedDirectoryPath(String sharedDirectoryPath) {
 		this.sharedDirectoryPath = sharedDirectoryPath;
 	}
+
+	public boolean getUseTimestamp() {
+		return useTimestamp;
+	}
+
+	public void setUseTimestamp(boolean useTimestamp) {
+		this.useTimestamp = useTimestamp;
+	}	
 
 	public Descriptor<Publisher> getDescriptor() {
         return DESCRIPTOR;
@@ -77,7 +89,14 @@ public class CopyArchiver extends Publisher implements Serializable{
 		return archivedJobList;
 	}    
         
-	
+	public String getDatePattern() {
+		return datePattern;
+	}
+
+	public void setDatePattern(String datePattern) {
+		this.datePattern = datePattern;
+	}
+		
     public static final class CopyArchiverDescriptor extends Descriptor<Publisher>{
 
     	//CopyOnWriteList
@@ -89,7 +108,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 
         @Override
         public String getDisplayName() {
-            return "Upload archived artifacts";
+            return "Aggregate the archived artifacts";
         }
 
         @Override
@@ -113,9 +132,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 		public List<AbstractProject> getJobs() {
 			 return Hudson.getInstance().getItems(AbstractProject.class);
 		}      
-        
-        
-        
+                      
     }
 
 
@@ -146,48 +163,47 @@ public class CopyArchiver extends Publisher implements Serializable{
     	try{
     		
     		if (build.getResult().equals(Result.UNSTABLE) || build.getResult().equals(Result.SUCCESS)){
-    	
-    			File destDir     = new File(sharedDirectoryPath,"lastSuccessfulBuildArtifact");
-    			listener.getLogger().println("Copy archived artifacts in the shared directory '" + destDir + "'.");    		    			
+    	    		
+    			listener.getLogger().println("Starting copy archived artifacts in the shared directory.");
+    			
+    			File destDir = null;
+    			Map vars = new HashMap();
+    			if (useTimestamp){
+    				
+    				if (datePattern==null || datePattern.trim().isEmpty()){
+    					build.setResult(Result.FAILURE);
+    					throw new AbortException("The option 'Change the date format' is activated. You must provide a new date pattern.");    					
+    				}
+    				
+    		        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+    		        final String newBuildIdStr = sdf.format(build.getTimestamp().getTime());         			
+        			vars.put("BUILD_ID", newBuildIdStr);
+    			}
+
+    			String sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPath,  vars);    				
+    			
+    			destDir = new File(sharedDirectoryPathParsed);
+    			listener.getLogger().println("Copying archived artifacts in the shared directory '" + destDir + "'.");    		    			
     			deleteDir(destDir);    			
     			destDir.mkdirs();
-    			    			
-    			for (ArchivedJobEntry archivedJobEntry:archivedJobList){
-    				
-    				List buildArtifacts  = Project.findNearest(archivedJobEntry.jobName).getLastSuccessfulBuild().getArtifacts();    				
-    				for (Iterator iterator = buildArtifacts.iterator(); iterator.hasNext();) {
-        				Run.Artifact buildArtifact = (Run.Artifact) iterator.next();
-        				String filename=buildArtifact.getFileName();            				
-        				if (isApplicable(filename,archivedJobEntry.pattern)){
-        					System.out.println("Adding new artifact: "+ filename);
-        					FileUtils.copyFileToDirectory(buildArtifact.getFile(), destDir, true);
-        				}
-        			}  
+    			FilePath destDirFilePath = new FilePath(destDir);
+    			
+    			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    				
+    				File lastSuccessfulDir = Project.findNearest(archivedJobEntry.jobName).getLastSuccessfulBuild().getArtifactsDir();
+    				FilePath lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);    				
+    				lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);    				
     			}
-    			listener.getLogger().println("End copy archived Artifacts in the shared directory.");    
-    		}
-
-    		//CopyDirectoryAction parser = new CopyDirectoryAction(path);
-    		//Boolean result = build.getProject().getWorkspace().act(parser);            
+    			
+    			listener.getLogger().println("Stop copying archived artifacts in the shared directory.");    
+    		}    
         } 
     	catch (Exception e) {
             e.printStackTrace(listener.fatalError("error"));
             build.setResult(Result.FAILURE);
             return true;
-        }
-        
+        }        
             
 		return true;
 	}
-
-    private boolean isApplicable(String filename, String pattern){
-    	return Pattern.matches("." + pattern, filename);
-    }
-
-
-
-
-
-
   
 }
