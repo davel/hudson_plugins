@@ -27,6 +27,10 @@ import hudson.AbortException;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.maven.AbstractMavenProject;
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
+import hudson.maven.MavenModuleSetBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -34,7 +38,9 @@ import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Project;
 import hudson.model.Result;
+import hudson.model.Run;
 import hudson.tasks.Publisher;
+import hudson.util.FormFieldValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +51,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * 
@@ -132,6 +141,37 @@ public class CopyArchiver extends Publisher implements Serializable{
 		public List<AbstractProject> getJobs() {
 			 return Hudson.getInstance().getItems(AbstractProject.class);
 		}      
+		
+		public void doDateTimePatternCheck(final StaplerRequest req,
+				StaplerResponse rsp) throws IOException, ServletException {
+			(new FormFieldValidator(req, rsp, true) {
+
+				public void check() throws IOException, ServletException {
+
+					String pattern = req.getParameter("value");
+
+					if (pattern == null || pattern.trim().length() == 0) {
+						error((new StringBuilder()).append(
+								"You must provide a pattern value").toString());
+					}
+
+					try {
+						new SimpleDateFormat(pattern);
+					} catch (NullPointerException npe) {
+						error((new StringBuilder()).append("Invalid input: ")
+								.append(npe.getMessage()).toString());
+						return;
+					} catch (IllegalArgumentException iae) {
+						error((new StringBuilder()).append("Invalid input: ")
+								.append(iae.getMessage()).toString());
+						return;
+					}
+
+					return;
+
+				}
+			}).process();
+		}		
                       
     }
 
@@ -188,10 +228,26 @@ public class CopyArchiver extends Publisher implements Serializable{
     			destDir.mkdirs();
     			FilePath destDirFilePath = new FilePath(destDir);
     			
-    			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    				
-    				File lastSuccessfulDir = Project.findNearest(archivedJobEntry.jobName).getLastSuccessfulBuild().getArtifactsDir();
-    				FilePath lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);    				
-    				lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);    				
+    			FilePath lastSuccessfulDirFilePath = null;
+    			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    		    				
+    				AbstractProject curProj = Project.findNearest(archivedJobEntry.jobName);
+    				Run run = curProj.getLastSuccessfulBuild();
+    				if (run!=null){    				
+    					if (curProj instanceof AbstractMavenProject){
+	    					MavenModuleSetBuild vMavenModuleSetBuild =(MavenModuleSetBuild)run;
+	    					Map<MavenModule,List<MavenBuild>> moduleBuildsMap = vMavenModuleSetBuild.getModuleBuilds();
+	    					for (MavenModule mm:moduleBuildsMap.keySet()){
+	    						File lastSuccessfulDir = mm.getLastSuccessfulBuild().getArtifactsDir();
+	        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
+	        					lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);
+	    					}    			
+    					}
+    					else{
+    						File lastSuccessfulDir = run.getArtifactsDir();
+    						lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
+    						lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);
+    					}
+    				}    				    				
     			}
     			
     			listener.getLogger().println("Stop copying archived artifacts in the shared directory.");    

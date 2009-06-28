@@ -23,7 +23,6 @@
 
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
-import hudson.AbortException;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
@@ -51,9 +50,7 @@ public class CopyDirectoryAction implements FilePath.FileCallable<Boolean>, Seri
     }
     
     public Boolean invoke(java.io.File workspace, VirtualChannel channel) throws IOException {
-    	    	
-
-    	
+    	        	
     	return true;
     }
 

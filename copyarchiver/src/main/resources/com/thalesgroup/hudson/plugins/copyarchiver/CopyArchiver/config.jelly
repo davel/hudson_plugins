@@ -70,7 +70,7 @@
 		              help="/plugin/copyarchiver/CopyArchiver/changeDateFormat.html">
 		        	<f:entry title="Date format">
 		 				<f:textbox name="copyarchiver.datePattern" value="${instance.datePattern}" 
-		 				checkUrl="'${rootURL}/plugin/copyarchiver/dateTimePatternCheck?value='+escape(this.value)"/>
+		 				checkUrl="'${rootURL}/publisher/CopyArchiver/dateTimePatternCheck?value='+escape(this.value)"/>
 		        	</f:entry>        		        
 		  		</f:optionalBlock>
 		  	 </table>
