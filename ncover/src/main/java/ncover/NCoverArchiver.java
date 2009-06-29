@@ -42,9 +42,11 @@ import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -108,8 +110,13 @@ public class NCoverArchiver extends Recorder {
         return new File(project.getRootDir(), "reporting");
     }
     
-    private static void writeFile(ArrayList<String> lines, File path) {
-        // TODO: Implement!
+    private static void writeFile(ArrayList<String> lines, File path) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+        for (int i = 0; i < lines.size(); i++) {
+            bw.write(lines.get(i));
+            bw.newLine();
+        }
+        bw.close();
         return;
     }
 
@@ -120,7 +127,7 @@ public class NCoverArchiver extends Recorder {
         return new File(run.getRootDir(),"ncover");
     }
 
-    public ArrayList<String> readFile(File filePath) throws java.io.FileNotFoundException, java.io.IOException {
+    public static ArrayList<String> readFile(File filePath) throws java.io.FileNotFoundException, java.io.IOException {
         // Another Python one-liner: open(filePath).readlines(). Oh well.
         FileReader fr = new FileReader(filePath);
         BufferedReader br = new BufferedReader(fr);
@@ -212,7 +219,12 @@ public class NCoverArchiver extends Recorder {
         // Now add the footer.
         headerLines.addAll(footerLines);
         // And write this as the index.html
-        writeFile(headerLines, new File(target.toString(), "index.html"));
+        try {
+            writeFile(headerLines, new File(target.toString(), "index.html"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
         return true;
     }
