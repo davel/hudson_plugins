@@ -72,6 +72,8 @@ public class CopyArchiver extends Publisher implements Serializable{
 	
 	private String datePattern;
 	
+	private boolean flatten;
+	
     private final List<ArchivedJobEntry> archivedJobList   = new ArrayList<ArchivedJobEntry>();	
 	    
     public String getSharedDirectoryPath() {
@@ -86,6 +88,14 @@ public class CopyArchiver extends Publisher implements Serializable{
 		return useTimestamp;
 	}
 
+	public boolean getFlatten() {
+		return flatten;
+	}
+	
+	public void setFlatten(boolean flatten) {
+		this.flatten = flatten;
+	}	
+	
 	public void setUseTimestamp(boolean useTimestamp) {
 		this.useTimestamp = useTimestamp;
 	}	
@@ -229,6 +239,7 @@ public class CopyArchiver extends Publisher implements Serializable{
     			FilePath destDirFilePath = new FilePath(destDir);
     			
     			FilePath lastSuccessfulDirFilePath = null;
+    			FilePathArchiver lastSuccessfulDirFilePathArchiver=null;
     			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    		    				
     				AbstractProject curProj = Project.findNearest(archivedJobEntry.jobName);
     				Run run = curProj.getLastSuccessfulBuild();
@@ -239,13 +250,15 @@ public class CopyArchiver extends Publisher implements Serializable{
 	    					for (MavenModule mm:moduleBuildsMap.keySet()){
 	    						File lastSuccessfulDir = mm.getLastSuccessfulBuild().getArtifactsDir();
 	        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
-	        					lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);
+	        					lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
+	        					lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes,destDirFilePath);
 	    					}    			
     					}
     					else{
     						File lastSuccessfulDir = run.getArtifactsDir();
     						lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
-    						lastSuccessfulDirFilePath.copyRecursiveTo(archivedJobEntry.pattern, destDirFilePath);
+    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
+    						lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
     					}
     				}    				    				
     			}

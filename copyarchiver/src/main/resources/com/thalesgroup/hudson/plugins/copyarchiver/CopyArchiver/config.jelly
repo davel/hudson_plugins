@@ -43,6 +43,12 @@
   	   <f:entry title="Artifacts to copy" help="/plugin/copyarchiver/CopyArchiver/pattern.html">
     	<f:textbox name="copyarchiver.entry.pattern" value="${e.pattern}" />
   	   </f:entry>
+  	   
+  	   <f:advanced>
+	  	   <f:entry title="Excludes" help="/plugin/copyarchiver/CopyArchiver/excludes.html">
+	    		<f:textbox name="copyarchiver.entry.excludes" value="${e.excludes}" />
+	  	   </f:entry>
+	   </f:advanced>
 
         <f:entry title="">
           <div align="right">
@@ -59,9 +65,13 @@
 	  <f:entry title="Shared directory" help="/plugin/copyarchiver/CopyArchiver/sharedDirectory.html">
 	    <f:textbox name="copyarchiver.sharedDirectoryPath" value="${instance.sharedDirectoryPath}" />
 	  </f:entry>
+
+	 <f:entry help="/plugin/copyarchiver/CopyArchiver/flatten.html">
+		<f:checkbox name="copyarchiver.flatten" checked="${instance.flatten}" />
+		<label class="attach-previous">Flatten</label>
+	</f:entry>	  
 	  
 	  <f:entry>
-	    <f:nested>
     		<table style="width:100%">
 		  		<f:optionalBlock 
 		              name="copyarchiver.useTimestamp" 
@@ -73,8 +83,7 @@
 		 				checkUrl="'${rootURL}/publisher/CopyArchiver/dateTimePatternCheck?value='+escape(this.value)"/>
 		        	</f:entry>        		        
 		  		</f:optionalBlock>
-		  	 </table>
-		  </f:nested>
+		  	 </table>		  
 	  </f:entry>
  </f:section>
   

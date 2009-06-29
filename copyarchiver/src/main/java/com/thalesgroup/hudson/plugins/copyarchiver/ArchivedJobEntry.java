@@ -38,4 +38,10 @@ public class ArchivedJobEntry implements Serializable{
 	 * Pattern to filtering the archived artifact to copy
 	 */
 	public String pattern;
+	
+	
+	/**
+	 * Pattern for excluding some archived artifact to copy
+	 */
+	public String excludes;
 }
