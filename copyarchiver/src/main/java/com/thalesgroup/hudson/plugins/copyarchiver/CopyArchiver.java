@@ -31,8 +31,8 @@ import hudson.maven.AbstractMavenProject;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 import hudson.maven.MavenModuleSetBuild;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
@@ -207,10 +207,12 @@ public class CopyArchiver extends Publisher implements Serializable{
     
     @SuppressWarnings("unchecked")
     @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher,
+    public boolean perform(Build<?,?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
     	
     	try{
+    		
+    		Project project = build.getProject();
     		
     		if (build.getResult().equals(Result.UNSTABLE) || build.getResult().equals(Result.SUCCESS)){
     	    		
@@ -240,28 +242,43 @@ public class CopyArchiver extends Publisher implements Serializable{
     			
     			FilePath lastSuccessfulDirFilePath = null;
     			FilePathArchiver lastSuccessfulDirFilePathArchiver=null;
+    			int numCopied=0;
     			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    		    				
     				AbstractProject curProj = Project.findNearest(archivedJobEntry.jobName);
     				Run run = curProj.getLastSuccessfulBuild();
     				if (run!=null){    				
-    					if (curProj instanceof AbstractMavenProject){
+
+						//if the selected project is the current projet, we're using the workspace base directory or SCM module root    						
+						if (project.getName().equals(archivedJobEntry.jobName)){
+    						lastSuccessfulDirFilePath = project.getModuleRoot();
+    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
+    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
+						}
+    					
+    					//if the selected project is not the current project, we are 2 cases: Maven project and not a Maven project
+						
+						// Maven projects
+						else if (curProj instanceof AbstractMavenProject){
 	    					MavenModuleSetBuild vMavenModuleSetBuild =(MavenModuleSetBuild)run;
 	    					Map<MavenModule,List<MavenBuild>> moduleBuildsMap = vMavenModuleSetBuild.getModuleBuilds();
 	    					for (MavenModule mm:moduleBuildsMap.keySet()){
 	    						File lastSuccessfulDir = mm.getLastSuccessfulBuild().getArtifactsDir();
 	        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
 	        					lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-	        					lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes,destDirFilePath);
+	        					numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes,destDirFilePath);
 	    					}    			
     					}
-    					else{
+						
+						// non Maven projects
+						else{
     						File lastSuccessfulDir = run.getArtifactsDir();
-    						lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
-    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-    						lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
+        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
+    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);    						    						
+    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
     					}
     				}    				    				
     			}
+    			listener.getLogger().println("'"+numCopied+"' artifacts have been copied.");
     			
     			listener.getLogger().println("Stop copying archived artifacts in the shared directory.");    
     		}    
