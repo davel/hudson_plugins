@@ -219,7 +219,12 @@ public class CopyArchiver extends Publisher implements Serializable{
     			listener.getLogger().println("Starting copy archived artifacts in the shared directory.");
     			
     			File destDir = null;
+    			
+    			//Use a temporary map in read/write access
     			Map vars = new HashMap();
+    			vars.putAll(build.getEnvironment(listener).descendingMap());
+    			
+    			
     			if (useTimestamp){
     				
     				if (datePattern==null || datePattern.trim().isEmpty()){
@@ -232,7 +237,11 @@ public class CopyArchiver extends Publisher implements Serializable{
         			vars.put("BUILD_ID", newBuildIdStr);
     			}
 
-    			String sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPath,  vars);    				
+    			//Replace environment variables
+    			String sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPath,  vars);
+    			//Replace build variables
+    			sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPathParsed,  build.getBuildVariables());  
+    			
     			
     			destDir = new File(sharedDirectoryPathParsed);
     			listener.getLogger().println("Copying archived artifacts in the shared directory '" + destDir + "'.");    		    			
