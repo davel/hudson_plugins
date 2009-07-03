@@ -259,7 +259,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 
 						//if the selected project is the current projet, we're using the workspace base directory or SCM module root    						
 						if (project.getName().equals(archivedJobEntry.jobName)){
-    						lastSuccessfulDirFilePath = project.getModuleRoot();
+    						lastSuccessfulDirFilePath = project.getWorkspace();
     						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
     						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
 						}
