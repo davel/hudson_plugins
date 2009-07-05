@@ -1,12 +1,11 @@
 package hudson.plugins.crap4j;
 
+import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
-import hudson.matrix.MatrixProject;
 import hudson.plugins.crap4j.calculation.HealthBuilder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;

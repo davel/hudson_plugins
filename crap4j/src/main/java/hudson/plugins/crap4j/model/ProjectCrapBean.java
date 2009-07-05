@@ -5,10 +5,7 @@ import hudson.plugins.crap4j.display.ICrapComparison;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.schneide.crap4j.reader.model.IMethodCrapData;
 import com.schneide.crap4j.reader.model.IOverallStatistics;
 
 public class ProjectCrapBean implements Serializable {
@@ -26,13 +23,6 @@ public class ProjectCrapBean implements Serializable {
 	
 	private transient WeakReference<IMethodCrap[]> newCrapMethods;
 	private transient WeakReference<IMethodCrap[]> fixedCrapMethods;
-	
-	public ProjectCrapBean(
-			ProjectCrapBean previousCrap,
-			IOverallStatistics statistics,
-			IMethodCrapData... allMethodData) {
-		this(previousCrap, statistics, extractCrapMethods(statistics, allMethodData));
-	}
 	
 	public ProjectCrapBean(
 			ProjectCrapBean previousCrap,
@@ -89,30 +79,6 @@ public class ProjectCrapBean implements Serializable {
 	private void loadCrapMethodComparison(ICrapComparison comparison) {
 		this.newCrapMethods = new WeakReference<IMethodCrap[]>(comparison.getNewCrapMethods());
 		this.fixedCrapMethods = new WeakReference<IMethodCrap[]>(comparison.getFixedCrapMethods());
-	}
-	
-	private static IMethodCrap[] extractCrapMethods(IOverallStatistics statistics, IMethodCrapData... data) {
-		checkParameters(statistics, data);
-		List<MethodCrapBean> crapBeans = new ArrayList<MethodCrapBean>();
-		for (int i = 0; i < data.length; i++) {
-			if (data[i].isCrappy()) {
-				crapBeans.add(new MethodCrapBean(data[i]));
-			}
-		}
-		return crapBeans.toArray(new MethodCrapBean[crapBeans.size()]);
-	}
-
-	private static void checkParameters(IOverallStatistics statistics, IMethodCrapData... data) {
-		if (statistics.getMethodCount() == data.length) {
-			return;
-		}
-		StringBuilder message = new StringBuilder();
-		message.append("Method count does not match: statistic say ");
-		message.append(statistics.getMethodCount());
-		message.append(" but there were ");
-		message.append(data.length);
-		message.append(" data objects given.");
-		throw new IllegalArgumentException(message.toString());
 	}
 	
 	public IMethodCrap[] getCrapMethods() {

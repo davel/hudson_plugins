@@ -1,5 +1,7 @@
 package com.schneide.crap4j.crap;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,26 +18,20 @@ public class MethodCrapManager {
 	}
 
 	public void addMethodCrapData(IMethodCrapData data) {
+		if (!data.isCrappy()) {
+			return;
+		}
 		if (hasCrapDataFor(data.getContext())) {
 			System.err.println("Already registered crap for: " + data.getContext()); //$NON-NLS-1$
 		}
 		this.methodCrapData.put(data.getContext(), data);
 	}
 
-	public boolean hasCrapDataFor(IMethod method) {
+	protected boolean hasCrapDataFor(IMethod method) {
 		return this.methodCrapData.containsKey(method);
 	}
 
-	public IMethodCrapData getCrapDataFor(IMethod method) {
-		return this.methodCrapData.get(method);
-	}
-
-	public GenericCrapData<IMethod> getGenericCrapDataFor(IMethod method) {
-		IMethodCrapData crapData = getCrapDataFor(method);
-		return new GenericCrapData<IMethod>(method, crapData);
-	}
-
-	public IMethodCrapData[] getAllCrapData() {
-		return this.methodCrapData.values().toArray(new IMethodCrapData[this.methodCrapData.size()]);
+	public Collection<IMethodCrapData> getCrapData() {
+		return Collections.unmodifiableCollection(this.methodCrapData.values());
 	}
 }

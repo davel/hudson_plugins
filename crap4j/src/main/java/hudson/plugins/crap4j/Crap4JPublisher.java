@@ -5,13 +5,16 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.plugins.crap4j.calculation.HealthBuilder;
 import hudson.plugins.crap4j.model.CrapReportMerger;
+import hudson.plugins.crap4j.model.IMethodCrap;
+import hudson.plugins.crap4j.model.MethodCrapBean;
 import hudson.plugins.crap4j.model.ProjectCrapBean;
 import hudson.plugins.crap4j.util.FoundFile;
 import hudson.plugins.crap4j.util.ReportFilesFinder;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,14 +23,17 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.schneide.crap4j.reader.ReportReader;
 import com.schneide.crap4j.reader.model.ICrapReport;
+import com.schneide.crap4j.reader.model.IMethodCrapData;
 
-public class Crap4JPublisher extends Publisher {
+public class Crap4JPublisher extends Recorder {
 
     /** Logger. */
     private static final Logger LOGGER = Logger.getLogger(Crap4JPublisher.class.getName());
@@ -64,7 +70,7 @@ public class Crap4JPublisher extends Publisher {
 	}
 
 	//@Override
-	public Descriptor<Publisher> getDescriptor() {
+	public BuildStepDescriptor<Publisher> getDescriptor() {
 		return DESCRIPTOR;
 	}
 
@@ -135,11 +141,22 @@ public class Crap4JPublisher extends Publisher {
 	        ProjectCrapBean reportBean = new ProjectCrapBean(
 	        		previousCrap,
 	        		report.getStatistics(),
-	        		report.getDetails().getMethodCrapManager().getAllCrapData());
+	        		convertToMethodCrap(report.getDetails().getMethodCrapManager().getCrapData()));
 	        log(logger, "Got a report bean with " + reportBean.getCrapMethodCount() + " crap methods out of " + reportBean.getMethodCount() + " methods.");
 	        result.add(reportBean);
 		}
 		return result.toArray(new ProjectCrapBean[result.size()]);
+	}
+
+	private IMethodCrap[] convertToMethodCrap(Collection<IMethodCrapData> crapData) {
+		IMethodCrap[] result = new IMethodCrap[crapData.size()];
+		Iterator<IMethodCrapData> dataIterator = crapData.iterator();
+		int index = 0;
+		while (dataIterator.hasNext()) {
+			result[index] = new MethodCrapBean(dataIterator.next());
+			index++;
+		}
+		return result;
 	}
 
 	public String getReportPattern() {
