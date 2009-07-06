@@ -205,6 +205,23 @@ public class CopyArchiver extends Publisher implements Serializable{
     } 
     
     
+    private String filterField(Build<?,?> build, BuildListener listener, String fieldText) throws InterruptedException, IOException {
+    	String str= null;
+    	
+		Map vars = new HashMap();
+		vars.putAll(build.getEnvironment(listener).descendingMap());
+		
+		if (useTimestamp && datePattern!=null){
+			SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+			final String newBuildIdStr = sdf.format(build.getTimestamp().getTime());         			
+			vars.put("BUILD_ID", newBuildIdStr);
+		}
+		str = Util.replaceMacro(fieldText,  vars);  		
+    	str = Util.replaceMacro(str,  build.getBuildVariables());      	
+    	return str;
+    }
+    
+    
     @SuppressWarnings("unchecked")
     @Override
     public boolean perform(Build<?,?> build, Launcher launcher,
@@ -225,23 +242,15 @@ public class CopyArchiver extends Publisher implements Serializable{
     			vars.putAll(build.getEnvironment(listener).descendingMap());
     			
     			
-    			if (useTimestamp){
-    				
+    			if (useTimestamp){    				
     				if (datePattern==null || datePattern.trim().isEmpty()){
     					build.setResult(Result.FAILURE);
     					throw new AbortException("The option 'Change the date format' is activated. You must provide a new date pattern.");    					
     				}
-    				
-    		        SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
-    		        final String newBuildIdStr = sdf.format(build.getTimestamp().getTime());         			
-        			vars.put("BUILD_ID", newBuildIdStr);
     			}
 
-    			//Replace environment variables
-    			String sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPath,  vars);
-    			//Replace build variables
-    			sharedDirectoryPathParsed = Util.replaceMacro(sharedDirectoryPathParsed,  build.getBuildVariables());  
-    			
+    			//Replace environment variables and build variables
+    			String sharedDirectoryPathParsed = filterField(build, listener, sharedDirectoryPath);
     			
     			destDir = new File(sharedDirectoryPathParsed);
     			listener.getLogger().println("Copying archived artifacts in the shared directory '" + destDir + "'.");    		    			
@@ -261,7 +270,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 						if (project.getName().equals(archivedJobEntry.jobName)){
     						lastSuccessfulDirFilePath = project.getWorkspace();
     						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
+    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
 						}
     					
     					//if the selected project is not the current project, we are 2 cases: Maven project and not a Maven project
@@ -274,7 +283,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 	    						File lastSuccessfulDir = mm.getLastSuccessfulBuild().getArtifactsDir();
 	        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
 	        					lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-	        					numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes,destDirFilePath);
+	        					numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes),destDirFilePath);
 	    					}    			
     					}
 						
@@ -283,7 +292,7 @@ public class CopyArchiver extends Publisher implements Serializable{
     						File lastSuccessfulDir = run.getArtifactsDir();
         					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
     						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);    						    						
-    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
+    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes) , destDirFilePath);
     					}
     				}    				    				
     			}
