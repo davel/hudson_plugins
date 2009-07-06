@@ -217,6 +217,8 @@ public class NCoverArchiver extends Recorder {
                 headerLines.add(tabItem);
             }
         }
+        // Add the JS to change the link as appopriate.
+        headerLines.add("<script type=\"text/javascript\">document.getElementById(\"hudson_link\").href=\"" + hudsonUrl +"\";</script>");
        
 
         try {
@@ -239,7 +241,6 @@ public class NCoverArchiver extends Recorder {
                 build.setResult(Result.FAILURE);
                 return true;
             }
-            
         } catch (IOException e) {
             Util.displayIOException(e,listener);
             e.printStackTrace(listener.fatalError("NCover failure"));
@@ -247,7 +248,7 @@ public class NCoverArchiver extends Recorder {
              return true;
         }
         
-        // add build action, if coverage is recorded for each build
+        // Add build action, if coverage is recorded for each build
         if(keepAll)
             build.addAction(new NCoverBuildAction(build));
         
