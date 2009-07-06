@@ -33,6 +33,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.DirectoryBrowserSupport;
+import hudson.model.Hudson;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -48,6 +49,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -83,7 +85,7 @@ public class NCoverArchiver extends Recorder {
     @DataBoundConstructor
     public NCoverArchiver(String coverage_dir, String index_file_name, boolean keep_all) {
         this.coverageDir = coverage_dir;
-	this.indexFileName = index_file_name;
+        this.indexFileName = index_file_name;
         this.keepAll = keep_all;
     }
 
@@ -106,10 +108,6 @@ public class NCoverArchiver extends Recorder {
         return new File(project.getRootDir(), "ncover");
     }
     
-    private static File getResourcesDir(AbstractItem project) {
-        return new File(project.getRootDir(), "reporting");
-    }
-    
     private static void writeFile(ArrayList<String> lines, File path) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(path));
         for (int i = 0; i < lines.size(); i++) {
@@ -127,9 +125,9 @@ public class NCoverArchiver extends Recorder {
         return new File(run.getRootDir(),"ncover");
     }
 
-    public static ArrayList<String> readFile(File filePath) throws java.io.FileNotFoundException, java.io.IOException {
+    public static ArrayList<String> readFile(URL filePath) throws java.io.FileNotFoundException, java.io.IOException {
         // Another Python one-liner: open(filePath).readlines(). Oh well.
-        FileReader fr = new FileReader(filePath);
+        FileReader fr = new FileReader(filePath.toString());
         BufferedReader br = new BufferedReader(fr);
         ArrayList<String> aList = new ArrayList<String>();
         
@@ -155,8 +153,8 @@ public class NCoverArchiver extends Recorder {
         ArrayList<String> headerLines;
         ArrayList<String> footerLines;
         try {
-             headerLines = readFile(new File(getResourcesDir(build.getProject()), "header.html"));
-             footerLines = readFile(new File(getResourcesDir(build.getProject()), "footer.html"));
+            headerLines = readFile(this.getClass().getResource("header.html"));
+            footerLines = readFile(this.getClass().getResource("footer.html"));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
             return false;
@@ -181,8 +179,11 @@ public class NCoverArchiver extends Recorder {
             }
         }
         
-        listener.getLogger().println("Debug: " + headerLines.get(0));
-        //ArrayList<String> = readFile()
+        // Debug stuff
+        String dpath = this.getClass().getResource("header.html").toString();
+        listener.getLogger().println("Debug: " + dpath);
+        String hudsonUrl = Hudson.getInstance().getRootUrl();
+        listener.getLogger().println("Debug: " + hudsonUrl);
 
         try {
             if (!ncover.exists()) {
@@ -218,9 +219,9 @@ public class NCoverArchiver extends Recorder {
         
         // Now add the footer.
         headerLines.addAll(footerLines);
-        // And write this as the index.html
+        // And write this as the index
         try {
-            writeFile(headerLines, new File(target.toString(), "index.html"));
+            writeFile(headerLines, new File(target.toString(), "coverage-wrapper.html"));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -258,7 +259,7 @@ public class NCoverArchiver extends Recorder {
          */
         public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
             DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, new FilePath(dir()), getTitle(), "graph.gif", false);
-            //dbs.setIndexFileName(indexFileName); // Hudson >= 1.312
+            dbs.setIndexFileName("coverage-wrapper.html"); // Hudson >= 1.312
             dbs.generateResponse(req,rsp,this);
         }
 
