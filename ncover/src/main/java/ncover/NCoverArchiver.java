@@ -49,6 +49,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -125,19 +128,48 @@ public class NCoverArchiver extends Recorder {
         return new File(run.getRootDir(),"ncover");
     }
 
-    public static ArrayList<String> readFile(URL filePath) throws java.io.FileNotFoundException, java.io.IOException {
-        // Another Python one-liner: open(filePath).readlines(). Oh well.
-        FileReader fr = new FileReader(filePath.toString());
-        BufferedReader br = new BufferedReader(fr);
+    public ArrayList<String> readFile(String filePath) throws java.io.FileNotFoundException, java.io.IOException {
         ArrayList<String> aList = new ArrayList<String>();
         
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            aList.add(line);
+        try {
+            final InputStream is = this.getClass().getResourceAsStream(filePath);
+            try {
+                final Reader r = new InputStreamReader(is);
+                try {
+                    final BufferedReader br = new BufferedReader(r);
+                    try {
+                        String line = null;
+                        while ((line = br.readLine()) != null) {
+                            aList.add(line);
+                        }
+                        br.close();
+                        r.close();
+                        is.close();
+                    } finally {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } finally {
+                    try {
+                        r.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            // failure
+            e.printStackTrace();
         }
-        
-        br.close();
-        fr.close();
         
         return aList;
     }
@@ -149,12 +181,19 @@ public class NCoverArchiver extends Recorder {
         FilePath ncover = build.getParent().getWorkspace().child(coverageDir);
         FilePath target = new FilePath(keepAll ? getDir(build) : getNCoverDir(build.getProject()));
         
+        // Debug stuff
+        URL dpath = this.getClass().getResource("/ncover/NCoverArchiver/header.html");
+        listener.getLogger().println(System.getProperty( "java.class.path" ));
+        listener.getLogger().println("Debug: " + dpath);
+        String hudsonUrl = Hudson.getInstance().getRootUrl();
+        listener.getLogger().println("Debug: " + hudsonUrl);
+        
         // Grab the contents of the header and footer as arrays
         ArrayList<String> headerLines;
         ArrayList<String> footerLines;
         try {
-            headerLines = readFile(this.getClass().getResource("header.html"));
-            footerLines = readFile(this.getClass().getResource("footer.html"));
+            headerLines = readFile("/ncover/NCoverArchiver/header.html");
+            footerLines = readFile("/ncover/NCoverArchiver/footer.html");
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
             return false;
@@ -178,12 +217,7 @@ public class NCoverArchiver extends Recorder {
                 headerLines.add(tabItem);
             }
         }
-        
-        // Debug stuff
-        String dpath = this.getClass().getResource("header.html").toString();
-        listener.getLogger().println("Debug: " + dpath);
-        String hudsonUrl = Hudson.getInstance().getRootUrl();
-        listener.getLogger().println("Debug: " + hudsonUrl);
+       
 
         try {
             if (!ncover.exists()) {
