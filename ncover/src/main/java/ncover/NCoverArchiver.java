@@ -213,7 +213,9 @@ public class NCoverArchiver extends Recorder {
                 reports.add(report);
                 listener.getLogger().println("Report: '"+report+"'");
                 String tabNo = "tab" + (i+1);
-                String tabItem = "<li id=\""+tabNo+"\" class=\"unselected\" onclick=\"updateBody('"+tabNo+"');\" value=\""+report+"\">"+report+"</li>";
+                // Make the report name the filename without the extesion.
+                String reportName = report.substring(0, report.lastIndexOf("."));
+                String tabItem = "<li id=\""+tabNo+"\" class=\"unselected\" onclick=\"updateBody('"+tabNo+"');\" value=\""+report+"\">"+reportName+"</li>";
                 headerLines.add(tabItem);
             }
         }
