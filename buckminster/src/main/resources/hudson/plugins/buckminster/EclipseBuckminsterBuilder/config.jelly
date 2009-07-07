@@ -4,7 +4,7 @@
 
     See global.jelly for a general discussion about jelly script.
   -->
-  <!--f:entry title="Eclipse Home" help="${rootURL}/plugin/buckminster-builder/help-projectEclipseHome.html"-->
+  <!--f:entry title="Eclipse Home" help="${rootURL}/plugin/buckminster/help-projectEclipseHome.html"-->
     <!--
       Creates an text field that shows the value of the "eclipseHome" property.
       When submitted, it will be passed to the corresponding constructor parameter.
@@ -28,11 +28,18 @@
     	<f:option value="debug" selected="${instance.isSelected('debug')}">Debug</f:option>      
     </select>
   </f:entry>
-  <f:entry title="${%Commands}" help="${rootURL}/plugin/buckminster-builder/help-projectCommands.html">
+  <f:entry title="${%Commands}" help="${rootURL}/plugin/buckminster/help-projectCommands.html">
     <!--
       Creates an text field that shows the value of the "commands" property.
       When submitted, it will be passed to the corresponding constructor parameter.
     -->
     <f:textarea name="eclipse.commands" value="${instance.getCommands()}" />
    </f:entry>
+   <f:section title="Advanced Options">
+    <f:advanced>
+ 		 <f:entry title="${%JVM Arguments}" help="${rootURL}/plugin/buckminster/help-jobVMArgs.html">
+    		<f:textarea name="eclipse.params" value="${instance.getParams()}" />
+   		 </f:entry>
+   </f:advanced>
+</f:section>
 </j:jelly>

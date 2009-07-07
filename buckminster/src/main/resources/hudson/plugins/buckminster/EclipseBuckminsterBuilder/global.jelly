@@ -11,11 +11,11 @@
                 <f:textbox name="eclipse.version" value="${inst.getVersion()}" checkUrl="'builder/EclipseBuckminsterBuilder/checkEclipseVersion?value='+escape(this.value)" />
               </f:entry>
 
-                <f:entry title="${%eclipse.home}" description="${%path.to.eclipse.description}" help="${rootURL}/plugin/buckminster-builder/help-globalEclipseHome.html">
+                <f:entry title="${%eclipse.home}" description="${%path.to.eclipse.description}" help="${rootURL}/plugin/buckminster/help-globalEclipseHome.html">
                   <f:textbox name="eclipse.home" value="${inst.getHome()}" checkUrl="'builder/EclipseBuckminsterBuilder/checkEclipseHome?value='+escape(this.value)" />
                 </f:entry>
          
-                 <f:entry title="${%additional.params}" description="${%additional.params.description}" help="${rootURL}/plugin/buckminster-builder/help-globalParams.html">
+                 <f:entry title="${%additional.params}" description="${%additional.params.description}" help="${rootURL}/plugin/buckminster/help-globalParams.html">
                   <f:textarea name="eclipse.params" value="${inst.getParams()}" />
                 </f:entry>
               <f:entry title="">

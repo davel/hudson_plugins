@@ -20,7 +20,12 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
@@ -49,13 +54,14 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class EclipseBuckminsterBuilder extends Builder {
 
-	private final String installationName, commands, logLevel;
+	private final String installationName, commands, logLevel, params;
 
 	@DataBoundConstructor
-	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel) {
+	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel, String params) {
 		this.installationName = installationName;
 		this.commands = commands;
 		this.logLevel = logLevel;
+		this.params = params;
 	}
 
 	/**
@@ -67,6 +73,10 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 	public String getCommands() {
 		return commands;
+	}
+	
+	public String getParams() {
+		return params;
 	}
 
 	public String getLogLevel(){
@@ -94,8 +104,6 @@ public class EclipseBuckminsterBuilder extends Builder {
 	public boolean perform(Build build, Launcher launcher,
 			BuildListener listener) {
 		//TODO: make this behave in master/slave scenario
-		listener.getLogger().println(getEclipseHome());
-		listener.getLogger().println("Commands: " + getCommands());
 		try {
 			List<String> buildCommands = buildCommands(build,listener);
 //			launcher.launch(buildCommands.toArray(new String[buildCommands.size()]), null, null, out, workDir)
@@ -114,6 +122,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 			
 			return process.waitFor() == 0;
 		} catch (Exception e) {
+			e.printStackTrace();
 			listener.error(e.getLocalizedMessage());
 			return false;
 		}
@@ -152,6 +161,19 @@ public class EclipseBuckminsterBuilder extends Builder {
 			commandList.add("-Xmx512m");
 			commandList.add("-XX:PermSize=128m");
 		}
+		//job vm setting (properties)
+		String jobParams = getParams();
+		if(jobParams!=null){
+			String[] additionalJobParams = jobParams.split("[\n\r]+");
+			for (int i = 0; i < additionalJobParams.length; i++) {
+				if(additionalJobParams[i].trim().length()>0){
+					String parameter = expandProperties(additionalJobParams[i],build.getEnvironment(listener));
+					commandList.add(parameter);
+				}
+			}
+		}
+
+		
 		commandList.add("-jar");
 		commandList.add(findEquinoxLauncher());
 
@@ -184,7 +206,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 			for (int i = 0; i < commands.length; i++) {
 				if (!commands[i].startsWith("perform"))
 					// the command is not perform -> nothing to modify
-					writer.println(commands[i]);
+					writer.println(expandProperties(commands[i],build.getEnvironment(listener)));
 				else {
 					// perform will usually produce build artifacts
 					// set the buckminster.output.root to the job's workspace
@@ -199,8 +221,28 @@ public class EclipseBuckminsterBuilder extends Builder {
 			if (writer != null)
 				writer.close();
 		}
-
+		listener.getLogger().println("Commandline: ");
+		for (Iterator iterator = commandList.iterator(); iterator.hasNext();) {
+			String string = (String) iterator.next();
+			listener.getLogger().print(string);
+			listener.getLogger().print(" ");
+			
+		}
 		return commandList;
+	}
+
+	private String expandProperties(String string, Map<String, String> properties) {
+		Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");
+		Matcher matcher = pattern.matcher(string);
+		while(matcher.find()){
+			if(matcher.group(1)!=null){
+				if(properties.containsKey(matcher.group(1))){
+					string = string.replace(matcher.group(0), properties.get(matcher.group(1)));
+				}
+			}
+		}
+		
+		return string;
 	}
 
 	/**
