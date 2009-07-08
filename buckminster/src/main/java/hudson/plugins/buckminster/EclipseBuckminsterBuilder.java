@@ -204,15 +204,19 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 			String[] commands = getCommands().split("[\n\r]+");
 			for (int i = 0; i < commands.length; i++) {
-				if (!commands[i].startsWith("perform"))
+				if (!commands[i].startsWith("perform") || commands[i].startsWith("perform -D buckminster.output.root="))
 					// the command is not perform -> nothing to modify
+					//or
+					//the command is a perform, but with explicit output root
 					writer.println(expandProperties(commands[i],build.getEnvironment(listener)));
 				else {
 					// perform will usually produce build artifacts
 					// set the buckminster.output.root to the job's workspace
 					writer.print("perform -D buckminster.output.root=\""
 							+ build.getProject().getWorkspace().toURI().getPath()+"/buckminster.output\"");
-					writer.println(commands[i].replaceFirst("perform", ""));
+					String commandAfterPerform = commands[i].replaceFirst("perform", "");
+					commandAfterPerform = expandProperties(commandAfterPerform, build.getEnvironment(listener));
+					writer.println(commandAfterPerform);
 					// TODO: let the user set more properties
 
 				}
