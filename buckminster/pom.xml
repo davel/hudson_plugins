@@ -10,7 +10,7 @@
   <artifactId>buckminster</artifactId>
   <packaging>hpi</packaging>
   <name>Buckminster</name>
-  <version>0.7.1</version>
+  <version>0.7.2-SNAPSHOT</version>
 
   <description>Integrates Eclipse Buckminster as a builder in Hudson</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Buckminster+PlugIn</url>
