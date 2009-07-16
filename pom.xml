@@ -110,7 +110,7 @@
             <plugin>
                 <groupId>org.jvnet.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <version>1.39</version>
+                <version>1.40</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -205,7 +205,7 @@
         <module>jwsdp-sqe</module>
         <module>locks-and-latches</module>
         <module>maven1-snapshot-plugin</module>
-        <module>m2release</module>
+        <!--module>m2release</module> build is failing -->
         <module>mercurial</module>
         <module>msbuild</module>
         <module>nant</module>
