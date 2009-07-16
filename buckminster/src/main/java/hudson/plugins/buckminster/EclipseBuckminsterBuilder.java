@@ -2,6 +2,7 @@ package hudson.plugins.buckminster;
 
 import hudson.CopyOnWrite;
 import hudson.Launcher;
+import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
@@ -20,6 +21,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +154,8 @@ public class EclipseBuckminsterBuilder extends Builder {
 		commandList.add("java");
 		String params = getInstallation().getParams();
 		String[] additionalParams = params.split("[\n\r]+");
+		Map properties = new HashMap(build.getEnvironment(listener));
+		properties.putAll(build.getBuildVariables());
 		for (int i = 0; i < additionalParams.length; i++) {
 			if(additionalParams[i].trim().length()>0)
 				commandList.add(additionalParams[i]);
@@ -167,7 +171,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 			String[] additionalJobParams = jobParams.split("[\n\r]+");
 			for (int i = 0; i < additionalJobParams.length; i++) {
 				if(additionalJobParams[i].trim().length()>0){
-					String parameter = expandProperties(additionalJobParams[i],build.getEnvironment(listener));
+					String parameter = expandProperties(additionalJobParams[i],properties);
 					commandList.add(parameter);
 				}
 			}
@@ -208,14 +212,14 @@ public class EclipseBuckminsterBuilder extends Builder {
 					// the command is not perform -> nothing to modify
 					//or
 					//the command is a perform, but with explicit output root
-					writer.println(expandProperties(commands[i],build.getEnvironment(listener)));
+					writer.println(expandProperties(commands[i],properties));
 				else {
 					// perform will usually produce build artifacts
 					// set the buckminster.output.root to the job's workspace
 					writer.print("perform -D buckminster.output.root=\""
 							+ build.getProject().getWorkspace().toURI().getPath()+"/buckminster.output\"");
 					String commandAfterPerform = commands[i].replaceFirst("perform", "");
-					commandAfterPerform = expandProperties(commandAfterPerform, build.getEnvironment(listener));
+					commandAfterPerform = expandProperties(commandAfterPerform, properties);
 					writer.println(commandAfterPerform);
 					// TODO: let the user set more properties
 
@@ -375,7 +379,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-			return FreeStyleProject.class.isAssignableFrom(jobType);
+			return FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType);
 		}
 	}
 }
