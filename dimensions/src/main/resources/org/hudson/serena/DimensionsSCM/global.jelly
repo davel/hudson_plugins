@@ -1,0 +1,34 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:section title="Serena Dimensions 10">
+        <f:entry title="Dimensions Installation" description="List of accesible Serena Dimensions server">
+            <f:repeatable name="installations" var="instance" items="${descriptor.installations}" add="Add">
+                <table width="100%">
+                    <f:entry title="Name" field="name">
+                        <f:textbox />
+                    </f:entry>
+                    <f:entry title="Server" field="server">
+                        <f:textbox />
+                    </f:entry>
+                    <f:entry title="DB Name" field="dbName">
+                        <f:textbox />
+                    </f:entry>
+                    <f:entry title="DB Connection" field="dbConnection">
+                        <f:textbox />
+                    </f:entry>
+                    <f:entry title="User ID" field="user">
+                        <f:textbox />
+                    </f:entry>
+                    <f:entry title="Password" field="password">
+                        <f:password />
+                    </f:entry>
+                    <f:validateButton title="Test Connection" progress="Testing..." method="testConnection" with="server,dbName,dbConnection,user,password" />
+                    <f:entry title="">
+                        <div align="right">
+                            <f:repeatableDeleteButton value="Delete Connection Details" />
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
+        </f:entry>
+    </f:section>
+</j:jelly>

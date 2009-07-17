@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:if test="${!empty(descriptor.installations)}">
+        <f:entry title="Dimensions Server">
+            <select class="setting-input" name="dimensions.server">
+                <j:forEach var="inst" items="${descriptor.installations}">
+                    <f:option value="${inst.name}">${inst.name}</f:option>
+                </j:forEach>
+            </select>
+        </f:entry>
+    </j:if>
+    <f:entry title="Product">
+        <f:textbox name="dimensions.product" />
+    </f:entry>
+    <f:entry title="Project">
+        <f:textbox name="dimensions.project" />
+    </f:entry>
+    <f:entry title="Folder (optional)">
+        <f:textbox name="dimensions.subfolder" />
+    </f:entry>
+    <f:entry title="${%Use update}">
+        <f:checkbox default="true" name="dimensions.canUseUpdate"/>
+    </f:entry>
+</j:jelly>

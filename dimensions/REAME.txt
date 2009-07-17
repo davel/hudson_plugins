@@ -1,0 +1,19 @@
+THIS PLUGIN IS A PRELIMINARY VERSION TO ADD SERENA DIMENSIONS 10 SUPPORT TO HUDSON
+==================================================================================
+
+This plug-in depends on several classes from the Serena Dimensions 10 Java client APIs both during compilation and runtime. These APIs have not been open sourced (to the best of my knowledge) and hence cannot be obtained from here. The following JARs are needed:
+
+* dmclient.jar
+* darius.jar
+* dmfile.jar
+* dmnet.jar
+* dmpmcli.jar
+
+The easiest way to obtain these JARs is from an installation of the Dimensions client. Usually (in Windows) they're available at c:\Program Files\Serena\Dimensions 10.1\CM\AdminConsole\lib.
+
+The first of those files (dmclient.jar) is needed to compile the plugin. Place it at the serena folder (sibling to the sources). The rest are needed at runtime. Place them at the WEB-INF/lib directory of your Hudson installation.
+
+KNOWN ISSUES
+============
+* There's a problem deleting a Serena configuration once created
+* The Configure page of a Job does not show the Dimensions configuration although it's correctly saved
