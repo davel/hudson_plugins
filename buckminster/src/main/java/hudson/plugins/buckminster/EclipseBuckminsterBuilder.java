@@ -8,26 +8,18 @@ import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.plugins.buckminster.command.CommandLineBuilder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
@@ -107,7 +99,15 @@ public class EclipseBuckminsterBuilder extends Builder {
 			BuildListener listener) {
 		//TODO: make this behave in master/slave scenario
 		try {
-			List<String> buildCommands = buildCommands(build,listener);
+			CommandLineBuilder cmdBuilder = new CommandLineBuilder(getInstallation(),getCommands(),getLogLevel(),getParams());
+			List<String> buildCommands = cmdBuilder.buildCommands(build,listener);
+			listener.getLogger().println("Commandline: ");
+			for (Iterator iterator = buildCommands.iterator(); iterator.hasNext();) {
+				String string = (String) iterator.next();
+				listener.getLogger().print(string);
+				listener.getLogger().print(" ");
+				
+			}
 //			launcher.launch(buildCommands.toArray(new String[buildCommands.size()]), null, null, out, workDir)
 			ProcessBuilder builder = new ProcessBuilder(buildCommands);
 			
@@ -130,154 +130,6 @@ public class EclipseBuckminsterBuilder extends Builder {
 		}
 
 	}
-
-	/**
-	 * fills an arraylist with all program arguments for buckminster
-	 * 
-	 * @param build
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	@SuppressWarnings("unchecked")
-	private List<String> buildCommands(Build build, BuildListener listener)
-			throws MalformedURLException, IOException, InterruptedException{
-
-		// the file listing all the commands since buckminster doesn't accept
-		// several commands as programm arguments
-		String commandsPath = build.getRootDir().getAbsolutePath()
-				+ "/commands.txt";
-		List<String> commandList = new ArrayList<String>();
-
-		// VM Options
-		commandList.add("java");
-		String params = getInstallation().getParams();
-		String[] additionalParams = params.split("[\n\r]+");
-		Map properties = new HashMap(build.getEnvironment(listener));
-		properties.putAll(build.getBuildVariables());
-		for (int i = 0; i < additionalParams.length; i++) {
-			if(additionalParams[i].trim().length()>0)
-				commandList.add(additionalParams[i]);
-		}
-		if(additionalParams.length==0)
-		{
-			commandList.add("-Xmx512m");
-			commandList.add("-XX:PermSize=128m");
-		}
-		//job vm setting (properties)
-		String jobParams = getParams();
-		if(jobParams!=null){
-			String[] additionalJobParams = jobParams.split("[\n\r]+");
-			for (int i = 0; i < additionalJobParams.length; i++) {
-				if(additionalJobParams[i].trim().length()>0){
-					String parameter = expandProperties(additionalJobParams[i],properties);
-					commandList.add(parameter);
-				}
-			}
-		}
-
-		
-		commandList.add("-jar");
-		commandList.add(findEquinoxLauncher());
-
-		// Specify Eclipse Product
-		commandList.add("-application");
-		commandList.add("org.eclipse.buckminster.cmdline.headless");
-
-		// set the workspace to the hudson workspace
-		commandList.add("-data");
-		String workspace = null;
-	
-		workspace = build.getProject().getWorkspace().toURI().getPath();
-
-		commandList.add(workspace);
-
-
-		 commandList.add("--loglevel");
-		 commandList.add(getLogLevel());
-
-		// Tell Buckminster about the command file
-		commandList.add("-S");
-		commandList.add(commandsPath);
-
-		//TODO: make this behave in master/slave scenario
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(commandsPath));
-
-			String[] commands = getCommands().split("[\n\r]+");
-			for (int i = 0; i < commands.length; i++) {
-				if (!commands[i].startsWith("perform") || commands[i].startsWith("perform -D buckminster.output.root="))
-					// the command is not perform -> nothing to modify
-					//or
-					//the command is a perform, but with explicit output root
-					writer.println(expandProperties(commands[i],properties));
-				else {
-					// perform will usually produce build artifacts
-					// set the buckminster.output.root to the job's workspace
-					writer.print("perform -D buckminster.output.root=\""
-							+ build.getProject().getWorkspace().toURI().getPath()+"/buckminster.output\"");
-					String commandAfterPerform = commands[i].replaceFirst("perform", "");
-					commandAfterPerform = expandProperties(commandAfterPerform, properties);
-					writer.println(commandAfterPerform);
-					// TODO: let the user set more properties
-
-				}
-			}
-		} finally {
-			if (writer != null)
-				writer.close();
-		}
-		listener.getLogger().println("Commandline: ");
-		for (Iterator iterator = commandList.iterator(); iterator.hasNext();) {
-			String string = (String) iterator.next();
-			listener.getLogger().print(string);
-			listener.getLogger().print(" ");
-			
-		}
-		return commandList;
-	}
-
-	private String expandProperties(String string, Map<String, String> properties) {
-		Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");
-		Matcher matcher = pattern.matcher(string);
-		while(matcher.find()){
-			if(matcher.group(1)!=null){
-				if(properties.containsKey(matcher.group(1))){
-					string = string.replace(matcher.group(0), properties.get(matcher.group(1)));
-				}
-			}
-		}
-		
-		return string;
-	}
-
-	/**
-	 * searches for the eclipse starter jar
-	 * <p>
-	 * The content of the folder $ECLIPSE_HOME/plugins is listed and the first
-	 * file that starts with <code>org.eclipse.equinox.launcher_</code> is
-	 * returned.
-	 * 
-	 * @return the guess for the startup jar, or <code>null</code> if none was
-	 *         found
-	 * @see EclipseBuckminsterBuilder#getEclipseHome()
-	 */
-	private String findEquinoxLauncher() {
-		//TODO: make this behave in master/slave scenario
-		File pluginDir = new File(getEclipseHome() + "/plugins");
-		File[] plugins = pluginDir.listFiles();
-		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i].getName()
-					.startsWith("org.eclipse.equinox.launcher_")) {
-				return "plugins/" + plugins[i].getName();
-
-			}
-		}
-		return null;
-	}
-
 
 	public Descriptor<Builder> getDescriptor() {
 		// see Descriptor javadoc for more about what a descriptor is.
