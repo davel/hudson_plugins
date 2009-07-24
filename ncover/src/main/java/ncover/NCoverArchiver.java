@@ -181,13 +181,6 @@ public class NCoverArchiver extends Recorder {
         FilePath ncover = build.getParent().getWorkspace().child(coverageDir);
         FilePath target = new FilePath(keepAll ? getDir(build) : getNCoverDir(build.getProject()));
         
-        // Debug stuff
-        URL dpath = this.getClass().getResource("/ncover/NCoverArchiver/header.html");
-        listener.getLogger().println(System.getProperty( "java.class.path" ));
-        listener.getLogger().println("Debug: " + dpath);
-        String hudsonUrl = Hudson.getInstance().getRootUrl();
-        listener.getLogger().println("Debug: " + hudsonUrl);
-        
         // Grab the contents of the header and footer as arrays
         ArrayList<String> headerLines;
         ArrayList<String> footerLines;
@@ -208,8 +201,8 @@ public class NCoverArchiver extends Recorder {
         ArrayList<String> reports = new ArrayList<String>();
         for (int i=0; i<csvReports.length; i++) {
             String report = csvReports[i];
-            if (!report.isEmpty()) {
-                report = report.trim();
+            report = report.trim();
+            if (!report.equals("")) {
                 reports.add(report);
                 listener.getLogger().println("Report: '"+report+"'");
                 String tabNo = "tab" + (i+1);
@@ -260,7 +253,6 @@ public class NCoverArchiver extends Recorder {
         try {
             writeFile(headerLines, new File(target.toString(), "coverage-wrapper.html"));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
