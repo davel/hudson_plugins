@@ -213,6 +213,7 @@ public class NCoverArchiver extends Recorder {
             }
         }
         // Add the JS to change the link as appopriate.
+        String hudsonUrl = Hudson.getInstance().getRootUrl();
         headerLines.add("<script type=\"text/javascript\">document.getElementById(\"hudson_link\").href=\"" + hudsonUrl +"\";</script>");
        
 
