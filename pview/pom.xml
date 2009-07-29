@@ -36,11 +36,7 @@
     </dependency>
   </dependencies>
   
-  <build>
-    <!--
-      Since new versions need to overwrite old versions, it's better
-      not to have version number in the .hpi file name.
-    -->
+<!--  <build>
     <finalName>${project.artifactId}</finalName>
     <defaultGoal>package</defaultGoal>
     <plugins>
@@ -59,6 +55,7 @@
       </plugin>
     </plugins>
   </build>
+  -->
 
    <scm>
        <connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
