@@ -1,0 +1,36 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%back}">
+		<l:task icon="images/24x24/up.gif" href="${rootURL}/pview" title="${%Personal View}" />
+	</f:entry>
+	<f:entry title="${%Regexp which Jobs to show}">
+		<f:textbox name="pview.pViewExpression" value="${instance.pViewExpression}"/>
+	</f:entry>
+	<f:entry title="${%Character where to cut projectNames into parts for tree views}">
+		<f:textbox name="pview.treeSplitChar" value="${instance.treeSplitChar}"/>
+	</f:entry>
+	<f:entry title="${%show build no queue}">
+		<f:checkbox name="pview.pViewBuildNoQueue" checked="${instance.pViewBuildNoQueue}"/>
+	</f:entry>
+	<f:entry title="${%show build no exeutor}">
+		<f:checkbox name="pview.pViewBuildNoExecutor" checked="${instance.pViewBuildNoExecutor}"/>
+	</f:entry>
+	<f:entry title="${%columns}">
+		Status <f:checkbox name="pview.pcStatus" checked="${instance.pcStatus}"/>
+		Weather <f:checkbox name="pview.pcWeather" checked="${instance.pcWeather}"/>
+		Job <f:checkbox name="pview.pcJob" checked="${instance.pcJob}"/>
+		LastSuccess <f:checkbox name="pview.pcLastSuccess" checked="${instance.pcLastSuccess}"/>
+    	LastFailure <f:checkbox name="pview.pcLastFailure" checked="${instance.pcLastFailure}"/>
+    	LastStable <f:checkbox name="pview.pcLastStable" checked="${instance.pcLastStable}"/>
+    	LastDuration <f:checkbox name="pview.pcLastDuration" checked="${instance.pcLastDuration}"/>
+    	ConsoleView <f:checkbox name="pview.pcConsoleView" checked="${instance.pcConsoleView}"/>
+    	BuildButton <f:checkbox name="pview.pcBuildButton" checked="${instance.pcBuildButton}"/>
+	</f:entry>
+	<f:entry title="${%position of step-in-tree}">
+		<select name="treePosition">
+			<f:option value="0" selected="${instance.treePosition==0}">North East</f:option>
+			<f:option value="1" selected="${instance.treePosition==1}">South East</f:option>
+			<f:option value="2" selected="${instance.treePosition==2}">North West</f:option>
+			<f:option value="3" selected="${instance.treePosition==3}">South West</f:option>
+		</select>
+	</f:entry>
+</j:jelly>

@@ -1,0 +1,15 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:pane title="tree" id="tview">
+		<j:if test="${it.hasUp}" >
+		<tr><th align="left" >
+    		<a href="${rootURL}/pview/${it.treeParent}" > <img src="${imagesURL}/24x24/up.gif" > </img>UP </a>   
+    		<a href="${rootURL}/pview/siView/${it.projectMatcher}/" > <img src="${imagesURL}/24x24/next.gif" > </img>${it.projectMatcher}</a>
+    		</th></tr>
+    	</j:if>
+    	<j:forEach var="dirset" items="${it.subDirs}" >
+    	<tr><th class="pane" align="left"  >
+    		<a href="${rootURL}/pview/siView/${dirset.link}/" ><img src="${imagesURL}/24x24/folder.gif" ></img>${dirset.link} ( ${dirset.counter} Project(s) )</a>
+    		</th></tr>
+    	</j:forEach>
+    </l:pane>
+</j:jelly>

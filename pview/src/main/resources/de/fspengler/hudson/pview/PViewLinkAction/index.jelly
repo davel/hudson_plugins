@@ -1,0 +1,50 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	
+    
+	<l:layout title="Personal View" >
+	<l:header />
+  	<l:side-panel>
+  	    <l:tasks>
+      <l:task icon="images/24x24/up.gif" href="${rootURL}/" title="${%Back to Dashboard}" />
+      <j:if test="${it.user}">
+      	<l:task icon="images/24x24/setting.gif" href="${rootURL}/${it.userLogin}/configure" title="${%Configure the View}" permission="${app.ADMINISTER}"/>
+	  </j:if>
+  	</l:tasks>
+  	<j:if test="${it.user}">
+  		<j:if test="${it.isTreeNW}">
+    		<st:include page="tview.jelly"/>
+    	</j:if>
+		<j:if test="${it.showQueue}">
+	    	<t:queue items="${app.queue.items}" />
+    	</j:if>
+    	<j:if test="${it.showExecutor}">
+    		<t:executors />
+    	</j:if>
+    	<j:if test="${it.isTreeSW}">
+    		<st:include page="tview.jelly"/>
+    	</j:if>
+    </j:if>
+    </l:side-panel>
+    <l:main-panel>
+    
+    <j:if test="${!it.user}">
+	    	<h1>Only useful for when you are logged in</h1>
+    </j:if>
+    	<j:if test="${it.isTreeNE}">
+    		<st:include page="tview.jelly"/>
+    		<br></br>
+    	</j:if>
+        <!-- view tab bar -->
+        <l:tabBar>
+          <l:tab name="Filtered ListView" active="${it.isList}" href="${rootURL}/pview" />
+          <l:tab name="Step in View" active="${it.isTree}" href="${rootURL}/pview/rootSiView" />
+        </l:tabBar>
+     	<t:projectView jobs="${it.jobs}" columnExtensions="${it.columns}" showViewTabs="${true}" />
+     	<br></br>
+    	<j:if test="${it.isTreeSE}">
+    		<st:include page="tview.jelly"/>
+    	</j:if>
+    </l:main-panel>
+	</l:layout>
+  	
+</j:jelly>
