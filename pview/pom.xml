@@ -4,7 +4,7 @@
   <groupId>de.fspengler.hudson.pview</groupId>
   <artifactId>hudson-pview-plugin</artifactId>
   <packaging>hpi</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Hudson Personal View</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Personal+View</url>  
  <description>This plugin provides every user the possibility to create its own view</description>        
@@ -62,5 +62,18 @@
            <developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</developerConnection>
            <url>https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</url>
       </scm>
-                   
+    <distributionManagement>
+        <repository>
+              <uniqueVersion>false</uniqueVersion>
+                    <id>java.net-m2-repository</id>
+                          <!--url>svn:https://svn.dev.java.net/svn/maven2-repository/trunk/www/repository/</url-->
+                                <url>java-net:/maven2-repository/trunk/repository/</url>
+                                    </repository>
+                                        <snapshotRepository>
+                                              <!-- prevent accidental deployment of SNAPSHOTS to repository -->
+                                                    <id>local</id>
+                                                          <url>file:.</url>
+                                                              </snapshotRepository>
+                                                                </distributionManagement>
+                                                                                   
 </project>
