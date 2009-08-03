@@ -20,6 +20,14 @@
     </select>
   </f:entry>
   
+    <f:entry title="${%Target Platform}">
+    <select class="setting-input" name="eclipse.targetPlatformName">
+      <j:forEach var="tp" items="${descriptor.targetPlatforms}">
+        <f:option selected="${tp.name==instance.getTargetPlatform().name}">${tp.name}</f:option>
+      </j:forEach>
+    </select>
+  </f:entry>
+  
   <f:entry title="${%Buckminster Log Level}">
     <select class="setting-input" name="eclipse.logLevel">
     	<f:option value="info" selected="${instance.isSelected('info')}">Info (Default)</f:option>

@@ -6,16 +6,24 @@ import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.Hudson;
 import hudson.plugins.buckminster.command.CommandLineBuilder;
+import hudson.plugins.buckminster.targetPlatform.NoTargetPlatformReference;
+import hudson.plugins.buckminster.targetPlatform.TargetPlatformPublisher;
+import hudson.plugins.buckminster.targetPlatform.TargetPlatformReference;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.tasks.Publisher;
+import hudson.util.DescribableList;
 import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,14 +54,15 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class EclipseBuckminsterBuilder extends Builder {
 
-	private final String installationName, commands, logLevel, params;
+	private final String installationName, commands, logLevel, params, targetPlatformName;
 
 	@DataBoundConstructor
-	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel, String params) {
+	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel, String params, String targetPlatformName) {
 		this.installationName = installationName;
 		this.commands = commands;
 		this.logLevel = logLevel;
 		this.params = params;
+		this.targetPlatformName = targetPlatformName;
 	}
 
 	/**
@@ -91,13 +100,29 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 		return null;
 	}
+	
+	public TargetPlatformReference getTargetPlatform() {
+		for (TargetPlatformReference reference : DESCRIPTOR.getTargetPlatforms()) {
+			if (targetPlatformName != null
+					&& reference.getName().equals(targetPlatformName)) {
+				return reference;
+			}
+		}
+
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public boolean perform(Build build, Launcher launcher,
 			BuildListener listener) {
 		//TODO: make this behave in master/slave scenario
 		try {
-			CommandLineBuilder cmdBuilder = new CommandLineBuilder(getInstallation(),getCommands(),getLogLevel(),getParams());
+			String modifiedCommands = getCommands();
+			TargetPlatformReference targetPlatform = getTargetPlatform();
+			if(targetPlatform!=null && targetPlatform.getPath()!=null){
+				modifiedCommands = "setpref targetPlatformPath=\""+targetPlatform.getPath()+"\"" +"\n" + modifiedCommands;
+			}
+			CommandLineBuilder cmdBuilder = new CommandLineBuilder(getInstallation(),modifiedCommands,getLogLevel(),getParams());
 			List<String> buildCommands = cmdBuilder.buildCommands(build,listener);
 			listener.getLogger().println("Commandline: ");
 			for (Iterator iterator = buildCommands.iterator(); iterator.hasNext();) {
@@ -156,6 +181,36 @@ public class EclipseBuckminsterBuilder extends Builder {
 		DescriptorImpl() {
 			super(EclipseBuckminsterBuilder.class);
 			load();
+		}
+
+		/**
+		 * Asks hudson for all available {@link AbstractProject}s and iterates over their {@link PublisherList}.
+		 * <p>
+		 * If a {@link TargetPlatformPublisher} is found and it offers a {@link TargetPlatformReference}, that reference is added to the result list.
+		 * 
+		 * @return a list of all {@link TargetPlatformReference}s published by a {@link TargetPlatformPublisher}
+		 */
+		public List<TargetPlatformReference> getTargetPlatforms() {	
+			
+			List<AbstractProject> projects = Hudson.getInstance().getAllItems(AbstractProject.class);
+			List<TargetPlatformReference> references = new ArrayList<TargetPlatformReference>();
+			references.add(new NoTargetPlatformReference());
+			for (AbstractProject project : projects) {
+				DescribableList<Publisher,Descriptor<Publisher>> publishersList = project.getPublishersList();
+				for (Describable describable : publishersList) {
+					if (describable instanceof TargetPlatformPublisher) {
+						TargetPlatformPublisher publisher = (TargetPlatformPublisher) describable;
+						TargetPlatformReference reference = publisher.getTargetPlatformReference(project);
+						if(reference!=null)
+						{
+							references.add(reference);	
+						}
+					}
+				}
+
+			}
+			return references;
+			
 		}
 
 		public EclipseInstallation[] getInstallations() {
