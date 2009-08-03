@@ -22,8 +22,8 @@ import hudson.tasks.Recorder;
 
 public class GamePublisher extends Recorder {
 
-	public BuildStepDescriptor<Publisher> getDescriptor() {
-        return PluginImpl.GAME_PUBLISHER_DESCRIPTOR;
+	public GameDescriptor getDescriptor() {
+        return (GameDescriptor)super.getDescriptor();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GamePublisher extends Recorder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
             BuildListener listener) throws InterruptedException, IOException {
 
-        RuleBook ruleBook = PluginImpl.GAME_PUBLISHER_DESCRIPTOR.getRuleBook();
+        RuleBook ruleBook = getDescriptor().getRuleBook();
 
         ScoreCard sc = new ScoreCard();
         sc.record(build, ruleBook);

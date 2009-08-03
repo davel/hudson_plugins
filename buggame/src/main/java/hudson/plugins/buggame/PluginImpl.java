@@ -12,7 +12,6 @@ import hudson.tasks.Publisher;
 @Extension
 public class PluginImpl extends Plugin {
 
-    public static final GameDescriptor GAME_PUBLISHER_DESCRIPTOR = new GameDescriptor();
     public static final UserScorePropertyDescriptor USER_SCORE_PROPERTY_DESCRIPTOR = new UserScorePropertyDescriptor();
 
     /**
