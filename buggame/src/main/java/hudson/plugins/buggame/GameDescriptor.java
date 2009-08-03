@@ -60,7 +60,7 @@ public class GameDescriptor extends BuildStepDescriptor<Publisher> {
 
     @Override
     public String getDisplayName() {
-        return "Continuous Integration Game";
+        return "The Bug Game";
     }
 
     @Override
