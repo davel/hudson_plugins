@@ -1,11 +1,13 @@
 package hudson.plugins.buggame;
 
+import hudson.Extension;
 import hudson.Plugin;
 import hudson.model.Hudson;
 
 /**
  * Entry point of the CI Game plugin.
  */
+@Extension
 public class PluginImpl extends Plugin {
 
     public static final GameDescriptor GAME_PUBLISHER_DESCRIPTOR = new GameDescriptor();
