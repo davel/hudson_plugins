@@ -15,6 +15,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.matrix.MatrixConfiguration;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -145,7 +146,16 @@ public class TargetPlatformPublisher extends ArtifactArchiver implements
 					if (builder.getTargetPlatform() != null
 							&& reference.getFullName().equals(
 									builder.getTargetPlatform().getFullName())) {
-						graph.addDependency(owner, project);
+						if (project instanceof MatrixConfiguration) {
+							//in case of a matrix configuration, the MatrixProject is the actual dependency, not the individual configurations
+							MatrixConfiguration matrixConfiguration = (MatrixConfiguration) project;
+							MatrixProject matrix = (MatrixProject) project.getParent();
+							graph.addDependency(owner, matrix);
+						}
+						else{
+							graph.addDependency(owner, project);	
+						}
+						
 					}
 
 				}
