@@ -3,6 +3,7 @@ package hudson.plugins.googlecode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
@@ -60,12 +61,8 @@ public final class GoogleCodeProjectProperty extends JobProperty<AbstractProject
         return projectName;
     }
 
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return PluginImpl.PROJECT_PROPERTY_DESCRIPTOR;
-    }
-    
-    public static final class DescriptorImpl extends JobPropertyDescriptor implements GoogleCodeProjectProperty.PropertyRetriever{
+    @Extension
+    public static final class DescriptorImpl extends JobPropertyDescriptor {
 
         public DescriptorImpl() {
             super(GoogleCodeProjectProperty.class);
@@ -86,14 +83,6 @@ public final class GoogleCodeProjectProperty extends JobProperty<AbstractProject
         public GoogleCodeProjectProperty newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             return req.bindJSON(GoogleCodeProjectProperty.class, formData);
         }
-
-        public GoogleCodeProjectProperty getProperty(AbstractBuild<?, ?> build) {
-            return build.getProject().getProperty(GoogleCodeProjectProperty.class);
-        }
-
-        public GoogleCodeProjectProperty getProperty(LogEntry entry) {
-            return getProperty(entry.getParent().build);
-        }
     }
 
     /**
@@ -103,5 +92,15 @@ public final class GoogleCodeProjectProperty extends JobProperty<AbstractProject
     public interface PropertyRetriever {
         GoogleCodeProjectProperty getProperty(AbstractBuild<?,?> build);
         GoogleCodeProjectProperty getProperty(LogEntry entry);
+    }
+    
+    public static class PropertyRetrieverImpl implements PropertyRetriever {
+        public GoogleCodeProjectProperty getProperty(AbstractBuild<?, ?> build) {
+            return build.getProject().getProperty(GoogleCodeProjectProperty.class);
+        }
+
+        public GoogleCodeProjectProperty getProperty(LogEntry entry) {
+            return getProperty(entry.getParent().build);
+        }   
     }
 }

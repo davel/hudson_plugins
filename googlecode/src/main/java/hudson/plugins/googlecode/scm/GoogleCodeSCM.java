@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -19,7 +20,6 @@ import hudson.model.Hudson;
 import hudson.model.TaskListener;
 import hudson.plugins.googlecode.GoogleCodeProjectProperty;
 import hudson.plugins.googlecode.GoogleCodeRepositoryBrowser;
-import hudson.plugins.googlecode.PluginImpl;
 import hudson.scm.ChangeLogParser;
 import hudson.scm.RepositoryBrowser;
 import hudson.scm.SCM;
@@ -71,7 +71,7 @@ public class GoogleCodeSCM extends SCM {
                         String path = directory;
                         String[] remoteLocations = new String[] {"http://" + property.getProjectName() + ".googlecode.com/svn/" + path};
                         String[] localLocations = new String[] {"."};
-                        configuredScm = new SubversionSCM(remoteLocations, localLocations, true, new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR),null);
+                        configuredScm = new SubversionSCM(remoteLocations, localLocations, true, new GoogleCodeRepositoryBrowser(new GoogleCodeProjectProperty.PropertyRetrieverImpl()),null);
                     } else {
                         throw new RuntimeException("The project does not have a google code property. Please report this to the plugin author.");
                     }
@@ -130,11 +130,7 @@ public class GoogleCodeSCM extends SCM {
         return getSCM().createChangeLogParser();
     }
 
-    @Override
-    public SCMDescriptor<?> getDescriptor() {
-        return PluginImpl.GOOGLE_CODE_SCM_DESCRIPTOR;
-    }
-    
+    @Extension
     public static class DescriptorImpl extends SCMDescriptor<GoogleCodeSCM> {
 
         public DescriptorImpl() {

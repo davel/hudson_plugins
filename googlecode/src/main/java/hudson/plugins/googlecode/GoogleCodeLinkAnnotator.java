@@ -1,5 +1,6 @@
 package hudson.plugins.googlecode;
 
+import hudson.Extension;
 import hudson.MarkupText;
 import hudson.MarkupText.SubText;
 import hudson.model.AbstractBuild;
@@ -15,10 +16,14 @@ import java.util.regex.Pattern;
  * @author Kohsuke Kawaguchi
  * @author Erik Ramfelt
  */
+@Extension
 public class GoogleCodeLinkAnnotator extends ChangeLogAnnotator {
 
     private GoogleCodeProjectProperty.PropertyRetriever propertyRetriever;
-        
+    
+    public GoogleCodeLinkAnnotator() {
+        this(new GoogleCodeProjectProperty.PropertyRetrieverImpl());
+    }   
     public GoogleCodeLinkAnnotator(GoogleCodeProjectProperty.PropertyRetriever propertyRetriever) {
         this.propertyRetriever = propertyRetriever;
     }

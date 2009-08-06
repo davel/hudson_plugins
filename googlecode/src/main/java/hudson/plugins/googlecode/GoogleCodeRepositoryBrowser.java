@@ -1,5 +1,6 @@
 package hudson.plugins.googlecode;
 
+import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.scm.EditType;
 import hudson.scm.RepositoryBrowser;
@@ -7,10 +8,7 @@ import hudson.scm.SubversionChangeLogSet.LogEntry;
 import hudson.scm.SubversionChangeLogSet.Path;
 import hudson.scm.SubversionRepositoryBrowser;
 
-import net.sf.json.JSONObject;
-
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,8 +25,12 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
     private static final long serialVersionUID = 1L;
 
     private transient GoogleCodeProjectProperty.PropertyRetriever propertyRetriever;
-    
+
     @DataBoundConstructor
+    public GoogleCodeRepositoryBrowser() {
+        this(new GoogleCodeProjectProperty.PropertyRetrieverImpl());
+    }
+    
     public GoogleCodeRepositoryBrowser(GoogleCodeProjectProperty.PropertyRetriever retriever) {
         propertyRetriever = retriever;
     }
@@ -39,7 +41,7 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
      */
     private URL getGoogleCodeWebURL(LogEntry cs) throws MalformedURLException {
         if (propertyRetriever == null) {
-            propertyRetriever = PluginImpl.PROJECT_PROPERTY_DESCRIPTOR;
+            propertyRetriever = new GoogleCodeProjectProperty.PropertyRetrieverImpl();
         }
         GoogleCodeProjectProperty property = propertyRetriever.getProperty(cs);
         if ((property == null) || (property.googlecodeWebsite == null))
@@ -70,10 +72,7 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
         return baseUrl == null ? null : new URL(baseUrl, "source/detail?r=" + changeSet.getRevision());
     }
 
-    public DescriptorImpl getDescriptor() {
-        return PluginImpl.REPOSITORY_BROWSER_DESCRIPTOR;
-    }
-
+    @Extension
     public static final class DescriptorImpl extends Descriptor<RepositoryBrowser<?>> {
         public DescriptorImpl() {
             super(GoogleCodeRepositoryBrowser.class);
@@ -82,11 +81,6 @@ public class GoogleCodeRepositoryBrowser extends SubversionRepositoryBrowser {
         @Override
         public String getDisplayName() {
             return "Google Code";
-        }
-
-        @Override
-        public GoogleCodeRepositoryBrowser newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            return new GoogleCodeRepositoryBrowser(PluginImpl.PROJECT_PROPERTY_DESCRIPTOR);        
         }
     }
 }
