@@ -1,0 +1,8 @@
+<!--
+  This view is used to render the plugin list page.
+
+  Since we don't really have anything dynamic here, let's just use static HTML. 
+-->
+<div>
+	A plugin to be able to easaly use the grails selenium plugin to run selenium tests with no need for selenimum-rc libraries and minimal configuration.
+</div>

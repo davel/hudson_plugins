@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="${%Browser}" field="browser">
+  <f:textbox />
+  </f:entry>
+	<f:entry title="${%BaseDir}" field="baseDir">
+  <f:textbox />
+  </f:entry>
+	<f:entry title="${%GrailsHome}" field="grailsHome">
+  <f:textbox />
+  </f:entry>
+	<f:entry title="${%ProjectName}" field="projectName">
+  <f:textbox />
+  </f:entry>
+</j:jelly>
