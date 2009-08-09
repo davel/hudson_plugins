@@ -156,16 +156,24 @@ public class ReportReader {
 		List methodElements = methodsElement.getChildren("method"); //$NON-NLS-1$
 		for (Object object : methodElements) {
 			IMethodCrapData crapData = parseMethodCrap((Element) object);
+			if (IRRELEVANT_ENTRY == crapData) {
+				continue;
+			}
 			this.methodCrapManager.addMethodCrapData(crapData);
 		}
 		return new ParsedCrap4JData();
 	}
+	
+	private static final MethodCrapData IRRELEVANT_ENTRY = new MethodCrapData(null, 0.0d, 0, 0.0d, 0.0d);
 
 	private IMethodCrapData parseMethodCrap(Element methodElement) {
 		IMethod method = parseMethod(methodElement);
 		NumericalParser parser = new NumericalParser();
-		double crap = parser.parseDouble(readTextualContent(methodElement, "crap")); //$NON-NLS-1$
 		int crapLoad = parser.parseInt(readTextualContent(methodElement, "crapLoad")); //$NON-NLS-1$
+		if (0 == crapLoad) {
+			return IRRELEVANT_ENTRY;
+		}
+		double crap = parser.parseDouble(readTextualContent(methodElement, "crap")); //$NON-NLS-1$
 		double coverage = parser.parseDouble(readTextualContent(methodElement, "coverage")); //$NON-NLS-1$
 		double complexity = parser.parseDouble(readTextualContent(methodElement, "complexity")); //$NON-NLS-1$
 		return new MethodCrapData(method,
@@ -181,7 +189,7 @@ public class ReportReader {
 		return childText.trim();
 	}
 
-	private class MethodCrapData extends GenericCrapData<IMethod> implements IMethodCrapData {
+	private static class MethodCrapData extends GenericCrapData<IMethod> implements IMethodCrapData {
 		public MethodCrapData(IMethod context, double crap, int crapLoad,
 				double coverage, double complexity) {
 			super(context, 0, 1, crap, crapLoad, coverage, complexity);
