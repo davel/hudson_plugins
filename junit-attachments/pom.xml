@@ -8,11 +8,11 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>claim</artifactId>
+  <artifactId>junit-attachments</artifactId>
   <version>1.6-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <name>Claim Plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Claim+Plugin</url>  
+  <name>JUnit Attachments Plugin</name>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/JUnit+Attachments+Plugin</url>  
   <build>
     <finalName>${project.artifactId}</finalName>
 
