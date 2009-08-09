@@ -27,5 +27,11 @@ public class GoogleCodeProjectPropertyTest {
     public void testGetProjectNameWithDash() {
         GoogleCodeProjectProperty property = new GoogleCodeProjectProperty("http://code.google.com/p/py-stones");
         assertEquals("py-stones", property.getProjectName());
+    }
+
+    @Test
+    public void testGetSubversionRootUrl() {
+        GoogleCodeProjectProperty property = new GoogleCodeProjectProperty("http://code.google.com/p/project");
+        assertEquals("http://project.googlecode.com/svn/", property.getSubversionRootUrl());
     }    
 }

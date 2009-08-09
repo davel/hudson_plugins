@@ -1,8 +1,7 @@
 package hudson.plugins.googlecode.scm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 import net.sf.json.JSONObject;
 
@@ -10,20 +9,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Hudson;
-import hudson.model.TaskListener;
 import hudson.plugins.googlecode.GoogleCodeProjectProperty;
 import hudson.plugins.googlecode.GoogleCodeRepositoryBrowser;
-import hudson.scm.ChangeLogParser;
-import hudson.scm.RepositoryBrowser;
-import hudson.scm.SCM;
-import hudson.scm.SCMDescriptor;
 import hudson.scm.SubversionSCM;
 
 /**
@@ -33,13 +21,15 @@ import hudson.scm.SubversionSCM;
  * 
  * @author Erik Ramfelt
  */
-public class GoogleCodeSCM extends SCM {
+public class GoogleCodeSCM extends SubversionSCM {
 
-    private transient SCM configuredScm;
+    private static final long serialVersionUID = 1L;
+
     private String directory;
     
     @DataBoundConstructor
-    public GoogleCodeSCM(String directory) {
+    public GoogleCodeSCM(String directory, List<ModuleLocation> locations) {
+        super(locations, true, new GoogleCodeRepositoryBrowser(new GoogleCodeProjectProperty.PropertyRetrieverImpl()), "");
         this.directory = directory;
     }
 
@@ -55,83 +45,8 @@ public class GoogleCodeSCM extends SCM {
         return directory;
     }
 
-    /**
-     * Get the SCM, create one if there is none.
-     * The SCM is created lazily as the project (that this SCM belongs to)
-     * may not be created when the SCM is created.
-     * @return the SCM object (SubversionSCM)
-     */
-    private SCM getSCM() {
-        if (configuredScm == null) {
-            for (AbstractProject<?, ?> project : Hudson.getInstance().getItems(AbstractProject.class)) {
-                if (this == project.getScm() ) {
-                    GoogleCodeProjectProperty property = project.getProperty(GoogleCodeProjectProperty.class);
-                    if (property != null) {
-
-                        String path = directory;
-                        String[] remoteLocations = new String[] {"http://" + property.getProjectName() + ".googlecode.com/svn/" + path};
-                        String[] localLocations = new String[] {"."};
-                        configuredScm = new SubversionSCM(remoteLocations, localLocations, true, new GoogleCodeRepositoryBrowser(new GoogleCodeProjectProperty.PropertyRetrieverImpl()),null);
-                    } else {
-                        throw new RuntimeException("The project does not have a google code property. Please report this to the plugin author.");
-                    }
-                    break;
-                }
-            }
-            if (configuredScm == null) {
-                throw new RuntimeException("Could not find the project for this SCM object. Please contact plugin author.");
-            }
-        }
-        return configuredScm;        
-    }
-    
-    @Override
-    public void buildEnvVars(AbstractBuild build, Map<String, String> env) {
-        getSCM().buildEnvVars(build, env);
-    }
-    
-    @Override
-    public RepositoryBrowser getBrowser() {
-        return getSCM().getBrowser();
-    }
-
-    @Override
-    public FilePath getModuleRoot(FilePath workspace) {
-        return getSCM().getModuleRoot(workspace);
-    }
-    
-    @Override
-    public FilePath[] getModuleRoots(FilePath workspace) {
-        return getSCM().getModuleRoots(workspace);
-    }
-    
-    @Override
-    public boolean requiresWorkspaceForPolling() {
-        return getSCM().requiresWorkspaceForPolling();
-    }
-
-    @Override
-    public boolean supportsPolling() {
-        return getSCM().supportsPolling();
-    }
-
-    @Override
-    public boolean checkout(AbstractBuild arg0, Launcher arg1, FilePath arg2, BuildListener arg3, File arg4) throws IOException, InterruptedException {
-        return getSCM().checkout(arg0, arg1, arg2, arg3, arg4);
-    }
-
-    @Override
-    public boolean pollChanges(AbstractProject arg0, Launcher arg1, FilePath arg2, TaskListener arg3) throws IOException, InterruptedException {
-        return getSCM().pollChanges(arg0, arg1, arg2, arg3);
-    }
-    
-    @Override
-    public ChangeLogParser createChangeLogParser() {
-        return getSCM().createChangeLogParser();
-    }
-
     @Extension
-    public static class DescriptorImpl extends SCMDescriptor<GoogleCodeSCM> {
+    public static class DescriptorImpl extends SubversionSCM.DescriptorImpl {
 
         public DescriptorImpl() {
             super(GoogleCodeSCM.class, GoogleCodeRepositoryBrowser.class);       
@@ -139,7 +54,17 @@ public class GoogleCodeSCM extends SCM {
         
         @Override
         public GoogleCodeSCM newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            return req.bindJSON(GoogleCodeSCM.class, formData);
+            //return req.bindJSON(GoogleCodeSCM.class, formData);
+            String projectWebsite = req.getParameter("googlecode.googlecodeWebsite");
+            String directory = req.getParameter("googlecode.svnRemoteDirectory");
+            List<ModuleLocation> moduleLocations = getModuleLocations(projectWebsite, directory, ".");
+            return new GoogleCodeSCM(directory, moduleLocations);
+        }
+
+        public static List<ModuleLocation> getModuleLocations(String googlecodeWebsite, String remoteDirectry, String localDirectory) {
+            GoogleCodeProjectProperty property = new GoogleCodeProjectProperty(googlecodeWebsite);
+            ModuleLocation location = new ModuleLocation(property.getSubversionRootUrl() + remoteDirectry, localDirectory);
+            return Arrays.asList(location);
         }
 
         @Override
