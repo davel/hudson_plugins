@@ -5,13 +5,13 @@ import hudson.FilePath;
 import hudson.model.AdministrativeMonitor;
 import hudson.model.Hudson;
 import hudson.util.TimeUnit2;
-import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Shows a support offer.
@@ -33,8 +33,13 @@ public class ScisSupportOffer extends AdministrativeMonitor {
         long t = Math.max(marker1.lastModified(), marker2.lastModified());
         if (t>0) {
             long d = TimeUnit2.MILLISECONDS.toDays(System.currentTimeMillis() - t);
-            active = d > 60 && h.getItems().size()>20;
+            active = d > 60 && h.getItems().size()>20
+                    // as an attempt to phase this in slowly, even if all the criteria are met,
+                    // limit the exposure.
+                    && new Random().nextInt(10)==0;
         }
+
+        active |= Boolean.getBoolean("forceAd"); // for debugging
     }
 
     public boolean isActivated() {
@@ -43,6 +48,9 @@ public class ScisSupportOffer extends AdministrativeMonitor {
 
     /**
      * Depending on whether the user said "yes" or "no", send him to the right place.
+     *
+     * @param no
+     *      non-null to disable, null to "remind me later".
      */
     public void doAct(StaplerRequest req, StaplerResponse rsp, @QueryParameter String no) throws IOException, InterruptedException {
         if(no!=null) {
