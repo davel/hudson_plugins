@@ -52,8 +52,13 @@ public class ScisSupportOffer extends AdministrativeMonitor {
      * @param no
      *      non-null to disable, null to "remind me later".
      */
-    public void doAct(StaplerRequest req, StaplerResponse rsp, @QueryParameter String no) throws IOException, InterruptedException {
-        if(no!=null) {
+    public void doAct(StaplerRequest req, StaplerResponse rsp, @QueryParameter String yes, @QueryParameter String no) throws IOException, InterruptedException {
+        if (yes!=null) {
+            rsp.sendRedirect("http://hudson-ci.org/scis");
+            return;
+        }
+        
+        if (no!=null) {
             disable(true);
         } else {
             // notify later

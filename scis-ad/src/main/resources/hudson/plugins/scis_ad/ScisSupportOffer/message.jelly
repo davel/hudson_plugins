@@ -23,13 +23,37 @@ THE SOFTWARE.
 -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <div style="font-weight: bold; padding-left: 40px; min-height: 32px; background-image: url('${rootURL}/plugin/scis-ad/shield.gif'); background-position: left center; background-repeat: no-repeat;">
-    <form method="post" action="${rootURL}/${it.url}/act" name="${it.id}">
-      ${%blurb}
-      <div style="margin-left: 4em; margin-top: 1em">
-        <f:submit name="later" value="${%Remind me later}"/>
-        <f:submit name="no" value="${%Dismiss}"/>
-      </div>
-    </form>
+  <div style="display:none" id="scis-ad">
+    <div style="width:100%; height:0px; overflow:hidden; background-color: #4e9a06; border-bottom: solid 1px black;">
+      <table width="100%" style="border-spacing:2px; position:relative; top:-40px; height:40px">
+        <tr>
+          <td style="vertical-align: middle; width:32px">
+            <img src="/plugin/scis-ad/shield.gif"/>
+          </td>
+          <td style="vertical-align: middle; font-weight: bold; font-size: 1.2em;  color: white;">
+            ${%blurb}
+          </td>
+          <td style="vertical-align: middle; text-align: right; white-space:nowrap;">
+            <form method="post" action="${rootURL}/${it.url}/act" name="${it.id}">
+              <f:submit name="yes" value="${%Tell me more}"/>
+              <f:submit name="later" value="${%Not now}"/>
+              <f:submit name="no" value="${%Dismiss}"/>
+            </form>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
+  <script>
+    YAHOO.util.Event.on(window, 'load', function() {
+      var header = document.getElementById("header");
+      var ad = document.getElementById("scis-ad").firstChild;
+      var adb = ad.firstChild;
+      ad.parentNode.removeChild(ad);
+      header.parentNode.insertBefore(ad,header);
+
+      new YAHOO.util.Anim(adb,{top: {from:-40,to:0}}).animate();
+      new YAHOO.util.Anim(ad, {height:{from:0,to:40}}).animate();
+    });
+  </script>
 </j:jelly>
