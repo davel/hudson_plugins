@@ -46,14 +46,16 @@ THE SOFTWARE.
   </div>
   <script>
     YAHOO.util.Event.on(window, 'load', function() {
-      var header = document.getElementById("header");
-      var ad = document.getElementById("scis-ad").firstChild;
-      var adb = ad.firstChild;
-      ad.parentNode.removeChild(ad);
-      header.parentNode.insertBefore(ad,header);
+      window.setTimeout(function() {
+        var header = document.getElementById("header");
+        var ad = document.getElementById("scis-ad").firstChild;
+        var adb = ad.firstChild;
+        ad.parentNode.removeChild(ad);
+        header.parentNode.insertBefore(ad,header);
 
-      new YAHOO.util.Anim(adb,{top: {from:-40,to:0}}).animate();
-      new YAHOO.util.Anim(ad, {height:{from:0,to:40}}).animate();
+        new YAHOO.util.Anim(adb,{top: {from:-40,to:0}}).animate();
+        new YAHOO.util.Anim(ad, {height:{from:0,to:40}}).animate();
+      },1000);
     });
   </script>
 </j:jelly>
