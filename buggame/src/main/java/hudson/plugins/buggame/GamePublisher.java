@@ -16,8 +16,6 @@ import hudson.plugins.buggame.model.RuleBook;
 import hudson.plugins.buggame.model.ScoreCard;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
 public class GamePublisher extends Recorder {
@@ -33,7 +31,7 @@ public class GamePublisher extends Recorder {
 
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-        return null;
+        return new ScoreBoardAction(project);
     }
 
     @Override

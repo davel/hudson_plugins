@@ -3,8 +3,6 @@ package hudson.plugins.buggame;
 import hudson.Extension;
 import hudson.Plugin;
 import hudson.model.Hudson;
-import hudson.model.UserProperties;
-import hudson.tasks.Publisher;
 
 /**
  * Entry point of the CI Game plugin.

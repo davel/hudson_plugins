@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<l:layout title="Score card">
+	<j:set var="sc" value="${it.scorecard}" />
+	<j:set var="participants" value="${it.participants}" />
+	<st:include it="${it.project}" page="sidepanel.jelly" />
+    <l:main-panel>
+       	<h1>Score card</h1>
+		<div>
+            This project has earnt ${it.projectScore} points.       	
+       	</div>
+	</l:main-panel>
+  	</l:layout>
+</j:jelly>
