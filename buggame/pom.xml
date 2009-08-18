@@ -63,6 +63,21 @@
       <artifactId>jdepend</artifactId>
       <version>1.1.4</version>
     </dependency>
+    <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>1.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>1.8.0</version> 
+     </dependency>
+     <dependency>
+    <groupId>org.hamcrest</groupId>
+    <artifactId>hamcrest-core</artifactId>
+    <version>1.1</version>
+</dependency> 
   </dependencies>
   
   <scm>
