@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Iterables;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
@@ -89,7 +91,7 @@ public class BuildGoal implements Goal {
 		System.err.println("Starting getCurrentScore loop");
 		
 		while (build != null) {
-			ScoreCardAction scoreCardAction = build.getAction(ScoreCardAction.class);
+			ScoreCardAction scoreCardAction = Iterables.getOnlyElement(build.getActions(ScoreCardAction.class));
 			ScoreCard scoreCard = scoreCardAction.getScorecard();
 			
 			Collection<Score> scores = scoreCard.getScores();
@@ -99,6 +101,9 @@ public class BuildGoal implements Goal {
 					totalScore = totalScore + score.getValue();
 				}
 			}
+			
+			// Only break after we've iterated one last time to get this build
+			if (build.equals(endBuild)) { break; }
 			
 			build = build.getNextBuild();
 		}

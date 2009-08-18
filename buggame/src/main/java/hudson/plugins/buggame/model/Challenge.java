@@ -6,6 +6,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import com.google.common.base.Preconditions;
+
 public class Challenge {
 	private final Date startDate;
 	private final Date endDate;
@@ -15,21 +17,14 @@ public class Challenge {
 	
 	public Challenge(String name, Date startDate, Date endDate, Goal goal, 
 			String reward) {
-		if (name == null || startDate == null || endDate == null || 
-				goal == null || reward == null) {
-			throw new IllegalArgumentException("Null values not allowed");
-		}
+		this.name = Preconditions.checkNotNull(name);
+		this.reward = Preconditions.checkNotNull(reward);
+		this.goal = Preconditions.checkNotNull(goal);
+		this.startDate = new Date(Preconditions.checkNotNull(startDate.getTime()));
+		this.endDate = new Date(Preconditions.checkNotNull(endDate.getTime()));
 		
-		this.name = name;
-		this.reward = reward;
-		this.goal = goal;
-		this.startDate = new Date(startDate.getTime());
-		this.endDate = new Date(endDate.getTime());
-		
-		if (this.startDate.compareTo(this.endDate) > 0) {
-			throw new IllegalArgumentException(this.startDate + " is after " + 
-					this.endDate);
-		}
+		Preconditions.checkArgument((this.startDate.compareTo(this.endDate) <= 0),
+				"%s is after %s", this.startDate, this.endDate);
 	}
 
 	public Goal getGoal() {
