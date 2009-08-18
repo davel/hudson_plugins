@@ -9,6 +9,7 @@ import hudson.model.AbstractProject;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.plugins.buggame.ScoreCardAction;
+import hudson.plugins.buggame.model.Challenge;
 import hudson.plugins.buggame.model.Goal;
 import hudson.plugins.buggame.model.Score;
 import hudson.plugins.buggame.model.ScoreCard;
@@ -34,7 +35,11 @@ public class BuildGoalTest extends HudsonTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		buildGoal = new BuildGoal(mock(AbstractProject.class), endValue, new Date(), new Date());
+		AbstractProject<?, ?> mockProject = mock(AbstractProject.class);
+		Challenge mockChallenge = new Challenge(mockProject, "Test challenge",
+				new Date(), new Date(), "Test Reward");
+		
+		buildGoal = new BuildGoal(mockChallenge, endValue);
 	}
 
 	/**
@@ -65,8 +70,10 @@ public class BuildGoalTest extends HudsonTestCase {
 		DateTime startDate = new DateTime(2008, 1, 1, 0, 0, 0, 0);
 		DateTime endDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
 		
-		BuildGoal goal = new BuildGoal(project, 100, startDate.toDate(),
-				endDate.toDate());
+		Challenge testChallenge = new Challenge((AbstractProject<?, ?>) project, 
+				"Test challenge", startDate.toDate(), endDate.toDate(), "Test Reward");
+		BuildGoal goal = new BuildGoal(testChallenge, 100);
+		testChallenge.setGoal(goal);
 		
 		assertTrue("Current score was " + goal.getCurrentScore() + "," +
 				"but expected " + expectedScore, goal.getCurrentScore() == expectedScore);
@@ -96,8 +103,10 @@ public class BuildGoalTest extends HudsonTestCase {
 		
 		DateTime endDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
 		
-		BuildGoal goal = new BuildGoal(project, 100, startDate.toDate(),
-				endDate.toDate());
+		Challenge testChallenge = new Challenge((AbstractProject<?, ?>) project, 
+				"Test challenge", startDate.toDate(), endDate.toDate(), "Test Reward");
+		BuildGoal goal = new BuildGoal(testChallenge, 100);
+		testChallenge.setGoal(goal);
 		
 		System.err.println("Expected score was " + expectedScore);
 		
@@ -137,5 +146,4 @@ public class BuildGoalTest extends HudsonTestCase {
 		
 		return new ScoreCardAction(scoreCard, build);
 	}
-
 }

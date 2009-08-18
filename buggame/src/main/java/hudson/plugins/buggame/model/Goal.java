@@ -17,20 +17,20 @@ import com.google.common.base.Preconditions;
  *
  */
 public abstract class Goal {
+	Challenge challenge;
 	AbstractProject<?, ?> project;
 	double startValue;
 	double endValue;
 	DateTime startDate;
 	DateTime endDate;
-	String ruleName = "Build result";
 	
-	public Goal(AbstractProject<?, ?> project, double startValue, double endValue, 
-			Date startDate, Date endDate) {
-		this.project = Preconditions.checkNotNull(project);
+	public Goal(Challenge challenge, double startValue, double endValue) {
+		this.challenge = Preconditions.checkNotNull(challenge);
+		this.project = Preconditions.checkNotNull(challenge.getProject());
 		this.startValue = startValue;
 		this.endValue = endValue;
-		this.startDate = new DateTime(Preconditions.checkNotNull(startDate));
-		this.endDate = new DateTime(Preconditions.checkNotNull(endDate));
+		this.startDate = new DateTime(challenge.getStartDate());
+		this.endDate = new DateTime(challenge.getEndDate());
 	}
 
 	
@@ -41,12 +41,16 @@ public abstract class Goal {
 	 */
 	public abstract String getName();
 	
+	public abstract double getCurrentScore();
+	
 	/**
 	 * Returns the percentage progress towards the goal.
 	 * 
 	 * @return percentage progress towards the goal
 	 */
-	public abstract double getPercentageProgress();
+	public double getPercentageProgress() {
+		return (getCurrentScore() / getEndValue()) * 100;
+	}
 	
 	/**
 	 * Returns the start value for this goal.

@@ -5,6 +5,7 @@ import java.util.List;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.plugins.buggame.model.Challenge;
 
 /**
  * Score card for a job.
@@ -18,11 +19,16 @@ public class ScoreBoardAction implements Action {
     
     public ScoreBoardAction(AbstractProject<?, ?> project) {
     	this.project = project;
+    	
+    	//FIXME: This is for testing only. Need to implement this.
+    	if (project.getActions(Challenge.class) == null) {
+    		//Goal testGoal = new BuildGoal()
+    		//Challenge testChallenge = new Challenge()
+    	}
     }
     
     /**
      * Return the score for a team from scorecards.
-     * TODO: Implement this
      * @return
      */
     public double getProjectScore() {
@@ -44,11 +50,11 @@ public class ScoreBoardAction implements Action {
     }
     
     public String getDisplayName() {
-        return "Score card";
+        return "Challenge Score Board";
     }
 
     public String getIconFileName() {
-        return "Scorecard.gif";
+        return GameDescriptor.ACTION_LOGO_MEDIUM;
     }
 
     public String getUrlName() {

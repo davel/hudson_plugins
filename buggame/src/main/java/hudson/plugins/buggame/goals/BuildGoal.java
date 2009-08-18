@@ -10,34 +10,25 @@ import com.google.common.collect.Iterables;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.plugins.buggame.ScoreCardAction;
+import hudson.plugins.buggame.model.Challenge;
 import hudson.plugins.buggame.model.Goal;
 import hudson.plugins.buggame.model.Score;
 import hudson.plugins.buggame.model.ScoreCard;
 
 public class BuildGoal extends Goal {
-	AbstractProject<?, ?> project;
-	double endValue;
-	DateTime startDate;
-	DateTime endDate;
-	String ruleName = "Build result";
+	private final static String ruleName = "Build result";
 	
-	public BuildGoal(AbstractProject<?, ?> project, double endValue, 
-			Date startDate, Date endDate) {
+	public BuildGoal(Challenge challenge, double endValue) {
 		// Start value has no context in this goal, so it is set to 0
-		super(project, 0, endValue, startDate, endDate);
+		super(challenge, 0, endValue);
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Build goal";
 	}
-
-	@Override
-	public double getPercentageProgress() {
-		return (getCurrentScore() / getEndValue()) * 100;
-	}
 	
+	@Override
 	public double getCurrentScore() {
 		AbstractBuild<?, ?> startBuild = getStartBuild();
 		AbstractBuild<?, ?> endBuild = getEndBuild();
