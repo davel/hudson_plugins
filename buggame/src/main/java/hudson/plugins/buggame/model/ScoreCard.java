@@ -66,6 +66,10 @@ public class ScoreCard {
         }
         return scores;
     }
+    
+    public void setScores(List<Score> scores) {
+    	this.scores = scores;
+    }
 
     /**
      * Returns the total points for this score card

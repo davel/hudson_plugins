@@ -2,6 +2,7 @@ package hudson.plugins.buggame.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -48,5 +49,14 @@ public class Challenge {
 		DateTime endDay = new DateTime(endDate);
 		
 		return Days.daysBetween(today, endDay).getDays();
+	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("name", name).
+			append("startDate", startDate).
+			append("endDate", endDate).
+			toString();
 	}
 }

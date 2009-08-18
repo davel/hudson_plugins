@@ -16,6 +16,7 @@ import hudson.plugins.buggame.model.RuleBook;
 import hudson.plugins.buggame.model.ScoreCard;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 
 public class GamePublisher extends Recorder {
@@ -101,4 +102,9 @@ public class GamePublisher extends Recorder {
             Hudson.getInstance().getActions().add(action);
         }
     }
+
+	@Override
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
 }

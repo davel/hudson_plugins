@@ -1,6 +1,7 @@
 package hudson.plugins.buggame.model;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -8,11 +9,17 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("restriction")
 public class ChallengeTest {
+	Goal mockedGoal;
+	DateTime today;
+	
+	@Before
+	public void setUp() {
+		mockedGoal = mock(Goal.class);
+		today = new DateTime();
+	}
 	
 	@Test
 	public void simpleDaysConversion() {
-		Goal mockedGoal = mock(Goal.class);
-		DateTime today = new DateTime();
 		DateTime threeDays = today.plusDays(3); 
 		
 		Challenge challenge = new Challenge("Test challenge", today.toDate(),
@@ -24,11 +31,15 @@ public class ChallengeTest {
 	
 	@Test
 	public void sameDay() {
-		Goal mockedGoal = mock(Goal.class);
-		DateTime today = new DateTime();
-		
 		Challenge challenge = new Challenge("Test challenge", today.toDate(),
 				today.toDate(), mockedGoal, "Test reward");
 		assertEquals(0, challenge.getDaysLeft());
+	}
+	
+	@Test
+	public void toStringNotNull() {
+		Challenge challenge = new Challenge("Test challenge", today.toDate(),
+				today.toDate(), mockedGoal, "Test reward");
+		assertFalse(challenge.toString() == "" || challenge.toString() == null);
 	}
 }

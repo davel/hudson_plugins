@@ -14,9 +14,9 @@ import hudson.model.Action;
 public class ScoreBoardAction implements Action {
 
     private static final long serialVersionUID = 1L;
-    private final AbstractProject<?,?> project;
+    private final AbstractProject<?, ?> project;
     
-    public ScoreBoardAction(AbstractProject<?,?> project) {
+    public ScoreBoardAction(AbstractProject<?, ?> project) {
     	this.project = project;
     }
     
@@ -28,7 +28,7 @@ public class ScoreBoardAction implements Action {
     public double getProjectScore() {
     	double score = 0;
     	
-    	AbstractBuild<?,?> build = project.getLastCompletedBuild();
+    	AbstractBuild<?, ?> build = project.getLastCompletedBuild();
     	
     	while (build != null) {
     		List <ScoreCardAction> actions = build.getActions(ScoreCardAction.class);
@@ -55,7 +55,7 @@ public class ScoreBoardAction implements Action {
         return "buggame";
     }
 
-	public AbstractProject<?,?> getProject() {
+	public AbstractProject<?, ?> getProject() {
 		return project;
 	}
 
