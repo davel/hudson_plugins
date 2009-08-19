@@ -203,6 +203,7 @@
         <module>jmx</module>
         <module>jprt</module>
         <module>jwsdp-sqe</module>
+        <module>locked-files-report</module>
         <module>locks-and-latches</module>
         <module>maven1-snapshot-plugin</module>
         <!--module>m2release</module> build is failing -->
