@@ -10,7 +10,7 @@
 
   <groupId>hudson</groupId>
   <artifactId>selenium-grails</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
 	<name>Hudson Selenium Grails plugin</name>
   <packaging>hpi</packaging>
 
@@ -28,4 +28,10 @@
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/selenium-grails-0.1</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/selenium-grails-0.1</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/selenium-grails/tags/selenium-grails-0.1</url>
+  </scm>
 </project>
