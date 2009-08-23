@@ -10,7 +10,7 @@
 
   <groupId>hudson</groupId>
   <artifactId>selenium-grails</artifactId>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
 	<name>Hudson Selenium Grails plugin</name>
   <packaging>hpi</packaging>
 
