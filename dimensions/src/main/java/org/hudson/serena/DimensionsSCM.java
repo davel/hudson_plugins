@@ -97,12 +97,12 @@ public class DimensionsSCM extends SCM implements Serializable {
     }
 
     @Override public FilePath getModuleRoot(FilePath workspace) {
-        String branch = subfolder;
-        if ((branch == null) || (branch.trim().length() == 0)) {
-            branch = project;
+        if ((subfolder != null) && (subfolder.trim().length() > 0)) {
+            workspace = new FilePath(workspace, subfolder);
         }
-        return new FilePath(workspace, branch);
+        return workspace;
     }
+
     @Override public boolean pollChanges(AbstractProject build, Launcher launcher, FilePath workspace, TaskListener arg3) throws IOException, InterruptedException {
         FilePath projectPath = getModuleRoot(workspace);
         if (projectPath.exists()) {
@@ -131,8 +131,7 @@ public class DimensionsSCM extends SCM implements Serializable {
     @Override public ChangeLogParser createChangeLogParser() {
         return new ChangeLogParser() {
 
-            @Override
-            public ChangeLogSet<? extends Entry> parse(final AbstractBuild build, final File changelogFile) throws IOException, SAXException {
+            @Override public ChangeLogSet<? extends Entry> parse(final AbstractBuild build, final File changelogFile) throws IOException, SAXException {
                 return new DimensionsChangeLogSet(build, changelogFile);
             }
 
@@ -184,10 +183,14 @@ public class DimensionsSCM extends SCM implements Serializable {
             conn.initialise();
             DownloadCommandDetails downloadDetails = new DownloadCommandDetails();
             downloadDetails.setRecursive(true);
-            downloadDetails.setUserDirectory(projectPath.getParent().toURI().toString().replace("file:/", ""));
+            String basePath = projectPath.toURI().toString().replace("file:/", "").replace("%20", " ");
             if ((subfolder != null) && (subfolder.trim().length() > 0)) {
+                basePath = basePath.substring(0, basePath.length() - subfolder.trim().length());
                 downloadDetails.setDirectory(subfolder);
             }
+            downloadDetails.setUserDirectory(basePath);
+            downloadDetails.setVerbose(true);
+            downloadDetails.setIgnoreErrors(true);
             DimensionsResult result = conn.getObjectFactory().getProject(product + ":" + project).download(downloadDetails);
             projectPath.touch(new Date().getTime());
             generateLogFile(result.getMessage(), changelogFile);
