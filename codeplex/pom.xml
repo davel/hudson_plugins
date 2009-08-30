@@ -13,6 +13,15 @@
   <packaging>hpi</packaging>
   <name>Hudson CodePlex plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Code+Plex+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>redsolo</id>
+      <name>Erik Ramfelt</name>
+      <email>eramfelt@gmail.com</email>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
   
   <build>
          <plugins>

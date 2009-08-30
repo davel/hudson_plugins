@@ -14,6 +14,15 @@
   <name>Hudson Google Code plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Google+Code+Plugin</url>
 
+  <developers>
+    <developer>
+      <id>redsolo</id>
+      <name>Erik Ramfelt</name>
+      <email>eramfelt@gmail.com</email>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+  
   <dependencies>
     <dependency>
       <groupId>org.jmock</groupId>
