@@ -34,6 +34,11 @@
 					value="${descriptor.nabatzagVoice}" />
 			</f:entry>
 
+			<f:entry title="Nabaztag Text for Starting Build"
+				help="${rootURL}/plugin/nabaztag/help-globalConfig-nabatzagBuildTTS.html">
+				<input class="setting-input" name="nabatzagBuildTTS" type="text"
+					value="${descriptor.nabatzagBuildTTS}" />
+			</f:entry>
 
 			<f:entry title="Nabaztag Text for Failure"
 				help="${rootURL}/plugin/nabaztag/help-globalConfig-nabatzagFailTTS.html">

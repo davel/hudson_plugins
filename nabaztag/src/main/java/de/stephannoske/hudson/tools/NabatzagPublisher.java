@@ -45,11 +45,13 @@ public class NabatzagPublisher extends Publisher {
 		public String nabatzagSerial = "";
 		public String nabatzagUrl = "http://api.nabaztag.com/vl/FR/api.jsp";
 		public String nabatzagVoice = "lea22s";
-		public String nabatzagFAILDpos = "posright=6&posleft=6&ears=ok&ttl=600";
-		public String nabatzagSUSSCEEDpos = "posright=3&posleft=3&ears=ok&ttl=600";
+		public String nabatzagFAILDpos = "posright=8&posleft=8&ears=ok";
+		public String nabatzagSUSSCEEDpos = "posright=0&posleft=0&ears=ok";
+		public String nabatzagBUILDEDpos = "posright=4&posleft=12&ears=ok";
 		public String nabatzagFailTTS = "Build Failed in Hudson ${projectName} ${buildNumber}";
 		public String nabatzagSuccessTTS = "Build was successfull in Hudson ${projectName} ${buildNumber}";
 		public String nabatzagRecoverTTS = "Hudson Build is back to normal ${projectName} ${buildNumber}";
+		public String nabatzagBuildTTS = "Hudson is about to build ${projectName} ${buildNumber}";
 		public boolean reportOnSucess = false;
 	
 		protected DescriptorImpl() {
@@ -68,6 +70,7 @@ public class NabatzagPublisher extends Publisher {
 			nabatzagFailTTS = req.getParameter("nabatzagFailTTS");
 			nabatzagSuccessTTS = req.getParameter("nabatzagSuccessTTS");
 			nabatzagRecoverTTS = req.getParameter("nabatzagRecoverTTS");
+			nabatzagBuildTTS = req.getParameter("nabatzagBuildTTS");
 	
 		    save();
 		    return super.configure(req, json);
@@ -104,6 +107,14 @@ public class NabatzagPublisher extends Publisher {
 	
 		public String getNabatzagSUSSCEEDpos() {
 		    return nabatzagSUSSCEEDpos;
+		}
+
+		public String getNabatzagBuildTTS() {
+		    return nabatzagBuildTTS;
+		}
+
+		public String getNabatzagBUILDEDpos() {
+		    return nabatzagBUILDEDpos;
 		}
 	
 		public String getNabatzagToken() {
@@ -148,6 +159,14 @@ public class NabatzagPublisher extends Publisher {
 	
 		public void setNabatzagSUSSCEEDpos(final String nabatzagSUSSCEEDpos) {
 		    this.nabatzagSUSSCEEDpos = nabatzagSUSSCEEDpos;
+		}
+
+		public void setNabatzagBuildTTS(final String nabatzagBuildTTS) {
+		    this.nabatzagBuildTTS = nabatzagBuildTTS;
+		}
+
+		public void setNabatzagBUILDEDpos(final String nabatzagBUILDEDpos) {
+		    this.nabatzagBUILDEDpos = nabatzagBUILDEDpos;
 		}
 	
 		public void setNabatzagToken(final String nabatzagToken) {
@@ -204,6 +223,14 @@ public class NabatzagPublisher extends Publisher {
 
     public Descriptor<Publisher> getDescriptor() {
     	return DESCRIPTOR;
+    }
+    
+    @Override
+    public boolean prebuild(final AbstractBuild<?, ?> build, BuildListener listener) {
+        String msg = DESCRIPTOR.getNabatzagBuildTTS();
+        log.finest("Nabaztag Build BEGIN");
+        sendRequest(msg, DESCRIPTOR.getNabatzagBUILDEDpos(), build, listener);
+        return true;
     }
 
     @Override
