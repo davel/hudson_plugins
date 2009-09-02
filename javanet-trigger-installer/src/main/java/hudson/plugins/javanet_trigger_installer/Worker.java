@@ -30,46 +30,51 @@ public class Worker extends Thread {
     }
 
     public void run() {
-        JavaNet connection=null;
         long lastUsed;
         try {
+            JavaNet connection=null;
             while(true) {
-                lastUsed = System.currentTimeMillis();
+                try {
+                    lastUsed = System.currentTimeMillis();
 
-                Task t = pick();
+                    Task t = pick();
 
-                // if a connection is left unused for a long time,
-                // don't bother using it. it must have already gone expired.
-                if(System.currentTimeMillis()-lastUsed >= SESSION_TIMEOUT)
-                    connection = null;
-
-                Exception ex = null;
-                for( int i=0; i<2; i++ ) {// allow one retry, in case the connection becomes expired
-
-                    if(connection==null)
-                        connection = JavaNet.connect();
-
-                    try {
-                        t.execute(connection);
-                        break;
-
-                        // in case of error, force a fresh connection and retry
-                    } catch (IOException e) {
+                    // if a connection is left unused for a long time,
+                    // don't bother using it. it must have already gone expired.
+                    if(System.currentTimeMillis()-lastUsed >= SESSION_TIMEOUT)
                         connection = null;
-                        ex = e;
-                    } catch (ProcessingException e) {
-                        connection = null;
-                        ex = e;
+
+                    Exception ex = null;
+                    for( int i=0; i<2; i++ ) {// allow one retry, in case the connection becomes expired
+
+                        if(connection==null)
+                            connection = JavaNet.connect();
+
+                        try {
+                            t.execute(connection);
+                            break;
+
+                            // in case of error, force a fresh connection and retry
+                        } catch (IOException e) {
+                            connection = null;
+                            ex = e;
+                        } catch (ProcessingException e) {
+                            connection = null;
+                            ex = e;
+                        }
                     }
-                }
 
-                if(ex!=null)
-                    LOGGER.log(Level.SEVERE,"Failed to execute "+t,ex);
+                    if(ex!=null)
+                        LOGGER.log(Level.SEVERE,"Failed to execute "+t,ex);
+                } catch (InterruptedException e) {
+                    throw e;
+                } catch (Throwable t) {
+                    LOGGER.log(Level.SEVERE,"Terminated abnormally because of an error. Retrying after a minute",t);
+                    Thread.sleep(60*1000);
+                }
             }
         } catch (InterruptedException e) {
             LOGGER.info("Going to shut down");
-        } catch (Throwable t) {
-            LOGGER.log(Level.SEVERE,"Terminated abnormally because of an error",t);
         }
     }
 
