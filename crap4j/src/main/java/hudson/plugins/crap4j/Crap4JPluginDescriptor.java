@@ -1,5 +1,6 @@
 package hudson.plugins.crap4j;
 
+import hudson.Extension;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
@@ -10,6 +11,7 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
 
+@Extension
 public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
 	
 	public static final String ACTION_ICON_PATH = "/plugin/crap4j/icons/crap-32x32.png";
@@ -53,6 +55,6 @@ public class Crap4JPluginDescriptor extends BuildStepDescriptor<Publisher> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-        return (FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType));
+            return (FreeStyleProject.class.isAssignableFrom(jobType) || MatrixProject.class.isAssignableFrom(jobType));
 	}
 }

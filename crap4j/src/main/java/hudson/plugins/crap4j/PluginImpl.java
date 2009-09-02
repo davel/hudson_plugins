@@ -1,13 +1,12 @@
 package hudson.plugins.crap4j;
 
-import hudson.Extension;
 import hudson.Plugin;
 
 /**
  * Entry point for plugin.
  * Add a publisher for crap.
+ * @plugin crap4j
  */
-@Extension
 public class PluginImpl extends Plugin {
 	
 	public PluginImpl() {

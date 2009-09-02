@@ -14,7 +14,6 @@ import hudson.plugins.crap4j.util.FoundFile;
 import hudson.plugins.crap4j.util.ReportFilesFinder;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +31,7 @@ import java.util.logging.Logger;
 import com.schneide.crap4j.reader.ReportReader;
 import com.schneide.crap4j.reader.model.ICrapReport;
 import com.schneide.crap4j.reader.model.IMethodCrapData;
+import hudson.tasks.Recorder;
 
 public class Crap4JPublisher extends Recorder {
 
