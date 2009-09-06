@@ -216,7 +216,7 @@ class GoogleCodeCrawlTask implements Callable<GrailsProjectInfo> {
     private Publisher createTwitterPublisher() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         Class type = Class.forName("hudson.plugins.twitter.TwitterPublisher");
         Constructor c = type.getConstructor(String.class, String.class, Boolean.class, Boolean.class);
-        return (Publisher) c.newInstance(null, null, false, false);
+        return (Publisher) c.newInstance(null, null, false, true);
     }
 
     private boolean isActive(String shortName) {
