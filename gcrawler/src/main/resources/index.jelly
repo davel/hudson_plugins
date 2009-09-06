@@ -1,0 +1,4 @@
+<div>
+GCrawler (1) searchs Google Code and discovers all Grails projects, (2) reads Subversion repository to figure out metadata, and (3) automatically add them to Hudson and builds them.
+This plugin requires <a href="http://wiki.hudson-ci.org/display/HUDSON/Google+Code+Plugin">Google Code Plugin</a> and <a href="http://wiki.hudson-ci.org/display/HUDSON/Grails+Plugin">Grails Plugin</a>.
+</div>

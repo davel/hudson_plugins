@@ -1,0 +1,14 @@
+echo \
+'dataSource {'$'\n'\
+'    pooled = true'$'\n'\
+'    driverClassName = "org.hsqldb.jdbcDriver"'$'\n'\
+'    username = "sa"'$'\n'\
+'    password = ""'$'\n'\
+'    dbCreate = "create-drop"'$'\n'\
+'    url = "jdbc:hsqldb:mem:devDB"'$'\n'\
+'}'$'\n'\
+'hibernate {'$'\n'\
+'    cache.use_second_level_cache=true'$'\n'\
+'    cache.use_query_cache=true'$'\n'\
+'    cache.provider_class="org.hibernate.cache.EhCacheProvider"'$'\n'\
+'}' > ${WORKSPACE}/#{name}/grails-app/conf/DataSource.groovy

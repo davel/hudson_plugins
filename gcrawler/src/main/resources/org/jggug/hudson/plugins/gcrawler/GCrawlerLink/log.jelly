@@ -1,0 +1,19 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout title="${it.displayName} log" norefresh="true">
+    <l:side-panel>
+    <l:tasks>
+      <l:task icon="images/24x24/up.gif" href="${rootURL}/${it.urlName}" title="Back to GCrawler" />
+    </l:tasks>
+    </l:side-panel>
+    <l:main-panel>
+      <l:isAdmin>
+        <h1>${it.displayName} log</h1>
+        <pre id="out"></pre>
+        <div id="spinner">
+          <img src="${imagesURL}/spinner.gif" alt=""/>
+        </div>
+        <t:progressiveText href="progressLog" idref="out" spinner="spinner" /> 
+      </l:isAdmin>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

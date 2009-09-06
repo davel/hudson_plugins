@@ -1,0 +1,454 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+ <script type="text/javascript">
+ 
+ (function(){
+function a(c){this.t={};this.tick=function(d,g,b){var e=b?b:(new Date).getTime();this.t[d]=e};this.tick("start",null,c)}var f=new a;window.jstiming={Timer:a,load:f};try{window.jstiming.pt=window.external.pageT}catch(h){};
+})();
+
+ 
+ 
+ 
+ var codesite_token = "1343ba070ec50e9b84459cd24ac05665";
+ 
+ </script>
+ <title>
+ ah-scrum -
+ 
+ Google Code</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+ 
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/361178772719635486/css/ph_core.css">
+ 
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/361178772719635486/css/ph_detail.css" >
+ 
+ 
+ 
+ 
+
+<!--[if IE]>
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/361178772719635486/css/d_ie.css" >
+<![endif]-->
+</head>
+<body class="t1">
+ <div id="gaia">
+ 
+ <span>
+ 
+ <b>kiy0taka333@gmail.com</b>
+ 
+ | <a href="/p/support/wiki/WhatsNew?source=gb" style="color:#a03" onclick="_CS_click('/gb/ph/whatsnew');">What's new?</a>
+ | <a href="/u/kiy0taka333/?source=gb" onclick="_CS_click('/gb/ph/profile');">Profile</a>
+
+ 
+ | <a href="/u/kiy0taka333/?source=gb" id="projects-dropdown" onclick="return false;">My projects</a>
+ 
+ | <a href="/hosting/settings?source=gb" onclick="_CS_click('/gb/ph/settings');">Settings</a>
+ | <a href="/p/support/?source=gb" onclick="_CS_click('/gb/ph/help');">Help</a>
+ | <a href="http://www.google.com/accounts/Logout?continue=http%3A%2F%2Fcode.google.com%2Fp%2Fah-scrum%2F" onclick="_CS_click('/gb/ph/signout');">Sign out</a>
+ 
+ </span>
+
+ </div>
+ <div class="gbh" style="left: 0pt;"></div>
+ <div class="gbh" style="right: 0pt;"></div>
+ 
+ 
+ <div style="height: 1px"></div>
+ <table style="padding:0px; margin: 20px 0px 0px 0px; width:100%" cellpadding="0" cellspacing="0">
+ <tr style="height: 58px;">
+ <td style="width: 55px; text-align:center;">
+ <a href="/p/ah-scrum/">
+
+ 
+ 
+ 
+ <img src="http://www.gstatic.com/codesite/ph/images/defaultlogo.png"
+ alt="Project Logo">
+ 
+ 
+ 
+ </a>
+ </td>
+ <td style="padding-left: 0.8em">
+ 
+ <div id="pname" style="margin: 0px 0px -3px 0px">
+ <a href="/p/ah-scrum/" style="text-decoration:none; color:#000">ah-scrum</a>
+ </div>
+ <div id="psum">
+
+ <i><a id="project_summary_link" href="/p/ah-scrum/" style="text-decoration:none; color:#000">A scrum tool.</a></i>
+ </div>
+ 
+ </td>
+ <td style="white-space:nowrap; text-align:right">
+ 
+ <form action="/hosting/search">
+ <input size="30" name="q" value="">
+ <input type="submit" name="projectsearch" value="Search projects" >
+ </form>
+
+ 
+ </tr>
+ </table>
+
+
+<table id="mt" cellspacing="0" cellpadding="0" width="100%" border="0">
+ <tr>
+ <th onclick="if (!cancelBubble) _go('/p/ah-scrum/');">
+ <div class="tab active">
+ <div class="round4"></div>
+ <div class="round2"></div>
+
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/ah-scrum/">Project&nbsp;Home</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/ah-scrum/downloads/list');">
+ <div class="tab inactive">
+
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/ah-scrum/downloads/list">Downloads</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/ah-scrum/w/list');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/ah-scrum/w/list">Wiki</a>
+ </div>
+
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/ah-scrum/issues/list');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/ah-scrum/issues/list">Issues</a>
+
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/ah-scrum/source/checkout');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+
+ <a onclick="cancelBubble=true;" href="/p/ah-scrum/source/checkout">Source</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ <td width="100%">&nbsp;</td>
+ </tr>
+</table>
+<table cellspacing="0" cellpadding="0" width="100%" align="center" border="0" class="st">
+ <tr>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <td>
+ <div class="st1">
+ <div class="isf">
+ <span class="inst1">
+ <a href="/p/ah-scrum/">Summary</a>
+ </span> |
+ <span class="inst2">
+ <a href="/p/ah-scrum/updates/list">Updates</a>
+
+ </span>
+ </div>
+</div>
+
+ </td>
+ 
+ 
+ 
+ <td height="4" align="right" valign="top" class="bevel-right">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ </td>
+
+ </tr>
+</table>
+<script type="text/javascript">
+ var cancelBubble = false;
+ function _go(url) { document.location = url; }
+</script>
+
+<div id="maincol">
+
+ 
+<!-- IE -->
+
+
+
+
+
+<style type="text/css">
+ #downloadbox {
+ padding: 6px;
+ overflow: hidden;
+ white-space: nowrap;
+ text-overflow: ellipsis;
+ }
+ #downloadbox a {
+ margin: 6px 0 0 3em;
+ display: block;
+ padding-left: 18px;
+ background: url(http://www.gstatic.com/codesite/ph/images/dl_arrow.gif) no-repeat bottom left;
+ }
+ #owners a, #members a { white-space: nowrap; }
+ 
+</style>
+
+<div style="float:right; width:25em; margin:0 0 1em 2em">
+ 
+ <div class="pmeta_bubble_bg">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <table class="pmeta" cellpadding="5">
+ 
+ 
+ 
+ <tr>
+ <td colspan="4">
+
+ <img width="15" height="15"
+ src="http://www.gstatic.com/codesite/ph/images/star_off.gif"
+ style="cursor:pointer"
+ 
+ onclick="_CS_toggleStar(this,
+ {'scope': 'projects',
+ 'user': '_CURRENT_USER',
+ 'item': 'ah-scrum',
+ 'token': codesite_token
+ },
+ 'star_msg',
+ 'Starred (\x3ca href\x3d\x22/u/kiy0taka333/\x22\x3eview starred projects\x3c/a\x3e)',
+ 'Star this project');"/>
+ &nbsp;
+ <span id="star_msg">
+ 
+ Star this project
+ 
+ </span>
+ </td>
+ </tr>
+ 
+ 
+ </table>
+ </div>
+
+ <div class="round1"></div>
+ <div class="round2"></div>
+ <div class="round4"></div>
+ </div>
+ 
+ <div class="pmeta_bubble_bg">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+
+ <table class="pmeta" cellpadding="5">
+ 
+ <tr>
+ <th><span style="white-space:nowrap">Code license:</span></th>
+ <td>
+ <a href="http://www.apache.org/licenses/LICENSE-2.0" rel="nofollow">Apache License 2.0</a>
+ </td>
+ </tr>
+ 
+ 
+ 
+ <tr><th>Labels:</th>
+
+ <td id="project_labels">
+ 
+ <a href="/hosting/search?q=label:Java">Java</a>, 
+ 
+ <a href="/hosting/search?q=label:Grails">Grails</a>, 
+ 
+ <a href="/hosting/search?q=label:Scrum">Scrum</a>
+ 
+ </td>
+ </tr>
+ 
+ </table>
+ </div>
+
+ <div class="round1"></div>
+ <div class="round2"></div>
+ <div class="round4"></div>
+ </div>
+ 
+ 
+ <div class="pmeta_bubble_bg">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+
+ <table class="pmeta" cellpadding="5">
+ 
+ 
+ <tr><th>Feeds:</th>
+ <td><ul>
+ <li><a href="/p/ah-scrum/feeds">Project feeds</a></li>
+ </ul></td>
+ </tr>
+ 
+ </table>
+ </div>
+
+ <div class="round1"></div>
+ <div class="round2"></div>
+ <div class="round4"></div>
+ </div>
+ <div class="pmeta_bubble_bg">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+
+ 
+ <a style="float:right;padding:6px" href="http://code.google.com/p/support/wiki/HowToJoinAProject">How to join?</a>
+ 
+ <table class="pmeta" cellpadding="3" style="padding:3px">
+ 
+ <tr><th colspan="2">Project owners:</th></tr>
+ <tr><td style="width:4em">&nbsp;</td>
+ <td id="owners">
+ 
+ <a style="white-space: nowrap" href="/u/kongxx/">kongxx</a>
+ 
+ </td>
+
+ </tr>
+ 
+ 
+ 
+ 
+ </table>
+ </div>
+ <div class="round1"></div>
+ <div class="round2"></div>
+ <div class="round4"></div>
+ </div>
+</div>
+ <div id="wikicontent" style="padding:0 3em 1.2em 0">
+
+ <p>A scrum tool. </p>
+ </div>
+
+<br><br><br><br><br><br><br><br>
+<script src="http://www.gstatic.com/codesite/ph/361178772719635486/js/prettify/prettify.js"></script>
+<script type="text/javascript">
+ prettyPrint();
+</script>
+ 
+ <script type="text/javascript" src="http://www.gstatic.com/codesite/ph/361178772719635486/js/core_scripts_20081103.js"></script>
+ 
+ 
+ 
+ </div>
+<div id="footer" dir="ltr">
+
+ 
+ <div class="text">
+ 
+ &copy;2009 Google -
+ <a href="/">Code Home</a> -
+ <a href="/tos.html">Terms of Service</a> -
+ <a href="http://www.google.com/privacy.html">Privacy Policy</a> -
+ <a href="/more/">Site Directory</a>
+ 
+ </div>
+
+</div>
+<script type="text/javascript">
+/**
+ * Reports analytics.
+ * It checks for the analytics functionality (window._gat) every 100ms
+ * until the analytics script is fully loaded in order to invoke siteTracker.
+ */
+function _CS_reportAnalytics() {
+ window.setTimeout(function() {
+ if (window._gat) {
+ var siteTracker = _gat._getTracker("UA-18071-1");
+ siteTracker._initData();
+ siteTracker._trackPageview();
+ 
+ } else {
+ _CS_reportAnalytics();
+ }
+ }, 100);
+}
+</script>
+
+ 
+ 
+ <div class="hostedBy" style="margin-top: -20px;">
+ <span style="vertical-align: top;">Hosted by</span>
+ <a href="/hosting/">
+ <img src="http://www.gstatic.com/codesite/ph/images/google_code_tiny.gif" width="107" height="24" alt="Google Code">
+ </a>
+ </div>
+
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ <script type="text/javascript">_CS_reportToCsi();</script>
+ 
+ </body>
+</html>
+

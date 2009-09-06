@@ -1,0 +1,50 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<l:layout title="GCrawler" secured="true">
+       
+   <!-- 
+     Sorted table of project disk usages
+   -->
+   <l:side-panel>
+    <l:tasks>
+      <l:task icon="images/24x24/up.gif" href="${rootURL}/" title="${%Back to Dashboard}" />
+    </l:tasks>
+  </l:side-panel>
+
+    <l:main-panel>
+
+    <h1>GCrawler</h1>
+
+    <j:set var="projects" value="${it.getProjectList()}" />
+
+    <l:isAdmin>
+      <form action="crawl"><f:submit value="Crawl" /></form>
+    </l:isAdmin>
+
+    <div>${projects.size()} projects. (${it.getErrorCount(projects)} errors.) ${it.lastCrawlDate}</div>
+
+    <table id="projectstatus" class="pane bigtable sortable">
+      <tr>
+        <th>Project name</th>
+        <th>Domain</th>
+        <th>Type</th>
+        <th>Version</th>
+        <th>License</th>
+        <th>Parse Time(ms)</th>
+        <th>Error</th>
+      </tr>
+    <j:forEach var="p" items="${projects}">
+      <tr>
+        <td><b><a href="${p.getProjectUrl()}" target="_blank">${p.getName()}</a></b></td>
+        <td>${p.domain}</td>
+        <td>${p.type}</td>
+        <td>${p.grailsVersion}</td>
+        <td>${p.licenseLink}</td>
+        <td>${p.parseTime}</td>
+        <td>${p.errorMessage}</td>
+      </tr>
+    </j:forEach>
+    </table>
+
+    </l:main-panel>
+</l:layout>
+</j:jelly>
