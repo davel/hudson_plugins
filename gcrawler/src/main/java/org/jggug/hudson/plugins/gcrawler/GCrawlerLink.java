@@ -22,8 +22,6 @@ public class GCrawlerLink extends ManagementLink {
 
     private GCrawler crawler = GCrawler.CRAWLER;
 
-    private File logFile;
-
     @Override
     public String getIconFileName() {
         return "computer.gif";
@@ -65,16 +63,15 @@ public class GCrawlerLink extends ManagementLink {
     public void doCrawl(StaplerRequest req, StaplerResponse res) throws ServletException, IOException {
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
         if (!crawler.isActive()) {
-            logFile = File.createTempFile("gcrawler", ".log");
-            logFile.deleteOnExit();
-            crawler.setCrawlerContext(CrawlContext.newInstance(logFile));
+            CrawlContext ctx = CrawlContext.newInstance();
+            crawler.setCrawlerContext(ctx);
             Executors.newSingleThreadExecutor().execute(crawler);
         }
         res.sendRedirect("log");
     }
 
     public void doProgressLog(StaplerRequest req, StaplerResponse res) throws IOException {
-        new LargeText(logFile, !crawler.isActive()).doProgressText(req, res);
+        new LargeText(crawler.getCrawlerContext().getLogFile(), !crawler.isActive()).doProgressText(req, res);
     }
 
     public Date getLastCrawlDate() {

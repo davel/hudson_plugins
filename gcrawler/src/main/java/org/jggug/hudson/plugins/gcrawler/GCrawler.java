@@ -68,6 +68,9 @@ public class GCrawler extends PeriodicWork {
         StopWatch watch = new StopWatch();
         watch.start();
 
+        if (context == null || context.isClosed()) {
+            context = CrawlContext.newInstance();
+        }
         logger = context.getLogger();
 
         logger.info("crawl start.");
@@ -94,7 +97,7 @@ public class GCrawler extends PeriodicWork {
         } catch (IOException e) {
             logger.warn(e);
         } finally {
-            logger.close();
+            context.close();
             isActive = false;
             GCrawlerPlugin.getConfig().setLastCrawlDate(new Date());
         }
@@ -202,5 +205,9 @@ public class GCrawler extends PeriodicWork {
 
     public void setCrawlerContext(CrawlContext context) {
         this.context = context;
+    }
+
+    public CrawlContext getCrawlerContext() {
+        return context;
     }
 }

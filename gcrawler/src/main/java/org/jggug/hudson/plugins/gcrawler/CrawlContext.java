@@ -3,6 +3,7 @@ package org.jggug.hudson.plugins.gcrawler;
 import static org.jggug.hudson.plugins.gcrawler.util.PropertyFileUtils.getStringPropertyValue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,10 @@ public class CrawlContext {
     private Map<String, String> grailsMap;
 
     private CrawlLogger logger;
+
+    private boolean isClosed = true;
+
+    private File logFile;
 
     public Map<String, String> getGrailsMap() {
         return grailsMap;
@@ -31,10 +36,32 @@ public class CrawlContext {
         this.logger = logger;
     }
 
-    public static CrawlContext newInstance(File logFile) {
+    public void close() {
+        isClosed = true;
+        logger.close();
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public File getLogFile() {
+        return logFile;
+    }
+
+    public static CrawlContext newInstance() {
         CrawlContext ctx = new CrawlContext();
+        File logFile;
+        try {
+            logFile = File.createTempFile("gcrawler", ".log");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        logFile.deleteOnExit();
+        ctx.logFile = logFile;
         ctx.logger = new CrawlLogger(logFile);
         ctx.grailsMap = mapGrails();
+        ctx.isClosed = false;
         return ctx;
     }
 
