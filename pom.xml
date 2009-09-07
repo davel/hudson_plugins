@@ -237,7 +237,7 @@
         <module>nunit</module>
         <module>plot</module>
         <module>perforce</module>
-        <!--<module>platformlabeler</module> Depends on 1.322 -->
+        <module>platformlabeler</module>
         <module>polarion</module>
         <module>port-allocator</module>
         <module>powershell</module>
