@@ -21,8 +21,8 @@ public class CodePlexSubversionBrowserTest {
     public void assertDiffLinkReturnsNull() throws Throwable {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         LogEntry entry = new LogEntry();
         Path path = new Path();
@@ -37,8 +37,8 @@ public class CodePlexSubversionBrowserTest {
     public void assertFileLinkReturnsNull() throws Throwable {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         LogEntry entry = new LogEntry();
         entry.setRevision(446);
@@ -55,8 +55,8 @@ public class CodePlexSubversionBrowserTest {
     public void testGetChangeSetLinkLogEntry() throws Throwable {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("project"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("project"));
+        when(build.getProject()).thenReturn(project);
 
         LogEntry entry = new LogEntry();
         entry.setRevision(450);      

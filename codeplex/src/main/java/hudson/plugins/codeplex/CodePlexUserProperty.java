@@ -1,19 +1,16 @@
 package hudson.plugins.codeplex;
 
+import hudson.Extension;
 import hudson.model.User;
 import hudson.model.UserProperty;
 import hudson.model.UserPropertyDescriptor;
 
 public class CodePlexUserProperty extends UserProperty {
 
-    @Override
-    public UserPropertyDescriptor getDescriptor() {
-        return PluginImpl.USER_PROPERTY_DESCRIPTOR;
-    }
-
+    @Extension
     public static class DescriptorImpl extends UserPropertyDescriptor {
 
-        protected DescriptorImpl() {
+        public DescriptorImpl() {
             super(CodePlexUserProperty.class);
         }
 

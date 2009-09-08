@@ -1,5 +1,6 @@
 package hudson.plugins.codeplex;
 
+import hudson.Extension;
 import hudson.MarkupText;
 import hudson.MarkupText.SubText;
 import hudson.model.AbstractBuild;
@@ -14,8 +15,8 @@ import java.util.regex.Pattern;
  *
  * @author Erik Ramfelt
  */
+@Extension
 public class CodePlexChangeLogAnnotator extends ChangeLogAnnotator {
-
 
     /**
      * Return the property from the project for the build

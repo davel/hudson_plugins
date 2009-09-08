@@ -3,7 +3,6 @@ package hudson.plugins.codeplex.scm;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.rpc.ServiceException;
@@ -12,6 +11,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.codeplex.soap.ProjectInfoServiceLocator;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -20,10 +20,8 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Hudson;
 import hudson.model.Node;
-import hudson.model.Project;
 import hudson.model.TaskListener;
 import hudson.plugins.codeplex.CodePlexProjectProperty;
-import hudson.plugins.codeplex.PluginImpl;
 import hudson.plugins.codeplex.browsers.CodePlexTfsBrowser;
 import hudson.plugins.tfs.TeamFoundationServerScm;
 import hudson.scm.ChangeLogParser;
@@ -159,12 +157,8 @@ public class CodePlexTfsScm extends SCM {
     public boolean supportsPolling() {
         return getScm().supportsPolling();
     }
-
-    @Override
-    public SCMDescriptor<?> getDescriptor() {
-        return PluginImpl.TFS_SCM_DESCRIPTOR;
-    }
     
+    @Extension
     public static class DescriptorImpl extends SCMDescriptor<CodePlexTfsScm> {
 
         public DescriptorImpl() {

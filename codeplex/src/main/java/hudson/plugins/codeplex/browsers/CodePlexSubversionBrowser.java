@@ -1,8 +1,8 @@
 package hudson.plugins.codeplex.browsers;
 
+import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.plugins.codeplex.CodePlexProjectProperty;
-import hudson.plugins.codeplex.PluginImpl;
 import hudson.scm.RepositoryBrowser;
 import hudson.scm.SubversionChangeLogSet.LogEntry;
 import hudson.scm.SubversionChangeLogSet.Path;
@@ -81,10 +81,7 @@ public class CodePlexSubversionBrowser extends SubversionRepositoryBrowser {
         return baseUrl == null ? null : new URL(baseUrl, "SourceControl/DirectoryView.aspx?SourcePath=&changeSetId=" + changeSet.getRevision());
     }
 
-    public DescriptorImpl getDescriptor() {
-        return PluginImpl.REPOSITORY_BROWSER_DESCRIPTOR;
-    }
-
+    @Extension
     public static final class DescriptorImpl extends Descriptor<RepositoryBrowser<?>> {
         public DescriptorImpl() {
             super(CodePlexSubversionBrowser.class);

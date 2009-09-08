@@ -10,7 +10,6 @@ import java.util.List;
 
 import hudson.model.AbstractBuild;
 import hudson.model.User;
-import hudson.plugins.codeplex.CodePlexProjectProperty;
 import hudson.plugins.codeplex.CodePlexUserProperty;
 import hudson.plugins.tfs.ChangeSetReader;
 import hudson.plugins.tfs.model.ChangeLogSet;
@@ -25,7 +24,7 @@ public class TfsChangeLogParserDecoratorTest {
         ChangeLogSet changeLogSet = new ChangeLogSet(mock(AbstractBuild.class), changesetList);
         
         ChangeSetReader decoratedLogParser = mock(ChangeSetReader.class);
-        stub(decoratedLogParser.parse(null, (File) null)).toReturn(changeLogSet);
+        when(decoratedLogParser.parse(null, (File) null)).thenReturn(changeLogSet);
         
         TfsChangeLogParserDecorator logParser = new TfsChangeLogParserDecorator(decoratedLogParser);
         ChangeLogSet logSet = (ChangeLogSet) logParser.parse(null, null);
@@ -38,7 +37,7 @@ public class TfsChangeLogParserDecoratorTest {
         ChangeLogSet changeLogSet = new ChangeLogSet(mock(AbstractBuild.class), changesetList);
         
         ChangeSetReader decoratedLogParser = mock(ChangeSetReader.class);
-        stub(decoratedLogParser.parse(null, (File) null)).toReturn(changeLogSet);
+        when(decoratedLogParser.parse(null, (File) null)).thenReturn(changeLogSet);
         
         TfsChangeLogParserDecorator logParser = new TfsChangeLogParserDecorator(decoratedLogParser);
         ChangeLogSet logSet = (ChangeLogSet) logParser.parse(null, null);
@@ -47,9 +46,9 @@ public class TfsChangeLogParserDecoratorTest {
     
     @Test public void assertUserPropertyIsAddedToUser() throws Exception {
         User user = mock(User.class);
-        stub(user.getProperty(CodePlexUserProperty.class)).
-            toReturn(null).
-            toReturn(new CodePlexUserProperty());
+        when(user.getProperty(CodePlexUserProperty.class)).
+            thenReturn(null).
+            thenReturn(new CodePlexUserProperty());
         
         List<ChangeSet> changesetList = new ArrayList<ChangeSet>();
         changesetList.add(new FakeChangeSet("1", new Date(), "redsolo", "", user));
@@ -57,7 +56,7 @@ public class TfsChangeLogParserDecoratorTest {
         ChangeLogSet changeLogSet = new ChangeLogSet(mock(AbstractBuild.class), changesetList);
         
         ChangeSetReader decoratedLogParser = mock(ChangeSetReader.class);
-        stub(decoratedLogParser.parse(null, (File) null)).toReturn(changeLogSet);
+        when(decoratedLogParser.parse(null, (File) null)).thenReturn(changeLogSet);
         
         TfsChangeLogParserDecorator logParser = new TfsChangeLogParserDecorator(decoratedLogParser);
         logParser.parse(null, null);

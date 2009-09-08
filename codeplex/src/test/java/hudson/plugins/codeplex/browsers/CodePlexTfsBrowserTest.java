@@ -19,8 +19,8 @@ public class CodePlexTfsBrowserTest {
     @Test public void assertChangeSetLink() throws Exception {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("project"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("project"));
+        when(build.getProject()).thenReturn(project);
         
         ChangeSet changeset = new ChangeSet("450", null, "user", "comment");
         new ChangeLogSet(build, new ChangeSet[]{changeset});
@@ -31,8 +31,8 @@ public class CodePlexTfsBrowserTest {
     @Test public void assertLinkIsNullIfNoProjectProperty() throws Exception {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(null);
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(null);
+        when(build.getProject()).thenReturn(project);
         
         ChangeSet changeset = new ChangeSet("450", null, "user", "comment");
         new ChangeLogSet(build, new ChangeSet[]{changeset});

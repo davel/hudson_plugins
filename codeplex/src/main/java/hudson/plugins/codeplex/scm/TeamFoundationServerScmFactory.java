@@ -6,11 +6,7 @@ import java.util.List;
 import javax.xml.rpc.ServiceException;
 
 import com.codeplex.soap.ProjectInfoService;
-import com.codeplex.soap.ProjectInfoServiceLocator;
-
 import hudson.model.AbstractProject;
-import hudson.model.Hudson;
-import hudson.model.View;
 import hudson.plugins.codeplex.CodePlexProjectProperty;
 import hudson.plugins.tfs.TeamFoundationServerScm;
 

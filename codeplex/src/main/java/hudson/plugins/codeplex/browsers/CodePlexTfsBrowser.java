@@ -3,9 +3,9 @@ package hudson.plugins.codeplex.browsers;
 import java.io.IOException;
 import java.net.URL;
 
+import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.plugins.codeplex.CodePlexProjectProperty;
-import hudson.plugins.codeplex.PluginImpl;
 import hudson.plugins.tfs.browsers.TeamFoundationServerRepositoryBrowser;
 import hudson.plugins.tfs.model.ChangeSet;
 import hudson.plugins.tfs.model.ChangeSet.Item;
@@ -54,11 +54,8 @@ public class CodePlexTfsBrowser extends TeamFoundationServerRepositoryBrowser {
     public URL getFileLink(Item item) throws IOException {
         return null;
     }
-    
-    public Descriptor<RepositoryBrowser<?>> getDescriptor() {
-        return PluginImpl.TFS_BROWSER_DESCRIPTOR;
-    }
 
+    @Extension
     public static class DescriptorImpl extends Descriptor<RepositoryBrowser<?>> {
         public DescriptorImpl() {
             super(CodePlexTfsBrowser.class);

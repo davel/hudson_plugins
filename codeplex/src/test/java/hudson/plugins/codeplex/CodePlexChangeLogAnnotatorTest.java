@@ -18,8 +18,8 @@ public class CodePlexChangeLogAnnotatorTest {
     public void testNoWikiLinkToAnnotate() {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
         
         CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
         MarkupText markupText = new MarkupText("Ordinary commit message without wiki link.");
@@ -31,8 +31,8 @@ public class CodePlexChangeLogAnnotatorTest {
 //    public void assertWikiWordIsAnnotated() {
 //        AbstractBuild build = mock(AbstractBuild.class);
 //        AbstractProject<?, ?> project = mock(AbstractProject.class);
-//        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-//        stub(build.getProject()).toReturn(project);
+//        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+//        when(build.getProject()).thenReturn(project);
 //
 //        CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
 //        MarkupText markupText = new MarkupText("Message with WikiLink. Yes a link.");
@@ -44,8 +44,8 @@ public class CodePlexChangeLogAnnotatorTest {
     public void assertWikiWordInBracketsIsAnnotated() {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
         MarkupText markupText = new MarkupText("Message with [Wiki Link]. Yes a link.");
@@ -57,8 +57,8 @@ public class CodePlexChangeLogAnnotatorTest {
     public void assertWikiKeyWordIsAnnotated() {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
         MarkupText markupText = new MarkupText("Message with wiki:WikiLink. Yes a link.");
@@ -70,8 +70,8 @@ public class CodePlexChangeLogAnnotatorTest {
 //    public void assertOneLetterWikiWordIsAnnotated() {
 //        AbstractBuild build = mock(AbstractBuild.class);
 //        AbstractProject<?, ?> project = mock(AbstractProject.class);
-//        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-//        stub(build.getProject()).toReturn(project);
+//        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+//        when(build.getProject()).thenReturn(project);
 //
 //        CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
 //        MarkupText markupText = new MarkupText("Changed version ThisIsAWikiLink");
@@ -83,8 +83,8 @@ public class CodePlexChangeLogAnnotatorTest {
     public void assertWorkItemInBracketsIsAnnotated() {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
         MarkupText markupText = new MarkupText("Message with [workitem: 12]. Yes a link.");
@@ -96,8 +96,8 @@ public class CodePlexChangeLogAnnotatorTest {
     public void assertDiscussionInBracketsIsAnnotated() {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getProperty(CodePlexProjectProperty.class)).toReturn(new CodePlexProjectProperty("theproject"));
-        stub(build.getProject()).toReturn(project);
+        when(project.getProperty(CodePlexProjectProperty.class)).thenReturn(new CodePlexProjectProperty("theproject"));
+        when(build.getProject()).thenReturn(project);
 
         CodePlexChangeLogAnnotator annotator = new CodePlexChangeLogAnnotator();
         MarkupText markupText = new MarkupText("Message with [discussion: 12]. Yes a link.");
