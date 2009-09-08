@@ -1,5 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	<t:summary icon="/plugin/codeplex/icons/codeplex-110x110.png">
-		THe project is available at codeplex.
-	</t:summary>
+  <table style="margin-top: 1em; margin-left:1em;">
+    <t:summary icon="/plugin/codeplex/icons/codeplex-110x110.png">
+    The project is available at <a href="${it.ProjectUrlString}">Codeplex</a>.
+    </t:summary>
+  </table>
 </j:jelly>

@@ -1,0 +1,107 @@
+package hudson.plugins.codeplex.scm;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+
+import hudson.matrix.MatrixProject;
+import hudson.model.FreeStyleProject;
+import hudson.plugins.codeplex.CodePlexProjectProperty;
+import hudson.plugins.codeplex.scm.CodePlexSubversionSCM;
+import hudson.scm.SubversionSCM;
+import hudson.scm.SubversionSCM.ModuleLocation;
+
+import org.jvnet.hudson.test.HudsonTestCase;
+
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebAssert;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
+
+    /**
+     * Asserts that Code plex subversion SCM works with Matrix projects.
+     * @throws Exception thrown if problem
+     */
+    public void testCodePlexSCMExNoLongerThrowsExceptionInAMatrixProject() throws Exception {
+        MatrixProject project = createMatrixProject("matrix");
+        project.setScm(new CodePlexSubversionSCM("path2", new ModuleLocation("https://rawr.svn.codeplex.com/svn", ".")));
+        project.addProperty(new CodePlexProjectProperty("rawr"));
+        
+        // Call any SCM method on the code plex scm used to throw RuntimeException
+        // when not finding the correct project
+        project.getScm().getBrowser();
+    }
+  
+    public void testCodePlexSCMExExtendsSubversionScm() throws Exception {        
+        FreeStyleProject project = createFreeStyleProject();
+        
+        WebClient client = new WebClient();
+        HtmlForm form = client.getPage(project, "configure").getFormByName("config");
+        form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
+        form.getInputsByName("scm").get(0).click(); // 
+        form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
+        
+        assertThat(project.getScm(), notNullValue());
+        assertThat(project.getScm(), is(SubversionSCM.class)); 
+    }
+  
+    /**
+     * Asserts that the svn URL is appended with the directory
+     * @throws Exception thrown if test errors
+     */
+    public void testSvnDirectoryIsSetCorrectly() throws Exception {        
+        FreeStyleProject project = createFreeStyleProject();
+        
+        WebClient client = new WebClient();
+        HtmlForm form = client.getPage(project, "configure").getFormByName("config");
+        form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
+        form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
+        form.getInputsByName("scm").get(0).click(); // 
+        form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
+        
+        assertThat(((CodePlexSubversionSCM) project.getScm()).getLocations()[0].getURL(), is("https://rawr.svn.codeplex.com/svn/tags/tag")); 
+    }
+  
+    /**
+     * Asserts that the svn URL is appended with the directory
+     * @throws Exception thrown if test errors
+     */
+    public void testLocalDirectoryIsStoredCorrectly() throws Exception {        
+        FreeStyleProject project = createFreeStyleProject();
+        
+        WebClient client = new WebClient();
+        HtmlForm form = client.getPage(project, "configure").getFormByName("config");
+        form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
+        form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
+        form.getInputsByName("scm").get(0).click(); // 
+        form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
+        
+        assertEquals("SVN Directory is incorrect", "tags/tag", ((CodePlexSubversionSCM) project.getScm()).getDirectory());
+        
+        HtmlPage page = client.getPage(project, "configure");
+        WebAssert.assertInputContainsValue(page, "codeplex.svnRemoteDirectory", "tags/tag"); 
+    }
+
+    public void testNewInstance() {
+        CodePlexSubversionSCM scm = CodePlexSubversionSCM.DescriptorImpl.newInstance(new CodePlexProjectProperty("rawr"), "trunk");
+        assertThat(scm.getLocations().length, is(1));
+        ModuleLocation location = scm.getLocations()[0];
+        assertThat(location.getLocalDir(), is("."));
+        assertThat(location.getURL(), is("https://rawr.svn.codeplex.com/svn/trunk"));
+    }
+    
+    public void testConfiguringWithoutSettingCodePlexProjectNameThrowsException() throws Exception {
+        try {
+            FreeStyleProject project = createFreeStyleProject();
+            
+            WebClient client = new WebClient();
+            HtmlForm form = client.getPage(project, "configure").getFormByName("config");
+            form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
+            form.getInputsByName("scm").get(0).click(); // 
+            form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
+        } catch (FailingHttpStatusCodeException e) {            
+        }
+    }
+}
