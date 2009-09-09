@@ -22,6 +22,6 @@ public class CodePlexProjectPropertyTest {
     @Test
     public void testGetSubversionRootUrl() {
         CodePlexProjectProperty property = new CodePlexProjectProperty("project");
-        assertEquals("https://project.svn.codeplex.com/svn", property.getSubversionRootUrlString());
+        assertEquals("https://project.svn.codeplex.com/svn/", property.getSubversionRootUrlString());
     }
 }
