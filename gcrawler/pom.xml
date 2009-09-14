@@ -11,6 +11,7 @@
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
     <hudson.version>1.323</hudson.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
@@ -48,6 +49,23 @@
       <artifactId>twitter</artifactId>
       <version>0.2</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+    	<groupId>easymock</groupId>
+    	<artifactId>easymock</artifactId>
+    	<version>2.0</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.jvnet.hudson.main</groupId>
+    	<artifactId>hudson-test-harness</artifactId>
+    	<version>1.323</version>
+    </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.7</version>
+    	<scope>test</scope>
     </dependency>
   </dependencies>
 

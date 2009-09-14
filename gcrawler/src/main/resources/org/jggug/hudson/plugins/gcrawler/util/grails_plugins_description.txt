@@ -1,0 +1,26 @@
+<table border="1" class="pane bigtable" style="width: 80%">
+    <tr>
+        <th>Project URL</th>
+        <td><a target="_blank" href="#{projectUrl}">#{projectUrl}</a></td>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>#{type}</td>
+    </tr>
+    <tr>
+        <th>Grails Version</th>
+        <td>#{grailsVersion}</td>
+    </tr>
+    <tr>
+        <th>SCM</th>
+        <td><a target="_blank" href="#{scmUrl}">#{scmUrl}</a></td>
+    </tr>
+    <tr>
+        <th>License</th>
+        <td>#{licenseLink}</td>
+    </tr>
+    <tr>
+        <th>Plugins</th>
+        <td style="white-space:normal">#{plugins}</td>
+    </tr>
+</table>

@@ -1,3 +1,4 @@
+mkdir -p ${WORKSPACE}/#{name}/grails-app/conf/
 echo \
 'dataSource {'$'\n'\
 '    pooled = true'$'\n'\

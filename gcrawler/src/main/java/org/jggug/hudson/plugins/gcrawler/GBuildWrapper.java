@@ -23,6 +23,7 @@ public class GBuildWrapper extends BuildWrapper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Environment setUp(final AbstractBuild build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
         class EnvironmentImpl extends Environment {
 

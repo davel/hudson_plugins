@@ -17,6 +17,7 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
+@Deprecated
 public class SVNRepositoryWrapper {
 
     private static final int DEFAULT_MAX_DEPTH = 3;

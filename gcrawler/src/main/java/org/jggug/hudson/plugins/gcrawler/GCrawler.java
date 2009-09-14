@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -41,7 +42,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
-import org.jggug.hudson.plugins.gcrawler.crawlers.GoogleCodeCrawler;
+import org.jggug.hudson.plugins.gcrawler.crawlers.GrailsPluginsCrawler;
 import org.kohsuke.stapler.StaplerRequest;
 
 public class GCrawler extends PeriodicWork {
@@ -83,8 +84,10 @@ public class GCrawler extends PeriodicWork {
         logger.info("-------------------------------");
 
         try {
-            Future<List<GrailsProjectInfo>> future = Executors.newSingleThreadExecutor()
-                .submit(new GoogleCodeCrawler(context));
+            ExecutorService service = Executors.newSingleThreadExecutor();
+            // TODO setting by management view.
+//            Future<List<GrailsProjectInfo>> future = service.submit(new GoogleCodeCrawler(context));
+            Future<List<GrailsProjectInfo>> future = service.submit(new GrailsPluginsCrawler(context));
             List<GrailsProjectInfo> projects = future.get();
             rebuildViews(projects);
             GCrawlerPlugin.getConfig().setGrailsProjectInfoList(projects);

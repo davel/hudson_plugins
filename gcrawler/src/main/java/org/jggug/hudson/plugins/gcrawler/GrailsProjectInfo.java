@@ -3,6 +3,7 @@ package org.jggug.hudson.plugins.gcrawler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -31,6 +32,8 @@ public class GrailsProjectInfo {
     private String grailsVersion;
 
     private String licenseLink;
+
+    private long revision;
 
     private List<String> plugins = new ArrayList<String>();
 
@@ -114,6 +117,13 @@ public class GrailsProjectInfo {
         this.parseTime = parseTime;
     }
 
+    public String toJobName() {
+        if (StringUtils.isEmpty(domain)) {
+            return name;
+        }
+        return String.format("%s.%s", name, domain);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
@@ -158,5 +168,13 @@ public class GrailsProjectInfo {
 
     public void addPlugin(String plugin) {
         plugins.add(plugin);
+    }
+
+    public long getRevision() {
+        return revision;
+    }
+
+    public void setRevision(long revision) {
+        this.revision = revision;
     }
 }

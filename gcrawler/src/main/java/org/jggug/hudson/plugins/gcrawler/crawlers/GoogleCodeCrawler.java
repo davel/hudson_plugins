@@ -5,23 +5,18 @@ import static java.util.regex.Pattern.compile;
 import static org.jggug.hudson.plugins.gcrawler.util.HttpUtils.getFile;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jggug.hudson.plugins.gcrawler.CrawlContext;
-import org.jggug.hudson.plugins.gcrawler.CrawlLogger;
 import org.jggug.hudson.plugins.gcrawler.GrailsProjectInfo;
+import org.jggug.hudson.plugins.gcrawler.scm.RepositoryException;
+import org.jggug.hudson.plugins.gcrawler.scm.SubversionRepository;
+import org.jggug.hudson.plugins.gcrawler.util.JobTemplate;
 
-public class GoogleCodeCrawler implements Callable<List<GrailsProjectInfo>> {
+public class GoogleCodeCrawler extends CrawlerBase {
 
     private static final String SEARCH_URL = "http://code.google.com/hosting/search?%s";
 
@@ -31,38 +26,22 @@ public class GoogleCodeCrawler implements Callable<List<GrailsProjectInfo>> {
 
     private static final List<String> IGNORE_PROJECT_NAMES = Arrays.asList("support");
 
-    private List<GrailsProjectInfo> result = new ArrayList<GrailsProjectInfo>();
+    private static final JobTemplate JOB_DESCRIPTION = JobTemplate.createTemplate("google_grails_description.txt");
 
-    private ExecutorService service;
-
-    private Vector<Future<GrailsProjectInfo>> list = new Vector<Future<GrailsProjectInfo>>();
-
-    private CrawlContext context;
-
-    private CrawlLogger logger;
+    private GrailsCrawlerTaskService service;
 
     public GoogleCodeCrawler(CrawlContext context) {
-        this.context = context;
-        this.logger = context.getLogger();
+        super(context);
     }
 
-    public List<GrailsProjectInfo> call() {
-        service = Executors.newFixedThreadPool(10);
+    public List<GrailsProjectInfo> crawl() throws Exception {
+        service = new GrailsCrawlerTaskService();
         try {
             crawl("q=label:Grails");
         } catch (FileNotFoundException e1) {
             logger.warn(e1);
         }
-        for (Future<GrailsProjectInfo> future : list) {
-            try {
-                result.add(future.get());
-            } catch (InterruptedException e) {
-                logger.warn(e);
-            } catch (ExecutionException e) {
-                logger.warn(e);
-            }
-        }
-        return result;
+        return service.getResults();
     }
 
     private void crawl(String query) throws FileNotFoundException {
@@ -73,7 +52,14 @@ public class GoogleCodeCrawler implements Callable<List<GrailsProjectInfo>> {
         while (nameMatcher.find()) {
             String name = nameMatcher.group(1);
             if (!IGNORE_PROJECT_NAMES.contains(name)) {
-                list.add(service.submit(new GoogleCodeCrawlTask(name, context)));
+                try {
+                    SubversionRepository repository =
+                        new SubversionRepository(format("http://%s.googlecode.com/svn/", name), true);
+                    GoogleCodeCrawlTask crawlTask = new GoogleCodeCrawlTask(name, context, JOB_DESCRIPTION, repository);
+                    service.submit(crawlTask);
+                } catch (RepositoryException e) {
+                    logger.warn(e);
+                }
             }
         }
         Matcher nextMatcher = NEXT_URL.matcher(html);

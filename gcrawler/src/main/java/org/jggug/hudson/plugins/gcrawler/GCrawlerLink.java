@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;

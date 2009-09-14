@@ -25,9 +25,6 @@ public class CrawlLogger {
 
     private Writer writer;
 
-    public CrawlLogger() {
-    }
-
     public CrawlLogger(File logFile) {
         try {
             logFile.deleteOnExit();
@@ -48,6 +45,10 @@ public class CrawlLogger {
 
     public void info(String message) {
         log(INFO, message);
+    }
+
+    public void info(String format, Object... args) {
+        log(INFO, String.format(format, args));
     }
 
     public void debug(String message) {

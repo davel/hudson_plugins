@@ -14,6 +14,8 @@ public class CrawlContext {
 
     private Map<String, String> grailsMap;
 
+    private Map<String, GrailsProjectInfo> projectMap;
+
     private CrawlLogger logger;
 
     private boolean isClosed = true;
@@ -61,8 +63,17 @@ public class CrawlContext {
         ctx.logFile = logFile;
         ctx.logger = new CrawlLogger(logFile);
         ctx.grailsMap = mapGrails();
+        ctx.projectMap = mapProject();
         ctx.isClosed = false;
         return ctx;
+    }
+
+    private static Map<String, GrailsProjectInfo> mapProject() {
+        Map<String, GrailsProjectInfo> result = new HashMap<String, GrailsProjectInfo>();
+        for (GrailsProjectInfo info : GCrawlerPlugin.getConfig().getGrailsProjectInfoList()) {
+            result.put(info.getName(), info);
+        }
+        return result;
     }
 
     private static Map<String, String> mapGrails() {
@@ -75,5 +86,13 @@ public class CrawlContext {
             }
         }
         return result;
+    }
+
+    public Map<String, GrailsProjectInfo> getProjectMap() {
+        return projectMap;
+    }
+
+    public void setProjectMap(Map<String, GrailsProjectInfo> projectMap) {
+        this.projectMap = projectMap;
     }
 }
