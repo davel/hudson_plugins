@@ -3,8 +3,12 @@ package org.jggug.hudson.plugins.gcrawler.crawlers;
 import static java.util.regex.Pattern.compile;
 import hudson.model.FreeStyleProject;
 import hudson.plugins.googlecode.GoogleCodeProjectProperty;
+import hudson.plugins.googlecode.GoogleCodeRepositoryBrowser;
+import hudson.scm.SubversionSCM;
+import hudson.scm.SubversionSCM.ModuleLocation;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +32,8 @@ class GoogleCodeCrawlTask extends GrailsProjectCrawlerTask {
     protected void setupJob(FreeStyleProject job, GrailsProjectInfo info) throws Exception {
         super.setupJob(job, info);
         job.addProperty(new GoogleCodeProjectProperty(info.getProjectUrl()));
+        job.setScm(new SubversionSCM(Arrays.asList(new ModuleLocation(info.getScmUrl(), info.getName())), true,
+                new GoogleCodeRepositoryBrowser(), ""));
     }
 
     @Override

@@ -35,6 +35,8 @@ public class GrailsProjectInfo {
 
     private long revision;
 
+    private boolean testsAvirable;
+
     private List<String> plugins = new ArrayList<String>();
 
     public String getVersion() {
@@ -176,5 +178,13 @@ public class GrailsProjectInfo {
 
     public void setRevision(long revision) {
         this.revision = revision;
+    }
+
+    public boolean isTestsAvirable() {
+        return testsAvirable;
+    }
+
+    public void setTestsAvirable(boolean testsAvirable) {
+        this.testsAvirable = testsAvirable;
     }
 }

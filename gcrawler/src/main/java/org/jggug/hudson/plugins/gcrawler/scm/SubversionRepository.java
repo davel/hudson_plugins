@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -91,6 +92,36 @@ public class SubversionRepository implements RepositoryWrapper {
             throw new RepositoryException(e);
         }
         throw new FileNotFoundException(name);
+    }
+
+    public boolean existsFileByPattern(Pattern pattern) throws RepositoryException {
+        boolean hasTrunk = repository.getLocation().toString().endsWith("trunk");
+        return existsFileByPattern((hasTrunk ? "" : "trunk"), pattern);
+    }
+
+    private boolean existsFileByPattern(String parent, Pattern pattern) throws RepositoryException {
+        List<SVNDirEntry> entries = new ArrayList<SVNDirEntry>();
+        try {
+            repository.getDir(parent, -1, false, entries);
+            Collections.sort(entries, FileFirstSVNDirEntryComparator.C);
+            for (SVNDirEntry entry : entries) {
+                if (entry.getKind() == FILE) {
+                    if (pattern.matcher(entry.getURL().toString()).matches()) {
+                        return true;
+                    }
+                }
+                else if (entry.getKind() == DIR) {
+                    boolean exists = existsFileByPattern(
+                        (StringUtils.isEmpty(parent) ? "" : parent + "/") + entry.getName(), pattern);
+                    if (exists) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SVNException e) {
+            throw new RepositoryException(e);
+        }
+        return false;
     }
 
     public FileInfo getFile(String path) throws FileNotFoundException, RepositoryException {

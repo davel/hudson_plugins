@@ -1,6 +1,10 @@
 package org.jggug.hudson.plugins.gcrawler.scm;
 
+import static org.junit.Assert.*;
+import static java.util.regex.Pattern.compile;
+
 import java.io.FileNotFoundException;
+import java.util.regex.Pattern;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,12 +46,15 @@ public class SubversionRepositoryTest {
         findFile("http://aloxcracetrack.googlecode.com/svn/", true);
     }
 
-//    @Test(expected=FileNotFoundException.class)
-//    public void test_google_nested_trunk() throws RepositoryException, FileNotFoundException {
-//        // http://aloxcracetrack.googlecode.com/svn/application.properties
-//        // http://aloxcracetrack.googlecode.com/svn/trunk
-//        findFile("http://aloxcracetrack.googlecode.com/svn/", true);
-//    }
+    @Test(expected=FileNotFoundException.class)
+    public void test_google_nested_trunk() throws RepositoryException, FileNotFoundException {
+        findFile("http://aloxcracetrack.googlecode.com/svn/", true);
+    }
+
+    @Test
+    public void exist() throws RepositoryException {
+        assertTrue(existsFileByPattern("http://svn.codehaus.org/grails-plugins/category/", compile("^.*Tests.groovy$")));
+    }
 
     private void findFile(String url) throws RepositoryException, FileNotFoundException {
         findFile(url, false);
@@ -57,5 +64,13 @@ public class SubversionRepositoryTest {
         SubversionRepository repo = new SubversionRepository(url, isFixedUrl);
         FileInfo f = repo.findFile("application.properties");
         System.out.println(f.getUrl());
+    }
+
+    private boolean existsFileByPattern(String url, Pattern pattern) {
+        try {
+            return new SubversionRepository(url, false).existsFileByPattern(pattern);
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

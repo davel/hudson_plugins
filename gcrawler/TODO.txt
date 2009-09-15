@@ -1,0 +1,14 @@
+Core
+    report code-coverage
+    report codenarc
+
+Grails plugins
+    Add FishEye Repository Blowser
+
+Google Code
+    Add user description
+        http://code.google.com/feeds/u/${userName}/updates/projects/basic > yahoo pipes
+
+Other
+    github, sourceforge
+    griffon

@@ -12,6 +12,13 @@ public class GrailsPluginsCrawlerTask extends GrailsProjectCrawlerTask {
     }
 
     @Override
+    protected void setupProjectInfo(GrailsProjectInfo info, String appProperties) {
+        super.setupProjectInfo(info, appProperties);
+        // TODO
+        info.setProjectUrl(getProjectUrl(info));
+    }
+
+    @Override
     protected String getDomain() {
         return "grails.org";
     }

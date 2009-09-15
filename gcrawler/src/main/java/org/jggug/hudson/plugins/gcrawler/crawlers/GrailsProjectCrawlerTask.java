@@ -13,9 +13,6 @@ import static org.jggug.hudson.plugins.gcrawler.util.PropertyFileUtils.toResourc
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Hudson;
-import hudson.plugins.googlecode.GoogleCodeRepositoryBrowser;
-import hudson.scm.SubversionSCM;
-import hudson.scm.SubversionSCM.ModuleLocation;
 import hudson.tasks.Builder;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Publisher;
@@ -26,7 +23,6 @@ import hudson.util.DescribableList;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.PropertyResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -56,6 +52,8 @@ public abstract class GrailsProjectCrawlerTask implements Callable<GrailsProject
     private static final Pattern PLUGINS = compile("plugins\\.(.*?)=(.*)");
 
     private static final JobTemplate JOB_SHELL = createTemplate("google_grails_shell.txt");
+
+    private static final Pattern PATTERN_TESTS = Pattern.compile("^.*Tests.groovy$");
 
     private String name;
 
@@ -107,6 +105,7 @@ public abstract class GrailsProjectCrawlerTask implements Callable<GrailsProject
         try {
             info.setRevision(repository.getLatestRevision());
             FileInfo appProperties = repository.findFile("application.properties");
+            info.setTestsAvirable(repository.existsFileByPattern(PATTERN_TESTS));
             String url = appProperties.getUrl();
             info.setScmUrl(url.substring(0, url.lastIndexOf('/')));
             setupProjectInfo(info, appProperties.getContent());
@@ -162,8 +161,6 @@ public abstract class GrailsProjectCrawlerTask implements Callable<GrailsProject
     protected void setupJob(FreeStyleProject job, GrailsProjectInfo info) throws Exception {
         job.setDescription(descriptionTemplate.generate(info));
         job.setLogRotator(new LogRotator(-1, 3));
-        job.setScm(new SubversionSCM(Arrays.asList(new ModuleLocation(info.getScmUrl(), info.getName())), true,
-                new GoogleCodeRepositoryBrowser(), ""));
         job.addTrigger(new SCMTrigger("*/5 * * * *"));
         job.setAssignedLabel(null);
         addGBuildWrapper(job);
@@ -171,12 +168,15 @@ public abstract class GrailsProjectCrawlerTask implements Callable<GrailsProject
         DescribableList<Builder,Descriptor<Builder>> builders = job.getBuildersList();
         builders.clear();
         builders.add(new Shell(JOB_SHELL.generate(info)));
-        builders.add(new GrailsBuilder("clean test-app",
+        String targets = "clean " + (info.isTestsAvirable() ? "test-app" : "package") + " --non-interactive";
+        builders.add(new GrailsBuilder(targets,
             context.getGrailsMap().get(info.getGrailsVersion()), null, null, null, null));
 
         DescribableList<Publisher,Descriptor<Publisher>> publishers = job.getPublishersList();
         publishers.clear();
-        publishers.add(new JUnitResultArchiver(format("%s/test/reports/TEST*.xml", info.getName()), null));
+        if (info.isTestsAvirable()) {
+            publishers.add(new JUnitResultArchiver(format("%s/test/reports/TEST*.xml", info.getName()), null));
+        }
         if (isActive("emotional-hudson")) {
             publishers.add(createEmotionalHudsonPublisher());
         }
