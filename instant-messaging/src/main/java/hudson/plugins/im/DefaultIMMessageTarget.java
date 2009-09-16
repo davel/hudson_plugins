@@ -1,18 +1,21 @@
-package hudson.plugins.jabber.im;
+package hudson.plugins.im;
 
+import hudson.plugins.im.IMMessageTarget;
+import hudson.plugins.im.tools.Assert;
 
 /**
  * DefaultIMMessageTarget basically is a String, that represents an Im-Account to send messages to.
  * @author Uwe Schaefer
  */
-@Deprecated
-public class DefaultIMMessageTarget extends hudson.plugins.im.DefaultIMMessageTarget
+public class DefaultIMMessageTarget implements IMMessageTarget
 {
     private static final long serialVersionUID = 1L;
+    protected final String value;
 
     public DefaultIMMessageTarget(final String value)
     {
-    	super(value);
+        Assert.isNotNull(value, "Parameter 'value' must not be null.");
+        this.value = value;
     }
 
     @Override
@@ -36,5 +39,17 @@ public class DefaultIMMessageTarget extends hudson.plugins.im.DefaultIMMessageTa
             return false;
         }
 
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.value.hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.value;
     }
 }
