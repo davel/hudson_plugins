@@ -212,6 +212,7 @@
         <module>hello-world</module>
         <module>harvest</module>
         <module>hudsontrayapp</module>
+        <module>instant-messaging</module>
         <module>ircbot</module>
         <module>ivy</module>
         <module>jabber</module>
