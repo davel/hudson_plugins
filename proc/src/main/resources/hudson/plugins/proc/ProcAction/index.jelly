@@ -1,0 +1,13 @@
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
+ <html>
+   <body bgcolor="${background}" text="#FFFFFF">
+     <h1>Processes</h1>
+     <ul>
+       <j:forEach items="${it.getProcesses()}" var="i">
+         <li><a href="${i.getPid()}">Process ${i.getPid()}</a></li>
+       </j:forEach>
+     </ul>
+   </body>
+ </html>
+</j:jelly>
+
