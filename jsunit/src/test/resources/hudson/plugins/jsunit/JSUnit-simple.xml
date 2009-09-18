@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<browserResult id="1253097313638" time="0.602">
+	<properties>
+		<property name="browserFileName" value="C:/Program Files/Mozilla Firefox/firefox.exe" />
+		<property name="browserId" value="0" />
+		<property name="jsUnitVersion" value="2.2" />
+		<property name="userAgent" value="Mozilla/5.0 (Windows; U; Windows NT 5.2; nl; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)" />
+		<property name="remoteAddress" value="127.0.0.1" />
+		<property name="url" value="file:///C:/.hudson/jobs/Test JSUnit/workspace/trunk/test/jsunit/tests/jsUnitTestSuite.html" />
+	</properties>
+	<testCases>
+		<testCase name="file:///C:/.hudson/jobs/Test JSUnit/workspace/trunk/test/jsunit/tests/DateTest.html:testSubstractSixWorkingdays" time="0.0020" />
+		<testCase name="file:///C:/.hudson/jobs/Test JSUnit/workspace/trunk/test/jsunit/tests/DateTest.html:testAddFourWorkingdays" time="0.0010" />
+	</testCases>
+</browserResult>
