@@ -10,6 +10,7 @@ import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.junit.TestResult;
 import hudson.tasks.junit.TestResultAction;
@@ -199,6 +200,10 @@ public class JSUnitPublisher extends hudson.tasks.Publisher implements Serializa
     public Descriptor<Publisher> getDescriptor() {
         return DESCRIPTOR;
     }
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
 
     public static class DescriptorImpl extends Descriptor<Publisher> {
 
