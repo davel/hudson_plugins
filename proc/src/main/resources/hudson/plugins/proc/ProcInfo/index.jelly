@@ -1,11 +1,13 @@
-<j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
- <html>
-   <body>
-     <h1>Process Info</h1>
-     <ul>
-       <li>Process ${it}</li>
-     </ul>
-   </body>
- </html>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<l:layout title="Remote API">
+		<l:main-panel>
+            <form method="post" action="kill" style="float:right">
+                <f:submit value="Kill" />
+            </form>
+            <h1>Process Info</h1>
+            <ul>
+              <li>Process ${it}</li>
+            </ul>
+		</l:main-panel>
+	</l:layout>
 </j:jelly>
-

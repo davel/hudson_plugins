@@ -1,13 +1,15 @@
-<j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
- <html>
-   <body bgcolor="${background}" text="#FFFFFF">
-     <h1>Processes</h1>
-     <ul>
-       <j:forEach items="${it.getProcesses()}" var="i">
-         <li><a href="${i.getPid()}">Process ${i.getPid()}</a></li>
-       </j:forEach>
-     </ul>
-   </body>
- </html>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+	<l:layout title="Remote API">
+		<l:main-panel>
+
+            <h1>Processes</h1>
+            <ul>
+              <j:forEach items="${it.getProcesses()}" var="i">
+                <li><a href="${i.getPid()}">Process ${i.getPid()}</a></li>
+              </j:forEach>
+            </ul>
+
+		</l:main-panel>
+	</l:layout>
 </j:jelly>
 

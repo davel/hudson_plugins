@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpRedirect;
+
 /**
  * @author Jitendra Kotamraju
  */
@@ -18,6 +21,11 @@ public class ProcInfo {
 
     ProcInfo(ProcessTree.OSProcess proc) {
         this.proc = proc;
+    }
+
+    public HttpResponse doKill() {
+        proc.kill();
+        return new HttpRedirect("..");
     }
 
     @Override
