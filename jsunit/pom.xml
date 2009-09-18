@@ -11,7 +11,7 @@
 
 	<artifactId>jsunit</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.1</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>Hudson JSUnit plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/JSUnit+Plugin</url>
 
@@ -23,7 +23,7 @@
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jmock</groupId>
@@ -37,7 +37,7 @@
 			<version>2.2.0</version>
 			<scope>test</scope>
 	    </dependency>
-	    
+
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
