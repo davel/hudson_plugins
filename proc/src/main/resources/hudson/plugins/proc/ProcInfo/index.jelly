@@ -1,0 +1,11 @@
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
+ <html>
+   <body>
+     <h1>Process Info</h1>
+     <ul>
+       <li>Process ${it}</li>
+     </ul>
+   </body>
+ </html>
+</j:jelly>
+

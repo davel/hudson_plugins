@@ -33,7 +33,8 @@ public class ProcAction implements Action {
     }
 
     public Object getDynamic(String id) {
-        return ProcessTree.get().get(Integer.parseInt(id));
+        ProcessTree.OSProcess osp = ProcessTree.get().get(Integer.parseInt(id));
+        return new ProcInfo(osp);
     }
 
     // returns the list of process for a build
@@ -62,8 +63,6 @@ public class ProcAction implements Action {
             String v = procVar.get(e.getKey());
             if(v==null || !v.equals(e.getValue()))
                 return false;   // no match
-            else
-                System.out.println("Mathing v="+v+" key="+e.getKey());
         }
 
         return true;
