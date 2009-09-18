@@ -47,7 +47,7 @@
 	</dependencies>
 
   <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/jsunit-0.1</connection>
+    <connection>scm:svn:https://ricktw@svn.dev.java.net/svn/hudson/tags/jsunit-0.1</connection>
     <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/jsunit-0.1</developerConnection>
     <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/jsunit/tags/jsunit-0.1</url>
   </scm>
