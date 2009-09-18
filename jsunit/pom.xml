@@ -11,7 +11,7 @@
 
 	<artifactId>jsunit</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.1</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>Hudson JSUnit plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/JSUnit+Plugin</url>
 
