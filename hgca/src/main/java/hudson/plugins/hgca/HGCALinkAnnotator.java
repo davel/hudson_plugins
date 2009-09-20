@@ -42,7 +42,7 @@ import java.util.ArrayList;
 public class HGCALinkAnnotator extends ChangeLogAnnotator {
 
     @Override
-    public void annotate(AbstractBuild<?,?> build, Entry change, MarkupText text) {
+        public void annotate(AbstractBuild<?,?> build, Entry change, MarkupText text) {
         HGCAProjectProperty hpp = build.getProject().getProperty(HGCAProjectProperty.class);
         
         if(hpp==null) 
@@ -89,8 +89,8 @@ public class HGCALinkAnnotator extends ChangeLogAnnotator {
             // Currently doing surroundWith - debating switching to pure replace?
             for(SubText st : text.findTokens(pattern)) {
                 st.surroundWith(
-                    "<a href='"+href+"'>",
-                    "</a>");
+                                "<a href='"+href+"'>",
+                                "</a>");
             }
         }
 
