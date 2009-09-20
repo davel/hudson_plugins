@@ -23,6 +23,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.thoughtworks.xstream.XStream;
+import hudson.model.Hudson;
 
 public class CrapBuildResult implements ModelObject, ICrapMethodPresentation {
 	
@@ -91,7 +92,7 @@ public class CrapBuildResult implements ModelObject, ICrapMethodPresentation {
 	
 	//@Override
 	public String getTitle() {
-		return "All Crappy Methods for <a href=\"/" + getOwner().getUrl() + "\">" + getOwner().getDisplayName() + "</a>";
+		return "All Crappy Methods for <a href=\"" + Hudson.getInstance().getRootUrlFromRequest() + getOwner().getUrl() + "\">" + getOwner().getDisplayName() + "</a>";
 	}
 	
 	//@Override
