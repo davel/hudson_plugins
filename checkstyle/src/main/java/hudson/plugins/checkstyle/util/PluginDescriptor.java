@@ -1,16 +1,17 @@
 package hudson.plugins.checkstyle.util;
 
+import hudson.FilePath;
 import hudson.maven.AbstractMavenProject;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -77,8 +78,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param response
      *            Stapler response
      */
-    public final void doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new EncodingValidator(request, response).process();
+    public final FormValidation doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        return new EncodingValidator(request, response).check();
     }
 
     /**
@@ -89,8 +90,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param response
      *            Stapler response
      */
-    public final void doCheckPattern(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new FormFieldValidator.WorkspaceFileMask(request, response).process();
+    public final FormValidation doCheckPattern(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException, ServletException {
+        return FilePath.validateFileMask(project.getSomeWorkspace(), value);
     }
 
     /**
@@ -101,8 +102,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param response
      *            Stapler response
      */
-    public final void doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new ThresholdValidator(request, response).process();
+    public final FormValidation doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        return new ThresholdValidator(request, response).check();
     }
 
     /**

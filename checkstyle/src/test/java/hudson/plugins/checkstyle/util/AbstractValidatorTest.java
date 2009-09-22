@@ -1,7 +1,7 @@
 package hudson.plugins.checkstyle.util;
 
 import static org.mockito.Mockito.*;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.PrintWriter;
 
@@ -15,9 +15,6 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Ulli Hafner
  */
 public abstract class AbstractValidatorTest {
-    /** Determines whether the error method has been called (i.e. a validation failure). */
-    private boolean isError;
-
     /**
      * Creates a new instance of {@link AbstractValidatorTest}.
      */
@@ -91,16 +88,9 @@ public abstract class AbstractValidatorTest {
         when(response.getWriter()).thenReturn(new PrintWriter(System.out));
 
         SingleFieldValidator validator = createValidator(request, response);
-        isError = false;
-        validator.check();
+        FormValidation result = validator.check();
+        boolean isError = result.kind != FormValidation.Kind.OK;
 
         Assert.assertEquals("Wrong validation of input string " + inputValue, expectedIsValid, !isError);
-    }
-
-    /**
-     * Sets the validation result to <code>false</code>.
-     */
-    protected final void setError() {
-        isError = true;
     }
 }

@@ -1,15 +1,16 @@
 package hudson.plugins.checkstyle;
 
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Descriptor;
 import hudson.plugins.checkstyle.parser.CheckStyleParser;
 import hudson.plugins.checkstyle.util.BuildResult;
 import hudson.plugins.checkstyle.util.FilesParser;
 import hudson.plugins.checkstyle.util.HealthAwarePublisher;
 import hudson.plugins.checkstyle.util.ParserResult;
 import hudson.plugins.checkstyle.util.PluginLogger;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class CheckStylePublisher extends HealthAwarePublisher {
     /** Default Checkstyle pattern. */
     private static final String DEFAULT_PATTERN = "**/checkstyle-result.xml";
     /** Descriptor of this publisher. */
+    @Extension
     public static final CheckStyleDescriptor CHECKSTYLE_DESCRIPTOR = new CheckStyleDescriptor();
     /** Ant file-set pattern of files to work with. */
     private final String pattern;
@@ -96,7 +98,7 @@ public class CheckStylePublisher extends HealthAwarePublisher {
 
         FilesParser parser = new FilesParser(logger, StringUtils.defaultIfEmpty(getPattern(), DEFAULT_PATTERN), new CheckStyleParser(getDefaultEncoding()),
                 isMavenBuild(build), isAntBuild(build));
-        ParserResult project = build.getProject().getWorkspace().act(parser);
+        ParserResult project = build.getWorkspace().act(parser);
         CheckStyleResult result = new CheckStyleResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new CheckStyleResultAction(build, this, result));
 
@@ -105,7 +107,7 @@ public class CheckStylePublisher extends HealthAwarePublisher {
 
     /** {@inheritDoc} */
     @Override
-    public Descriptor<Publisher> getDescriptor() {
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return CHECKSTYLE_DESCRIPTOR;
     }
 }

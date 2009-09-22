@@ -1,5 +1,7 @@
 package hudson.plugins.checkstyle.util;
 
+import hudson.util.FormValidation;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -52,20 +54,19 @@ public class TrendReportHeightValidator extends SingleFieldValidator {
 
     /** {@inheritDoc} */
     @Override
-    public void check(final String value) throws IOException, ServletException {
+    public FormValidation check(final String value) throws IOException, ServletException {
         if (!StringUtils.isEmpty(value)) {
             try {
                 int integer = Integer.valueOf(value);
                 if (integer < MINIMUM_HEIGHT) {
-                    error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
-                    return;
+                    return FormValidation.error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
                 }
             }
             catch (NumberFormatException exception) {
-                error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
-                return;
+                return FormValidation.error(Messages.FieldValidator_Error_TrendHeight(MINIMUM_HEIGHT));
             }
         }
+        return FormValidation.ok();
     }
 }
 

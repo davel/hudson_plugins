@@ -1,5 +1,7 @@
 package hudson.plugins.checkstyle.util;
 
+import hudson.util.FormValidation;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -101,18 +103,19 @@ public class EncodingValidator extends SingleFieldValidator {
 
     /** {@inheritDoc} */
     @Override
-    public void check(final String encoding) throws IOException, ServletException {
+    public FormValidation check(final String encoding) throws IOException, ServletException {
         try {
             if (StringUtils.isEmpty(encoding) || Charset.forName(encoding) != null) {
-                ok();
+                return FormValidation.ok();
             }
         }
         catch (IllegalCharsetNameException exception) {
-            error(Messages.FieldValidator_Error_DefaultEncoding());
+            return FormValidation.error(Messages.FieldValidator_Error_DefaultEncoding());
         }
         catch (UnsupportedCharsetException exception) {
-            error(Messages.FieldValidator_Error_DefaultEncoding());
+            return FormValidation.error(Messages.FieldValidator_Error_DefaultEncoding());
         }
+        return FormValidation.ok();
     }
 }
 

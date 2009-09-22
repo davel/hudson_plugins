@@ -15,9 +15,10 @@ import hudson.plugins.checkstyle.util.model.WorkspaceFile;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.Ant;
 import hudson.tasks.BuildStep;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
-import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +45,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Ulli Hafner
  */
 // CHECKSTYLE:COUPLING-OFF
-public abstract class HealthAwarePublisher extends Publisher implements HealthDescriptor {
+public abstract class HealthAwarePublisher extends Recorder implements HealthDescriptor {
     /** Unique ID of this class. */
     private static final long serialVersionUID = -7945220365563528457L;
     /** Default threshold priority limit. */
@@ -384,6 +385,11 @@ public abstract class HealthAwarePublisher extends Publisher implements HealthDe
      */
     public String getThresholdLimit() {
         return thresholdLimit;
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     /** Backward compatibility. */
