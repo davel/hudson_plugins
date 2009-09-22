@@ -42,7 +42,7 @@ import java.util.ArrayList;
 public class HGCALinkAnnotator extends ChangeLogAnnotator {
 
     @Override
-        public void annotate(AbstractBuild<?,?> build, Entry change, MarkupText text) {
+    public void annotate(AbstractBuild<?,?> build, Entry change, MarkupText text) {
         HGCAProjectProperty hpp = build.getProject().getProperty(HGCAProjectProperty.class);
         
         if(hpp==null) 

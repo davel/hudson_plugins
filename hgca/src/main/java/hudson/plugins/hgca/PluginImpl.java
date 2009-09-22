@@ -37,7 +37,7 @@ public class PluginImpl extends Plugin {
     private final HGCALinkAnnotator annotator = new HGCALinkAnnotator();
 
     @Override
-        public void start() throws Exception {
+    public void start() throws Exception {
         annotator.register();
         Jobs.PROPERTIES.add(HGCAProjectProperty.DESCRIPTOR);
     }

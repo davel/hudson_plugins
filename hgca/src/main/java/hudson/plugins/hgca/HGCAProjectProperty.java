@@ -51,7 +51,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
     public final HashMap<String,String> annoPats; 
 
     @DataBoundConstructor
-        public HGCAProjectProperty(List<Entry> annoPats) {
+    public HGCAProjectProperty(List<Entry> annoPats) {
         this.annoPats = toMap(annoPats);
     }
 
@@ -107,7 +107,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
         }
 
         @Override
-            public boolean configure(StaplerRequest req, JSONObject o) throws FormException {
+        public boolean configure(StaplerRequest req, JSONObject o) throws FormException {
             // to persist global configuration information,
             // set that to properties and call save().
             HGCAProjectProperty hpp = req.bindJSON(HGCAProjectProperty.class,o);
@@ -122,7 +122,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
         }
         
         @Override
-            public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             JSONObject toBind;
             System.err.println(formData.toString());
             // annoBlock contains the pairs in per-project configuration, but they're not in a block like 
@@ -143,12 +143,12 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
         public String key, value;
         
         @DataBoundConstructor
-            public Entry(String key, String value) {
+        public Entry(String key, String value) {
             this.key = key;
             this.value = value;
         }
     }
-        
+    
     private static HashMap<String,String> toMap(List<Entry> entries) {
         HashMap<String,String> map = new HashMap<String,String>();
         if (entries!=null && entries.size() > 0) {
