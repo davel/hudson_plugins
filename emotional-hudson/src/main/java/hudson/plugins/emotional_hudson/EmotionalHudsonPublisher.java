@@ -1,14 +1,18 @@
 package hudson.plugins.emotional_hudson;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.*;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 
-public class EmotionalHudsonPublisher extends Publisher {
+public class EmotionalHudsonPublisher extends Notifier {
 
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 /*
@@ -39,13 +43,19 @@ public class EmotionalHudsonPublisher extends Publisher {
         return new EmotionalHudsonAction();
     }
 
-    public Descriptor<Publisher> getDescriptor() {
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    @Override
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return DESCRIPTOR;
     }
 
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 //        public static int counter = 0;
 
         DescriptorImpl() {
@@ -57,13 +67,20 @@ public class EmotionalHudsonPublisher extends Publisher {
             return "Emotional Hudson";
         }
 
-        public boolean configure(StaplerRequest req) throws FormException {
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             save();
-            return super.configure(req);
+            return super.configure(req, formData);
         }
 
+        @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             return new EmotionalHudsonPublisher();
+        }
+
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
         }
     }
 }
