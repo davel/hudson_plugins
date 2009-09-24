@@ -36,7 +36,7 @@ public class ScisSupportOffer extends AdministrativeMonitor {
             active = d > 60 && h.getItems().size()>20
                     // as an attempt to phase this in slowly, even if all the criteria are met,
                     // limit the exposure.
-                    && new Random().nextInt(10)==0;
+                    && new Random().nextInt(3)==0;
         }
 
         active |= Boolean.getBoolean("forceAd"); // for debugging
