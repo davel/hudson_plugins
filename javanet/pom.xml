@@ -17,7 +17,7 @@
     <dependency>
       <groupId>javanettasks</groupId>
       <artifactId>javanettasks</artifactId>
-      <version>1.0.14</version>
+      <version>1.0.25</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -34,19 +34,4 @@
       I get copies of jars that are already in hudson-core.
     -->
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/1/</url>
-      <layout>legacy</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 </project>
