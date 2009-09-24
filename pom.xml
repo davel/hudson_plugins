@@ -250,6 +250,7 @@
         <module>rubyMetrics</module>
         <module>sametime</module>
         <module>scp</module>
+        <module>secret</module>
         <module>sidebar-link</module>
         <module>sonar</module>
         <module>ssh-slaves</module>
@@ -271,9 +272,6 @@
         <module>pvcs_scm</module>
         <!--module>backup</module resurrect this with 1.318 -->
         <module>jsunit</module>
-        
-        
-        
     </modules>
 
     <properties>
