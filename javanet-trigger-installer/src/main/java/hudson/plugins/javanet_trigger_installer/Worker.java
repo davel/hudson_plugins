@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import hudson.util.TimeUnit2;
+
 /**
  * Does the actual job of subscribing/unsubscribing.
  *
@@ -91,5 +93,5 @@ public class Worker extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(Worker.class.getName());
 
-    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
+    private static final long SESSION_TIMEOUT = TimeUnit2.MINUTES.toMillis(120);
 }
