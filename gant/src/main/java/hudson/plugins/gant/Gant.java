@@ -1,25 +1,25 @@
 package hudson.plugins.gant;
 
 import hudson.tasks.Builder;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Project;
 import hudson.model.Descriptor;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.CopyOnWrite;
+import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.util.ArgumentListBuilder;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.io.File;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import javax.servlet.ServletException;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -58,9 +58,9 @@ public class Gant extends Builder {
         return null;
     }
 
-    public boolean perform(Build<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
-        Project proj = build.getProject();
-
+    @Override
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener)
+            throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
 
         String execName;
@@ -85,7 +85,7 @@ public class Gant extends Builder {
         args.addKeyValuePairs("-D",build.getBuildVariables());
         args.addTokenized(normalizedTarget);
 
-        Map<String,String> env = build.getEnvVars();
+        Map<String,String> env = build.getEnvironment(listener);
         if(ai!=null)
             env.put("GROOVY_HOME",ai.getGroovyHome());
 
@@ -99,7 +99,7 @@ public class Gant extends Builder {
         }
 
         try {
-            int r = launcher.launch(args.toCommandArray(),env,listener.getLogger(),proj.getModuleRoot()).join();
+            int r = launcher.launch().cmds(args).envs(env).stdout(listener.getLogger()).pwd(build.getModuleRoot()).join();
             return r==0;
         } catch (IOException e) {
             Util.displayIOException(e,listener);
@@ -108,10 +108,12 @@ public class Gant extends Builder {
         }
     }
 
+    @Override
     public Descriptor<Builder> getDescriptor() {
         return DESCRIPTOR;
     }
 
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static final class DescriptorImpl extends Descriptor<Builder> {
@@ -123,6 +125,7 @@ public class Gant extends Builder {
             load();
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/gant/help.html";
         }
@@ -135,7 +138,8 @@ public class Gant extends Builder {
             return installations;
         }
 
-        public boolean configure(StaplerRequest req) {
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) {
             installations = req.bindParametersToList(
                 GantInstallation.class,"gant.").toArray(new GantInstallation[0]);
             save();
@@ -148,29 +152,24 @@ public class Gant extends Builder {
         /**
          * Checks if the GROOVY_HOME is valid.
          */
-        public void doCheckGroovyHome( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
+        public FormValidation doCheckGroovyHome(@QueryParameter final String value) {
             // this can be used to check the existence of a file on the server, so needs to be protected
-            new FormFieldValidator(req,rsp,true) {
-                public void check() throws IOException, ServletException {
-                    File f = getFileParameter("value");
-                    if(!f.isDirectory()) {
-                        error(f+" is not a directory");
-                        return;
-                    }
+            if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER)) return FormValidation.ok();
 
-                    if(!new File(f,"bin/groovy").exists() && !new File(f,"bin/groovy.bat").exists()) {
-                        error(f+" doesn't look like a Groovy directory");
-                        return;
-                    }
+            File f = new File(Util.fixNull(value));
+            if(!f.isDirectory()) {
+                return FormValidation.error(f+" is not a directory");
+            }
 
-                    if(!new File(f,"bin/gant").exists() && !new File(f,"bin/gant.bat").exists()) {
-                        error(f+" looks like a Groovy but Gant is not found in here");
-                        return;
-                    }
+            if(!new File(f,"bin/groovy").exists() && !new File(f,"bin/groovy.bat").exists()) {
+                return FormValidation.error(f+" doesn't look like a Groovy directory");
+            }
 
-                    ok();
-                }
-            }.process();
+            if(!new File(f,"bin/gant").exists() && !new File(f,"bin/gant.bat").exists()) {
+                return FormValidation.error(f+" looks like a Groovy but Gant is not found in here");
+            }
+
+            return FormValidation.ok();
         }
     }
 
