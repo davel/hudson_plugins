@@ -5,9 +5,8 @@
  */
 package hudson.plugins.ircbot;
 
-import hudson.model.Descriptor;
+import hudson.Extension;
 import hudson.model.User;
-import hudson.model.UserProperty;
 import hudson.model.UserPropertyDescriptor;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -17,6 +16,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @version $Id$
  */
 public class IrcUserProperty extends hudson.model.UserProperty {
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     private final String nick;
@@ -36,6 +36,7 @@ public class IrcUserProperty extends hudson.model.UserProperty {
     /**
      * @see hudson.model.Describable#getDescriptor()
      */
+    @Override
     public UserPropertyDescriptor getDescriptor() {
         return DESCRIPTOR;
     }

@@ -92,7 +92,7 @@ public enum BotCommands {
                                 bot.sendNotice(sender, jobName
                                         + " is disabled");
                             } else {
-                                project.scheduleBuild();
+                                project.scheduleBuild(new IrcCause(sender));
                                 bot.sendNotice(sender, jobName
                                         + " build scheduled");
                             }
