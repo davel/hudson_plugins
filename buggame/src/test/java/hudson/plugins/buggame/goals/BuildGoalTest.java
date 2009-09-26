@@ -36,7 +36,7 @@ public class BuildGoalTest extends HudsonTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		AbstractProject<?, ?> mockProject = mock(AbstractProject.class);
-		Challenge mockChallenge = new Challenge(mockProject, "Test challenge",
+		Challenge mockChallenge = new Challenge(1, mockProject, "Test challenge",
 				new Date(), new Date(), "Test Reward");
 		
 		buildGoal = new BuildGoal(mockChallenge, endValue);
@@ -55,6 +55,30 @@ public class BuildGoalTest extends HudsonTestCase {
 	 * @throws Exception 
 	 */
 	@Test
+	public void testGetScore() throws Exception {		
+		FreeStyleProject project = setUpHudsonProject();
+		AbstractBuild<?, ?> build = project.getLastBuild();
+		double expectedScore = 0;
+		
+		while (build != null) {
+			build.addAction(getScoreCardAction(build, "Build result", 10));
+
+			expectedScore = expectedScore + 10;
+			build = build.getPreviousBuild();
+		}
+		
+		DateTime startDate = new DateTime(2008, 1, 1, 0, 0, 0, 0);
+		DateTime endDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
+		
+		Challenge testChallenge = new Challenge(2, (AbstractProject<?, ?>) project, 
+				"Test challenge", startDate.toDate(), endDate.toDate(), "Test Reward");
+		BuildGoal goal = new BuildGoal(testChallenge, 100);
+		testChallenge.setGoal(goal);
+		
+		assertTrue("Current score was " + goal.getCurrentScore() + "," +
+				"but expected " + expectedScore, goal.getCurrentScore() == expectedScore);
+	}
+	
 	public void testGetPercentageProgress() throws Exception {		
 		FreeStyleProject project = setUpHudsonProject();
 		AbstractBuild<?, ?> build = project.getLastBuild();
@@ -70,13 +94,14 @@ public class BuildGoalTest extends HudsonTestCase {
 		DateTime startDate = new DateTime(2008, 1, 1, 0, 0, 0, 0);
 		DateTime endDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
 		
-		Challenge testChallenge = new Challenge((AbstractProject<?, ?>) project, 
+		Challenge testChallenge = new Challenge(3, (AbstractProject<?, ?>) project, 
 				"Test challenge", startDate.toDate(), endDate.toDate(), "Test Reward");
 		BuildGoal goal = new BuildGoal(testChallenge, 100);
 		testChallenge.setGoal(goal);
-		
-		assertTrue("Current score was " + goal.getCurrentScore() + "," +
-				"but expected " + expectedScore, goal.getCurrentScore() == expectedScore);
+				
+		// Because we set the challenge to 100, the score *is* the percentage
+		assertTrue("Current percentage was " + goal.getPercentageProgress() + "," +
+				"but expected " + expectedScore, goal.getPercentageProgress() == expectedScore);
 	}
 	
 	/**
@@ -84,7 +109,7 @@ public class BuildGoalTest extends HudsonTestCase {
 	 * @throws Exception 
 	 */
 	@Test
-	public void testGetSlicedPercentageProgress() throws Exception {		
+	public void testGetSlicedScore() throws Exception {		
 		FreeStyleProject project = setUpHudsonProject();
 		AbstractBuild<?, ?> build = project.getLastBuild();
 		double expectedScore = 0;
@@ -103,7 +128,7 @@ public class BuildGoalTest extends HudsonTestCase {
 		
 		DateTime endDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
 		
-		Challenge testChallenge = new Challenge((AbstractProject<?, ?>) project, 
+		Challenge testChallenge = new Challenge(4, (AbstractProject<?, ?>) project, 
 				"Test challenge", startDate.toDate(), endDate.toDate(), "Test Reward");
 		BuildGoal goal = new BuildGoal(testChallenge, 100);
 		testChallenge.setGoal(goal);

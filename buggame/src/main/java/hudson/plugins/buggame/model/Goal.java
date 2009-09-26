@@ -1,7 +1,5 @@
 package hudson.plugins.buggame.model;
 
-import java.util.Date;
-
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 

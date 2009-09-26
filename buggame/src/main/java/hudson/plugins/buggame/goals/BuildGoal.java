@@ -1,14 +1,10 @@
 package hudson.plugins.buggame.goals;
 
 import java.util.Collection;
-import java.util.Date;
-
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Iterables;
 
 import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.plugins.buggame.ScoreCardAction;
 import hudson.plugins.buggame.model.Challenge;
 import hudson.plugins.buggame.model.Goal;

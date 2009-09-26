@@ -1,5 +1,8 @@
 package hudson.plugins.buggame;
 
+import static org.mockito.Mockito.mock;
+
+import java.util.Date;
 import java.util.List;
 
 import hudson.model.AbstractBuild;
@@ -20,11 +23,7 @@ public class ScoreBoardAction implements Action {
     public ScoreBoardAction(AbstractProject<?, ?> project) {
     	this.project = project;
     	
-    	//FIXME: This is for testing only. Need to implement this.
-    	if (project.getActions(Challenge.class) == null) {
-    		//Goal testGoal = new BuildGoal()
-    		//Challenge testChallenge = new Challenge()
-    	}
+    	System.err.println("Loaded Scoreboard action");
     }
     
     /**
@@ -63,6 +62,20 @@ public class ScoreBoardAction implements Action {
 
 	public AbstractProject<?, ?> getProject() {
 		return project;
+	}
+	
+	public Challenge getChallenge(String id) {
+		if (id == null) { id = "1"; }
+		return getChallenge(Integer.parseInt(id));
+	}
+	
+	public Challenge getChallenge(int id) {
+		// FIXME: This is returning a fake object
+		AbstractProject<?, ?> mockProject = mock(AbstractProject.class);
+		Challenge mockChallenge = new Challenge(1, mockProject, "Test challenge",
+				new Date(), new Date(), "Test Reward");
+		
+		return mockChallenge;
 	}
 
 }
