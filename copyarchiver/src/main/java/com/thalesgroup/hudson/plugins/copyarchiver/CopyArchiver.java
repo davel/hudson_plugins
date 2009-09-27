@@ -36,6 +36,7 @@ import hudson.model.Hudson;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormFieldValidator;
@@ -51,6 +52,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -64,8 +67,6 @@ public class CopyArchiver extends Publisher implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	public static final CopyArchiverDescriptor DESCRIPTOR = new CopyArchiverDescriptor();
-		
 	private String sharedDirectoryPath;
 	
 	private boolean useTimestamp;
@@ -73,6 +74,8 @@ public class CopyArchiver extends Publisher implements Serializable{
 	private String datePattern;
 	
 	private boolean flatten;
+	
+	private boolean deleteShared;
 	
     private final List<ArchivedJobEntry> archivedJobList   = new ArrayList<ArchivedJobEntry>();	
 	    
@@ -100,10 +103,6 @@ public class CopyArchiver extends Publisher implements Serializable{
 		this.useTimestamp = useTimestamp;
 	}	
 
-	public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
 	public List<ArchivedJobEntry> getArchivedJobList() {
 		return archivedJobList;
 	}    
@@ -116,14 +115,23 @@ public class CopyArchiver extends Publisher implements Serializable{
 		this.datePattern = datePattern;
 	}
 		
+	public boolean getDeleteShared() {
+		return deleteShared;
+	}
+
+	public void setDeleteShared(boolean deleteShared) {
+		this.deleteShared = deleteShared;
+	}	
+	
 	@Extension
-    public static final class CopyArchiverDescriptor extends Descriptor<Publisher>{
+    public static final class CopyArchiverDescriptor extends BuildStepDescriptor<Publisher>{
 
     	//CopyOnWriteList
     	private List<AbstractProject> jobs;
     	
         public CopyArchiverDescriptor() {
             super(CopyArchiver.class);
+            load();
         }
 
         @Override
@@ -138,6 +146,7 @@ public class CopyArchiver extends Publisher implements Serializable{
             pub.getArchivedJobList().addAll(req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry."));
             return pub;
         }
+        
 
         @Override
         public String getHelpFile() {
@@ -234,7 +243,7 @@ public class CopyArchiver extends Publisher implements Serializable{
     		
     		if (build.getResult().equals(Result.UNSTABLE) || build.getResult().equals(Result.SUCCESS)){
     	    		
-    			listener.getLogger().println("Starting copy archived artifacts in the shared directory.");
+    			CopyArchiverLogger.log(listener,"Starting copy archived artifacts in the shared directory.");
     			
     			File destDir = null;
     			
@@ -253,8 +262,11 @@ public class CopyArchiver extends Publisher implements Serializable{
     			String sharedDirectoryPathParsed = filterField(build, listener, sharedDirectoryPath);
     			
     			destDir = new File(sharedDirectoryPathParsed);
-    			listener.getLogger().println("Copying archived artifacts in the shared directory '" + destDir + "'.");    		    			
-    			deleteDir(destDir);    			
+    			CopyArchiverLogger.log(listener, "Copying archived artifacts in the shared directory '" + destDir + "'.");    		    			
+    			
+    			if (deleteShared)
+    				deleteDir(destDir);    			
+    			
     			destDir.mkdirs();
     			FilePath destDirFilePath = new FilePath(destDir);
     			
@@ -286,8 +298,7 @@ public class CopyArchiver extends Publisher implements Serializable{
     				numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
 
     			}
-    			CopyArchiverLogger.log(listener, "'"+numCopied+"' artifacts have been copied.");
-    			
+    			CopyArchiverLogger.log(listener, "'"+numCopied+"' artifacts have been copied.");    			
     			CopyArchiverLogger.log(listener, "Stop copying archived artifacts in the shared directory.");
     		}    
         } 
@@ -303,5 +314,6 @@ public class CopyArchiver extends Publisher implements Serializable{
 	public BuildStepMonitor getRequiredMonitorService() {
 		return BuildStepMonitor.NONE;
 	}
+
   
 }

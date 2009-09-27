@@ -66,13 +66,19 @@
 	    <f:textbox name="copyarchiver.sharedDirectoryPath" value="${instance.sharedDirectoryPath}" />
 	  </f:entry>
 
+	 <f:entry help="/plugin/copyarchiver/CopyArchiver/deleteSharedDirectory.html">
+		<f:checkbox name="copyarchiver.deleteShared" checked="${instance.deleteShared}" />
+		<label class="attach-previous">Delete the shared directory and its content</label>
+	</f:entry>	  
+
+
 	 <f:entry help="/plugin/copyarchiver/CopyArchiver/flatten.html">
 		<f:checkbox name="copyarchiver.flatten" checked="${instance.flatten}" />
 		<label class="attach-previous">Flatten</label>
 	</f:entry>	  
 	  
 	  <f:entry>
-    		<table style="width:100%">
+			<table style="width:100%">
 		  		<f:optionalBlock 
 		              name="copyarchiver.useTimestamp" 
 		              title="Change the date format" 
