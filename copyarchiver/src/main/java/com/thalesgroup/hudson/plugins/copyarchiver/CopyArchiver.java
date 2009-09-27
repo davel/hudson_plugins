@@ -24,13 +24,10 @@
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
 import hudson.AbortException;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.maven.AbstractMavenProject;
-import hudson.maven.MavenBuild;
-import hudson.maven.MavenModule;
-import hudson.maven.MavenModuleSetBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.BuildListener;
@@ -39,6 +36,7 @@ import hudson.model.Hudson;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormFieldValidator;
 
@@ -55,6 +53,8 @@ import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
 
 /**
  * 
@@ -116,6 +116,7 @@ public class CopyArchiver extends Publisher implements Serializable{
 		this.datePattern = datePattern;
 	}
 		
+	@Extension
     public static final class CopyArchiverDescriptor extends Descriptor<Publisher>{
 
     	//CopyOnWriteList
@@ -208,7 +209,7 @@ public class CopyArchiver extends Publisher implements Serializable{
     private String filterField(Build<?,?> build, BuildListener listener, String fieldText) throws InterruptedException, IOException {
     	String str= null;
     	
-		Map vars = new HashMap();
+		Map<String, String> vars = new HashMap<String, String>();
 		vars.putAll(build.getEnvironment(listener).descendingMap());
 		
 		if (useTimestamp && datePattern!=null){
@@ -249,7 +250,6 @@ public class CopyArchiver extends Publisher implements Serializable{
     				}
     			}
 
-    			//Replace environment variables and build variables
     			String sharedDirectoryPathParsed = filterField(build, listener, sharedDirectoryPath);
     			
     			destDir = new File(sharedDirectoryPathParsed);
@@ -261,44 +261,34 @@ public class CopyArchiver extends Publisher implements Serializable{
     			FilePath lastSuccessfulDirFilePath = null;
     			FilePathArchiver lastSuccessfulDirFilePathArchiver=null;
     			int numCopied=0;
+    			
     			for (ArchivedJobEntry archivedJobEntry:archivedJobList){    		    				
     				AbstractProject curProj = Project.findNearest(archivedJobEntry.jobName);
     				Run run = curProj.getLastSuccessfulBuild();
-    				if (run!=null){    				
-
-						//if the selected project is the current projet, we're using the workspace base directory or SCM module root    						
-						if (project.getName().equals(archivedJobEntry.jobName)){
-    						lastSuccessfulDirFilePath = project.getWorkspace();
-    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
-						}
+    				if (run!=null){  
     					
-    					//if the selected project is not the current project, we are 2 cases: Maven project and not a Maven project
-						
-						// Maven projects
-						else if (curProj instanceof AbstractMavenProject){
-	    					MavenModuleSetBuild vMavenModuleSetBuild =(MavenModuleSetBuild)run;
-	    					Map<MavenModule,List<MavenBuild>> moduleBuildsMap = vMavenModuleSetBuild.getModuleBuilds();
-	    					for (MavenModule mm:moduleBuildsMap.keySet()){
-	    						File lastSuccessfulDir = mm.getLastSuccessfulBuild().getArtifactsDir();
-	        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
-	        					lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
-	        					numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes),destDirFilePath);
-	    					}    			
+    					//if the selected project is the current projet, we're using the workspace base directory or SCM module root    						
+    					if (project.getName().equals(archivedJobEntry.jobName)){
+    						lastSuccessfulDirFilePath = build.getWorkspace();	
     					}
-						
-						// non Maven projects
-						else{
+    					else {
     						File lastSuccessfulDir = run.getArtifactsDir();
-        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);
-    						lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);    						    						
-    						numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten,filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes) , destDirFilePath);
-    					}
-    				}    				    				
+        					lastSuccessfulDirFilePath = new FilePath(lastSuccessfulDir);  
+    					}    					
+    				}
+    				else{
+    					//If it is the first build
+    					lastSuccessfulDirFilePath = build.getWorkspace();    					
+    				}
+
+    				//Copy
+    				lastSuccessfulDirFilePathArchiver=new FilePathArchiver(lastSuccessfulDirFilePath);
+    				numCopied+=lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
+
     			}
-    			listener.getLogger().println("'"+numCopied+"' artifacts have been copied.");
+    			CopyArchiverLogger.log(listener, "'"+numCopied+"' artifacts have been copied.");
     			
-    			listener.getLogger().println("Stop copying archived artifacts in the shared directory.");    
+    			CopyArchiverLogger.log(listener, "Stop copying archived artifacts in the shared directory.");
     		}    
         } 
     	catch (Exception e) {
@@ -308,6 +298,10 @@ public class CopyArchiver extends Publisher implements Serializable{
         }        
             
 		return true;
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.NONE;
 	}
   
 }
