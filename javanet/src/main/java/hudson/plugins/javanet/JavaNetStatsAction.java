@@ -3,11 +3,13 @@ package hudson.plugins.javanet;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Hudson;
-import static hudson.plugins.javanet.PluginImpl.DAY;
 import hudson.security.Permission;
+import static hudson.plugins.javanet.ItemListenerImpl.DAY;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
 import org.apache.commons.io.FileUtils;
 
 import javax.servlet.ServletException;
@@ -71,7 +73,7 @@ public class JavaNetStatsAction implements Action {
     public void upToDateCheck() {
         File indexHtml = new File(reportDir,"index.html");
         long diff = System.currentTimeMillis() - indexHtml.lastModified();
-        if(!indexHtml.exists() || (diff >7*DAY)) {
+        if(!indexHtml.exists() || (diff>7*DAY)) {
             scheduleGeneration();
         }
     }
@@ -99,25 +101,25 @@ public class JavaNetStatsAction implements Action {
             return;
         }
 
-        rsp.serveFile(req,new File(reportDir,path).toURL());
+        rsp.serveFile(req,new File(reportDir,path).toURI().toURL());
     }
 
-    public void doChangeProject(StaplerRequest req, StaplerResponse rsp,@QueryParameter("name") String name) throws IOException, ServletException {
+    public HttpResponse doChangeProject(@QueryParameter("name") String name) throws IOException, ServletException {
         project.checkPermission(CONFIGURE);
 
         projectName = name.trim();
         reportDir = getReportDirectory();
         FileUtils.writeStringToFile(getOverrideFile(),projectName,"UTF-8");
 
-        rsp.sendRedirect2(".");
+        return HttpResponses.redirectToDot();
     }
 
     /**
      * Manually trigger the regeneration.
      */
-    public void doRegenerate(StaplerResponse rsp) throws IOException, ServletException {
+    public HttpResponse doRegenerate() throws IOException, ServletException {
         scheduleGeneration();
-        rsp.sendRedirect2(".");
+        return HttpResponses.redirectToDot();
     }
 
     /**

@@ -8,6 +8,7 @@ import hudson.scm.CVSSCM;
 import hudson.scm.SCM;
 import hudson.scm.SubversionSCM;
 import hudson.scm.SubversionSCM.ModuleLocation;
+import hudson.Extension;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -23,10 +24,6 @@ import java.util.regex.Pattern;
  * @author Kohsuke Kawaguchi
  */
 public class StatsProperty extends JobProperty<AbstractProject<?,?>> {
-    public JobPropertyDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-
     public JavaNetStatsAction getJobAction(AbstractProject<?,?> job) {
         String jnp = getJavaNetProject(job);
         if(jnp==null)
@@ -72,13 +69,8 @@ public class StatsProperty extends JobProperty<AbstractProject<?,?>> {
     private static final Pattern CVS_URL = Pattern.compile(
         ":pserver:"+USERNAME+"@"+HOST+":/cvs");
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
+    @Extension
     public static final class DescriptorImpl extends JobPropertyDescriptor {
-        private DescriptorImpl() {
-            super(StatsProperty.class);
-        }
-
         public boolean isApplicable(Class<? extends Job> jobType) {
             return AbstractProject.class.isAssignableFrom(jobType);
         }
