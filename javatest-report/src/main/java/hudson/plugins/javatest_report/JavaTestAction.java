@@ -21,7 +21,6 @@ package hudson.plugins.javatest_report;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.tasks.test.AbstractTestResultAction;
 import org.kohsuke.stapler.StaplerProxy;
@@ -48,7 +47,7 @@ public class JavaTestAction extends AbstractTestResultAction<JavaTestAction> imp
     private int failCount;
     private int totalCount;
 
-    JavaTestAction(Build owner, BuildListener listener) {
+    JavaTestAction(AbstractBuild<?,?> owner, BuildListener listener) {
         super(owner);
 
         Report r = load(listener);
@@ -58,7 +57,7 @@ public class JavaTestAction extends AbstractTestResultAction<JavaTestAction> imp
         result = new WeakReference<Report>(r);
     }
 
-    /*package*/ static  File getDataDir(AbstractBuild build) {
+    /*package*/ static File getDataDir(AbstractBuild<?,?> build) {
         return new File(build.getRootDir(), "java-test-result");
     }
 

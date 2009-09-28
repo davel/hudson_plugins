@@ -19,9 +19,12 @@
  */
 package hudson.plugins.javatest_report;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.remoting.VirtualChannel;
 import hudson.model.Build;
 import hudson.model.BuildListener;
@@ -29,7 +32,10 @@ import hudson.model.Descriptor;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.Action;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.IOException2;
 import org.apache.tools.ant.types.FileSet;
@@ -38,11 +44,12 @@ import org.kohsuke.stapler.StaplerRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import net.sf.json.JSONObject;
 
 /**
  * @author Rama Pulavarthi
  */
-public class JavaTestReportPublisher extends Publisher implements Serializable {
+public class JavaTestReportPublisher extends Recorder implements Serializable {
     private final String includes;
     private final String jtwork;
 
@@ -78,7 +85,8 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
         }
     }
 
-    public boolean perform(Build build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    @Override
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
 
         archiveJTWork(build,listener);
 
@@ -93,7 +101,7 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
         final long nowMaster = System.currentTimeMillis();
 
         try {
-            build.getProject().getWorkspace().act(new FileCallable<Void>() {
+            build.getWorkspace().act(new FileCallable<Void>() {
                 public Void invoke(File ws, VirtualChannel channel) throws IOException {
                     final long nowSlave = System.currentTimeMillis();
 
@@ -155,23 +163,27 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
         return true;
      }
 
-    private void archiveJTWork(Build<?,?> owner, BuildListener listener) throws IOException, InterruptedException {
+    private void archiveJTWork(AbstractBuild<?,?> owner, BuildListener listener) throws IOException, InterruptedException {
         if (jtwork == null || jtwork.equals("")) {
             listener.getLogger().println("Set JavaTest Work directory for better reporting");
         } else {
-            Project p = owner.getProject();
-
-            p.getWorkspace().child(jtwork).copyRecursiveTo("**/*",
+            owner.getWorkspace().child(jtwork).copyRecursiveTo("**/*",
                 new FilePath(owner.getArtifactsDir()).child("java-test-work"));
         }
     }
 
-    public Descriptor<Publisher> getDescriptor() {
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    @Override
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return DescriptorImpl.DESCRIPTOR;
     }
 
-    /*package*/ static class DescriptorImpl extends Descriptor<Publisher> {
-        public static final Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+        @Extension
+        public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
         public DescriptorImpl() {
             super(JavaTestReportPublisher.class);
@@ -181,12 +193,19 @@ public class JavaTestReportPublisher extends Publisher implements Serializable {
             return "Publish JavaTest result report";
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/javatest-report/help.html";
         }
 
-        public Publisher newInstance(StaplerRequest req) {
+        @Override
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) {
             return new JavaTestReportPublisher(req.getParameter("javatest_includes"), req.getParameter("javatest_jtwork"));
+        }
+
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
         }
     }
 
