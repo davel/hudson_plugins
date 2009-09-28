@@ -11,7 +11,7 @@
 
 	<artifactId>jsunit</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>Hudson JSUnit plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/JSUnit+Plugin</url>
 
@@ -44,6 +44,12 @@
 			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
+
+      <dependency>
+         <groupId>org.jvnet.hudson.plugins</groupId>
+         <artifactId>xunit</artifactId>
+         <version>0.2</version>
+      </dependency>
 	</dependencies>
 
   <scm>
