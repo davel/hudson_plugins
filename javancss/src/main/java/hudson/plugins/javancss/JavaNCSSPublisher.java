@@ -1,14 +1,15 @@
 package hudson.plugins.javancss;
 
+import hudson.Extension;
 import hudson.maven.MavenModule;
 import hudson.maven.MavenModuleSet;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Descriptor;
 import hudson.plugins.helpers.AbstractPublisherImpl;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -44,22 +45,30 @@ public class JavaNCSSPublisher extends AbstractPublisherImpl {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean needsToRunAfterFinalized() {
         return false;
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /**
      * {@inheritDoc}
      */
-    public Descriptor<Publisher> getDescriptor() {
+    @Override
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return DESCRIPTOR;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
         return new JavaNCSSProjectIndividualReport(project);
     }
@@ -84,6 +93,7 @@ public class JavaNCSSPublisher extends AbstractPublisherImpl {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
 
+        @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             ConvertUtils.register(JavaNCSSHealthMetrics.CONVERTER, JavaNCSSHealthMetrics.class);
             return req.bindJSON(JavaNCSSPublisher.class, formData);

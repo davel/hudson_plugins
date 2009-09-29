@@ -1,6 +1,6 @@
 package hudson.plugins.helpers;
 
-import hudson.tasks.Publisher;
+import hudson.tasks.Notifier;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.Launcher;
@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author Stephen Connolly
  * @since 28-Jan-2008 22:32:46
  */
-public abstract class AbstractPublisherImpl extends Publisher {
+public abstract class AbstractPublisherImpl extends Notifier {
 
     /**
      * Creates the configured Ghostwriter.
@@ -25,6 +25,7 @@ public abstract class AbstractPublisherImpl extends Publisher {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
         return BuildProxy.doPerform(newGhostwriter(), build, listener);
@@ -33,6 +34,7 @@ public abstract class AbstractPublisherImpl extends Publisher {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
         return true;
     }

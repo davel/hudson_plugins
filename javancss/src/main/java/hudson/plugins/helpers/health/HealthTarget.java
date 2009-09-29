@@ -7,8 +7,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA. User: stephen Date: 17-Mar-2008 Time: 12:44:28 To change this template use File | Settings
- * | File Templates.
+ * Created by IntelliJ IDEA. User: stephen Date: 17-Mar-2008 Time: 12:44:28
  */
 public abstract class HealthTarget<M extends HealthMetric<OBSERVABLE>, OBSERVABLE> implements Serializable {
 
@@ -53,13 +52,13 @@ public abstract class HealthTarget<M extends HealthMetric<OBSERVABLE>, OBSERVABL
         return unstable;
     }
 
-    public HealthReport evaluateHealth(OBSERVABLE observable, String descriptionPrefix) {
+    public HealthReport evaluateHealth(OBSERVABLE observable) {
         float result = metric.measure(observable);
         float healthy = this.healthy == null ? metric.getBest() : this.healthy;
         float unhealthy = this.unhealthy == null ? metric.getWorst() : this.unhealthy;
         return new HealthReport(
                 Math.max(0, Math.min(100, (int) ((result - unhealthy) / (healthy - unhealthy) * 100))),
-                descriptionPrefix + metric.getName() + " (" + result + ")");
+                Messages._HealthTarget_Description(metric.getName(), result));
     }
 
     public Result evaluateStability(OBSERVABLE observable) {

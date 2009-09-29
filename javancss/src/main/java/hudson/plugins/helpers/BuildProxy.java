@@ -62,7 +62,7 @@ public final class BuildProxy implements Serializable {
                     new FilePath(build.getArtifactsDir()),
                     new FilePath(build.getProject().getRootDir()),
                     new FilePath(build.getRootDir()),
-                    build.getProject().getModuleRoot(),
+                    build.getModuleRoot(),
                     build.getTimestamp());
 
             BuildProxyCallableHelper callableHelper = new BuildProxyCallableHelper(buildProxy, ghostwriter, listener);
@@ -86,7 +86,7 @@ public final class BuildProxy implements Serializable {
         final Ghostwriter.MasterGhostwriter masterGhostwriter = Ghostwriter.MasterGhostwriter.class.cast(ghostwriter);
 
         return masterGhostwriter == null
-                || masterGhostwriter.performFromMaster(build, build.getProject().getModuleRoot(), listener);
+                || masterGhostwriter.performFromMaster(build, build.getModuleRoot(), listener);
     }
 
     /**

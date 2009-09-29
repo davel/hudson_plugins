@@ -65,7 +65,7 @@ public class JavaNCSSGhostwriter
             if (targets != null && targets.length > 0) {
                 HealthReport r = null;
                 for (JavaNCSSHealthTarget target : targets) {
-                    r = HealthReport.min(r, target.evaluateHealth(action, PluginImpl.DISPLAY_NAME + ": "));
+                    r = HealthReport.min(r, target.evaluateHealth(action));
                 }
                 action.setBuildHealth(r);
             }

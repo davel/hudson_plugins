@@ -1,5 +1,6 @@
 package hudson.plugins.javancss;
 
+import hudson.Extension;
 import hudson.maven.*;
 import hudson.model.Action;
 import hudson.plugins.helpers.AbstractMavenReporterImpl;
@@ -96,6 +97,7 @@ public class JavaNCSSMavenPublisher extends AbstractMavenReporterImpl {
         return path.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);
     }
 
+    @Override
     public Action getProjectAction(MavenModule module) {
         for (MavenBuild build : module.getBuilds()) {
             if (build.getAction(JavaNCSSBuildIndividualReport.class) != null) {
@@ -105,13 +107,15 @@ public class JavaNCSSMavenPublisher extends AbstractMavenReporterImpl {
         return null;
     }
 
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public MavenReporterDescriptor getDescriptor() {
-        return DESCRIPTOR;  //To change body of implemented methods use File | Settings | File Templates.
+        return DESCRIPTOR;
     }
 
     public static final class DescriptorImpl extends MavenReporterDescriptor {
@@ -130,6 +134,7 @@ public class JavaNCSSMavenPublisher extends AbstractMavenReporterImpl {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
 
+        @Override
         public MavenReporter newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             ConvertUtils.register(JavaNCSSHealthMetrics.CONVERTER, JavaNCSSHealthMetrics.class);
             return req.bindJSON(JavaNCSSMavenPublisher.class, formData);
