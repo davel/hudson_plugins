@@ -9,6 +9,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.AbstractProject;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.tasks.BuildStepDescriptor;
@@ -48,6 +49,10 @@ public class JNUploaderPublisher extends Recorder {
         return entries;
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws InterruptedException {
         if(build.getResult()== Result.FAILURE) {
             // build failed. don't post
@@ -81,7 +86,7 @@ public class JNUploaderPublisher extends Recorder {
                 listener.getLogger().println("Uploading "+e.sourceFile+" to java.net");
 
                 String expanded = Util.replaceMacro(e.sourceFile, envVars);
-                FilePath[] src = build.getProject().getWorkspace().list(expanded);
+                FilePath[] src = build.getWorkspace().list(expanded);
                 if(src.length==0)
                     throw new ProcessingException("No such file exists: "+ expanded);
 
