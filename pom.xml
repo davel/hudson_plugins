@@ -251,6 +251,7 @@
     <module>sametime</module>
     <module>scp</module>
     <module>secret</module>
+    <module>setenv</module>
     <module>sidebar-link</module>
     <module>sonar</module>
     <module>ssh-slaves</module>
