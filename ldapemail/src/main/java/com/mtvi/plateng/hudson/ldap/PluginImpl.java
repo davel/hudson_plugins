@@ -7,7 +7,6 @@ package com.mtvi.plateng.hudson.ldap;
 import hudson.Plugin;
 import hudson.Util;
 import hudson.XmlFile;
-import hudson.model.Descriptor.FormException;
 import hudson.model.Hudson;
 import hudson.tasks.MailAddressResolver;
 
@@ -15,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Entry point of for the LDAP Email plugin. Loads configuration from
@@ -42,7 +42,7 @@ public class PluginImpl extends Plugin {
     @Override
     public void start() throws Exception {
         config = loadConfiguration();
-        MailAddressResolver.LIST.add(new LdapMailAddressResolver(config));
+        MailAddressResolver.all().add(new LdapMailAddressResolver(config));
     }
 
     /**
@@ -66,7 +66,7 @@ public class PluginImpl extends Plugin {
     }
 
     @Override
-    public void configure(JSONObject formData) throws IOException {
+    public void configure(StaplerRequest req, JSONObject formData) throws IOException {
         config.setServer(Util.fixEmptyAndTrim(formData.optString("server")));
         config.setBaseDN(Util.fixEmptyAndTrim(formData.optString("baseDN")));
         config.setBindDN(Util.fixEmptyAndTrim(formData.optString("bindDN")));
