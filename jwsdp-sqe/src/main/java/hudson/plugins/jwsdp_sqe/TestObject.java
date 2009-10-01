@@ -1,6 +1,5 @@
 package hudson.plugins.jwsdp_sqe;
 
-import hudson.model.Build;
 import hudson.model.ModelObject;
 import hudson.model.AbstractBuild;
 import hudson.util.ChartUtil;
@@ -177,7 +176,7 @@ public abstract class TestObject<S extends TestObject<S>>
      * Generates a PNG image for the test result trend.
      */
     public void doTestTrendGraph( StaplerRequest req, StaplerResponse rsp) throws IOException {
-        if(ChartUtil.awtProblem) {
+        if(ChartUtil.awtProblemCause != null) {
             // not available. send out error message
             rsp.sendRedirect2(req.getContextPath()+"/images/headless.png");
             return;
@@ -197,15 +196,18 @@ public abstract class TestObject<S extends TestObject<S>>
                 return this.build.number-that.build.number;
             }
 
+            @Override
             public boolean equals(Object o) {
                 BuildLabel that = (BuildLabel) o;
                 return build==that.build;
             }
 
+            @Override
             public int hashCode() {
                 return build.hashCode();
             }
 
+            @Override
             public String toString() {
                 return build.getDisplayName();
             }

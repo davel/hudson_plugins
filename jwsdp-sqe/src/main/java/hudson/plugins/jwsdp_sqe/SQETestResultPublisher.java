@@ -1,18 +1,24 @@
 package hudson.plugins.jwsdp_sqe;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.remoting.VirtualChannel;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.Action;
+import hudson.model.Build;
 import hudson.model.Project;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.tasks.test.TestResultProjectAction;
 import hudson.util.IOException2;
+import net.sf.json.JSONObject;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
 import org.xml.sax.helpers.DefaultHandler;
@@ -30,7 +36,7 @@ import java.io.Serializable;
  *
  * @author Kohsuke Kawaguchi
  */
-public class SQETestResultPublisher extends Publisher implements Serializable {
+public class SQETestResultPublisher extends Recorder implements Serializable {
 
     private final String includes;
     /**
@@ -54,8 +60,13 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
         return considerTestAsTestObject;
     }
 
-    public Action getProjectAction(Project project) {
+    @Override
+    public Action getProjectAction(AbstractProject<?,?> project) {
         return new TestResultProjectAction(project);
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     /**
@@ -67,7 +78,11 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
         }
     }
 
-    public boolean perform(Build build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+    @Override
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, final BuildListener listener) throws IOException, InterruptedException {
+        // Should always be a Build because isApplicable requires Project type:
+        if (!(build instanceof Build)) return true;
+
         final long buildTime = build.getTimestamp().getTimeInMillis();
 
         listener.getLogger().println("Collecting JWSDP SQE reports");
@@ -78,7 +93,7 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
         final FilePath target = new FilePath(dataDir);
 
         try {
-            build.getProject().getWorkspace().act(new FileCallable<Void>() {
+            build.getWorkspace().act(new FileCallable<Void>() {
                 public Void invoke(File ws, VirtualChannel channel) throws IOException {
                     FileSet fs = new FileSet();
                     org.apache.tools.ant.Project p = new org.apache.tools.ant.Project();
@@ -148,8 +163,8 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
             return true; /// but this is not a fatal error
         }
 
-
-        SQETestAction action = new SQETestAction(build, listener, considerTestAsTestObject);
+        // Type checked above, so cast is ok:
+        SQETestAction action = new SQETestAction((Build)build, listener, considerTestAsTestObject);
         build.getActions().add(action);
 
         Report r = action.getResult();
@@ -168,12 +183,14 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Descriptor<Publisher> getDescriptor() {
+    @Override
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return DescriptorImpl.DESCRIPTOR;
     }
 
-    /*package*/ static class DescriptorImpl extends Descriptor<Publisher> {
-        public static final Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+        @Extension
+        public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
         public DescriptorImpl() {
             super(SQETestResultPublisher.class);
@@ -183,12 +200,19 @@ public class SQETestResultPublisher extends Publisher implements Serializable {
             return "Publish SQE test result report";
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/jwsdp-sqe/help.html";
         }
 
-        public Publisher newInstance(StaplerRequest req) {
+        @Override
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) {
             return new SQETestResultPublisher(req.getParameter("sqetest_includes"),(req.getParameter("sqetest_testobject")!=null));
+        }
+
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return jobType.isAssignableFrom(Project.class);
         }
     }
 }
