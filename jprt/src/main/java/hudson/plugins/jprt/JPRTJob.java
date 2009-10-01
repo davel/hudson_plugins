@@ -1,6 +1,7 @@
 package hudson.plugins.jprt;
 
 import JPRT.shared.GlobalProperties;
+import hudson.Extension;
 import hudson.model.Hudson;
 import hudson.model.Items;
 import hudson.model.Job;
@@ -124,7 +125,8 @@ public class JPRTJob extends ViewJob<JPRTJob,JPRTRun> implements TopLevelItem {
         return DESCRIPTOR;
     }
 
-    static final TopLevelItemDescriptor DESCRIPTOR = new TopLevelItemDescriptor(JPRTJob.class) {
+    @Extension
+    public static final TopLevelItemDescriptor DESCRIPTOR = new TopLevelItemDescriptor(JPRTJob.class) {
         public String getDisplayName() {
             return "Monitoring a JPRT system";
         }
