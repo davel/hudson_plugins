@@ -1,7 +1,7 @@
 package hudson.plugins.jmx;
 
 import hudson.Plugin;
-import hudson.model.Hudson;
+import hudson.model.listeners.ItemListener;
 
 import javax.management.MBeanServer;
 import javax.management.remote.JMXConnectorServer;
@@ -27,26 +27,20 @@ import java.util.logging.Logger;
  */
 public class PluginImpl extends Plugin {
     public static final int JMX_PORT = 9876;
-    private MBeanServer server;
-    JmxJobListener jjl = null;
-
-    public void start() throws Exception {
-        server = getJMXConnectorServer();
-        jjl = new JmxJobListener(server);
-        Hudson.getInstance().addListener(jjl);
-    }
+    /*package*/ static MBeanServer SERVER = getJMXConnectorServer();
 
     /**
      * @see hudson.Plugin#stop()
      */
     @Override
     public void stop() throws Exception {
-        Hudson.getInstance().removeListener(jjl);
-        jjl.unregister();
-        jjl = null;
+        JmxJobListener jjl = ItemListener.all().get(JmxJobListener.class);
+        if (jjl != null) {
+            jjl.unregister();
+        }
     }
 
-    private MBeanServer getJMXConnectorServer() {
+    private static MBeanServer getJMXConnectorServer() {
         MBeanServer server = getPlatformMBeanServer();
         try {
             LocateRegistry.createRegistry(JMX_PORT);

@@ -5,9 +5,11 @@
  */
 package hudson.plugins.jmx;
 
+import hudson.Extension;
 import hudson.model.Hudson;
+import hudson.model.Item;
 import hudson.model.Job;
-import hudson.model.listeners.JobListener;
+import hudson.model.listeners.ItemListener;
 
 import java.util.List;
 
@@ -32,7 +34,8 @@ import javax.management.ReflectionException;
  * @author bruyeron
  * @version $Id$
  */
-public class JmxJobListener extends JobListener {
+@Extension
+public class JmxJobListener extends ItemListener {
 	
 	public final static String JMX_NAME_PREFIX = "hudson:type=Job,name=";
 	protected MBeanServer server;
@@ -41,16 +44,17 @@ public class JmxJobListener extends JobListener {
     /**
 	 * @param server
 	 */
-	public JmxJobListener(MBeanServer server) {
-		super();
-		this.server = server;
+	public JmxJobListener() {
+		this.server = PluginImpl.SERVER;
 	}
 
 	/**
 	 * @see hudson.model.listeners.JobListener#onCreated(hudson.model.Job)
 	 */
 	@Override
-	public void onCreated(Job j) {
+	public void onCreated(Item i) {
+		if (!(i instanceof Job)) return;
+		Job j = (Job)i;
 		try {
 			ObjectName n = new ObjectName(JMX_NAME_PREFIX + j.getName());
 			JobMBean mbean = new JobMBean(j);
@@ -70,7 +74,9 @@ public class JmxJobListener extends JobListener {
 	 * @see hudson.model.listeners.JobListener#onDeleted(hudson.model.Job)
 	 */
 	@Override
-	public void onDeleted(Job j) {
+	public void onDeleted(Item i) {
+		if (!(i instanceof Job)) return;
+		Job j = (Job)i;
 		try {
 			ObjectName n = new ObjectName(JMX_NAME_PREFIX + j.getName());
 			server.unregisterMBean(n);
@@ -98,6 +104,7 @@ public class JmxJobListener extends JobListener {
     }
 	
 	public void unregister(){
+        ItemListener.all().remove(this);
         if(!loaded)
             return; // early termination
         List<Job> jobs = Hudson.getInstance().getAllItems(Job.class);
