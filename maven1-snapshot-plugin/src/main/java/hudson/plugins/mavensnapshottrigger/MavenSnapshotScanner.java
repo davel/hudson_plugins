@@ -74,7 +74,7 @@ public class MavenSnapshotScanner
     /** enable logging for this class */
     private static Logger log = Logger.getLogger(MavenSnapshotScanner.class.getName());
     /** a collection of File objects which point to modified SNAPSHOT files */
-    private List modifications;
+    private List<File> modifications;
     /** Maven POM (project.xml) for the project to be scanned */
     private File projectFile;
     /** Pointer to the local Maven repository (contains JARs etc) */
@@ -113,19 +113,18 @@ public class MavenSnapshotScanner
      * @return list of File objects that point to SNAPSHOT dependencies that are
      *    newer than the lastBuild instance
      */
-    public List getModifications(Date lastBuild)
+    public List<File> getModifications(Date lastBuild)
     {
-        modifications = new ArrayList();
+        modifications = new ArrayList<File>();
 
         long lastBuildTime = lastBuild.getTime();
-        List filenames = new ArrayList();
+        List<String> filenames = new ArrayList<String>();
         
         getSnapshotFilenames(filenames, projectFile, new ArrayList());
 
-        Iterator itr = filenames.iterator();
-        while (itr.hasNext())
+        for (Iterator<String> itr = filenames.iterator(); itr.hasNext();)
         {
-          String filename = (String) itr.next();
+          String filename = itr.next();
           File dependency = new File(filename);
           checkFile(dependency, lastBuildTime);
         }
@@ -155,7 +154,7 @@ public class MavenSnapshotScanner
      * @param callstack Maven POM files already processed (prevents cyclic
      *            dependencies)
      */
-    void getSnapshotFilenames(List filenames, File mavenFile, List callstack)
+    void getSnapshotFilenames(List<String> filenames, File mavenFile, List callstack)
     {
         log.fine("Getting a list of dependencies for " + mavenFile);
 

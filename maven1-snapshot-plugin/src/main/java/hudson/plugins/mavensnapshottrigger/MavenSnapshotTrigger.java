@@ -1,21 +1,21 @@
 package hudson.plugins.mavensnapshottrigger;
 
 import antlr.ANTLRException;
+import hudson.Extension;
+import hudson.model.AbstractBuild;
 import static hudson.Util.fixNull;
 import hudson.model.BuildableItem;
+import hudson.model.Hudson;
 import hudson.model.Item;
 import hudson.scheduler.CronTabList;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
 
 import java.net.URL;
 
-import hudson.model.Run;
 import hudson.model.Project;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
@@ -41,11 +41,12 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
         super(cronTabSpec);
     }
 
+    @Override
     public void run() {
         try {
             Project project = (Project)job;
         
-            Run build = project.getLastBuild();
+            AbstractBuild build = (AbstractBuild)project.getLastBuild();
             
             LOGGER.fine("Polling SNAPSHOT changes for "+project.getName());
             
@@ -53,7 +54,7 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
                 MavenSnapshotScanner scanner = new MavenSnapshotScanner();
 
                 // We assume that the project.xml is in the project root
-                URL url = new URL(project.getModuleRoot().toURI() + "/project.xml");
+                URL url = new URL(build.getModuleRoot().toURI() + "/project.xml");
                 
                 File projectXml = new File(url.getFile());
                 
@@ -61,7 +62,7 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
 
                 Date lastBuild = new Date(build.getTimestamp().getTimeInMillis());
 
-                List modifications = scanner.getModifications(lastBuild);
+                List<File> modifications = scanner.getModifications(lastBuild);
                 
                 if( modifications.size() > 0 ) {
                     LOGGER.info(project.getName()+": "+modifications.size() + " modifications found. Triggering a build.");
@@ -69,7 +70,7 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
                     // TODO: how to report dependency changes to Hudson (change set)?
                     
                     // trigger a build
-                    job.scheduleBuild();
+                    job.scheduleBuild(new MavenSnapshotCause(modifications));
                 }
             }
         }
@@ -78,10 +79,12 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
         }
     }
 
+    @Override
     public TriggerDescriptor getDescriptor() {
         return DESCRIPTOR;
     }
 
+    @Extension
     public static final TriggerDescriptor DESCRIPTOR = new DescriptorImpl();
         
     public static class DescriptorImpl extends TriggerDescriptor {
@@ -113,6 +116,7 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
          * @return
          *      "" to indicate that there's no help.
          */
+        @Override
         public String getHelpFile() {
             return "/plugin/maven-snapshot-plugin/help-projectConfig.html";
         }
@@ -125,28 +129,26 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
          * @return false
          *      to keep the client in the same config page.
          */
-        public boolean configure(StaplerRequest req) throws FormException {
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             // to persist global configuration information,
             // set that to properties and call save().
             // myParam = req.getParameter("mavensnapshotplugin.myParam")!=null;
             save();
-            return super.configure(req);
+            return super.configure(req, formData);
         }
         
         /**
          * Performs syntax check.
          */
-        public void doCheck(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-            new FormFieldValidator(req, rsp, true) {
-                protected void check() throws IOException, ServletException {
-                    try {
-                        CronTabList.create(fixNull(request.getParameter("mavensnapshotplugin_spec")));
-                        ok();
-                    } catch (ANTLRException e) {
-                        error(e.getMessage());
-                    }
-                }
-            }.process();
+        public FormValidation doCheck(@QueryParameter final String mavensnapshotplugin_spec) {
+            if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER)) return FormValidation.ok();
+            try {
+                CronTabList.create(fixNull(mavensnapshotplugin_spec));
+                return FormValidation.ok();
+            } catch (ANTLRException e) {
+                return FormValidation.error(e.getMessage());
+            }
         }        
 
         /**
@@ -161,7 +163,8 @@ public class MavenSnapshotTrigger extends Trigger<BuildableItem> {
          * @throws FormException
          *      Signals a problem in the submitted form.
          */
-        public Trigger newInstance(StaplerRequest req) throws FormException {
+        @Override
+        public Trigger newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             try {
                 return new MavenSnapshotTrigger(req.getParameter("mavensnapshotplugin_spec"));
             } catch (ANTLRException e) {
