@@ -1,0 +1,9 @@
+<!--
+  This view is used to render the plugin list page.
+
+  Since we don't really have anything dynamic here, let's just use static HTML. 
+-->
+<div>
+  This plugin allows you to configure a maven2 job to clean some or all of the artifacts
+  from the repository before it runs.
+</div>
