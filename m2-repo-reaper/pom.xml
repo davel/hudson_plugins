@@ -8,7 +8,7 @@
 
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>m2-repo-reaper</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
   <name>M2 Repository Cleanup Plugin</name>
 
@@ -46,4 +46,10 @@
       <version>1.7.0</version>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/m2-repo-reaper-1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/m2-repo-reaper-1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/m2-repo-reaper/tags/m2-repo-reaper-1.0</url>
+  </scm>
 </project>
