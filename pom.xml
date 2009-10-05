@@ -201,6 +201,7 @@
     <module>email-ext</module>
     <module>emma</module>
     <module>emotional-hudson</module>
+    <module>extended-read-permission</module>
     <module>findbugs</module>
     <module>gant</module>
     <module>gcal</module>
