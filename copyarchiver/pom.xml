@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>plugin</artifactId>
-      <version>1.325</version>
+      <version>1.327</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
@@ -34,4 +34,17 @@
          <comments>All source code is under the MIT license.</comments>
       </license>
    </licenses>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.jvnet.hudson.tools</groupId>
+            <artifactId>maven-hpi-plugin</artifactId>
+            <configuration>
+               <disabledTestInjection>true</disabledTestInjection>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>
+
