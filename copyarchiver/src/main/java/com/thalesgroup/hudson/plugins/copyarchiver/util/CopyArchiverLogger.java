@@ -38,7 +38,7 @@ public class CopyArchiverLogger implements Serializable {
      * @param message  The message to be outputted
      */
     public static void log(BuildListener listener, final String message) {
-        listener.getLogger().println("[CopyArchiver] " + message);
+        listener.getLogger().println("[CopyArchiverPublisher] " + message);
     }
 
 }
