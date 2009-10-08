@@ -1,23 +1,28 @@
 package webtestpresenter;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.servlet.ServletException;
-
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -28,7 +33,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Adam Ambrose
  */
-public class WebtestPublisher extends Publisher implements Serializable {
+public class WebtestPublisher extends Notifier implements Serializable {
     // Uncomment for debugging:
     //private static final Logger LOG = 
     //    Logger.getLogger(WebtestPublisher.class.getName());
@@ -56,6 +61,10 @@ public class WebtestPublisher extends Publisher implements Serializable {
                 new File(build.getRootDir(), WEBTEST_REPORTS));
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher,
                            BuildListener listener) throws InterruptedException {
 
@@ -64,7 +73,7 @@ public class WebtestPublisher extends Publisher implements Serializable {
         final long buildTime = build.getTimestamp().getTimeInMillis();
         
         FilePath webtestResults =
-            build.getParent().getWorkspace().child(webtestResultsSrcDir);
+            build.getWorkspace().child(webtestResultsSrcDir);
         FilePath target = getWebtestReportDir(build);
         Action action = null;
 
@@ -101,19 +110,9 @@ public class WebtestPublisher extends Publisher implements Serializable {
         return true;
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-        // see Descriptor javadoc for more about what a descriptor is.
-        return DESCRIPTOR;
-    }
-
     public Action getProjectAction(AbstractBuild<?,?> build) {
         return new WebtestReportAction(build);
     }
-
-    /**
-     * Descriptor should be singleton.
-     */
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /**
      * Descriptor for {@link WebtestPublisher}. Used as a singleton.
@@ -123,7 +122,8 @@ public class WebtestPublisher extends Publisher implements Serializable {
      * See <tt>views/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    @Extension
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         /**
          * To persist global configuration information,
          * simply store it in a field and call save().
@@ -135,7 +135,7 @@ public class WebtestPublisher extends Publisher implements Serializable {
             "webtest_publisher.webtestResultsSrc";
         private String webtestResultsSrc;
 
-        DescriptorImpl() {
+        public DescriptorImpl() {
             super(WebtestPublisher.class);
         }
 
@@ -150,26 +150,34 @@ public class WebtestPublisher extends Publisher implements Serializable {
             return webtestResultsSrc;
         }
 
-        public boolean configure(StaplerRequest req) throws FormException {
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             // to persist global configuration information,
             // set that to properties and call save().
             webtestResultsSrc = req.getParameter(CONFIG_PARAM);
             save();
-            return super.configure(req);
+            return super.configure(req, formData);
         }
 
         /**
          * Performs on-the-fly validation on the file mask wildcard.
          */
-        public void doCheck(StaplerRequest req, StaplerResponse rsp)
-            throws IOException, ServletException {
-            new FormFieldValidator.WorkspaceFileMask(req,rsp).process();
+        public FormValidation doCheck(@AncestorInPath AbstractProject project,
+                                      @QueryParameter String value) throws IOException {
+            return FilePath.validateFileMask(project.getSomeWorkspace(), value);
         }
+
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
         /**
          * Creates a new instance of {@link WebtestPublisher} from a submitted
          * form.
          */
-        public WebtestPublisher newInstance(StaplerRequest req)
+        @Override
+        public WebtestPublisher newInstance(StaplerRequest req, JSONObject formData)
             throws FormException {
             // see config.jelly and you'll find "hello_world.name" form entry.
             return new WebtestPublisher(req.getParameter(CONFIG_PARAM));
@@ -206,15 +214,12 @@ public class WebtestPublisher extends Publisher implements Serializable {
             return null;
         }
 
-        public void doDynamic(StaplerRequest req, StaplerResponse rsp)
-            throws IOException, ServletException, InterruptedException {
-
+        public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp) {
             if(this.build != null) {
-                new DirectoryBrowserSupport(this, "webtest")
-                    .serveFile(req, rsp,
-                               getWebtestReportDir(this.build),
-                               "clipboard.gif", false);
+                return new DirectoryBrowserSupport(this, getWebtestReportDir(this.build),
+                                                   "webtest", "clipboard.gif", false);
             }
+            return null;
         }
     }
 }
