@@ -4,24 +4,29 @@
  */
 package net.fredjean.ws7;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Descriptor.FormException;
-import hudson.model.Project;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.ArgumentListBuilder;
 import java.io.IOException;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
  *
  * @author fjean
  */
-public class WS7Publisher extends Publisher {
+public class WS7Publisher extends Notifier {
 
     private String user;
     private String pwdLocation;
@@ -41,16 +46,10 @@ public class WS7Publisher extends Publisher {
 
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
     @Override
-    public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         String cmd = DESCRIPTOR.ws7Location + "/bin/wadm";
         int rc = -1;
-
-        Project project = build.getProject();
 
         if (validateArguments()) {
             synchronized (lock) {
@@ -70,7 +69,7 @@ public class WS7Publisher extends Publisher {
                     /*
                      * Adds the web application to the server.  
                      */
-                    rc = launcher.launch(args.toCommandArray(), build.getEnvVars(), listener.getLogger(), project.getModuleRoot()).join();
+                    rc = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
 
                     /*
                      * Redeploy the configuration if the webapp was added succesfully.
@@ -79,7 +78,7 @@ public class WS7Publisher extends Publisher {
                         args = buildConnectOptions(cmd, "deploy-config");
                         args.add("--echo", "--no-prompt", getWsConfig());
 
-                        rc = launcher.launch(args.toCommandArray(), build.getEnvVars(), listener.getLogger(), project.getModuleRoot()).join();
+                        rc = launcher.launch().cmds(args).envs(build.getEnvironment(listener)).stdout(listener).pwd(build.getModuleRoot()).join();
                     }
                 } catch (IOException ioe) {
                     Util.displayIOException(ioe, listener);
@@ -93,8 +92,12 @@ public class WS7Publisher extends Publisher {
     }
 
     @Override
-    public Action getProjectAction(Project project) {
+    public Action getProjectAction(AbstractProject<?, ?> project) {
         return new WS7ProjectAction(project, this);
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     /**
@@ -120,6 +123,7 @@ public class WS7Publisher extends Publisher {
     /**
      * Reference to the Descriptor
      */
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public String getUser() {
@@ -198,7 +202,7 @@ public class WS7Publisher extends Publisher {
         return (str == null || str.length() == 0);
     }
 
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         private String ws7Location = "/sun/webserver7";
         private String defaultUser = "admin";
@@ -219,7 +223,7 @@ public class WS7Publisher extends Publisher {
         }
 
         @Override
-        public boolean configure(StaplerRequest req) throws FormException {
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             ws7Location = req.getParameter("ws7.ws7Location");
             defaultUser = req.getParameter("ws7.defaultUser");
             defaultPwdLocation = req.getParameter("ws7.defaultPwdLocation");
@@ -228,11 +232,16 @@ public class WS7Publisher extends Publisher {
             defaultConfig = req.getParameter("ws7.defaultConfig");
             defaultVS = req.getParameter("ws7.defaultVS");
             save();
-            return super.configure(req);
+            return super.configure(req, formData);
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req) throws FormException {
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
+        @Override
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             WS7Publisher ws7 = new WS7Publisher();
             req.bindParameters(ws7, "ws7.");
             return ws7;
