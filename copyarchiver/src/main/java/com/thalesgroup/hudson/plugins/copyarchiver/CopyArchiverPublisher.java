@@ -204,7 +204,7 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
                     }
                 }
 
-                final FilePath destDirFilePath = new FilePath(build.getWorkspace().getChannel(), sharedDirectoryPath);
+                final FilePath destDirFilePath = new FilePath(build.getWorkspace().getChannel(), filterField(build, listener, sharedDirectoryPath));
 
                 result = build.getWorkspace().act(new FilePath.FileCallable<Boolean>() {
                     public Boolean invoke(File f, VirtualChannel channel) throws IOException {
@@ -257,7 +257,7 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
                     }
 
                     //Copy
-                    numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, archivedJobEntry.pattern, archivedJobEntry.excludes, destDirFilePath);
+                    numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
 
                 }
                 CopyArchiverLogger.log(listener, "'" + numCopied + "' artifacts have been copied.");
@@ -283,7 +283,6 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
         String str = null;
 
         Map<String, String> vars = new HashMap<String, String>();
-        //vars.putAll(build.getEnvironment(listener).descendingMap());
         Set<Map.Entry<String, String>> set = build.getEnvironment(listener).entrySet();
         for (Map.Entry<String, String> entry : set) {
             vars.put(entry.getKey(), entry.getValue());
