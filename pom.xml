@@ -264,16 +264,16 @@
     <module>text-finder</module>
     <module>tfs</module>
     <module>trac</module>
-    <!--module>twitter</module> tests are failing -->
+    <module>twitter</module>
     <module>violations</module>
-    <!--module>vmware</module-->
+    <module>vmware</module>
     <module>vss</module>
     <module>warnings</module>
     <module>webtestpresenter</module>
     <module>ws7</module>
     <module>xvnc</module>
     <module>pvcs_scm</module>
-    <!--module>backup</module resurrect this with 1.318 -->
+    <module>backup</module>
     <module>jsunit</module>
   </modules>
 
