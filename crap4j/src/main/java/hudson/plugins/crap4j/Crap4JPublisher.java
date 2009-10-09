@@ -13,6 +13,7 @@ import hudson.plugins.crap4j.model.ProjectCrapBean;
 import hudson.plugins.crap4j.util.FoundFile;
 import hudson.plugins.crap4j.util.ReportFilesFinder;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
 import java.io.BufferedReader;
@@ -69,7 +70,7 @@ public class Crap4JPublisher extends Recorder {
 		}
 	}
 
-	//@Override
+	@Override
 	public BuildStepDescriptor<Publisher> getDescriptor() {
 		return DESCRIPTOR;
 	}
@@ -77,6 +78,10 @@ public class Crap4JPublisher extends Recorder {
 	@Override
 	public Action getProjectAction(AbstractProject<?, ?> project) {
 		return new Crap4JProjectAction(project);
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
 	}
 
     protected void log(final PrintStream logger, final String message) {
@@ -93,7 +98,7 @@ public class Crap4JPublisher extends Recorder {
         log(logger, "Using the new FileSetBuilder");
         
         ReportFilesFinder finder = new ReportFilesFinder(this.reportPattern);
-        FoundFile[] reports = build.getProject().getWorkspace().act(finder);
+        FoundFile[] reports = build.getWorkspace().act(finder);
         if (0 == reports.length) {
             log(logger, "No crap4j report files were found. Configuration error?");
             return false;

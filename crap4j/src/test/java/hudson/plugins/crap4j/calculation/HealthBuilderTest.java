@@ -58,8 +58,8 @@ public class HealthBuilderTest extends TestCase {
 
 	public void testHealthSummary() throws Exception {
 		HealthBuilder builder = new HealthBuilder();
-		assertEquals("132 crappy methods (7.96%)", builder.getHealthSummary(132, 7.96d));
-		assertEquals("0 crappy methods (0.0%)", builder.getHealthSummary(0, 0.0d));
-		assertEquals("1 crappy methods (0.02%)", builder.getHealthSummary(1, 0.02d));
+		assertEquals("132 crappy methods (7.96%)", Messages.HealthBuilder_HealthSummary(132, 7.96d));
+		assertEquals("0 crappy methods (0%)", Messages.HealthBuilder_HealthSummary(0, 0.0d));
+		assertEquals("1 crappy methods (0.02%)", Messages.HealthBuilder_HealthSummary(1, 0.02d));
 	}
 }
