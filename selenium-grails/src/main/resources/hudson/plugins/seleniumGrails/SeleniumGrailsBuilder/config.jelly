@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry title="${%Browser}" field="browser">
+  <f:entry description="The name of the browser which is to be used. The broser will be execueted as #&lt;browser&gt; URL, so any options or system variables can be added to this property as if it was a command line." title="${%Browser}" field="browser">
   <f:textbox />
   </f:entry>
 	<f:entry title="${%BaseDir}" field="baseDir">
@@ -11,4 +11,15 @@
 	<f:entry title="${%ProjectName}" field="projectName">
   <f:textbox />
   </f:entry>
+	<f:advanced>
+		<f:entry title="${%DeployString}" field="deployString">
+  	<f:textbox />
+	  </f:entry>
+		<f:entry title="${%Port}" field="port">
+    <f:textbox />
+    </f:entry>
+		<f:entry description="This property tells selenium-grails where to find the test results file. If you are using a custom deploy command it may be nessesary to set this. Its value will depend on the applicaton server. For instance, with glassfish it will typically be GLASSFISH_HOME/domain/domain1/config (domain1 may differ depending on the name of your domain)." title="${%ResultPath}" field="resultPath">
+    <f:textbox />
+    </f:entry>
+	</f:advanced>
 </j:jelly>
