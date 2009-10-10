@@ -65,7 +65,7 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
 
     private boolean deleteShared;
 
-    private final List<ArchivedJobEntry> archivedJobList = new ArrayList<ArchivedJobEntry>();
+    private List<ArchivedJobEntry> archivedJobList = new ArrayList<ArchivedJobEntry>();
 
     public String getSharedDirectoryPath() {
         return sharedDirectoryPath;
@@ -95,6 +95,10 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
         return archivedJobList;
     }
 
+    public void setArchivedJobList(List<ArchivedJobEntry> archivedJobList) {
+        this.archivedJobList = archivedJobList;
+    }
+
     public String getDatePattern() {
         return datePattern;
     }
@@ -110,6 +114,8 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
     public void setDeleteShared(boolean deleteShared) {
         this.deleteShared = deleteShared;
     }
+
+
 
     @Extension
     public static final class CopyArchiverDescriptor extends BuildStepDescriptor<Publisher> {
@@ -303,4 +309,26 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
     }
 
 
+    @Deprecated
+    private CopyArchiver copyArchiver;
+
+    /**
+     * Initializes members that were not present in previous versions of this plug-in.
+     * @return the created object
+     */
+    /*
+    private Object readResolve() {
+       if (copyArchiver!=null){
+          sharedDirectoryPath=copyArchiver.getSharedDirectoryPath();
+          useTimestamp=copyArchiver.isUseTimestamp();
+          datePattern=copyArchiver.getDatePattern();
+          flatten=copyArchiver.isFlatten();
+          deleteShared=copyArchiver.isDeleteShared();
+          archivedJobList=copyArchiver.getArchivedJobList();
+       }
+       return this;
+    }
+    */
+
 }
+
