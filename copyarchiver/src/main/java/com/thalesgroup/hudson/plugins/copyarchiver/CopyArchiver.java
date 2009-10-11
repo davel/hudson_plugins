@@ -3,9 +3,7 @@ package com.thalesgroup.hudson.plugins.copyarchiver;
 import hudson.tasks.Publisher;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.Extension;
 import hudson.Launcher;
-import hudson.util.FormFieldValidator;
 import hudson.model.AbstractProject;
 import hudson.model.Hudson;
 import hudson.model.AbstractBuild;
@@ -15,14 +13,11 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ServletException;
 
-public class CopyArchiver  extends Publisher implements Serializable {
+public class CopyArchiver extends Publisher implements Serializable {
 
     private String sharedDirectoryPath;
 
@@ -31,8 +26,6 @@ public class CopyArchiver  extends Publisher implements Serializable {
     private String datePattern;
 
     private boolean flatten;
-
-    private boolean deleteShared;
 
     private List<ArchivedJobEntry> archivedJobList = new ArrayList<ArchivedJobEntry>();
 
@@ -66,14 +59,6 @@ public class CopyArchiver  extends Publisher implements Serializable {
 
     public void setFlatten(boolean flatten) {
         this.flatten = flatten;
-    }
-
-    public boolean isDeleteShared() {
-        return deleteShared;
-    }
-
-    public void setDeleteShared(boolean deleteShared) {
-        this.deleteShared = deleteShared;
     }
 
     public List<ArchivedJobEntry> getArchivedJobList() {
@@ -133,7 +118,7 @@ public class CopyArchiver  extends Publisher implements Serializable {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
                            final BuildListener listener) throws InterruptedException, IOException {
-           return copyArchiverPublisher.perform(build, launcher, listener);
+        return copyArchiverPublisher.perform(build, launcher, listener);
     }
 
 
@@ -146,10 +131,10 @@ public class CopyArchiver  extends Publisher implements Serializable {
         copyArchiverPublisher.setUseTimestamp(useTimestamp);
         copyArchiverPublisher.setDatePattern(datePattern);
         copyArchiverPublisher.setFlatten(flatten);
-        copyArchiverPublisher.setDeleteShared(deleteShared);
+        copyArchiverPublisher.setDeleteShared(true);
         copyArchiverPublisher.setArchivedJobList(archivedJobList);
 
-       return copyArchiverPublisher;
+        return copyArchiverPublisher;
     }
-    
+
 }

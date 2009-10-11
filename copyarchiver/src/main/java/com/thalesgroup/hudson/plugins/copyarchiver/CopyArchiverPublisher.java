@@ -116,7 +116,6 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
     }
 
 
-
     @Extension
     public static final class CopyArchiverDescriptor extends BuildStepDescriptor<Publisher> {
 
@@ -307,28 +306,5 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
-
-
-    @Deprecated
-    private CopyArchiver copyArchiver;
-
-    /**
-     * Initializes members that were not present in previous versions of this plug-in.
-     * @return the created object
-     */
-    /*
-    private Object readResolve() {
-       if (copyArchiver!=null){
-          sharedDirectoryPath=copyArchiver.getSharedDirectoryPath();
-          useTimestamp=copyArchiver.isUseTimestamp();
-          datePattern=copyArchiver.getDatePattern();
-          flatten=copyArchiver.isFlatten();
-          deleteShared=copyArchiver.isDeleteShared();
-          archivedJobList=copyArchiver.getArchivedJobList();
-       }
-       return this;
-    }
-    */
-
 }
 
