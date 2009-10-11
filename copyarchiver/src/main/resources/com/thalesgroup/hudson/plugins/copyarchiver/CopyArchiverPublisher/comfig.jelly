@@ -1,0 +1,97 @@
+<!--
+/*******************************************************************************
+* Copyright (c) 2009 Thales Corporate Services SAS                             *
+* Author : Gregory Boissinot                                                   *
+*                                                                              *
+* Permission is hereby granted, free of charge, to any person obtaining a copy *
+* of this software and associated documentation files (the "Software"), to deal*
+* in the Software without restriction, including without limitation the rights *
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell    *
+* copies of the Software, and to permit persons to whom the Software is        *
+* furnished to do so, subject to the following conditions:                     *
+*                                                                              *
+* The above copyright notice and this permission notice shall be included in   *
+* all copies or substantial portions of the Software.                          *
+*                                                                              *
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR   *
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     *
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  *
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       *
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,*
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
+* THE SOFTWARE.                                                                *
+*******************************************************************************/
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <f:entry title="Jobs">
+  
+    <f:repeatable var="e" items="${instance.archivedJobList}">
+      <table width="100%">
+
+	   <f:entry title="Job to aggregate" help="/plugin/copyarchiver/CopyArchiver/jobName.html">
+	   
+	    <select class="setting-input" name="copyarchiver.entry.jobName">
+	      <j:forEach var="inst" items="${descriptor.jobs}">
+	        <f:option selected="${inst.name==e.jobName}">${inst.name}</f:option>
+	      </j:forEach>
+	    </select>
+	    
+	   </f:entry>
+
+  	   <f:entry title="Artifacts to copy" help="/plugin/copyarchiver/CopyArchiver/pattern.html">
+    	<f:textbox name="copyarchiver.entry.pattern" value="${e.pattern}" />
+  	   </f:entry>
+  	   
+  	   <f:advanced>
+	  	   <f:entry title="Excludes" help="/plugin/copyarchiver/CopyArchiver/excludes.html">
+	    		<f:textbox name="copyarchiver.entry.excludes" value="${e.excludes}" />
+	  	   </f:entry>
+	   </f:advanced>
+
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+
+      </table>
+   </f:repeatable>  
+  </f:entry>    
+
+
+  <f:section>
+	  <f:entry title="Shared directory" help="/plugin/copyarchiver/CopyArchiver/sharedDirectory.html">
+	    <f:textbox name="copyarchiver.sharedDirectoryPath" value="${instance.sharedDirectoryPath}" />
+	  </f:entry>
+
+	 <f:entry help="/plugin/copyarchiver/CopyArchiver/deleteSharedDirectory.html">
+		<f:checkbox name="copyarchiver.deleteShared" checked="${h.defaultToTrue(instance.deleteShared)}" />
+		<label class="attach-previous">Delete the shared directory and its content</label>
+	</f:entry>	  
+
+
+	 <f:entry help="/plugin/copyarchiver/CopyArchiver/flatten.html">
+		<f:checkbox name="copyarchiver.flatten" checked="${instance.flatten}" />
+		<label class="attach-previous">Flatten</label>
+	</f:entry>	  
+	  
+	  <f:entry>
+			<table style="width:100%">
+		  		<f:optionalBlock 
+		              name="copyarchiver.useTimestamp" 
+		              title="Change the date format" 
+		              checked="${instance.useTimestamp==true}"
+		              help="/plugin/copyarchiver/CopyArchiver/changeDateFormat.html">
+		        	<f:entry title="Date format">
+		 				<f:textbox name="copyarchiver.datePattern" value="${instance.datePattern}" 
+		 				checkUrl="'${rootURL}/publisher/CopyArchiverPublisher/dateTimePatternCheck?value='+escape(this.value)"/>
+		        	</f:entry>        		        
+		  		</f:optionalBlock>
+		  	 </table>		  
+	  </f:entry>
+ </f:section>
+  
+       	 
+</j:jelly>
