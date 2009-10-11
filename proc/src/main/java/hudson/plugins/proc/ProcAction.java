@@ -5,8 +5,6 @@ import hudson.model.Run;
 import hudson.util.ProcessTree;
 import hudson.EnvVars;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -37,35 +35,16 @@ public class ProcAction implements Action {
         return new ProcInfo(osp);
     }
 
-    // returns the list of process for a build
+    // returns the list of processes for a build
     public List<ProcessTree.OSProcess> getProcesses() {
         List<ProcessTree.OSProcess> procs = new ArrayList<ProcessTree.OSProcess>();
         EnvVars vars = run.getCharacteristicEnvVars();
-        Iterator<ProcessTree.OSProcess> it = ProcessTree.get().iterator();
-        while(it.hasNext()) {
-            ProcessTree.OSProcess osp = it.next();
-            // TODO OSProcess#hasMatchingEnvVars()
-            if (hasMatchingEnvVars(vars, osp.getEnvironmentVariables())) {
+        for(ProcessTree.OSProcess osp : ProcessTree.get()) {
+            if (osp.hasMatchingEnvVars(vars)) {
                 procs.add(osp);
             }
         }
         return procs;
-    }
-
-    // TODO remove once we use the new hudson build which exposes
-    // TODO OSProcess#hasMatchingEnvVars()
-    boolean hasMatchingEnvVars(Map<String,String> modelEnvVar, Map<String,String> procVar) {
-        if(modelEnvVar.isEmpty())
-            // sanity check so that we don't start rampage.
-            return false;
-
-        for (Map.Entry<String,String> e : modelEnvVar.entrySet()) {
-            String v = procVar.get(e.getKey());
-            if(v==null || !v.equals(e.getValue()))
-                return false;   // no match
-        }
-
-        return true;
     }
 
 }

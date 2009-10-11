@@ -5,7 +5,7 @@
             <h1>Processes</h1>
             <ul>
               <j:forEach items="${it.getProcesses()}" var="i">
-                <li><a href="${i.getPid()}">Process ${i.getPid()}</a></li>
+                <li><a href="${i.getPid()}">Process ${i.getPid()} - ${i.getArguments()}</a></li>
               </j:forEach>
             </ul>
 
