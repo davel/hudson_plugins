@@ -42,7 +42,7 @@ JobProperty<AbstractProject<?, ?>> {
 	}
 	
 	public List<Challenge> getChallenges() {
-		return this.challenges;
+		return challenges;
 	}
 
 
@@ -149,6 +149,7 @@ JobProperty<AbstractProject<?, ?>> {
 				append("name", name).
 				append("startDate", startDate).
 				append("endDate", endDate).
+				append("reward", reward).
 				toString();
 		}
 	}

@@ -19,6 +19,10 @@
         <h1>${it.displayName}</h1>
         
         <h2>Challenges</h2>
+          <j:forEach var="c" items="${it.challenges}">
+            <h3>Challenge ${c.name} for ${c.reward}</h3>
+          </j:forEach>
+        
         <p>${it.challenges}</p>
         
         <h2>Challenge ${challengeName}: ${challengeDescription}</h2>

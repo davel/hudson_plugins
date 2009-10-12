@@ -1,9 +1,12 @@
 package hudson.plugins.buggame;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.plugins.buggame.ChallengeProperty.Challenge;
 
 public class ChallengeProjectAction implements Action {
 	AbstractProject<?,?> project;
@@ -34,9 +37,9 @@ public class ChallengeProjectAction implements Action {
 		return "buggame";
 	}
 	
-	public String getChallenges() {
+	public List<Challenge> getChallenges() {
 		ChallengeProperty cp = this.project.getProperty(ChallengeProperty.class);
 
-		return cp.getChallenges().toString();
+		return cp.getChallenges();
 	}
 }
