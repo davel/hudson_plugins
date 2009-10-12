@@ -26,6 +26,7 @@
     	BuildButton <f:checkbox name="pview.pcBuildButton" checked="${instance.pcBuildButton}"/>
 	</f:entry>
 	<f:entry title="${%position of step-in-tree}">
+		You have to relogin to see the treeseletor again<br></br>
 		<select name="treePosition">
 			<f:option value="0" selected="${instance.treePosition==0}">North East</f:option>
 			<f:option value="1" selected="${instance.treePosition==1}">South East</f:option>

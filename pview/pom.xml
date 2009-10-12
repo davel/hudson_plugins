@@ -1,79 +1,61 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>de.fspengler.hudson.pview</groupId>
-  <artifactId>hudson-pview-plugin</artifactId>
-  <packaging>hpi</packaging>
-  <version>1.3-SNAPSHOT</version>
-  <name>Hudson Personal View</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Personal+View</url>  
- <description>This plugin provides every user the possibility to create its own view</description>        
-  <properties>
-    <!-- which version of Hudson is this plugin built against? -->
-    <hudson.version>1.317</hudson.version>
-  </properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-        <parent>
-                <groupId>org.jvnet.hudson.plugins</groupId>
-                <artifactId>plugin</artifactId>
+	<groupId>de.fspengler.hudson.pview</groupId>
+	<artifactId>hudson-pview-plugin</artifactId>
+	<packaging>hpi</packaging>
+	<version>1.3-SNAPSHOT</version>
+	<name>Hudson Personal View</name>
+	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Personal+View</url>
+	<description>This plugin provides every user the possibility to create its own view</description>
+	<properties>
+		<!-- which version of Hudson is this plugin built against? -->
+		<hudson.version>1.328</hudson.version>
+	</properties>
+
+	<parent>
+		<groupId>org.jvnet.hudson.plugins</groupId>
+		<artifactId>plugin</artifactId>
 		<relativePath>../pom.xml</relativePath>
-                <version>1.318</version>
-       </parent>
-                                            
-  <dependencies>
-    <dependency>
-      <groupId>org.jvnet.hudson.main</groupId>
-      <artifactId>hudson-core</artifactId>
-      <version>${hudson.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jvnet.hudson.main</groupId>
-      <artifactId>hudson-war</artifactId>
-      <type>war</type>
-      <version>${hudson.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  
-<!--  <build>
-    <finalName>${project.artifactId}</finalName>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.jvnet.hudson.tools</groupId>
-        <artifactId>maven-hpi-plugin</artifactId>
-        <version>1.41</version>
-        <extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  -->
+		<version>1.328</version>
+	</parent>
 
-   <scm>
-       <connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
-           <developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</developerConnection>
-           <url>https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</url>
-      </scm>
-    <distributionManagement>
-        <repository>
-              <uniqueVersion>false</uniqueVersion>
-                    <id>java.net-m2-repository</id>
-                          <!--url>svn:https://svn.dev.java.net/svn/maven2-repository/trunk/www/repository/</url-->
-                                <url>java-net:/maven2-repository/trunk/repository/</url>
-                                    </repository>
-                                        <snapshotRepository>
-                                              <!-- prevent accidental deployment of SNAPSHOTS to repository -->
-                                                    <id>local</id>
-                                                          <url>file:.</url>
-                                                              </snapshotRepository>
-                                                                </distributionManagement>
-                                                                                   
+	<dependencies>
+		<dependency>
+			<groupId>org.jvnet.hudson.main</groupId>
+			<artifactId>hudson-core</artifactId>
+			<version>${hudson.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.hudson.main</groupId>
+			<artifactId>hudson-war</artifactId>
+			<type>war</type>
+			<version>${hudson.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<scm>
+		<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
+		<developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</developerConnection>
+		<url>https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</url>
+	</scm>
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>java.net-m2-repository</id>
+			<!--
+				url>svn:https://svn.dev.java.net/svn/maven2-repository/trunk/www/repository/</url
+			-->
+			<url>java-net:/maven2-repository/trunk/repository/</url>
+		</repository>
+		<snapshotRepository>
+			<!-- prevent accidental deployment of SNAPSHOTS to repository -->
+			<id>local</id>
+			<url>file:.</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>

@@ -90,8 +90,11 @@ public class PViewLinkAction implements Action, AccessControlled {
 	}
 
 	private boolean isIsTreePosition (int position, boolean pDefault){
-		if (getUser() )
-			return ((getUserProp().getTreePosition() == position)  && (isIsTree())); 
+		if (!isIsTree()){
+			return false;
+		}
+		if (getUser() && getUserProp() != null )
+			return ((getUserProp().getTreePosition() == position)); 
 		else
 			return pDefault;
 	}
@@ -139,8 +142,12 @@ public class PViewLinkAction implements Action, AccessControlled {
 		String result;
 		if (isIsTree()){
 			String matcher = getProjectMatcher();
-			if (matcher.indexOf(getUserProp().getTreeSplitChar()) > -1){
-				result = URL_PART_SI_VIEW + "/" + matcher.substring(0, matcher.lastIndexOf(getUserProp().getTreeSplitChar())) + "/";
+			String splitChar = "-";
+			if (getUserProp() != null ) {		
+				splitChar = getUserProp().getTreeSplitChar();
+			} 
+			if (matcher.indexOf(splitChar) > -1){
+				result = URL_PART_SI_VIEW + "/" + matcher.substring(0, matcher.lastIndexOf(splitChar)) + "/";
 			} else {
 				result = URL_PART_ROOT_SI_VIEW;
 			}
@@ -151,7 +158,10 @@ public class PViewLinkAction implements Action, AccessControlled {
 	}
 	
 	public Collection<DirEntry> getSubDirs(){
-		final String splitChar = getUserProp().getTreeSplitChar(); 
+		String splitChar = "-";
+		if (getUserProp() != null ) {		
+			splitChar = getUserProp().getTreeSplitChar();
+		} 
 		List<AbstractProject> iList = Hudson.getInstance().getItems(AbstractProject.class);
 		SortedMap<String,DirEntry> dirSet = new TreeMap<String,DirEntry>();
 		String startMatcher = getProjectMatcher();
@@ -193,7 +203,10 @@ public class PViewLinkAction implements Action, AccessControlled {
 	public List<AbstractProject> getJobs() {
 		List<AbstractProject> jobList = new ArrayList<AbstractProject>();
 		List<AbstractProject> iList = Hudson.getInstance().getItems(AbstractProject.class);
-		final String splitChar = getUserProp().getTreeSplitChar(); 
+	   String splitChar = "-";
+		if (getUserProp() != null) {
+			splitChar = getUserProp().getTreeSplitChar();
+		} 
 		
 		if (isIsTree()){
 			StaplerRequest req = Stapler.getCurrentRequest();
