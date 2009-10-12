@@ -1,6 +1,8 @@
 package hudson.plugins.buggame;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import net.sf.json.JSONObject;
 
@@ -15,37 +17,31 @@ import com.google.common.base.Preconditions;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.plugins.buggame.model.Goal;
+import hudson.plugins.buggame.model.Challenge;
 
 public final class ChallengeProperty extends
 JobProperty<AbstractProject<?, ?>> {
 
 	/**
-	 * This will the URL to the project main branch.
+	 * This is the list of challenges.
 	 */
-	private String projectUrl;
+	private List<Challenge> challenges = new ArrayList<Challenge>();
 
 	@DataBoundConstructor
-	public ChallengeProperty(String projectUrl) {
-		//
+	public ChallengeProperty(List<Challenge> challenges) {
+		this.challenges = challenges;
+	}
+	
+	public List<Challenge> getChallenges() {
+		return this.challenges;
 	}
 
-	@Override
-	public Action getJobAction(AbstractProject<?, ?> job) {
 
-		return null;
-	}
-	/*
-@Override
-public JobPropertyDescriptor getDescriptor() {
-return DESCRIPTOR;
-}
-
-public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-	 */
 	@Extension
 	public static final class DescriptorImpl extends JobPropertyDescriptor {
 
@@ -53,13 +49,15 @@ public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 			super(ChallengeProperty.class);
 			load();
 		}
-
+		
+		@Override
 		public boolean isApplicable(Class<? extends Job> jobType) {
 			return AbstractProject.class.isAssignableFrom(jobType);
 		}
 
+		@Override
 		public String getDisplayName() {
-			return "Github project page";
+			return "Bug Game Challenges";
 		}
 
 		@Override
@@ -67,8 +65,11 @@ public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 				JSONObject formData) throws FormException {
 			ChallengeProperty tpp = req.bindJSON(
 					ChallengeProperty.class, formData);
-			if (tpp.projectUrl == null) {
+			tpp.challenges = Descriptor.newInstancesFromHeteroList(req, formData, "challenges", Challenge.all());
+			if (tpp.getChallenges() == null || tpp.getChallenges().isEmpty()) {
+				tpp = null; // Not configured
 			}
+			
 			return tpp;
 		}
 	}
