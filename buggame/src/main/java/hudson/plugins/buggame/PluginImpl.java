@@ -3,6 +3,7 @@ package hudson.plugins.buggame;
 import hudson.Extension;
 import hudson.Plugin;
 import hudson.model.Hudson;
+import hudson.model.Jobs;
 
 /**
  * Entry point of the CI Game plugin.
@@ -12,9 +13,6 @@ public class PluginImpl extends Plugin {
 
     public static final UserScorePropertyDescriptor USER_SCORE_PROPERTY_DESCRIPTOR = new UserScorePropertyDescriptor();
 
-    /**
-     * I really 
-     */
     @Override
     public void start() throws Exception {
         //Publisher.PUBLISHERS.addNotifier(GAME_PUBLISHER_DESCRIPTOR);
