@@ -34,4 +34,16 @@
 			<f:option value="3" selected="${instance.treePosition==3}">South West</f:option>
 		</select>
 	</f:entry>
+	<f:entry title="${%number of jobs in  step-in-tree up to when the jobs are shown}">
+		<select name="stepInNumberJobs">
+			<f:option value="10" selected="${instance.stepInNumberJobs==10}">10</f:option>
+			<f:option value="20" selected="${instance.stepInNumberJobs==20}">20</f:option>
+			<f:option value="30" selected="${instance.stepInNumberJobs==30}">30</f:option>
+			<f:option value="40" selected="${instance.stepInNumberJobs==40}">40</f:option>
+			<f:option value="50" selected="${instance.stepInNumberJobs==50}">50</f:option>
+			<f:option value="100" selected="${instance.stepInNumberJobs==100}">100</f:option>
+			<f:option value="1000" selected="${instance.stepInNumberJobs==1000}">1000</f:option>
+		</select>
+	</f:entry>
+	
 </j:jelly>

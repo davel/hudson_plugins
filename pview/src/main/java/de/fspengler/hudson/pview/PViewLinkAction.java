@@ -47,8 +47,8 @@ public class PViewLinkAction implements Action, AccessControlled {
 
 	private static final String URL_PART_SI_VIEW = "siView";
 	private static final String URL_PART_ROOT_SI_VIEW = "rootSiView";
-	private static final String URL_PVIEW_ROOT_SI_VIEW = "/pview/" + URL_PART_ROOT_SI_VIEW ;
-	private static final String URL_PVIEW_SI_VIEW = "/pview/" + URL_PART_SI_VIEW;
+	private static final String P_URL_PVIEW_ROOT_SI_VIEW = "/pview/" + URL_PART_ROOT_SI_VIEW ;
+	private static final String P_URL_PVIEW_SI_VIEW = "/pview/" + URL_PART_SI_VIEW;
 	private static final long serialVersionUID = 1L;
 	
 
@@ -114,12 +114,22 @@ public class PViewLinkAction implements Action, AccessControlled {
 		return isIsTreePosition(3, false);
 	}	
 	public boolean isIsTree() {
+		
 		StaplerRequest req = Stapler.getCurrentRequest();
         if(req!=null && 
-        		(req.getOriginalRequestURI().startsWith(URL_PVIEW_SI_VIEW) || req.getOriginalRequestURI().startsWith(URL_PVIEW_ROOT_SI_VIEW) )){
+        		(req.getOriginalRequestURI().startsWith(getStepInViewUrl(req)) 
+        				|| req.getOriginalRequestURI().startsWith(getStepInViewRoot(req)) )){
         	return true;
         }
 		return false;
+	}
+
+	private String getStepInViewRoot(StaplerRequest req) {
+		return req.getContextPath()  +  P_URL_PVIEW_ROOT_SI_VIEW;
+	}
+
+	private String getStepInViewUrl(StaplerRequest req) {
+		return req.getContextPath()  + P_URL_PVIEW_SI_VIEW;
 	}
 	public boolean isIsList() {
 		return !isIsTree();
@@ -210,7 +220,7 @@ public class PViewLinkAction implements Action, AccessControlled {
 		
 		if (isIsTree()){
 			StaplerRequest req = Stapler.getCurrentRequest();
-			if (req.getOriginalRequestURI().startsWith(URL_PVIEW_ROOT_SI_VIEW)){
+			if (req.getOriginalRequestURI().startsWith(getStepInViewRoot(req))){
 				for (AbstractProject abstractProject : iList) {
 					if  (!abstractProject.getName().contains(splitChar)){
 						jobList.add(abstractProject);
@@ -218,10 +228,17 @@ public class PViewLinkAction implements Action, AccessControlled {
 				}	
 			} else {
 				String startMatcher = getProjectMatcher();
-				int lenMatcher = startMatcher.length();
 				for (AbstractProject abstractProject : iList) {
-					if  (abstractProject.getName().startsWith(startMatcher) && abstractProject.getName().indexOf(splitChar, lenMatcher + 1)  == -1){
+					if  (abstractProject.getName().startsWith(startMatcher)){
 						jobList.add(abstractProject);
+						int stepInNumberJobs = 30;
+						if (getUserProp() != null) {
+							stepInNumberJobs = getUserProp().getStepInNumberJobs(); 
+						}
+						if (jobList.size() > stepInNumberJobs){
+							jobList.clear();
+							break;
+						}
 					}
 				}	
 			}
@@ -239,10 +256,10 @@ public class PViewLinkAction implements Action, AccessControlled {
 
 	public String getProjectMatcher() {
 		StaplerRequest req = Stapler.getCurrentRequest();
-		if ( ! req.getOriginalRequestURI().startsWith(URL_PVIEW_SI_VIEW + "/")){
+		if ( ! req.getOriginalRequestURI().startsWith(getStepInViewUrl(req) + "/")){
 			return "";
 		}
-		String matchPoint = req.getOriginalRequestURI().substring((URL_PVIEW_SI_VIEW + "/").length(),req.getOriginalRequestURI().length() -1);
+		String matchPoint = req.getOriginalRequestURI().substring((getStepInViewUrl(req) + "/").length(),req.getOriginalRequestURI().length() -1);
 		return matchPoint;
 	}
 
