@@ -1,5 +1,6 @@
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.BuildStepDescriptor;
@@ -14,10 +15,10 @@ import java.util.ArrayList;
 import java.io.Serializable;
 import java.io.IOException;
 
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
-
-public class CopyArchiver extends Publisher implements Serializable {
+public class CopyArchiver extends Notifier implements Serializable {
 
     private String sharedDirectoryPath;
 
@@ -89,7 +90,7 @@ public class CopyArchiver extends Publisher implements Serializable {
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req) throws FormException {
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
             req.bindParameters(pub, "copyarchiver.");
             pub.getArchivedJobList().addAll(req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry."));

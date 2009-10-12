@@ -32,8 +32,9 @@ import hudson.remoting.VirtualChannel;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,17 +42,16 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.servlet.ServletException;
-
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
 
 /**
  * @author Gregory Boissinot
  */
-public class CopyArchiverPublisher extends Publisher implements Serializable {
+public class CopyArchiverPublisher extends Notifier implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -133,7 +133,7 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req) throws FormException {
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
             req.bindParameters(pub, "copyarchiver.");
             pub.getArchivedJobList().addAll(req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry."));
@@ -155,35 +155,21 @@ public class CopyArchiverPublisher extends Publisher implements Serializable {
             return Hudson.getInstance().getItems(AbstractProject.class);
         }
 
-        public void doDateTimePatternCheck(final StaplerRequest req,
-                                           StaplerResponse rsp) throws IOException, ServletException {
-            (new FormFieldValidator(req, rsp, true) {
+        public FormValidation doDateTimePatternCheck(@QueryParameter("value") String pattern) {
+            if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER)) return FormValidation.ok();
+            if (pattern == null || pattern.trim().length() == 0) {
+                return FormValidation.error("You must provide a pattern value");
+            }
 
-                public void check() throws IOException, ServletException {
+            try {
+                new SimpleDateFormat(pattern);
+            } catch (NullPointerException npe) {
+                return FormValidation.error("Invalid input: " + npe.getMessage());
+            } catch (IllegalArgumentException iae) {
+                return FormValidation.error("Invalid input: " + iae.getMessage());
+            }
 
-                    String pattern = req.getParameter("value");
-
-                    if (pattern == null || pattern.trim().length() == 0) {
-                        error((new StringBuilder()).append(
-                                "You must provide a pattern value").toString());
-                    }
-
-                    try {
-                        new SimpleDateFormat(pattern);
-                    } catch (NullPointerException npe) {
-                        error((new StringBuilder()).append("Invalid input: ")
-                                .append(npe.getMessage()).toString());
-                        return;
-                    } catch (IllegalArgumentException iae) {
-                        error((new StringBuilder()).append("Invalid input: ")
-                                .append(iae.getMessage()).toString());
-                        return;
-                    }
-
-                    return;
-
-                }
-            }).process();
+            return FormValidation.ok();
         }
 
     }
