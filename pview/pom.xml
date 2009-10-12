@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.fspengler.hudson.pview</groupId>
 	<artifactId>hudson-pview-plugin</artifactId>
 	<packaging>hpi</packaging>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<name>Hudson Personal View</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Personal+View</url>
 	<description>This plugin provides every user the possibility to create its own view</description>
@@ -38,17 +37,16 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
-		<developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</developerConnection>
-		<url>https://hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</url>
+		<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/tags/hudson-pview-plugin-1.3</connection>
+		<developerConnection>scm:svn:https://hudson.dev.java.net/svn/hudson/tags/hudson-pview-plugin-1.3</developerConnection>
+		<url>https://hudson.dev.java.net/svn/hudson/tags/hudson-pview-plugin-1.3</url>
 	</scm>
 	<distributionManagement>
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
 			<id>java.net-m2-repository</id>
 			<!--
-				url>svn:https://svn.dev.java.net/svn/maven2-repository/trunk/www/repository/</url
-			-->
+				url>svn:https://svn.dev.java.net/svn/maven2-repository/trunk/www/repository/</url -->
 			<url>java-net:/maven2-repository/trunk/repository/</url>
 		</repository>
 		<snapshotRepository>
