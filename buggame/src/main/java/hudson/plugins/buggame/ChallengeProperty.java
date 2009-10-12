@@ -95,27 +95,28 @@ JobProperty<AbstractProject<?, ?>> {
 		
 		@DataBoundConstructor
 		public Challenge(String name, String startDate, String endDate,
-				String reward, String goalStartValue, String goalEndValue) {
+				String reward, String goalStartValue, String goalEndValue, 
+				String goalType) {
 			this(name, bigEndianDateParser.parseDateTime(startDate), 
 					bigEndianDateParser.parseDateTime(endDate),
-					reward, Integer.parseInt(goalStartValue), Integer.parseInt(goalEndValue));
-		}
-		
-		public Challenge (String name, Date startDate, Date endDate,
-				String reward, int goalStartValue, int goalEndValue) {
-			this(name, new DateTime(Preconditions.checkNotNull(startDate.getTime())), 
-					new DateTime(Preconditions.checkNotNull(endDate.getTime())), reward, goalStartValue, goalEndValue);
+					reward, Double.parseDouble(goalStartValue), Double.parseDouble(goalEndValue), goalType);
 		}
 		
 		public Challenge (String name, DateTime startDate, 
-				DateTime endDate, String reward, int goalStartValue, int goalEndValue) {		
+				DateTime endDate, String reward, double goalStartValue, double goalEndValue, String goalType) {		
 			this.name = Preconditions.checkNotNull(name);
 			this.reward = Preconditions.checkNotNull(reward);
 			this.startDate = Preconditions.checkNotNull(startDate);
 			this.endDate = Preconditions.checkNotNull(endDate);
 			Preconditions.checkArgument((this.startDate.compareTo(this.endDate) <= 0),
 					"%s is after %s", this.startDate, this.endDate);
-			this.goal = new BuildGoal(this, goalEndValue);
+			
+			if (goalType.equals("buildGoal")) {
+				this.goal = new BuildGoal(this, goalEndValue);
+			}
+			else {
+				throw new IllegalArgumentException("Goal unrecognized");
+			}
 		}
 
 		public String getReward() {

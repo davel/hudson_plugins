@@ -41,7 +41,7 @@ public class ChallengeTest extends HudsonTestCase {
 		DateTime threeDays = today.plusDays(3); 
 		
 		Challenge challenge = new Challenge("Test challenge", today,
-				threeDays, "Test reward", 1, 2);
+				threeDays, "Test reward", 1, 2, "buildGoal");
 		
 		// Sleep 5 seconds to ensure a separation when we calculate the days left
 		Thread.sleep(5000);
@@ -54,7 +54,7 @@ public class ChallengeTest extends HudsonTestCase {
 	@Test
 	public void testSameDay() {
 		Challenge challenge = new Challenge("Test challenge", today,
-				today, "Test reward", 1, 2);
+				today, "Test reward", 1, 2, "buildGoal");
 		assertEquals(0, challenge.getDaysLeft());
 	}
 
@@ -62,7 +62,7 @@ public class ChallengeTest extends HudsonTestCase {
 	@Test
 	public void testToStringNotNull() {
 		Challenge challenge = new Challenge("Test challenge", today,
-				today, "Test reward", 1, 2);
+				today, "Test reward", 1, 2, "buildGoal");
 		assertFalse(challenge.toString() == "" || challenge.toString() == null);
 	}
 }
