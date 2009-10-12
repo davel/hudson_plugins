@@ -1,0 +1,35 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="Score card">
+    <j:set var="challengeObj" value="${it.getChallenge(request.getParameter('id'))}" />
+    <j:set var="percentScore" value="75" />
+    <j:set var="challengeName" value="23" />
+    <j:set var="challengeDescription" value="Get 50 build points" />
+    <j:set var="reward" value="${challengeObj}" />
+    <st:include it="${it.project}" page="sidepanel.jelly" />
+    
+    <l:header>
+        <style type="text/css" media="all">
+            td.green{background-color:#AAFFAA;}
+            td.red{background-color:#FFAAD4;}
+        </style>
+        <script type="text/javascript" src="${rootURL}/plugin/buggame/progressbar.js" />
+    </l:header>
+    
+    <l:main-panel>
+        <h1>${it.displayName}</h1>
+        
+        <h2>Challenges</h2>
+        <p>${it.challenges}</p>
+        
+        <h2>Challenge ${challengeName}: ${challengeDescription}</h2>
+        <h3>Reward: ${challengeObj.reward}</h3>
+        
+        <h3 style="float:right">${percentScore}% complete</h3>
+        
+        <script type="text/javascript">
+            var html = progressbar(${percentScore});
+            document.write(html);
+        </script>
+    </l:main-panel>
+    </l:layout>
+</j:jelly>

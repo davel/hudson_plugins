@@ -32,7 +32,8 @@ public class GamePublisher extends Recorder {
 
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new ScoreBoardAction(project);
+    	System.out.println("Adding project action");
+        return new ChallengeProjectAction(project);
     }
 
     @Override
