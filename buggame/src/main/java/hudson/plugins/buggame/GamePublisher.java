@@ -45,6 +45,7 @@ public class GamePublisher extends Recorder {
         ScoreCard sc = new ScoreCard();
         sc.record(build, ruleBook);
 
+        System.err.println("Added scorecard");
         ScoreCardAction action = new ScoreCardAction(sc, build);
         build.getActions().add(action);
 

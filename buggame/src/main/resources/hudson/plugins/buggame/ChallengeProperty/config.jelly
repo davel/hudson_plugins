@@ -14,6 +14,12 @@
                 <f:entry title="Reward" field="reward">
           <f:textbox value="${c.reward}" />
         </f:entry>
+        <f:entry title="Build Goal Start Value" field="goalStartValue">
+            <f:textbox value="${c.goalStartValue}" />
+        </f:entry>
+        <f:entry title="Build Goal End Value" field="goalEndValue">
+            <f:textbox value="${c.goalEndValue}" />
+        </f:entry>
         <f:entry>
           <div align="right">
             <input type="button" value="${%Delete}" class="repeatable-delete show-if-not-only" style="margin-left: 1em;" />

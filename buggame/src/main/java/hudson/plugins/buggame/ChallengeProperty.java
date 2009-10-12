@@ -24,7 +24,8 @@ import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-//import hudson.plugins.buggame.model.Goal;
+import hudson.plugins.buggame.goals.BuildGoal;
+import hudson.plugins.buggame.model.Goal;
 
 public final class ChallengeProperty extends
 JobProperty<AbstractProject<?, ?>> {
@@ -42,6 +43,10 @@ JobProperty<AbstractProject<?, ?>> {
 	}
 	
 	public List<Challenge> getChallenges() {
+		for (Challenge c: challenges) {
+			c.setProject(this.owner);
+		}
+		
 		return challenges;
 	}
 
@@ -84,41 +89,34 @@ JobProperty<AbstractProject<?, ?>> {
 		private final DateTime startDate;
 		private final DateTime endDate;
 		private final String name;
-		//private Goal goal = null;
 		private final String reward;
+		private AbstractProject<?,?> project = null;
+		private final Goal goal;
 		
 		@DataBoundConstructor
 		public Challenge(String name, String startDate, String endDate,
-				String reward) {
+				String reward, String goalStartValue, String goalEndValue) {
 			this(name, bigEndianDateParser.parseDateTime(startDate), 
 					bigEndianDateParser.parseDateTime(endDate),
-					reward);
+					reward, Integer.parseInt(goalStartValue), Integer.parseInt(goalEndValue));
 		}
 		
 		public Challenge (String name, Date startDate, Date endDate,
-				String reward) {
+				String reward, int goalStartValue, int goalEndValue) {
 			this(name, new DateTime(Preconditions.checkNotNull(startDate.getTime())), 
-					new DateTime(Preconditions.checkNotNull(endDate.getTime())), reward);
+					new DateTime(Preconditions.checkNotNull(endDate.getTime())), reward, goalStartValue, goalEndValue);
 		}
 		
 		public Challenge (String name, DateTime startDate, 
-				DateTime endDate, String reward) {		
+				DateTime endDate, String reward, int goalStartValue, int goalEndValue) {		
 			this.name = Preconditions.checkNotNull(name);
 			this.reward = Preconditions.checkNotNull(reward);
 			this.startDate = Preconditions.checkNotNull(startDate);
 			this.endDate = Preconditions.checkNotNull(endDate);
 			Preconditions.checkArgument((this.startDate.compareTo(this.endDate) <= 0),
 					"%s is after %s", this.startDate, this.endDate);
+			this.goal = new BuildGoal(this, goalEndValue);
 		}
-		
-//		public void setGoal(Goal goal) {
-//			Preconditions.checkState(this.goal == null);
-//			this.goal = goal;	
-//		}
-//
-//		public Goal getGoal() {
-//			return goal;
-//		}
 
 		public String getReward() {
 			return reward;
@@ -143,6 +141,18 @@ JobProperty<AbstractProject<?, ?>> {
 			return Days.daysBetween(today, endDay).getDays();
 		}
 		
+		public AbstractProject<?, ?> getProject() {
+			return project;
+		}
+
+		public void setProject(AbstractProject<?, ?> project) {
+			this.project = project;
+		}
+
+		public Goal getGoal() {
+			return goal;
+		}
+
 		@Override
 		public String toString() {
 			return new ToStringBuilder(this).
