@@ -39,13 +39,15 @@ public class UserPersonalViewProperty extends UserProperty implements Describabl
 	private String treeSplitChar  ="-";
     private int treePosition=0;
     private int stepInNumberJobs = 30; 
-
+    private static int DEF_STEPIN_NUMBER = 30;
+    
 	@DataBoundConstructor
     public UserPersonalViewProperty(String pViewExpression, Boolean pViewBuildNoExecutor, Boolean pViewBuildNoQueue
     		,Boolean pcStatus, Boolean pcWeather, Boolean pcJob, Boolean pcLastSuccess, Boolean pcLastFailure,
     		Boolean pcLastStable,  Boolean pcLastDuration, Boolean pcConsoleView, Boolean pcBuildButton, String treeSplitChar,
     		int treePosition, int stepInNumberJobs) {
-        this.pViewExpression = pViewExpression  ;
+
+		this.pViewExpression = pViewExpression  ;
         this.pViewBuildNoExecutor=Boolean.TRUE.equals(pViewBuildNoExecutor);
         this.pViewBuildNoQueue=Boolean.TRUE.equals(pViewBuildNoQueue);
         this.pcStatus=Boolean.TRUE.equals(pcStatus);
@@ -61,7 +63,12 @@ public class UserPersonalViewProperty extends UserProperty implements Describabl
         this.treeSplitChar   = treeSplitChar;
 		checkEmptyTreeChar();
 		this.treePosition = treePosition;
-		this.stepInNumberJobs = stepInNumberJobs;
+		if (stepInNumberJobs > 0){
+			this.stepInNumberJobs = stepInNumberJobs;
+		} else {
+			this.stepInNumberJobs = DEF_STEPIN_NUMBER;
+		}
+		
     }
     
     private void checkEmptyPList(){
@@ -93,12 +100,19 @@ public class UserPersonalViewProperty extends UserProperty implements Describabl
 
     @Exported
     public int getStepInNumberJobs() {
-		return stepInNumberJobs;
+    	if (stepInNumberJobs > 0){
+    		return stepInNumberJobs;
+    	}  else {
+			return DEF_STEPIN_NUMBER;
+		}
 	}
 
 	public void setStepInNumberJobs(int stepInNumberJobs) {
-		
-		this.stepInNumberJobs = stepInNumberJobs;
+		if (stepInNumberJobs > 0){
+			this.stepInNumberJobs = stepInNumberJobs;
+		} else {
+			this.stepInNumberJobs = DEF_STEPIN_NUMBER;
+		}
 	}
 	
     @Exported

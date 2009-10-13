@@ -35,6 +35,15 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+	<dependencies>
+	<dependency>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-enforcer-plugin</artifactId>
+	<version>1.0-beta1</version>
+	</dependency>
+	</dependencies>
+	</dependencyManagement>
 
 	<scm>
 		<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
