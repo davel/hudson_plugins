@@ -3,21 +3,14 @@ package hudson.plugins.seleniumGrails;
 import hudson.tasks.Builder;
 import hudson.model.Result;
 import hudson.model.Descriptor;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.model.Build;
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Proc;
-import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import java.util.Map;
 import java.io.IOException;
 import java.io.File;
@@ -57,8 +50,9 @@ public class SeleniumGrailsBuilder extends Builder {
 		this.port = port;
 		this.resultPath = resultPath;
 	}
-	
-	public boolean perform(Build build, Launcher launcher, BuildListener listener)
+
+	@Override
+	public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener)
             throws IOException, InterruptedException {
 		if (browser == null || browser.length() == 0) {
     	listener.error("Build config : browser field is mandatory");
@@ -90,7 +84,7 @@ public class SeleniumGrailsBuilder extends Builder {
 		//env.put("GRAILS_HOME", grailsHome);
 		FilePath resultFile =  null;		
 		if(resultPath == null){				
-			resultFile = new FilePath(new FilePath(build.getProject().getModuleRoot(), baseDir), "seleniumTestResult.xml");
+			resultFile = new FilePath(new FilePath(build.getModuleRoot(), baseDir), "seleniumTestResult.xml");
 		} else {
 			resultFile = new FilePath(new File(resultPath));
 		}
@@ -100,8 +94,7 @@ public class SeleniumGrailsBuilder extends Builder {
 		//String url = "http://localhost:"+port+"/"+projectName+"/selenium/core/TestRunner.html?test=..%2F..%2Fselenium/suite&auto=on&close=on&resultsUrl=..%2FpostResults%3Ffile%3DseleniumTestResult.xml";
 		String url = "http://localhost:"+port+"/"+projectName+"/selenium/core/TestRunner.html?test=..%2F..%2Fselenium/suite&auto=on&close=on&resultsUrl=..%2FpostResults%3Ffile%3DseleniumTestResult.xml";
 
-		String cmd = browser + " " + url;
-		Proc browserProc = launcher.launch(cmd, build.getEnvVars(), listener.getLogger(), new FilePath(build.getProject().getModuleRoot(), baseDir));
+		Proc browserProc = launcher.launch().cmds(browser, url).envs(build.getEnvironment(listener)).stdout(listener).pwd(new FilePath(build.getModuleRoot(), baseDir)).start();
 
 		while(!resultFile.exists()){ Thread.sleep(1000); } //wait for the result file to be written
 
@@ -110,42 +103,37 @@ public class SeleniumGrailsBuilder extends Builder {
 		if(grailsServer != null) grailsServer.kill();
 		if(resultPath != null){ 
 			//put the results somewhere where the publisher can find it
-			System.out.println("moving "+resultPath+"to: "+new FilePath(new FilePath(build.getProject().getModuleRoot(), baseDir), "seleniumTestResult.xml").toString());
-			new FilePath(new File(resultPath)).copyTo(new FilePath(new FilePath(build.getProject().getModuleRoot(), baseDir), "seleniumTestResult.xml"));
+			System.out.println("moving "+resultPath+"to: "+new FilePath(new FilePath(build.getModuleRoot(), baseDir), "seleniumTestResult.xml"));
+			new FilePath(new File(resultPath)).copyTo(new FilePath(new FilePath(build.getModuleRoot(), baseDir), "seleniumTestResult.xml"));
 		}
 		return true;
 	}
 	
-	private Proc startGrails(String deployString, String grailsHome, String port, Build build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
-		Map<String, String> env = build.getEnvVars();
+	private Proc startGrails(String deployString, String grailsHome, String port, AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+		Map<String, String> env = build.getEnvironment(listener);
     env.put("GRAILS_HOME", grailsHome);
 		if(deployString == null){
-			String startGrailsCommand = String.format("%1$s/bin/grails -Dserver.port=%2$s run-app",grailsHome, port);
-			Proc grailsServer = launcher.launch(startGrailsCommand, env, listener.getLogger(), new FilePath(build.getProject().getModuleRoot(), baseDir));
+			Proc grailsServer = launcher.launch().cmds(grailsHome + "/bin/grails", "-Dserver.port=" + port, "run-app").envs(env).stdout(listener).pwd(new FilePath(build.getModuleRoot(), baseDir)).start();
 			Thread.sleep(60000);//give hte grails server some time to start up
 			return grailsServer;
 		} else {
-			String buildCommand = String.format("%1$s/bin/grails war",grailsHome);
-			Proc buildWar = launcher.launch(buildCommand, env, listener.getLogger(), new FilePath(build.getProject().getModuleRoot(), baseDir));
+			Proc buildWar = launcher.launch().cmds(grailsHome + "/bin/grails", "war").envs(env).stdout(listener).pwd(new FilePath(build.getModuleRoot(), baseDir)).start();
 			buildWar.join();
-			Proc deploy = launcher.launch(deployString, env, listener.getLogger(), new FilePath(build.getProject().getModuleRoot(), baseDir));
+                        //XXX do we need to split deployString into cmd/args?
+			Proc deploy = launcher.launch().cmds(deployString).envs(env).stdout(listener).pwd(new FilePath(build.getModuleRoot(), baseDir)).start();
 			deploy.join();
 			return null;
 		}
 	}
 
+    @Extension
+    public static final class DescriptorImpl extends Descriptor<Builder> {
+        public DescriptorImpl() {
+            super(SeleniumGrailsBuilder.class);
+        }
 
-	public Descriptor<Builder> getDescriptor() {
-        return DESCRIPTOR;
-  }
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-	public static final class DescriptorImpl extends Descriptor<Builder> {
-		DescriptorImpl() {
-    	super(SeleniumGrailsBuilder.class);
-    }
-		
-		public String getDisplayName() {
+        public String getDisplayName() {
             return "Selenium grails";
+        }
     }
-	}
 }
