@@ -1,6 +1,5 @@
 package hudson.staging;
 
-import hudson.maven.EmbedderLoggerImpl;
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenUtil;
 import hudson.model.AbstractBuild;
@@ -119,7 +118,7 @@ public class DeployAction implements Action {
 
 			try {
 				MavenEmbedder embedder = MavenUtil.createEmbedder(listener,
-						null);
+						(File)null, null);
 				embedder.setInteractiveMode(false);
 				try {
 					ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) embedder

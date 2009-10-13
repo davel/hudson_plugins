@@ -11,7 +11,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -39,24 +38,15 @@ public class BrowseAction implements Action {
 		return build;
 	}
 
-	public void doDynamic(StaplerRequest req, StaplerResponse rsp)
+	public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp)
 			throws IOException, ServletException, InterruptedException {
 		build.checkPermission(AbstractProject.WORKSPACE);
 		FilePath ws = new FilePath(new File(build.getRootDir(), "staging"));
 		if ((ws == null) || (!ws.exists())) {
 			rsp.sendError(404);
+                        return null;
 		} else {
-			new DirectoryBrowserSupport(build, getDisplayName()).serveFile(req,
-					rsp, ws, "folder.gif", true);
+			return new DirectoryBrowserSupport(build, ws, getDisplayName(), "folder.gif", true);
 		}
 	}
-
-//	public void doDynamic(StaplerRequest req, StaplerResponse rsp)
-//			throws IOException, ServletException, InterruptedException {
-//		build.checkPermission(AbstractProject.WORKSPACE);
-//		FilePath ws = new FilePath(new File(build.getRootDir(), "staging"));
-//		new DirectoryBrowserSupport(build, getDisplayName()).serveFile(
-//				req, rsp, ws, "folder.gif", true);
-//	}
-
 }

@@ -1,13 +1,15 @@
 package hudson.staging;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.maven.MavenEmbedder;
-import hudson.maven.MavenUtil;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +24,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class StagingPublisher extends Publisher {
+public class StagingPublisher extends Recorder {
 
 	private final String repositoryLocation;
 	private final String repositoryId;
@@ -47,12 +49,16 @@ public class StagingPublisher extends Publisher {
 		return repositoryLocation;
 	}
 
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
+
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 
 		FilePath target = new FilePath(new File(build.getRootDir(), "staging"));
-		int num = build.getProject().getWorkspace().child(repositoryLocation)
+		int num = build.getWorkspace().child(repositoryLocation)
 				.copyRecursiveTo("**", target);
 		
 		String version = getVersion(build);
@@ -88,7 +94,8 @@ public class StagingPublisher extends Publisher {
 		return null;
 	}
 
-	public static final class DescriptorImpl extends Descriptor<Publisher> {
+	@Extension
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
 		private DescriptorImpl() {
 			super(StagingPublisher.class);
@@ -105,11 +112,10 @@ public class StagingPublisher extends Publisher {
 			return req.bindJSON(StagingPublisher.class, formData);
 		}
 
-	}
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
 
-	public static final Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
-
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
 	}
 }
