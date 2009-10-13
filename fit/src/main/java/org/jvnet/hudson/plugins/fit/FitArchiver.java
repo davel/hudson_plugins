@@ -1,5 +1,6 @@
 package org.jvnet.hudson.plugins.fit;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -7,23 +8,26 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.jvnet.hudson.plugins.fit.HtmlContentHandler.FitResult;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -37,11 +41,11 @@ import org.kohsuke.stapler.StaplerResponse;
  * 
  * <p>
  * When a build is performed, the
- * {@link #perform(Build, Launcher, BuildListener)} method will be invoked.
+ * {@link #perform(AbstractBuild, Launcher, BuildListener)} method will be invoked.
  * 
  * @author Eric Lefevre
  */
-public class FitArchiver extends Publisher {
+public class FitArchiver extends Recorder {
 	private static final String PLUGIN_NAME = "fit";
 
 	private static final String DOT_HTML = ".html";
@@ -66,10 +70,15 @@ public class FitArchiver extends Publisher {
 		return new File(project.getRootDir(), PLUGIN_NAME);
 	}
 
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.BUILD;
+	}
+
+	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
-		FilePath sourceDirectory = build.getParent().getWorkspace().child(
+		FilePath sourceDirectory = build.getWorkspace().child(
 				pathToHtml);
 		FilePath targetDirectory = new FilePath(getTargetDir(build.getParent()));
 
@@ -162,15 +171,6 @@ public class FitArchiver extends Publisher {
 		return new FitAction(project);
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
-	/**
-	 * Descriptor should be singleton.
-	 */
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
 	/**
 	 * Descriptor for {@link FitArchiver}. Used as a singleton. The class is
 	 * marked as public so that it can be accessed from views.
@@ -179,9 +179,10 @@ public class FitArchiver extends Publisher {
 	 * See <tt>views/hudson/plugins/hello_world/HelloWorldBuilder/*.jelly</tt>
 	 * for the actual HTML fragment for the configuration screen.
 	 */
+        @Extension
 	public static final class DescriptorImpl extends
 			BuildStepDescriptor<Publisher> {
-		DescriptorImpl() {
+		public DescriptorImpl() {
 			super(FitArchiver.class);
 		}
 
@@ -201,7 +202,8 @@ public class FitArchiver extends Publisher {
 		/**
 		 * Creates a new instance of {@link FitArchiver} from a submitted form.
 		 */
-		public FitArchiver newInstance(StaplerRequest req) throws FormException {
+		@Override
+		public FitArchiver newInstance(StaplerRequest req, JSONObject formData) throws FormException {
 			String param1FromJellyFile = "fit.pathToHtml";
 			return new FitArchiver(req.getParameter(param1FromJellyFile));
 		}
@@ -209,9 +211,10 @@ public class FitArchiver extends Publisher {
 		/**
 		 * Performs on-the-fly validation on the file mask wildcard.
 		 */
-		public void doCheck(StaplerRequest req, StaplerResponse rsp)
+		public FormValidation doCheck(@AncestorInPath AbstractProject project, @QueryParameter String value)
 				throws IOException, ServletException {
-			new FormFieldValidator.WorkspaceDirectory(req, rsp).process();
+			FilePath ws = project.getSomeWorkspace();
+			return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();
 		}
 
 		@SuppressWarnings("unchecked")
@@ -248,14 +251,13 @@ public class FitArchiver extends Publisher {
 			}
 		}
 
-		public void doDynamic(StaplerRequest req, StaplerResponse rsp)
+		public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp)
 				throws IOException, ServletException, InterruptedException {
 			// handles the conversion of the URL into a proper local directory
 
 			String title = project.getDisplayName() + " " + PLUGIN_NAME;
 			FilePath systemDirectory = new FilePath(getTargetDir(project));
-			new DirectoryBrowserSupport(this, title).serveFile(req, rsp,
-					systemDirectory, ICON_FILENAME, false);
+			return new DirectoryBrowserSupport(this, systemDirectory, title, ICON_FILENAME, false);
 		}
 	}
 
