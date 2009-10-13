@@ -246,6 +246,7 @@
     <module>pmd</module>
     <module>promoted-builds</module>
     <module>promoted-builds-simple</module>
+    <module>pview</module>
     <module>rake</module>
     <module>redmine</module>
     <module>ruby</module>
@@ -271,6 +272,7 @@
     <module>warnings</module>
     <module>webtestpresenter</module>
     <module>ws7</module>
+    <module>wsclean</module>
     <module>xvnc</module>
     <module>pvcs_scm</module>
     <module>backup</module>
