@@ -1,15 +1,19 @@
 package com.zanox.hudson.plugins;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.CopyOnWriteList;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,10 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import com.jcraft.jsch.SftpException;
 
@@ -40,11 +42,12 @@ import com.jcraft.jsch.SftpException;
  * @author $Author: ZANOX-COM\fit $
  * 
  */
-public class FTPPublisher extends Publisher {
+public class FTPPublisher extends Notifier {
 
     /**
      * Hold an instance of the Descriptor implementation of this publisher.
      */
+    @Extension
     public static final DescriptorImpl      DESCRIPTOR   = new DescriptorImpl();
 
     /**
@@ -102,6 +105,10 @@ public class FTPPublisher extends Publisher {
         return null;
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
     /**
      * {@inheritDoc}
      * 
@@ -114,7 +121,8 @@ public class FTPPublisher extends Publisher {
      * @see hudson.tasks.BuildStep#perform(hudson.model.Build, hudson.Launcher,
      *      hudson.model.BuildListener)
      */
-    public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener)
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
         throws InterruptedException, IOException {
         if (build.getResult() == Result.FAILURE) {
             // build failed. don't post
@@ -127,10 +135,10 @@ public class FTPPublisher extends Publisher {
             listener.getLogger().println("Connecting to " + ftpsite.getHostname());
             ftpsite.createSession();
 
-            URI workSpaceDir = build.getProject().getWorkspace().toURI();
+            URI workSpaceDir = build.getWorkspace().toURI();
             workSpaceDir = workSpaceDir.resolve(build.getProject().getName());
 
-            Map<String, String> envVars = build.getEnvVars();
+            Map<String, String> envVars = build.getEnvironment(listener);
             String targetFolder = "/" + build.getProject().getName()
                 + "/"
                 + ID_FORMATTER.format(build.getTimestamp().getTime());
@@ -141,7 +149,7 @@ public class FTPPublisher extends Publisher {
             for (Entry e : entries) {
                 String expanded = Util.replaceMacro(e.sourceFile, envVars);
                 listener.getLogger().println(workSpaceDir);
-                FilePath[] src = build.getProject().getWorkspace().list(expanded);
+                FilePath[] src = build.getWorkspace().list(expanded);
                 String folderPath = Util.replaceMacro(e.filePath, envVars);
                 if (src.length == 0) {
                     listener.getLogger().println("No file(s) found: " + expanded);
@@ -185,16 +193,6 @@ public class FTPPublisher extends Publisher {
     }
 
     /**
-     * {@inheritDoc}
-     * 
-     * @return {@inheritDoc}
-     * @see hudson.model.Describable#getDescriptor()
-     */
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    /**
      * <p>
      * This class holds the metadata for the FTPPublisher.
      * </p>
@@ -202,7 +200,7 @@ public class FTPPublisher extends Publisher {
      * @author $Author: ZANOX-COM\fit $
      * @see Descriptor
      */
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         private final CopyOnWriteList<FTPSite> sites = new CopyOnWriteList<FTPSite>();
 
@@ -240,6 +238,11 @@ public class FTPPublisher extends Publisher {
             return "/plugin/ftppublisher/help.html";
         }
 
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
         /**
          * This method is called by hudson if the user has clicked the add button of the FTP
          * repository hosts point in the System Configuration web page. It's create a new instance
@@ -254,7 +257,7 @@ public class FTPPublisher extends Publisher {
          * @see hudson.model.Descriptor#newInstance(org.kohsuke.stapler.StaplerRequest)
          */
         @Override
-        public Publisher newInstance(StaplerRequest req) {
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) {
             FTPPublisher pub = new FTPPublisher();
             req.bindParameters(pub, "ftp.");
             pub.getEntries().addAll(req.bindParametersToList(Entry.class, "ftp.entry."));
@@ -284,7 +287,7 @@ public class FTPPublisher extends Publisher {
          * @see hudson.model.Descriptor#configure(org.kohsuke.stapler.StaplerRequest)
          */
         @Override
-        public boolean configure(StaplerRequest req) {
+        public boolean configure(StaplerRequest req, JSONObject formData) {
             sites.replaceBy(req.bindParametersToList(FTPSite.class, "ftp."));
             save();
             return true;
@@ -294,44 +297,24 @@ public class FTPPublisher extends Publisher {
          * This method validates the current entered ftp configuration data. That is made by create
          * a ftp connection.
          * 
-         * @param req the current {@link javax.servlet.http.HttpServletRequest}
-         * @param rsp the current {@link javax.servlet.http.HttpServletResponse}
-         * @throws IOException is able to be thrown if a error by creating the ftp connection occurs 
-         * @throws ServletException is able to be thrown if a error by creating the ftp connection occurs
+         * @param request the current {@link javax.servlet.http.HttpServletRequest}
          */
-        public void doLoginCheck(final StaplerRequest req, StaplerResponse rsp)
-            throws IOException, ServletException {
-            new FormFieldValidator(req, rsp, false) {
+        public FormValidation doLoginCheck(StaplerRequest request) {
+            String hostname = Util.fixEmpty(request.getParameter("hostname"));
+            if (hostname == null) { // hosts is not entered yet
+                return FormValidation.ok();
+            }
+            FTPSite site = new FTPSite(hostname, request.getParameter("port"), request
+                .getParameter("timeOut"), request.getParameter("user"), request
+                .getParameter("pass"));
+            try {
+                site.createSession();
+                site.closeSession();
 
-                /**
-                 * {@inheritDoc}
-                 * 
-                 * @throws IOException {@inheritDoc}
-                 * @throws ServletException {@inheritDoc}
-                 * @see hudson.util.FormFieldValidator#check()
-                 */
-                @Override
-                protected void check()
-                    throws IOException, ServletException {
-                    String hostname = Util.fixEmpty(request.getParameter("hostname"));
-                    if (hostname == null) { // hosts is not entered yet
-                        ok();
-                        return;
-                    }
-                    FTPSite site = new FTPSite(hostname, request.getParameter("port"), request
-                        .getParameter("timeOut"), request.getParameter("user"), request
-                        .getParameter("pass"));
-                    try {
-
-                        site.createSession();
-                        site.closeSession();
-
-                        ok();
-                    } catch (Exception e) {
-                        error(e.getMessage());
-                    }
-                }
-            } .process();
+                return FormValidation.ok();
+            } catch (Exception e) {
+                return FormValidation.error(e.getMessage());
+            }
         }
     }
 }
