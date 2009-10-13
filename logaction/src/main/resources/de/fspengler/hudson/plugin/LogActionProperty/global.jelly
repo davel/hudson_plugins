@@ -6,7 +6,7 @@
       </f:entry>
        <f:entry title="restart on failure">
           <f:checkbox name="logaction.restartEnabled" checked="${descriptor.restartEnabled}" />
-          ${%This Restart is occures on Pattern in joboutput}
+          ${%This Restart is occurs on Pattern in joboutput}
           <f:textbox name="logaction.restartPattern" value="${descriptor.restartPattern}"/>
           ${%This Restart sets folowing description}
           <f:textbox name="logaction.restartDescription" value="${descriptor.restartDescription}"/>

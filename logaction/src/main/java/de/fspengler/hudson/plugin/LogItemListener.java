@@ -1,5 +1,6 @@
 package de.fspengler.hudson.plugin;
 
+import hudson.Extension;
 import hudson.Util;
 import hudson.model.Hudson;
 import hudson.model.Project;
@@ -13,6 +14,7 @@ import java.util.regex.Matcher;
 
 import de.fspengler.hudson.plugin.LogActionProperty.LogActionDescriptor;
 
+@Extension
 public class LogItemListener extends RunListener<Run> {
 
 	@Override
@@ -26,7 +28,6 @@ public class LogItemListener extends RunListener<Run> {
 				&& descriptor.isRestartEnabled()
 				&& descriptor.getRestartPattern() != null) {
 			try {
-
 				String log = Util.loadFile(r.getLogFile(), r.getCharset());
 				Matcher matcher = descriptor
 						.getPatternForRestart().matcher(log);
@@ -37,7 +38,7 @@ public class LogItemListener extends RunListener<Run> {
 					Project<?, ?> project = Hudson.getInstance()
 							.getItemByFullName(r.getParent().getFullName(),
 									Project.class);
-					project.scheduleBuild(descriptor.getRestartDelay());
+					project.scheduleBuild(descriptor.getRestartDelay(), new LogActionCause());
 
 				}
 			} catch (IOException e) {
@@ -46,9 +47,8 @@ public class LogItemListener extends RunListener<Run> {
 		}
 	}
 
-	protected LogItemListener() {
+	public LogItemListener() {
 		super(Run.class);
-		
 	}
 
 }

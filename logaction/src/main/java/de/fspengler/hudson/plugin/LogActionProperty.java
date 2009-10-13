@@ -1,5 +1,6 @@
 package de.fspengler.hudson.plugin;
 
+import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
@@ -16,11 +17,8 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author tspengler
  */
 public class LogActionProperty extends JobProperty<Job<?, ?>> {
-    
-    public JobPropertyDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-    
+
+    @Extension
     public static final LogActionDescriptor DESCRIPTOR = new LogActionDescriptor();
 
     public static final class LogActionDescriptor extends JobPropertyDescriptor {
@@ -37,7 +35,7 @@ public class LogActionProperty extends JobProperty<Job<?, ?>> {
         
         private transient Pattern pattern = null;
         
-		public LogActionDescriptor() {
+        public LogActionDescriptor() {
             super(LogActionProperty.class);
             load();
         }
@@ -54,7 +52,7 @@ public class LogActionProperty extends JobProperty<Job<?, ?>> {
         }
         
         @Override
-        public boolean configure(StaplerRequest req) throws FormException {
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             enabled = req.getParameter("logaction.enabled") != null;
             restartEnabled = req.getParameter("logaction.restartEnabled") != null;
             restartPattern = req.getParameter("logaction.restartPattern");
@@ -130,6 +128,3 @@ public class LogActionProperty extends JobProperty<Job<?, ?>> {
 
     }         
 }
-
-    
-
