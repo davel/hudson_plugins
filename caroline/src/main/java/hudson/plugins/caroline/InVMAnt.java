@@ -1,14 +1,13 @@
 package hudson.plugins.caroline;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.util.ArgumentListBuilder;
 import hudson.remoting.VirtualChannel;
 import hudson.FilePath.FileCallable;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.tasks.Ant;
-import hudson.tasks.Builder;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
@@ -37,7 +36,7 @@ public class InVMAnt extends Ant {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
-        return build.getProject().getModuleRoot().act(new FileCallable<Boolean>() {
+        return build.getModuleRoot().act(new FileCallable<Boolean>() {
             public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
                 Project project = new Project();
                 project.init();
@@ -69,13 +68,7 @@ public class InVMAnt extends Ant {
         });
     }
 
-    @Override
-    public Descriptor<Builder> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
+    @Extension
     public static final class DescriptorImpl extends Ant.DescriptorImpl {
         public DescriptorImpl() {
             super(InVMAnt.class);
