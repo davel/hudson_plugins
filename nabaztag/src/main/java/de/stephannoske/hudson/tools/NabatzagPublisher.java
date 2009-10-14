@@ -1,11 +1,15 @@
 package de.stephannoske.hudson.tools;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.ProxyConfiguration;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.BufferedReader;
@@ -38,9 +42,9 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author snoske
  * @author eric.lemerdy
  */
-public class NabatzagPublisher extends Publisher {
+public class NabatzagPublisher extends Notifier {
 
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 		public String nabatzagToken = "";
 		public String nabatzagSerial = "";
 		public String nabatzagUrl = "http://api.nabaztag.com/vl/FR/api.jsp";
@@ -58,7 +62,13 @@ public class NabatzagPublisher extends Publisher {
 		    super(NabatzagPublisher.class);
 		    load();
 		}
-	
+
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		@Override
 		public boolean configure(final StaplerRequest req, JSONObject json)
 				throws FormException {
 		    nabatzagVoice = req.getParameter("nabatzagVoice");
@@ -190,6 +200,7 @@ public class NabatzagPublisher extends Publisher {
     /**
      * the DESCRIPTOR
      */
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /** the Logger */
@@ -221,10 +232,6 @@ public class NabatzagPublisher extends Publisher {
 		return buf.toString();
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-    	return DESCRIPTOR;
-    }
-    
     @Override
     public boolean prebuild(final AbstractBuild<?, ?> build, BuildListener listener) {
         String msg = DESCRIPTOR.getNabatzagBuildTTS();
@@ -272,6 +279,10 @@ public class NabatzagPublisher extends Publisher {
 		}
 	
 		return true;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     private boolean isSNAndTokenDefined() {
