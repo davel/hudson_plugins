@@ -38,6 +38,7 @@ import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
@@ -46,13 +47,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -178,7 +177,7 @@ public class NCoverArchiver extends Recorder {
     public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
         listener.getLogger().println("Publishing NCover HTML report...");
 
-        FilePath ncover = build.getParent().getWorkspace().child(coverageDir);
+        FilePath ncover = build.getWorkspace().child(coverageDir);
         FilePath target = new FilePath(keepAll ? getDir(build) : getNCoverDir(build.getProject()));
         
         // Grab the contents of the header and footer as arrays
@@ -252,12 +251,16 @@ public class NCoverArchiver extends Recorder {
         headerLines.addAll(footerLines);
         // And write this as the index
         try {
-            writeFile(headerLines, new File(target.toString(), "coverage-wrapper.html"));
+            writeFile(headerLines, new File(target.getRemote(), "coverage-wrapper.html"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         
         return true;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     @Override
@@ -360,7 +363,7 @@ public class NCoverArchiver extends Recorder {
          * Performs on-the-fly validation on the file mask wildcard.
          */
         public FormValidation doCheck(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException, ServletException {
-            FilePath ws = project.getWorkspace();
+            FilePath ws = project.getSomeWorkspace();
             return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();
         }
 
