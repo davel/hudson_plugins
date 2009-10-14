@@ -277,6 +277,7 @@
     <module>pvcs_scm</module>
     <module>backup</module>
     <module>jsunit</module>
+    <module>next-build-number</module>
   </modules>
 
   <properties>
