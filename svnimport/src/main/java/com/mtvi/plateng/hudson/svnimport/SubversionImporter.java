@@ -1,13 +1,17 @@
 package com.mtvi.plateng.hudson.svnimport;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.FilePath.FileCallable;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.File;
@@ -19,11 +23,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
-public class SubversionImporter extends Publisher {
+public class SubversionImporter extends Notifier {
 
     private static final Logger LOGGER = Logger.getLogger(SubversionImporter.class.getName());
 
@@ -48,10 +53,6 @@ public class SubversionImporter extends Publisher {
         baseSvnUrl = SVNURL.parseURIEncoded(baseUrl);
         this.importExpression = importExpression;
         this.svnClientManager = SVNClientManager.newInstance();
-    }
-
-    public Descriptor<Publisher> getDescriptor() {
-        return DescriptorImpl.INSTANCE;
     }
 
     public List<ImportItem> getItemsToImport(FilePath workspace) throws SVNException, IOException,
@@ -81,7 +82,7 @@ public class SubversionImporter extends Publisher {
             throws InterruptedException, IOException {
         try {
             if (build.getResult() == Result.SUCCESS) {
-                FilePath workspace = build.getProject().getWorkspace();
+                FilePath workspace = build.getWorkspace();
 
                 List<ImportItem> items = getItemsToImport(workspace);
                 for (final ImportItem importItem : items) {
@@ -90,7 +91,7 @@ public class SubversionImporter extends Publisher {
                         public Boolean invoke(File f, VirtualChannel channel) throws IOException {
                             try {
                                 svnClientManager.getCommitClient().doImport(f,
-                                        importItem.svnDestination, "", false);
+                                        importItem.svnDestination, "", null, false, false, SVNDepth.EMPTY);
                                 return true;
                             } catch (SVNException e) {
                                 throw new IOException("Unable to import " + f.getAbsolutePath()
@@ -108,8 +109,12 @@ public class SubversionImporter extends Publisher {
         return true;
     }
 
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
-        public static final DescriptorImpl INSTANCE = new DescriptorImpl();
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    @Extension
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         public DescriptorImpl() {
             super(SubversionImporter.class);
@@ -120,6 +125,10 @@ public class SubversionImporter extends Publisher {
             return "Subversion Importer";
         }
 
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
     }
 
     public class ImportItem {
