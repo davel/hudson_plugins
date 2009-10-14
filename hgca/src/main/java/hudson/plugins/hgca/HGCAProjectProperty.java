@@ -23,13 +23,11 @@
  */
 package hudson.plugins.hgca;
 
+import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-import hudson.model.Descriptor;
-import hudson.model.Action;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.DataBoundConstructor;
 import net.sf.json.JSONObject;
@@ -37,6 +35,7 @@ import net.sf.json.JSONObject;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
+
 /**
  * Property for {@link AbstractProject} that stores the HGCA pattern/URL pairs. Also handles setting
  * them globally.
@@ -78,10 +77,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
         return allAnnos;
     }
 
-    public DescriptorImpl getDescriptor() {
-        return DESCRIPTOR;
-    }
-    
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static final class DescriptorImpl extends JobPropertyDescriptor {
@@ -94,6 +90,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
             load();
         }
 
+        @Override
         public boolean isApplicable(Class<? extends Job> jobType) {
             return AbstractProject.class.isAssignableFrom(jobType);
         }
@@ -118,7 +115,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
                 this.globalAnnotations = hpp.annoPats;
             
             save();
-            return super.configure(req);
+            return super.configure(req, o);
         }
         
         @Override

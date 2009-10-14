@@ -23,6 +23,7 @@
  */
 package hudson.plugins.hgca;
 
+import hudson.Extension;
 import hudson.MarkupText;
 import hudson.MarkupText.SubText;
 import hudson.model.AbstractBuild;
@@ -32,6 +33,7 @@ import hudson.scm.ChangeLogSet.Entry;
 import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.ArrayList;
+
 /**
  * Given a set of pattern->URL pairs, replaces "pattern" in changelog text with 
  * "&lt;a href='url'&gt;pattern&lt;/a&gt;", replacing $1, $2, etc in "url" with matched 
@@ -39,6 +41,7 @@ import java.util.ArrayList;
  *
  * @author Andrew Bayer
  */
+@Extension
 public class HGCALinkAnnotator extends ChangeLogAnnotator {
 
     @Override
