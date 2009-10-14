@@ -68,7 +68,7 @@ public class MetricsAction implements Action,StaplerProxy {
      public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
          Repository rep = getWrapper().getRepository(); 
  
-         if(ChartUtil.awtProblem || rep == null) {
+         if(ChartUtil.awtProblemCause != null || rep == null) {
             // not available. send out error message
             rsp.sendRedirect2(req.getContextPath()+"/images/headless.png");
             return;

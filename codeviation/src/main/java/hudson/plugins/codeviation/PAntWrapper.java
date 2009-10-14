@@ -4,18 +4,19 @@
 
 package hudson.plugins.codeviation;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Descriptor.FormException;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildWrapper;
-import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapper.Environment;
-import hudson.util.FormFieldValidator;
+import hudson.tasks.BuildWrapperDescriptor;
+import hudson.util.FormValidation;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -26,17 +27,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
+import net.sf.json.JSONObject;
 import org.codeviation.model.PersistenceManager;
 import org.codeviation.model.Repository;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 /**
  *
  * @author pzajac
  */
 public class PAntWrapper extends BuildWrapper {
-    StaplerRequest req;
+    @Deprecated private transient StaplerRequest req;
     public  String startDate;
     public  String endDate;
     public int daysStep;
@@ -49,10 +50,11 @@ public class PAntWrapper extends BuildWrapper {
     static  SimpleDateFormat f3 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     static Logger log = Logger.getLogger(PAntWrapper.class.getName());
+
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl(); 
     
-    public PAntWrapper(StaplerRequest sr) {
-        this.req = req;
+    public PAntWrapper() {
     }
     
   
@@ -90,7 +92,8 @@ public class PAntWrapper extends BuildWrapper {
         return (strs != null) ?  strs[1] : null;
     }
 
-    public Environment setUp(Build build, Launcher launcher , BuildListener listener) throws IOException {
+    @Override
+    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException {
         if (!checkDate(getStartDate())) {
             throw new IOException("Codeviation: invalid Starting date format - " + getStartDate());
         }
@@ -112,8 +115,8 @@ public class PAntWrapper extends BuildWrapper {
         initRepository(build);
         return new EnvironmentImpl(build);
     }
-       private void initRepository(Build build) throws IOException {
-            FilePath path = build.getProject().getWorkspace();
+       private void initRepository(AbstractBuild<?,?> build) throws IOException {
+            FilePath path = build.getWorkspace();
             final String relCvs = getRelCvsPath();
             String absPath = null;
             try {
@@ -173,9 +176,6 @@ public class PAntWrapper extends BuildWrapper {
     public void setEndDate(String date) {
         this.endDate = date;
     }
-    public Descriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
     
     public void setDaysStep(String steps) {
         if (steps == null) {
@@ -207,7 +207,7 @@ public class PAntWrapper extends BuildWrapper {
         return false;
     }
     
-    public static class DescriptorImpl extends Descriptor<BuildWrapper> {
+    public static class DescriptorImpl extends BuildWrapperDescriptor {
     
        public File pantLibsFolder;
        public  File pantCacheFolder;
@@ -243,45 +243,48 @@ public class PAntWrapper extends BuildWrapper {
             }
             return builder.toString();
         }
-        public boolean configure(StaplerRequest req) throws FormException {
+
+        @Override
+        public boolean isApplicable(AbstractProject<?,?> item) {
+            return true;
+        }
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             req.bindParameters(this,"codeviation.");
             save();
             return true;
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/codeviation/help-projectConfig.html";
         }
         
-        // XXX this validator deesn't work, maybe problem with Wrappers in hudson
+        // XXX this validator didn't work, maybe problem with Wrappers in hudson
         // In wrapper class is warning don't use this experimental class :(
-        public void doCheckA(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-            new FormFieldValidator(req,rsp,true) {
-                protected void check() throws IOException, ServletException {
-                        String value = request.getParameter("value");
-                        String name = request.getParameter("name");
-                        if ("startDate".equals(name) || "endDate".equals(name)) {
-                            if (checkDate(value)) { 
-                                ok();
-                            } else {
-                                error("Invalid date format (yyy/mm/dd hh:MM)");
-                            }
-                        } else {
-                            if (value != null) {
-                                try {
-                                    Integer.parseInt(value);
-                                    ok();
-                                } catch (NumberFormatException e) {
-                                    error("Not number");
-                                }
-                            }
-                        }
+        public FormValidation doCheckA(@QueryParameter String value, @QueryParameter String name) {
+            if ("startDate".equals(name) || "endDate".equals(name)) {
+                if (checkDate(value)) {
+                    return FormValidation.ok();
+                } else {
+                    return FormValidation.error("Invalid date format (yyy/mm/dd hh:MM)");
                 }
-            }.process();
+            } else {
+                if (value != null) {
+                    try {
+                        Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        return FormValidation.error("Not number");
+                    }
+                }
+                return FormValidation.ok();
+            }
         }
 
-        public PAntWrapper newInstance(StaplerRequest req) throws FormException {
-            PAntWrapper wrapper = new PAntWrapper(req);
+        @Override
+        public PAntWrapper newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            PAntWrapper wrapper = new PAntWrapper();
             req.bindParameters(wrapper,"codeviation.");
   //          System.out.println("startDate: " + req.getParameter("codeviation.startDate"));
 //            wrapper.setStartDate(req.getParameter("codeviation.startDate"));
@@ -293,8 +296,8 @@ public class PAntWrapper extends BuildWrapper {
         
     }
     class EnvironmentImpl extends Environment {
-        Build build;
-        EnvironmentImpl(Build build) {
+        AbstractBuild<?,?> build;
+        EnvironmentImpl(AbstractBuild<?,?> build) {
             this.build = build;
         }
         @Override
@@ -346,12 +349,13 @@ public class PAntWrapper extends BuildWrapper {
             }
             return f1.format(buildDate);
         }
-        public boolean tearDown(Build build, BuildListener arg1) throws IOException {
+        @Override
+        public boolean tearDown(AbstractBuild build, BuildListener arg1) throws IOException {
             Date date = getNextBuildDate();    
             if (date != null) {
                 setStartDate(f1.format(date));
                 build.getProject().save();
-                build.getProject().scheduleBuild();
+                build.getProject().scheduleBuild(new CodeviationCause());
             }
             return true;
         }        

@@ -4,43 +4,47 @@
 
 package hudson.plugins.codeviation;
 
+import hudson.Extension;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
+import hudson.model.Descriptor.FormException;
 import hudson.model.Project;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import java.io.IOException;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
  *
  * @author pzajac
  */
-public class CodeviationPublisher extends Publisher{
+public class CodeviationPublisher extends Recorder {
 
     public CodeviationPublisher() {
     }
 
-    public boolean perform(Build arg0, Launcher arg1, BuildListener arg2) throws InterruptedException,IOException {
+    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener) throws InterruptedException,IOException {
         return true;                                                            
     }
 
     @Override
-    public Action getProjectAction(Project prj) {
-        return new MetricsAction(prj);
+    public Action getProjectAction(AbstractProject<?,?> prj) {
+        return prj instanceof Project ? new MetricsAction((Project)prj) : null;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
     
-
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    public static final Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
-
-    public static class DescriptorImpl extends Descriptor<Publisher> {
+    @Extension
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public DescriptorImpl() {
             super(CodeviationPublisher.class);
         }
@@ -49,11 +53,18 @@ public class CodeviationPublisher extends Publisher{
             return "Codeviation publisher";
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/codeviation/help.html";
         }
 
-        public Publisher newInstance(StaplerRequest req) throws FormException {
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return Project.class.isAssignableFrom(jobType);
+        }
+
+        @Override
+        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CodeviationPublisher pub = new CodeviationPublisher();
           //  req.bindParameters(pub, "codeviationpublisher.");
             return pub;
