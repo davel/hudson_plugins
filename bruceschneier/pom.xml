@@ -9,7 +9,7 @@
 
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>bruceschneier</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <name>Bruce Schneier Plugin</name>
     <url>http://wiki.hudson-ci.org/display/HUDSON/BruceSchneier+Plugin</url>
     <packaging>hpi</packaging>
@@ -19,7 +19,7 @@
             <id>dinomite</id>
             <name>Drew Stephens</name>
             <email>dstephens@genius.com</email>
-            <timezone></timezone>
+            <timezone />
         </developer>
     </developers>
   
@@ -36,4 +36,10 @@
             <url>http://maven.glassfish.org/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/bruceschneier-0.1</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/bruceschneier-0.1</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/bruceschneier/tags/bruceschneier-0.1</url>
+  </scm>
 </project>
