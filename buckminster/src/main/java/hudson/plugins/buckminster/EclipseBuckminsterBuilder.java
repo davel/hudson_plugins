@@ -1,10 +1,11 @@
 package hudson.plugins.buckminster;
 
 import hudson.CopyOnWrite;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.matrix.MatrixProject;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -48,7 +49,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * 
  * <p>
  * When a build is performed, the
- * {@link #perform(Build, Launcher, BuildListener)} method will be invoked.
+ * {@link #perform(AbstractBuild, Launcher, BuildListener)} method will be invoked.
  * 
  * @author Johannes Utzig
  */
@@ -112,8 +113,8 @@ public class EclipseBuckminsterBuilder extends Builder {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean perform(Build build, Launcher launcher,
+	@SuppressWarnings("unchecked") @Override
+	public boolean perform(AbstractBuild<?,?> build, Launcher launcher,
 			BuildListener listener) {
 		//TODO: make this behave in master/slave scenario
 		try {
@@ -131,7 +132,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 				listener.getLogger().print(" ");
 				
 			}
-//			launcher.launch(buildCommands.toArray(new String[buildCommands.size()]), null, null, out, workDir)
+//			launcher.launch().cmds(buildCommands.toArray(new String[buildCommands.size()])).stdout(out).pwd(workDir)
 			ProcessBuilder builder = new ProcessBuilder(buildCommands);
 			
 			builder.directory(new File(getEclipseHome()));
@@ -155,14 +156,10 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 	}
 
-	public Descriptor<Builder> getDescriptor() {
-		// see Descriptor javadoc for more about what a descriptor is.
-		return DESCRIPTOR;
-	}
-
 	/**
 	 * Descriptor should be singleton.
 	 */
+        @Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
 	/**
@@ -251,7 +248,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 				return FormValidation.error("Eclipse version is not valid. Currently only 3.4.x and 3.5 are supported.");
 				
 			}
-;
+
 			return FormValidation.ok();
 		}
 
@@ -263,6 +260,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 			return "Run Buckminster";
 		}
 
+		@Override
 		public boolean configure(StaplerRequest req, JSONObject o)
 				throws FormException {
 			// to persist global configuration information,

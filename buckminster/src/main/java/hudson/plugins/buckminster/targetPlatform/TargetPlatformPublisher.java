@@ -63,8 +63,6 @@ public class TargetPlatformPublisher extends ArtifactArchiver implements
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException {
 
-		AbstractProject<?, ?> p = build.getProject();
-
 		if (getArtifacts().length() == 0) {
 			listener.error(Messages.ArtifactArchiver_NoIncludes());
 			build.setResult(Result.FAILURE);
@@ -78,7 +76,7 @@ public class TargetPlatformPublisher extends ArtifactArchiver implements
 		listener.getLogger().println(
 				Messages.ArtifactArchiver_ARCHIVING_ARTIFACTS());
 		try {
-			FilePath ws = p.getWorkspace();
+			FilePath ws = build.getWorkspace();
 			if (ws == null) { // #3330: slave down?
 				return true;
 			}
@@ -199,7 +197,8 @@ public class TargetPlatformPublisher extends ArtifactArchiver implements
 		public FormValidation doCheckArtifacts(
 				@AncestorInPath AbstractProject project,
 				@QueryParameter String value) throws IOException {
-			return project.getWorkspace().validateRelativeDirectory(value);
+			FilePath ws = project.getSomeWorkspace();
+			return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();
 		}
 		@Override
 		public String getHelpFile() {

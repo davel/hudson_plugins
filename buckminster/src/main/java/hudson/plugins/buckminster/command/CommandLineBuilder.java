@@ -1,8 +1,7 @@
 package hudson.plugins.buckminster.command;
 
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.plugins.buckminster.EclipseBuckminsterBuilder;
 import hudson.plugins.buckminster.EclipseInstallation;
 
 import java.io.File;
@@ -48,7 +47,7 @@ public class CommandLineBuilder {
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<String> buildCommands(Build build, BuildListener listener)
+	public List<String> buildCommands(AbstractBuild<?,?> build, BuildListener listener)
 			throws MalformedURLException, IOException, InterruptedException{
 
 		// the file listing all the commands since buckminster doesn't accept
@@ -112,7 +111,7 @@ public class CommandLineBuilder {
 		}
 	}
 
-	private void addStarterParameters(Build build, List<String> commandList)
+	private void addStarterParameters(AbstractBuild<?,?> build, List<String> commandList)
 			throws IOException, InterruptedException {
 		commandList.add("-jar");
 		commandList.add(findEquinoxLauncher());
@@ -125,16 +124,16 @@ public class CommandLineBuilder {
 		commandList.add("-data");
 		String workspace = null;
 	
-		workspace = build.getProject().getWorkspace().toURI().getPath();
+		workspace = build.getWorkspace().toURI().getPath();
 
 		commandList.add(workspace);
 	}
 
-	private Map addJVMProperties(Build build, BuildListener listener,
+	private Map addJVMProperties(AbstractBuild<?,?> build, BuildListener listener,
 			List<String> commandList) throws IOException, InterruptedException {
 		//temp and output root
-		commandList.add("-Dbuckminster.output.root="+ build.getProject().getWorkspace().absolutize().toURI().getPath()+"/buckminster.output");
-		commandList.add("-Dbuckminster.temp.root="+ build.getProject().getWorkspace().absolutize().toURI().getPath()+"/buckminster.temp");
+		commandList.add("-Dbuckminster.output.root="+ build.getWorkspace().absolutize().toURI().getPath()+"/buckminster.output");
+		commandList.add("-Dbuckminster.temp.root="+ build.getWorkspace().absolutize().toURI().getPath()+"/buckminster.temp");
 		String params = getInstallation().getParams();
 		String[] globalVMParams = params.split("[\n\r]+");
 		Map properties = new HashMap(build.getEnvironment(listener));
