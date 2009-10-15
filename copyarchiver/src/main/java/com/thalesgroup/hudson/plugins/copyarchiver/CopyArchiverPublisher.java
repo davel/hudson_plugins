@@ -237,14 +237,14 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
                         //if the selected project is the current projet, we're using the workspace base directory or SCM module root
                         if (projectName.equals(archivedJobEntry.jobName)) {
-                            lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getModuleRoot());
+                            lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
                         } else {
                             lastSuccessfulDir = run.getArtifactsDir();
                             lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(lastSuccessfulDir));
                         }
                     } else {
                         //If it is the first build
-                        lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getModuleRoot());
+                        lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
                     }
 
                     //Copy
