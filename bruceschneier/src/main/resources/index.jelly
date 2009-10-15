@@ -1,0 +1,4 @@
+<div>
+	BruceSchneier plugin displays a picture of Bruce Schneier (instead of Hudson the butler) and a random Bruce Schneier fact on each build page.
+    Code stolen wholesale from the ChuckNorris plugin: http://wiki.hudson-ci.org/display/HUDSON/ChuckNorris+Plugin
+</div>
