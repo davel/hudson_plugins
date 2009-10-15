@@ -8,38 +8,23 @@ import hudson.model.User;
 
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.hudson.test.HudsonTestCase;
 
-public class MissingConfigLoadTest {
+public class MissingConfigLoadTest extends HudsonTestCase {
 
     @Test
     public void testMissingConfig() throws IOException {
-        PluginImpl pi = new PluginImpl();
-        Configuration config = (Configuration) pi.loadConfiguration();
+        Configuration config = (Configuration) PluginImpl.loadConfiguration();
         Assert.assertFalse(config.isValid());
     }
 
     @Test
     public void testRegexMailAddressResolver() throws Exception {
-        PluginImpl pi = new PluginImpl();
-        Configuration config = (Configuration) pi.loadConfiguration();
+        Configuration config = (Configuration) PluginImpl.loadConfiguration();
         RegexMailAddressResolver resolver = new RegexMailAddressResolver(config);
         User u = User.get("username");
         Assert.assertNull(resolver.findMailAddressFor(u));
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        HudsonUtil.hudson.getRootUrl();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        HudsonUtil.hudson.cleanUp();
-        FileUtils.deleteDirectory(HudsonUtil.root);
     }
 }

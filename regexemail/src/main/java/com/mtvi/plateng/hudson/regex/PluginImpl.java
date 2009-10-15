@@ -32,18 +32,18 @@ public class PluginImpl extends Plugin {
     @Override
     public void start() throws Exception {
         IConfiguration config = loadConfiguration();
-        MailAddressResolver.LIST.add(new RegexMailAddressResolver(config));
+        MailAddressResolver.all().add(new RegexMailAddressResolver(config));
     }
 
     /**
      * Loads confiugration file from
-     * com.mtvi.plateng.hudson.ldap.RegexMailAddressResolver.xml.
+     * com.mtvi.plateng.hudson.regex.RegexMailAddressResolver.xml.
      * 
      * @return a Configuration object, populated from the file, if it exists
      * @throws IOException
      *             if the file can't be read.
      */
-    protected IConfiguration loadConfiguration() throws IOException {
+    protected static IConfiguration loadConfiguration() throws IOException {
         Hudson hudson = Hudson.getInstance();
         File rootDirectory = hudson.getRootDir();
         String fileName = RegexMailAddressResolver.class.getName() + ".xml";
