@@ -11,7 +11,7 @@
    <artifactId>copyarchiver</artifactId>
    <packaging>hpi</packaging>
    <name>Hudson Copy Archiver Plug-in</name>
-   <version>0.4.2</version>
+   <version>0.4.3-SNAPSHOT</version>
    <url>http://wiki.hudson-ci.org/display/HUDSON/CopyArchiver+Plugin</url>
 
    <dependencies>
@@ -46,11 +46,5 @@
          </plugin>
       </plugins>
    </build>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/copyarchiver-0.4.2</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/copyarchiver-0.4.2</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/copyarchiver/tags/copyarchiver-0.4.2</url>
-  </scm>
 </project>
 
