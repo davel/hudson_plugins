@@ -229,8 +229,6 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                 int numCopied = 0;
 
                 for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
-                    //AbstractProject curProj = Project.findNearest(archivedJobEntry.jobName);
-                    CopyArchiverLogger.log(listener, "Hudson full name" + Hudson.getInstance());
                     AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
                     Run run = curProj.getLastSuccessfulBuild();
                     if (run != null) {
