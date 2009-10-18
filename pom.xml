@@ -112,6 +112,9 @@
         <artifactId>maven-hpi-plugin</artifactId>
         <version>1.45</version>
         <extensions>true</extensions>
+        <configuration>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.kohsuke.stapler</groupId>
@@ -180,29 +183,38 @@
     <module>accurev</module>
     <module>active-directory</module>
     <module>audit-trail</module>
+    <module>backup</module>
     <module>batch-task</module>
     <module>bazaar</module>
+    <module>bitkeeper</module>
     <module>build-publisher</module>
     <module>build-timeout</module>
     <module>checkstyle</module>
     <module>changelog-history</module>
+    <module>chucknorris</module>
     <module>ci-game</module>
+    <module>claim</module>
     <module>clearcase</module>
     <module>clover</module>
     <module>codeplex</module>
     <!-- #2819: uses private repo, licensing questions: <module>codeviation</module> -->
     <module>cobertura</module>
     <!--module>coverage</module--><!-- not ready for release yet -->
+    <module>cppunit</module>
+    <module>crap4j</module>
+    <module>crowd</module>
     <module>cvs-tag</module>
     <module>deploy</module>
     <module>disk-usage</module>
     <!--module>drools/drools</module-->
     <module>dry</module>
+    <module>ec2</module>
     <module>email-ext</module>
     <module>emma</module>
     <module>emotional-hudson</module>
     <module>extended-read-permission</module>
     <module>findbugs</module>
+    <module>gallio</module>
     <module>gant</module>
     <module>gcal</module>
     <module>git</module>
@@ -210,6 +222,7 @@
     <module>googlecode</module>
     <module>greenballs</module>
     <module>groovy</module>
+    <module>hadoop</module>
     <module>hello-world</module>
     <module>harvest</module>
     <module>hudsontrayapp</module>
@@ -224,11 +237,14 @@
     <module>javanet-uploader</module>
     <module>javanet-trigger-installer</module>
     <module>jira</module>
+    <module>jmeter</module>
     <module>jmx</module>
     <module>jprt</module>
+    <module>jsunit</module>
     <module>jwsdp-sqe</module>
     <module>locked-files-report</module>
     <module>locks-and-latches</module>
+    <module>mantis</module>
     <module>maven1-snapshot-plugin</module>
     <module>m2release</module>
     <module>mercurial</module>
@@ -236,6 +252,7 @@
     <module>nant</module>
     <module>naginator</module>
     <module>network-monitor</module>
+    <module>next-build-number</module>
     <module>nunit</module>
     <module>plot</module>
     <module>perforce</module>
@@ -246,26 +263,36 @@
     <module>pmd</module>
     <module>promoted-builds</module>
     <module>promoted-builds-simple</module>
+    <module>pvcs_scm</module>
     <module>pview</module>
     <module>rake</module>
     <module>redmine</module>
+    <module>release</module>
     <module>ruby</module>
     <module>rubyMetrics</module>
     <module>sametime</module>
     <module>scp</module>
     <module>secret</module>
+    <module>seleniumhq</module>
     <module>setenv</module>
     <module>sidebar-link</module>
+    <module>sloccount</module>
     <module>sonar</module>
+    <module>sourcemonitor</module>
     <module>ssh-slaves</module>
     <module>sfee</module>
+    <module>subversion</module>
     <module>svncompat13</module>
+    <module>svncompat14</module>
     <module>svn-tag</module>
+    <module>swarm</module>
     <module>tasks</module>
     <module>text-finder</module>
     <module>tfs</module>
     <module>trac</module>
     <module>twitter</module>
+    <module>validating-string-parameter</module>
+    <module>viewVC</module>
     <module>violations</module>
     <module>vmware</module>
     <module>vss</module>
@@ -273,11 +300,8 @@
     <module>webtestpresenter</module>
     <module>ws7</module>
     <module>wsclean</module>
+    <module>xunit</module>
     <module>xvnc</module>
-    <module>pvcs_scm</module>
-    <module>backup</module>
-    <module>jsunit</module>
-    <module>next-build-number</module>
   </modules>
 
   <properties>
