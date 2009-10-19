@@ -1,15 +1,16 @@
 package hudson.plugins.kundo;
 
 import hudson.tasks.Builder;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
-import hudson.model.Project;
 import hudson.model.Descriptor;
+import hudson.model.Hudson;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.CopyOnWrite;
 import hudson.util.ArgumentListBuilder;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.io.File;
@@ -18,16 +19,17 @@ import java.util.HashMap;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ServletException;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * I have to recognise all the other Hudson Plugin developers
  * without their source code I wouldn't have had any idea what
  * was going on. Thanks for the inspiration, and in several
  * places the code.
- */
+ */
+
 public class Kundo extends Builder {
     /**
      * The phases, optional properties, and other Kundo options.
@@ -71,9 +73,7 @@ public class Kundo extends Builder {
         return null;
     }
 
-    public boolean perform( Build<?,?> build, Launcher launcher, BuildListener listener ) throws InterruptedException {
-        Project proj = build.getProject();
-
+    public boolean perform( AbstractBuild<?,?> build, Launcher launcher, BuildListener listener ) throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
 
         String execType;
@@ -114,7 +114,7 @@ public class Kundo extends Builder {
         args.addKeyValuePairs( "-D", build.getBuildVariables() );
         args.addTokenized( normalizedPhases );
 
-        Map<String,String> env = build.getEnvVars();
+        Map<String,String> env = build.getEnvironment(listener);
         if( currentInstall != null )
             env.put( "KUNDO_HOME", currentInstall.getKundoHome() );
 
@@ -124,7 +124,7 @@ public class Kundo extends Builder {
         }
 
         try {
-            int r = launcher.launch( args.toCommandArray(), env, listener.getLogger(), proj.getModuleRoot() ).join();
+            int r = launcher.launch().cmds(args).envs(env).stdout(listener).pwd(build.getModuleRoot()).join();
             return r == 0;
         } catch ( IOException e ) {
             Util.displayIOException( e, listener );
@@ -133,10 +133,7 @@ public class Kundo extends Builder {
         }
     }
 
-    public Descriptor<Builder> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
+    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static final class DescriptorImpl extends Descriptor<Builder> {
@@ -149,6 +146,7 @@ public class Kundo extends Builder {
             load();
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/kundo/help.html";
         }
@@ -161,7 +159,8 @@ public class Kundo extends Builder {
             return installations;
         }
 
-        public boolean configure( StaplerRequest req ) {
+        @Override
+        public boolean configure( StaplerRequest req, JSONObject formData ) {
             installations = req.bindParametersToList( KundoInstallation.class, "kundo." ).toArray( new KundoInstallation[0] );
             save();
             return true;
@@ -170,31 +169,23 @@ public class Kundo extends Builder {
         /**
          * Checks if the specified Hudson KUNDO_HOME is valid.
          */
-        public void doCheckKundoHome( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
-            
-        	
-            new FormFieldValidator( req, rsp ,true ) {
-                public void check() throws IOException, ServletException {
-                    File f = getFileParameter( "value" );
-                    
-                    if( !f.isDirectory() ) {
-                        error( f + " is not a directory" );
-                        return;
-                    }
-                    
-                    if( !new File( f, "bin" ).exists() && !new File( f, "lib" ).exists() && !new File( f, "conf" ).exists() && !new File( f, "groovy" ).exists() ) {
-                        error( f + " isn't a proper Kundo kernel" );
-                        return;
-                    }
+        public FormValidation doCheckKundoHome(@QueryParameter String value) {
+            if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER)) return FormValidation.ok();
+            File f = new File(Util.fixNull(value));
 
-                    if( !new File( f, "bin/kundo" ).exists() ) {
-                        error( f + " isn't a proper Kundo kernel" );
-                        return;
-                    }
+            if( !f.isDirectory() ) {
+                return FormValidation.error( f + " is not a directory" );
+            }
 
-                    ok();
-                }
-            }.process();
+            if( !new File( f, "bin" ).exists() && !new File( f, "lib" ).exists() && !new File( f, "conf" ).exists() && !new File( f, "groovy" ).exists() ) {
+                return FormValidation.error( f + " isn't a proper Kundo kernel" );
+            }
+
+            if( !new File( f, "bin/kundo" ).exists() ) {
+                return FormValidation.error( f + " isn't a proper Kundo kernel" );
+            }
+
+            return FormValidation.ok();
         }
     }
 
