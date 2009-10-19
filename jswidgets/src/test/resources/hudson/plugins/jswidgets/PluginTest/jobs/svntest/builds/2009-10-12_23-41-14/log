@@ -1,0 +1,9 @@
+Gestartet durch Benutzer anonymous
+Checking out a fresh workspace because /Software/hudson/jobs/svntest/workspace/trunk doesn't exist
+Checking out file:///tmp/svn/trunk
+A         foo
+At revision 2
+[workspace] $ /bin/sh -xe /var/folders/ZC/ZCxLWY9zHqCTQUPl66dtTU+++TM/-Tmp-/hudson5057703613801594905.sh
++ cat foo
+cat: foo: No such file or directory
+Finished: FAILURE

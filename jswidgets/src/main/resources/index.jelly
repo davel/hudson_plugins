@@ -1,0 +1,4 @@
+<div>
+  Allows embedding various statistics available from Hudson in your via javascript-snippets ala ohloh.net.
+  See <a href="http://wiki.hudson-ci.org/display/HUDSON/JSWidgets+Plugin">JSWidgets+Plugin</a>.
+</div>

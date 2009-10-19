@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+    xmlns:f="/lib/form">
+    <l:layout title="${%JS Widgets for Hudson}">
+        <!-- st:include page="/hudson/model/Hudson/sidepanel.jelly" /-->
+        <l:main-panel>
+            <h2>${%JS Widgets for Hudson}</h2>            
+            <j:set var="baseURL" value="${it.getBaseUrl(request)}"/>            
+            <h3>${%Build History Javascript}</h3>
+            <j:set var="jsrunsURL" value="${baseURL}${it.urlName}/runs/"/>
+            <p>${%Copy this snippet to a HTML page to include via Javascript.}</p>
+            <p>${%Use optional count to restrict the number of items.}</p>
+            <p><tt>&amp;lt;script type="text/javascript" src="${jsrunsURL}[?count=N]"/&amp;gt;</tt></p>
+            <script type="text/javascript" src="${jsrunsURL}?count=5"/>
+            <h3>${%Build History HTML}</h3>
+            <j:set var="jsrunsURL" value="${jsrunsURL}?html=true"/>
+            <p>${%Copy this snippet to a HTML page to include via IFRAME.}</p>
+            <p>${%Use optional count to restrict the number of items.}</p>
+            <p><tt>&amp;lt;iframe src="${jsrunsURL}[&amp;count=N]" width="470"/&amp;gt;&amp;lt;/iframe&amp;gt;</tt></p>
+            <iframe src="${jsrunsURL}&amp;count=5" width="470"></iframe>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

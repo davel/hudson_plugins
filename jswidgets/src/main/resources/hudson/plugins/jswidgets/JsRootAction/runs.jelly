@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+    xmlns:f="/lib/form">
+    ${response.setContentType("text/html; charset=UTF-8")}
+    <j:set var="html" value="${it.wantHtml(request)}"/>
+    <j:set var="baseURL" value="${it.getBaseUrl(request)}"/>
+    <j:set var="imagesURL" value="${it.getImagesUrl(request)}"/>
+    <j:set var="runList" value="${it.getRunList(request)}"/>
+    <j:if test="${!html}">
+    ${response.setContentType("text/javascript; charset=UTF-8")}
+    document.write('</j:if>
+    <div style="background-color: #ffe; border: 1px solid #bbb; width: 450px;">
+    <div align="center"><b>${%Hudson Build History for} <a href="${baseURL}">${baseURL}</a></b></div>
+    <table width="100%">
+    <j:forEach var="run" items="${runList}">
+        <tr>
+            <td><img title="${run.result}" alt="${run.result}" src="${imagesURL}/${run.result.color.image}"/></td>
+            <td><a href="${baseURL}/${run.parent.url}">${run.parent.name}</a><st:nbsp/><a href="${baseURL}/${run.url}">${run.displayName}</a></td>
+            <td align="right">${run.timestampString2}</td>
+            <td align="right"><a href="${baseURL}/${run.url}/console"><img title="${%Console output}" alt="${%Console output}" src="${imagesURL}/terminal.gif"/></a></td>
+        </tr>
+    </j:forEach>
+    </table>
+    </div>
+    <j:if test="${!html}">');</j:if>
+</j:jelly>

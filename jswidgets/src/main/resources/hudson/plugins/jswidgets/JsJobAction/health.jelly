@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+    xmlns:f="/lib/form">
+    ${response.setContentType("text/html; charset=UTF-8")}
+    <j:set var="html" value="${it.wantHtml(request)}"/>
+    <j:set var="job" value="${it.project}"/>
+        <j:set var="baseURL" value="${it.getBaseUrl(request)}${rootURL}"/>
+        <j:set var="imagesURL" value="${it.getImagesUrl(request)}"/>
+        ${response.setContentType("text/html; charset=UTF-8")}
+        <j:if test="${!html}">
+            ${response.setContentType("text/javascript; charset=UTF-8")}
+document.write('</j:if>
+<style type="text/css">div.healthReportDetails { align: center; background-color: #ffe; border: 1px solid #bbb; z-index: 26; width: 450px;}; div.healthReportDetails table { width: 100%; border-collapse: collapse;};</style>
+        <div class="healthReportDetails" title="${job.lastBuild.timestampString}">
+            <div align="center"><big>${%Hudson Health Report}</big><br/></div>            
+            <table border="0">
+                <thead>
+                    <tr>
+                    <th align="left"><img src="${imagesURL}/${job.buildHealth.iconUrl}"/></th>
+                    <th align="left"><a href="${baseURL}/${job.url}lastBuild">${job.name}<st:nbsp/>(${job.lastBuild.timestampString2})</a></th>
+                    <th align="right"><img src="${imagesURL}/${job.buildStatusUrl}"/></th>
+                    </tr>
+                    <tr>
+                    <th align="left">W</th>
+                    <th align="left">${%Description}</th>
+                    <th align="right">%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <j:forEach var="report" items="${job.buildHealthReports}">
+                    <tr>
+                        <td align="left"><img src="${imagesURL}/${report.iconUrl}"/></td>
+                        <td align="left">${report.description}</td>
+                        <td align="right">${report.score}</td>
+                    </tr>
+                    </j:forEach>
+                </tbody>
+            </table>
+            <div><small>${it.getJobDescription()}</small></div>
+        </div><j:if test="${!html}">');</j:if>
+</j:jelly>

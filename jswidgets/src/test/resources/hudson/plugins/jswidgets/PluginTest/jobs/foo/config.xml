@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Just a small instance for testing &lt;a href=&quot;http://hudson-jswidgets&quot;&gt;hudson-jswidgets&lt;/a&gt;</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <triggers class="vector"/>
+  <builders/>
+  <publishers/>
+  <buildWrappers/>
+</project>

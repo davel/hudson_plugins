@@ -1,0 +1,10 @@
+Build wurde duch eine SCM-Abfrage ausgelšst.
+Updating file:///tmp/svn/trunk
+U         foo
+At revision 4
+[workspace] $ /bin/sh -xe /var/folders/ZC/ZCxLWY9zHqCTQUPl66dtTU+++TM/-Tmp-/hudson1227970699113431827.sh
++ cd trunk
++ cat foo
+Jepp
+Jepp
+Finished: SUCCESS

@@ -1,0 +1,8 @@
+Gestartet durch Benutzer anonymous
+Updating file:///tmp/svn/trunk
+At revision 2
+no change for file:///tmp/svn/trunk since the previous build
+[workspace] $ /bin/sh -xe /var/folders/ZC/ZCxLWY9zHqCTQUPl66dtTU+++TM/-Tmp-/hudson4589871641975740887.sh
++ cd trunk
++ cat foo
+Finished: SUCCESS
