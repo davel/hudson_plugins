@@ -281,7 +281,7 @@
     <module>sourcemonitor</module>
     <module>ssh-slaves</module>
     <module>sfee</module>
-    <module>subversion</module>
+    <!--module>subversion</module-->
     <module>svncompat13</module>
     <module>svncompat14</module>
     <module>svn-tag</module>
