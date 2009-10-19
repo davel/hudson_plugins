@@ -21,7 +21,7 @@
   <scm>
     <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/</connection>
     <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins</url>
+    <url>https://hudson.dev.java.net/source/browse/hudson/trunk/hudson/plugins</url>
   </scm>
 
   <issueManagement>
@@ -241,6 +241,7 @@
     <module>jmx</module>
     <module>jprt</module>
     <module>jsunit</module>
+    <module>jswidgets</module>
     <module>jwsdp-sqe</module>
     <module>locked-files-report</module>
     <module>locks-and-latches</module>
