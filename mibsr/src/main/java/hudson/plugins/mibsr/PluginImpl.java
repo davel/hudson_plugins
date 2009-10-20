@@ -3,7 +3,7 @@ package hudson.plugins.mibsr;
 import hudson.Plugin;
 
 /**
- * Entry point of JavaNCSS plugin.
+ * Entry point of mibsr plugin.
  *
  * @author Stephen Connolly
  */

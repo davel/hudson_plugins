@@ -9,7 +9,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -17,15 +16,17 @@ import hudson.plugins.mibsr.health.HealthMetric;
 import hudson.plugins.mibsr.parser.BuildJobs;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,7 +38,7 @@ import java.io.Serializable;
  * @since 08-Jan-2008 21:24:06
  */
 public class MIBSRPublisher
-    extends Publisher
+    extends Recorder
 {
 
     private String reportFilenamePattern;
@@ -65,6 +66,7 @@ public class MIBSRPublisher
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean needsToRunAfterFinalized()
     {
         return false;
@@ -78,7 +80,7 @@ public class MIBSRPublisher
     {
 
         MIBSRBuildIndividualReport action =
-            build.getProject().getModuleRoot().act( new Worker( build, listener, reportFilenamePattern ) );
+            build.getModuleRoot().act( new Worker( build, listener, reportFilenamePattern ) );
         if ( action != null )
         {
             if ( targets != null && targets.length > 0 )
@@ -107,6 +109,7 @@ public class MIBSRPublisher
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean prebuild( AbstractBuild<?, ?> build, BuildListener listener )
     {
         return true;
@@ -115,9 +118,14 @@ public class MIBSRPublisher
     /**
      * {@inheritDoc}
      */
+    @Override
     public Action getProjectAction( AbstractProject<?, ?> project )
     {
         return new MIBSRProjectIndividualReport( project );
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
     @Extension
@@ -138,6 +146,7 @@ public class MIBSRPublisher
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
 
+        @Override
         public Publisher newInstance( StaplerRequest req, JSONObject formData )
             throws FormException
         {
@@ -160,10 +169,8 @@ public class MIBSRPublisher
         /**
          * Performs on-the-fly validation on the file mask wildcard.
          */
-        public void doCheck( StaplerRequest req, StaplerResponse rsp )
-            throws IOException, ServletException
-        {
-            new FormFieldValidator.WorkspaceFileMask( req, rsp ).process();
+        public FormValidation doCheck(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
+            return FilePath.validateFileMask(project.getSomeWorkspace(),value);
         }
 
         public String applyDefaultIncludes( String invokerResults )
@@ -202,7 +209,7 @@ public class MIBSRPublisher
             FilePath[] paths;
             try
             {
-                paths = build.getProject().getModuleRoot().list( reportFilenamePattern );
+                paths = build.getModuleRoot().list( reportFilenamePattern );
             }
             catch ( InterruptedException e )
             {
