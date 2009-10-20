@@ -1,14 +1,14 @@
 package com.redfin.hudson;
 
+import hudson.Extension;
 import static hudson.Util.*;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.scheduler.CronTabList;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,12 +24,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-
 import net.sf.json.JSONObject;
 
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import antlr.ANTLRException;
 
@@ -52,9 +50,7 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
         DigestInputStream dis = new DigestInputStream(stream,
                 messageDigest);
         byte[] buf = new byte[readBufferSize];
-        while (dis.read(buf, 0, readBufferSize) != -1) {
-        ;
-        }
+        while (dis.read(buf, 0, readBufferSize) != -1) { }
         dis.close();
         stream.close();
         byte[] fileDigest = messageDigest.digest ();
@@ -130,7 +126,7 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
 		    w.close();
 		}
                 oldMd5 = currentMd5;
-                job.scheduleBuild();
+                job.scheduleBuild(new UrlChangeCause());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -140,17 +136,8 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
     public URL getUrl() {
         return url;
     }
-    
-    @Override
-    public TriggerDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-    
-    /**
-     * Descriptor should be singleton.
-     */
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-    
+
+    @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
 
         public DescriptorImpl() {
@@ -175,18 +162,13 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
         /**
          * Performs syntax check.
          */
-        public void doCheck(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-            FormFieldValidator validator = new FormFieldValidator(req,rsp,true) {
-                protected void check() throws IOException, ServletException {
-                    try {
-                        new URL(fixNull(request.getParameter("urlChangeTrigger.url")));
-                        ok();
-                    } catch (MalformedURLException e) {
-                        error(e.getMessage());
-                    }
-                }
-            };
-            validator.process();
+        public FormValidation doCheck(@QueryParameter("urlChangeTrigger.url") String url) {
+            try {
+                new URL(fixNull(url));
+                return FormValidation.ok();
+            } catch (MalformedURLException e) {
+                return FormValidation.error(e.getMessage());
+            }
         }
         
         @Override
@@ -200,5 +182,4 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
         }
         
     }
-
 }
