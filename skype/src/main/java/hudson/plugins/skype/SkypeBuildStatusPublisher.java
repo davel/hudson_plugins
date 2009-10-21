@@ -1,14 +1,19 @@
 package hudson.plugins.skype;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -16,13 +21,17 @@ import org.kohsuke.stapler.StaplerRequest;
  * 
  * @author udagawa
  */
-public class SkypeBuildStatusPublisher extends Publisher {
+public class SkypeBuildStatusPublisher extends Notifier {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = Logger
 			.getLogger(SkypeBuildStatusPublisher.class.getName());
 
 	private SkypeBuildStatusPublisher() {
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.STEP;
 	}
 
 	@Override
@@ -47,16 +56,8 @@ public class SkypeBuildStatusPublisher extends Publisher {
 
 	private static final String SCRIPT_NAME_DEFAULT = "skypeBuildStatus.groovy";
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
-	/**
-	 * Descriptor should be singleton.
-	 */
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-	public static final class DescriptorImpl extends Descriptor<Publisher> {
+	@Extension
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
 		private final String DISPLAY_NAME = "Skype Build Status";
 
@@ -76,7 +77,12 @@ public class SkypeBuildStatusPublisher extends Publisher {
 		}
 
 		@Override
-		public SkypeBuildStatusPublisher newInstance(final StaplerRequest req)
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+                	return true;
+		}
+
+		@Override
+		public SkypeBuildStatusPublisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return new SkypeBuildStatusPublisher();
 		}

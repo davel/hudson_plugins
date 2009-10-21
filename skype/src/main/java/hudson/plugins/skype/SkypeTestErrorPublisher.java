@@ -1,15 +1,20 @@
 package hudson.plugins.skype;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -18,7 +23,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * 
  * @author udagawa
  */
-public class SkypeTestErrorPublisher extends Publisher {
+public class SkypeTestErrorPublisher extends Notifier {
 
 	private static final Logger LOGGER = Logger
 			.getLogger(SkypeTestErrorPublisher.class.getName());
@@ -29,6 +34,10 @@ public class SkypeTestErrorPublisher extends Publisher {
 		_chatName = chatName;
 		_unitTestPattern = unitTestPattern;
 		_testFilePattern = testFilePattern;
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.STEP;
 	}
 
 	@Override
@@ -75,16 +84,8 @@ public class SkypeTestErrorPublisher extends Publisher {
 		return _testFilePattern;
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
-	/**
-	 * Descriptor should be singleton.
-	 */
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-	public static final class DescriptorImpl extends Descriptor<Publisher> {
+	@Extension
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
 		private final String DISPLAY_NAME = "Skype Test Error";
 		private final String PARAMETER_CHAT_NAME = "skype.chatNameTestError";
@@ -115,7 +116,12 @@ public class SkypeTestErrorPublisher extends Publisher {
 		}
 
 		@Override
-		public SkypeTestErrorPublisher newInstance(final StaplerRequest req)
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		@Override
+		public SkypeTestErrorPublisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return new SkypeTestErrorPublisher(
 				req.getParameter(PARAMETER_CHAT_NAME), 
