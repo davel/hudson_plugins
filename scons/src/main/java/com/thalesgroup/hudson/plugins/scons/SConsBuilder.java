@@ -23,18 +23,20 @@
 
 package com.thalesgroup.hudson.plugins.scons;
 import hudson.CopyOnWrite;
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
-import hudson.model.Project;
 import hudson.tasks.Builder;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.File;
 import java.io.IOException;
 
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -105,9 +107,9 @@ public class SConsBuilder extends Builder {
         return null;
     }	
 
-	public boolean perform(Build<?, ?> build, Launcher launcher,
-			BuildListener listener) throws InterruptedException {
-		Project proj = build.getProject();
+	@Override
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
+			BuildListener listener) throws InterruptedException, IOException {
 
 		ArgumentListBuilder args = new ArgumentListBuilder();
 		
@@ -142,13 +144,13 @@ public class SConsBuilder extends Builder {
 		}
 
 		if (normalizedSconsscript != null && normalizedSconsscript.trim().length() != 0) {
-			normalizedSconsscript=Util.replaceMacro(normalizedSconsscript, build.getEnvVars());
+			normalizedSconsscript=Util.replaceMacro(normalizedSconsscript, build.getEnvironment(listener));
 			args.add("-f");
 			args.add(normalizedSconsscript);
 		}
 	
 		if (normalizedRootSconsscriptDirectory != null && normalizedRootSconsscriptDirectory.trim().length() != 0) {
-			normalizedRootSconsscriptDirectory=Util.replaceMacro(normalizedRootSconsscriptDirectory, build.getEnvVars());
+			normalizedRootSconsscriptDirectory=Util.replaceMacro(normalizedRootSconsscriptDirectory, build.getEnvironment(listener));
 			args.add("-C");
 			args.add(normalizedRootSconsscriptDirectory);
 		}		
@@ -174,8 +176,8 @@ public class SConsBuilder extends Builder {
 		}
 
 		try {
-			int r = launcher.launch(args.toCommandArray(), build.getEnvVars(),
-					listener.getLogger(), proj.getModuleRoot()).join();
+			int r = launcher.launch().cmds(args).envs(build.getEnvironment(listener))
+					.stdout(listener).pwd(build.getModuleRoot()).join();
 			return r == 0;
 		} catch (IOException e) {
 			Util.displayIOException(e, listener);
@@ -184,13 +186,10 @@ public class SConsBuilder extends Builder {
 		}
 	}
 
-	public Descriptor<Builder> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
+	@Extension
 	public static final SConsBuilderDescriptor DESCRIPTOR = new SConsBuilderDescriptor();
 
-	public static final class SConsBuilderDescriptor extends Descriptor<Builder> {
+	public static final class SConsBuilderDescriptor extends BuildStepDescriptor<Builder> {
 
 		@CopyOnWrite
 		private volatile SConsInstallation[] installations = new SConsInstallation[0];
@@ -213,7 +212,13 @@ public class SConsBuilder extends Builder {
 			return installations;
 		}
 
-		public boolean configure(StaplerRequest req) {
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject formData) {
 			installations = req.bindParametersToList(SConsInstallation.class,"scons.").toArray(new SConsInstallation[0]);
 			save();
 			return true;
