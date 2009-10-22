@@ -10,7 +10,6 @@ import org.kohsuke.stapler.StaplerResponse;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.BuildBadgeAction;
 import hudson.model.DirectoryBrowserSupport;
 
@@ -58,14 +57,15 @@ public class WorkspaceBrowser implements BuildBadgeAction {
     /**
      * Serves the workspace files.
      */
-    public void doDynamic( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException, InterruptedException {
+    public DirectoryBrowserSupport doDynamic( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException, InterruptedException {
         parent.checkPermission(AbstractProject.WORKSPACE);
         FilePath ws = buildWorkspace;
         if ((ws == null) || (!ws.exists())) {
             // if there's no workspace, report a nice error message
             req.getView(this,"noWorkspace.jelly").forward(req,rsp);
+            return null;
         } else {
-            new DirectoryBrowserSupport(parent,getDisplayName()+" workspace").serveFile(req, rsp, ws, "folder.gif", true);
+            return new DirectoryBrowserSupport(parent, ws, getDisplayName()+" workspace", "folder.gif", true);
         }
     }
 
