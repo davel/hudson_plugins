@@ -94,10 +94,15 @@ public class StagingPublisher extends Recorder {
 		return null;
 	}
 
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl)super.getDescriptor();
+	}
+
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-		private DescriptorImpl() {
+		public DescriptorImpl() {
 			super(StagingPublisher.class);
 		}
 
