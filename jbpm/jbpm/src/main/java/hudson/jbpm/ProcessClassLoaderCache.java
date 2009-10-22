@@ -16,7 +16,6 @@
  */
 package hudson.jbpm;
 
-import hudson.PluginManager;
 import hudson.model.Hudson;
 
 import java.io.ByteArrayInputStream;

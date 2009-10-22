@@ -18,13 +18,10 @@ package hudson.jbpm;
 
 import hudson.Plugin;
 import hudson.jbpm.model.TaskInstanceWrapper;
-import hudson.jbpm.model.UserTasks;
 import hudson.jbpm.rendering.GraphicsUtil;
 import hudson.model.Hudson;
 import hudson.model.Job;
 import hudson.model.TopLevelItem;
-import hudson.tasks.Publisher;
-import hudson.triggers.Trigger;
 import hudson.util.PluginServletFilter;
 
 import java.awt.Graphics2D;
@@ -70,8 +67,6 @@ public class PluginImpl extends Plugin {
 		return processDefinition;
 	}
 
-	private HudsonTaskListener taskListener;
-
 	public PluginImpl() {
 	}
 
@@ -79,10 +74,6 @@ public class PluginImpl extends Plugin {
 	public void start() throws Exception {
 		JbpmConfiguration.getInstance().startJobExecutor();
 		PluginServletFilter.addFilter(new JbpmContextFilter());
-		new HudsonRunListener().register();
-		Publisher.PUBLISHERS.add(ProcessStartPublisher.DESCRIPTOR);
-		Trigger.timer.schedule(taskListener = new HudsonTaskListener(), 10000, 10000);
-		Hudson.getInstance().getWidgets().add(new UserTasks());
 		GraphicsUtil.class.getName(); // trigger icon initialization
 		INSTANCE = this;
 	}
@@ -223,11 +214,10 @@ public class PluginImpl extends Plugin {
 	@Override
 	public void stop() throws Exception {
 		JbpmConfiguration.getInstance().getJobExecutor().stop();
-		taskListener.cancel();
 	}
 
 	public List<TaskInstance> getUserTasks() {
-		Authentication authentication = Hudson.getInstance().getAuthentication();
+		Authentication authentication = Hudson.getAuthentication();
 		if ("anonymous".equals(authentication.getPrincipal())) {
 			return Collections.emptyList();
 		}

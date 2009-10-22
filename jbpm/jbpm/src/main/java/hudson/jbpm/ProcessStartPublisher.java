@@ -16,12 +16,15 @@
  */
 package hudson.jbpm;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.jbpm.model.ProcessInstanceAction;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 
 import java.io.IOException;
@@ -37,7 +40,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class ProcessStartPublisher extends Publisher {
+public class ProcessStartPublisher extends Notifier {
 
 	private String processDefinition;
 	
@@ -45,6 +48,10 @@ public class ProcessStartPublisher extends Publisher {
 	public ProcessStartPublisher(String processDefinition) {
 		super();
 		this.processDefinition = processDefinition;
+	}
+
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.STEP;
 	}
 
 	@Override
@@ -79,21 +86,21 @@ public class ProcessStartPublisher extends Publisher {
 		return processDefinition;
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl)super.getDescriptor();
 	}
 
-	public static Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
-
-	public static class DescriptorImpl<Publisher> extends Descriptor {
+	@Extension
+	public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
 		@Override
-		public Describable newInstance(StaplerRequest req, JSONObject formData)
+		public ProcessStartPublisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return req.bindJSON(ProcessStartPublisher.class, formData);
 		}
 
-		protected DescriptorImpl() {
+		public DescriptorImpl() {
 			super(ProcessStartPublisher.class);
 		}
 		
@@ -108,6 +115,11 @@ public class ProcessStartPublisher extends Publisher {
 		@Override
 		public String getDisplayName() {
 			return "Start workflow after build";
+		}
+
+		@Override
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
 		}
 
 	}

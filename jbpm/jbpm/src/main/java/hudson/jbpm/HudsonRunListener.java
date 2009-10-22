@@ -18,7 +18,7 @@ package hudson.jbpm;
 
 import java.util.logging.Logger;
 
-import hudson.jbpm.PluginImpl;
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.ParametersAction;
 import hudson.model.Run;
@@ -36,6 +36,7 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
  * @author tom
  *
  */
+@Extension
 public class HudsonRunListener extends RunListener {
 
 	private static Logger log = Logger.getLogger(HudsonRunListener.class.getName());

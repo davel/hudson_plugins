@@ -16,6 +16,7 @@
  */
 package hudson.jbpm;
 
+import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Hudson;
 import hudson.model.ParameterValue;
@@ -40,17 +41,19 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
  * This task is responsible for picking up new tasks for Hudson, and putting
  * them into the queue
  */
+@Extension
 public class HudsonTaskListener extends PeriodicWork {
 
 	private static Logger log = Logger.getLogger(HudsonTaskListener.class
 			.getName());
 
-	public HudsonTaskListener() {
-		super("JBPM Task Listener");
+	@Override
+	public long getRecurrencePeriod() {
+		return 10000;
 	}
 
 	@Override
-	protected void execute() {
+	protected void doRun() {
 		JbpmContext context = JbpmConfiguration.getInstance()
 				.createJbpmContext();
 		try {
@@ -88,7 +91,7 @@ public class HudsonTaskListener extends PeriodicWork {
 
 		List<ParameterValue> parameters = new ArrayList<ParameterValue>();
 		RunParameterValue runParameter = new RunParameterValue(
-				"triggeringBuild", run);
+				"triggeringBuild", run.getId());
 		StringParameterValue taskParameter = new StringParameterValue("task",
 				Long.toString(task.getId()));
 		parameters.add(runParameter);

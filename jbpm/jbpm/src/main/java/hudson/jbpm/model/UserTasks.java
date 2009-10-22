@@ -20,9 +20,11 @@ import java.util.List;
 
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
+import hudson.Extension;
 import hudson.jbpm.PluginImpl;
 import hudson.widgets.Widget;
 
+@Extension
 public class UserTasks extends Widget {
 
 	@Override
