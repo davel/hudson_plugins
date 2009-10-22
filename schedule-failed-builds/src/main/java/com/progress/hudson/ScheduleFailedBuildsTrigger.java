@@ -1,20 +1,13 @@
 package com.progress.hudson;
 
-import static hudson.Util.fixNull;
+import hudson.Extension;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
-import hudson.util.FormFieldValidator;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.servlet.ServletException;
-
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import antlr.ANTLRException;
 
@@ -33,20 +26,11 @@ public class ScheduleFailedBuildsTrigger extends Trigger<BuildableItem> {
     @Override
     public void run() {      
         if(FailedBuildsQueue.needsBuild(job)){          
-                job.scheduleBuild();
+                job.scheduleBuild(new ScheduleFailedBuildsCause());
         }
     }  
     
-    @Override
-    public TriggerDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-    
-    /**
-     * Descriptor should be singleton.
-     */
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-    
+    @Extension
     public static final class DescriptorImpl extends TriggerDescriptor {
 
         public DescriptorImpl() {
@@ -67,7 +51,7 @@ public class ScheduleFailedBuildsTrigger extends Trigger<BuildableItem> {
   
         
         @Override
-        public ScheduleFailedBuildsTrigger newInstance(StaplerRequest req) throws FormException {
+        public ScheduleFailedBuildsTrigger newInstance(StaplerRequest req, JSONObject formData) throws FormException {
                      
                   try {
                     return new ScheduleFailedBuildsTrigger("* * * * *"); 

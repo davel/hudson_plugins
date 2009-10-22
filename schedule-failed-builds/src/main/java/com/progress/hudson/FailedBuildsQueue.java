@@ -3,7 +3,6 @@ package com.progress.hudson;
 import java.util.HashMap;
 
 import hudson.model.AbstractBuild;
-import hudson.model.Build;
 import hudson.model.BuildableItem;
 
 /**
@@ -30,7 +29,7 @@ public class FailedBuildsQueue {
     return false;
   }
 
-  public static void add(AbstractBuild build, String interval, String maxRetries) {
+  public synchronized static void add(AbstractBuild build, String interval, String maxRetries) {
     if(items==null){
       items= new HashMap<String, BuildItem>();
     }
@@ -41,7 +40,7 @@ public class FailedBuildsQueue {
    
   }
 
-  public static void remove(AbstractBuild build) {
+  public synchronized static void remove(AbstractBuild build) {
     if(items!=null){      
       String fullName=build.getParent().getFullName();
       if( items.containsKey(fullName)){

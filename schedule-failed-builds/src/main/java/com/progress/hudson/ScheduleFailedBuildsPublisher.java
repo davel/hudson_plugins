@@ -1,21 +1,18 @@
 package com.progress.hudson;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.Result;
 import hudson.model.Descriptor.FormException;
-import hudson.tasks.Builder;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-
-import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
@@ -38,31 +35,24 @@ import org.kohsuke.stapler.StaplerRequest;
  *
  * @author Stefan Fritz <sfritz@progress.com>
  */
-public class ScheduleFailedBuildsPublisher extends Publisher {
+public class ScheduleFailedBuildsPublisher extends Notifier {
 
     private  String interval="0";
     private  String maxRetries="0";
     
-    public ScheduleFailedBuildsPublisher(String interval, String maxRetries ) {
+    public ScheduleFailedBuildsPublisher(String interval, String maxRetries) {
       setInterval(interval);
       setMaxRetries(maxRetries);
       
     }
-    
-    @Override
-    public boolean perform(Build build, Launcher launcher, BuildListener listener) {
-      // not called during my tests :-( 
-        return doPerform(build);
-      
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
     
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
         throws InterruptedException, IOException {     
-      return doPerform(build);
-    }
-    
-    private boolean doPerform(AbstractBuild build){
       // If the build was successful, remove it from our build queue
       if (build.getResult() == Result.SUCCESS) {
         // no need to build it
@@ -78,19 +68,10 @@ public class ScheduleFailedBuildsPublisher extends Publisher {
       return true;
     }
     
-
+    @Override
     public boolean needsToRunAfterFinalized() {
       return true;
-  }
-    public Descriptor<Publisher> getDescriptor() {
-        // see Descriptor javadoc for more about what a descriptor is.
-        return DESCRIPTOR;
     }
-
-    /**
-     * Descriptor should be singleton.
-     */
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     /**
      * Descriptor for {@link ScheduleFailedBuildsPublisher}. Used as a singleton.
@@ -98,9 +79,10 @@ public class ScheduleFailedBuildsPublisher extends Publisher {
      *
      * 
      */
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    @Extension
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        DescriptorImpl() {
+        public DescriptorImpl() {
             super(ScheduleFailedBuildsPublisher.class);
         }
 
@@ -111,9 +93,15 @@ public class ScheduleFailedBuildsPublisher extends Publisher {
             return "Schedule failed builds (ScheduleFailedBuildsPublisher)";
         }
 
-        public boolean configure(HttpServletRequest req) throws FormException {
+        @Override
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
+        }
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             save();
-            return super.configure(req);
+            return super.configure(req, formData);
         }
 
 
