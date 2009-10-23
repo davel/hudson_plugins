@@ -1,25 +1,25 @@
 package hudson.plugins.kagemai;
 
+import hudson.Extension;
 import hudson.Util;
+import hudson.model.Hudson;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.util.CopyOnWriteList;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.servlet.ServletException;
-
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * @author yamkazu
@@ -31,6 +31,7 @@ public class KagemaiProjectProperty extends JobProperty<Job<?, ?>> {
 	private String regex;
 	private boolean linkEnabled;
 
+	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
 	@DataBoundConstructor
@@ -125,7 +126,7 @@ public class KagemaiProjectProperty extends JobProperty<Job<?, ?>> {
 		}
 
 		@Override
-		public boolean configure(StaplerRequest req) throws FormException {
+		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
 			sites.replaceBy(req.bindParametersToList(KagemaiSite.class,
 					"kagemai."));
 			save();
@@ -136,55 +137,37 @@ public class KagemaiProjectProperty extends JobProperty<Job<?, ?>> {
 			return sites.toArray(new KagemaiSite[0]);
 		}
 
-		public void doRegexCheck(final StaplerRequest req, StaplerResponse rsp)
-				throws IOException, ServletException {
-			new FormFieldValidator(req, rsp, false) {
-				@Override
-				protected void check() throws IOException, ServletException {
-					String regex = Util.fixEmpty(request.getParameter("value"));
-					if (regex == null) {
-						ok();
-						return;
-					}
-					try {
-						Pattern.compile(regex);
-						ok();
-						return;
-					} catch (PatternSyntaxException e) {
-						error(Messages.error_regex());
-						return;
-					}
-				}
-			}.process();
+		public FormValidation doRegexCheck(@QueryParameter String value) {
+			String regex = Util.fixEmpty(value);
+			if (regex == null) {
+				return FormValidation.ok();
+			}
+			try {
+				Pattern.compile(regex);
+				return FormValidation.ok();
+			} catch (PatternSyntaxException e) {
+				return FormValidation.error(Messages.error_regex());
+			}
 		}
 
-		public void doLoginCheck(final StaplerRequest req, StaplerResponse rsp)
-				throws IOException, ServletException {
-			new FormFieldValidator(req, rsp, false) {
-				@Override
-				protected void check() throws IOException, ServletException {
-					String baseUrl = Util.fixEmpty(request
-							.getParameter("baseUrl"));
-					String basicUserName = Util.fixEmpty(request
-							.getParameter("basicUserName"));
-					String basicPassword = Util.fixEmpty(request
-							.getParameter("basicPassword"));
+		public FormValidation doLoginCheck(@QueryParameter String baseUrl,
+				@QueryParameter String basicUserName, @QueryParameter String basicPassword)
+				throws IOException {
+			//if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER)) return FormValidation.ok();
+			baseUrl = Util.fixEmpty(baseUrl);
+			basicUserName = Util.fixEmpty(basicUserName);
+			basicPassword = Util.fixEmpty(basicPassword);
 
-					if (StringUtils.isEmpty(baseUrl)) {
-						ok();
-						return;
-					}
-					KagemaiSession session = new KagemaiSession(
-							new URL(baseUrl), basicUserName, basicPassword);
-					if (session.isConnect()) {
-						ok();
-						return;
-					} else {
-						error(Messages.error_login());
-						return;
-					}
-				}
-			}.process();
+			if (StringUtils.isEmpty(baseUrl)) {
+				return FormValidation.ok();
+			}
+			KagemaiSession session = new KagemaiSession(
+					new URL(baseUrl), basicUserName, basicPassword);
+			if (session.isConnect()) {
+				return FormValidation.ok();
+			} else {
+				return FormValidation.error(Messages.error_login());
+			}
 		}
 	}
 }

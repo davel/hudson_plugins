@@ -1,6 +1,7 @@
 package hudson.plugins.kagemai;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import hudson.Extension;
 import hudson.MarkupText;
 import hudson.MarkupText.SubText;
 import hudson.model.AbstractBuild;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
  * @author yamkazu
  * 
  */
+@Extension
 public class KagemaiChangelogAnnotator extends ChangeLogAnnotator {
 
 	@Override

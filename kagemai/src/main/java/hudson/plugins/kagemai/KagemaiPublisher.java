@@ -1,13 +1,17 @@
 package hudson.plugins.kagemai;
 
+import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.plugins.kagemai.model.KagemaiIssue;
 import hudson.scm.ChangeLogSet.Entry;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -16,13 +20,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * @author yamkazu
  * 
  */
-public class KagemaiPublisher extends Publisher {
+public class KagemaiPublisher extends Recorder {
 
 	KagemaiPublisher() {
 	}
@@ -74,15 +79,19 @@ public class KagemaiPublisher extends Publisher {
 		return true;
 	}
 
-	public Descriptor<Publisher> getDescriptor() {
-		return DESCRIPTOR;
+	public BuildStepMonitor getRequiredMonitorService() {
+		return BuildStepMonitor.STEP;
 	}
 
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+	@Override
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl)super.getDescriptor();
+	}
 
-	public static final class DescriptorImpl extends Descriptor<Publisher> {
+	@Extension
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-		DescriptorImpl() {
+		public DescriptorImpl() {
 			super(KagemaiPublisher.class);
 		}
 
@@ -92,7 +101,12 @@ public class KagemaiPublisher extends Publisher {
 		}
 
 		@Override
-		public KagemaiPublisher newInstance(StaplerRequest req)
+		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+			return true;
+		}
+
+		@Override
+		public KagemaiPublisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return new KagemaiPublisher();
 		}
