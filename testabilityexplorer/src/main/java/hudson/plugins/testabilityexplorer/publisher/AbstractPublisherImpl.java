@@ -8,8 +8,10 @@ import hudson.plugins.testabilityexplorer.helpers.BuildProxy;
 import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
 import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 import hudson.plugins.testabilityexplorer.utils.TypeConverterUtil;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 
+import hudson.tasks.Recorder;
 import java.io.IOException;
 
 /**
@@ -21,20 +23,23 @@ import java.io.IOException;
  *
  * @author reik.schatz
  */
-public abstract class AbstractPublisherImpl extends Publisher implements ExtractAndBuildDelegate {
+public abstract class AbstractPublisherImpl extends Recorder implements ExtractAndBuildDelegate {
 
     protected static final double DEFAULT_WEIGHT = 1.5;
 
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener)
             throws InterruptedException, IOException {
-        AbstractProject project = getProject(build);
-        BuildProxy buildProxy = new BuildProxy(project.getModuleRoot(), newStatisticsParser(),
+        BuildProxy buildProxy = new BuildProxy(build.getModuleRoot(), newStatisticsParser(),
                 newDetailBuilder(), newReportBuilder());
         return buildProxy.doPerform(newParseDelegate(), build, listener);
     }
 
     protected AbstractProject getProject(AbstractBuild build) {
         return build.getProject();
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.STEP;
     }
 
     @Override

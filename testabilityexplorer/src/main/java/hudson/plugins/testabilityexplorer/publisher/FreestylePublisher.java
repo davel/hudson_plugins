@@ -2,9 +2,9 @@ package hudson.plugins.testabilityexplorer.publisher;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import hudson.Extension;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Descriptor;
-import hudson.model.Project;
 import hudson.plugins.testabilityexplorer.helpers.ParseDelegate;
 import hudson.plugins.testabilityexplorer.helpers.ReportParseDelegate;
 import hudson.plugins.testabilityexplorer.parser.StatisticsParser;
@@ -17,7 +17,6 @@ import hudson.plugins.testabilityexplorer.report.charts.TestabilityChartBuilder;
 import hudson.plugins.testabilityexplorer.report.health.ReportBuilder;
 import hudson.plugins.testabilityexplorer.report.health.TemporaryHealthCalculator;
 import hudson.plugins.testabilityexplorer.report.health.TestabilityReportBuilder;
-import hudson.tasks.Publisher;
 
 /**
  * Main publisher class. Expects two values from the GUI which are mapped by the Stapler framework.
@@ -26,7 +25,8 @@ import hudson.tasks.Publisher;
  */
 public class FreestylePublisher extends AbstractPublisherImpl {
 
-    public static final Descriptor DESCRIPTOR = new TestabilityExplorerDescriptor();
+    @Extension
+    public static final TestabilityExplorerDescriptor DESCRIPTOR = new TestabilityExplorerDescriptor();
 
     private final String m_reportFilenamePattern;
 
@@ -103,12 +103,13 @@ public class FreestylePublisher extends AbstractPublisherImpl {
         return m_perClassThreshold;
     }
 
-    public Descriptor<Publisher> getDescriptor() {
+    @Override
+    public TestabilityExplorerDescriptor getDescriptor() {
         return DESCRIPTOR;
     }
 
     @Override
-    public Action getProjectAction(Project project) {
+    public Action getProjectAction(AbstractProject project) {
         return new ProjectIndividualReport(project);
     }
 }

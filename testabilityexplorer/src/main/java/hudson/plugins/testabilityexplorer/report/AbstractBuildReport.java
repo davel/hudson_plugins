@@ -196,7 +196,7 @@ public abstract class AbstractBuildReport<T extends AbstractBuild<?, ?>> extends
      */
     public final void doTrendGraph(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException
     {
-        if (ChartUtil.awtProblem)
+        if (ChartUtil.awtProblemCause != null)
         {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;

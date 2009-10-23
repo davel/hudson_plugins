@@ -6,7 +6,6 @@ import hudson.FilePath;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenBuildProxy;
 import hudson.maven.MavenReporter;
-import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.plugins.testabilityexplorer.helpers.BuildProxy;
@@ -49,8 +48,7 @@ public abstract class AbstractMavenReporterImpl extends MavenReporter implements
 
             public Void call(final MavenBuild mavenBuild) throws IOException {
                 if (mavenBuild.isBuilding()) {
-                    AbstractProject project = mavenBuild.getProject();
-                    BuildProxy buildProxy = new BuildProxy(getModuleRoot(project),
+                    BuildProxy buildProxy = new BuildProxy(getModuleRoot(mavenBuild),
                             newStatisticsParser(), newDetailBuilder(), newReportBuilder());
                     ParseDelegate parseDelegate = newParseDelegate();
                     parseDelegate.perform(buildProxy, listener);
@@ -64,11 +62,11 @@ public abstract class AbstractMavenReporterImpl extends MavenReporter implements
     /**
      * Returns the {@link FilePath} to the module root of the given project.
      *
-     * @param project AbstractProject
+     * @param project MavenBuild
      * @return FilePath
      */
-    FilePath getModuleRoot(final AbstractProject project) {
-        return project.getModuleRoot();
+    FilePath getModuleRoot(final MavenBuild build) {
+        return build.getModuleRoot();
     }
 
     protected boolean toBool(String value, boolean defaultValue) {

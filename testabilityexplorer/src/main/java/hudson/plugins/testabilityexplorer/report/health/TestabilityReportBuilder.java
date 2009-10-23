@@ -6,6 +6,7 @@ import hudson.plugins.testabilityexplorer.report.costs.CostSummary;
 import hudson.plugins.testabilityexplorer.report.costs.Statistic;
 
 import java.util.Collection;
+import org.jvnet.localizer.Localizable;
 
 /**
  * A {@link ReportBuilder} that will compute health based on the specified
@@ -26,7 +27,7 @@ public class TestabilityReportBuilder extends DrawingReportBuilder
     public HealthReport computeHealth(Collection<Statistic> results)
     {
         int score;
-        String description = "";
+        Localizable description;
 
         int allClasses = 0;
         int excellentClasses = 0;
@@ -45,19 +46,19 @@ public class TestabilityReportBuilder extends DrawingReportBuilder
         score = healthCalculator.calculate(allClasses, excellentClasses, 0, 0);
         if (score == 100)
         {
-            description = "Testability is excellent.";
+            description = Messages._TestabilityReportBuilder_GreatHealth();
         }
         else if (score > 80)
         {
-            description = "Testability almost excellent.";
+            description = Messages._TestabilityReportBuilder_GoodHealth();
         }
         else if (score > 0)
         {
-            description = "Testability need to be improved.";
+            description = Messages._TestabilityReportBuilder_BadHealth();
         }
         else
         {
-            description = "Testability is awful.";
+            description = Messages._TestabilityReportBuilder_NoHealth();
         }
 
         return new HealthReport(score, description);

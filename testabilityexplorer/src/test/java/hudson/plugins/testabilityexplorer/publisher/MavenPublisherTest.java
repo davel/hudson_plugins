@@ -10,8 +10,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.testng.annotations.Test;
 
 import hudson.FilePath;
+import hudson.maven.MavenBuild;
 import hudson.maven.MavenReporterDescriptor;
-import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.plugins.testabilityexplorer.PluginImpl;
 import hudson.plugins.testabilityexplorer.helpers.ParseDelegate;
@@ -46,9 +46,8 @@ public class MavenPublisherTest
         File root = SystemUtils.getJavaIoTmpDir();
         FilePath rootPath = new FilePath(root);
 
-        final AbstractProject<?, ?> project = mock(AbstractProject.class);
-        stub(project.getRootDir()).toReturn(root);
-        stub(project.getModuleRoot()).toReturn(rootPath);
+        final MavenBuild build = mock(MavenBuild.class);
+        stub(build.getModuleRoot()).toReturn(rootPath);
 
         Action action = publisher.getProjectAction(null);
         assertTrue(action instanceof ProjectIndividualReport);
@@ -62,7 +61,7 @@ public class MavenPublisherTest
         StatisticsParser statisticsParser = publisher.newStatisticsParser();
         assertTrue(statisticsParser instanceof XmlStatisticsParser);
 
-        MavenReporterDescriptor mavenReporterDescriptor = publisher.getDescriptor();
+        MavenReporterDescriptor mavenReporterDescriptor = new MavenPublisher.DescriptorImpl();
         String displayName = mavenReporterDescriptor.getDisplayName();
         assertEquals(displayName, "Publish " + PluginImpl.DISPLAY_NAME);
         String helpFile = mavenReporterDescriptor.getHelpFile();

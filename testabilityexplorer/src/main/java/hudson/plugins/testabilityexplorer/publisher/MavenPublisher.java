@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import hudson.Extension;
 import hudson.maven.MavenModule;
 import hudson.maven.MavenReporter;
 import hudson.maven.MavenReporterDescriptor;
@@ -31,11 +32,10 @@ import hudson.plugins.testabilityexplorer.report.health.TestabilityReportBuilder
  */
 public class MavenPublisher extends AbstractMavenReporterImpl {
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
+    @Extension
     public static final class DescriptorImpl extends MavenReporterDescriptor {
 
-        private DescriptorImpl() {
+        public DescriptorImpl() {
             super(MavenPublisher.class);
         }
 
@@ -94,14 +94,6 @@ public class MavenPublisher extends AbstractMavenReporterImpl {
     @Override
     public Action getProjectAction(MavenModule module) {
         return new ProjectIndividualReport(module);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MavenReporterDescriptor getDescriptor() {
-        return DESCRIPTOR;
     }
 
     public ParseDelegate newParseDelegate() {
