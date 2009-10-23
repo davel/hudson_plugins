@@ -1,6 +1,8 @@
 package com.redfin.hudson;
 
 import hudson.Extension;
+import hudson.Util;
+import hudson.FilePath;
 import static hudson.Util.*;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
@@ -9,19 +11,10 @@ import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.FormValidation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +22,7 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.apache.commons.io.FileUtils;
 
 import antlr.ANTLRException;
 
@@ -36,40 +30,6 @@ import antlr.ANTLRException;
 public class UrlChangeTrigger extends Trigger<BuildableItem> {
 
     URL url;
-    
-    private static final int readBufferSize = 8*1024;
-    /** Extracts the MD5 string from the specified input stream; this MD5 should
-     * be a perfect match for the GNU "md5sum" tool.
-     */
-    private static String getMd5(InputStream stream) throws IOException {
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        DigestInputStream dis = new DigestInputStream(stream,
-                messageDigest);
-        byte[] buf = new byte[readBufferSize];
-        while (dis.read(buf, 0, readBufferSize) != -1) { }
-        dis.close();
-        stream.close();
-        byte[] fileDigest = messageDigest.digest ();
-        return createDigestString(fileDigest);
-    }
-    
-    /** byte array to string */
-    private static String createDigestString(byte[] fileDigest) {
-        StringBuffer checksumSb = new StringBuffer();
-        for (int i = 0; i < fileDigest.length; i++) {
-            String hexStr = Integer.toHexString(0x00ff & fileDigest[i]);
-            if (hexStr.length() < 2) {
-                checksumSb.append("0");
-            }
-            checksumSb.append(hexStr);
-        }
-        return checksumSb.toString();
-    }
 
     public UrlChangeTrigger(String url) throws MalformedURLException {
         this(new URL(url));
@@ -100,40 +60,30 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
     public void run() {
         try {
             LOGGER.log(Level.FINER, "Testing the file {0}", url);
-            String currentMd5 = getMd5(url.openStream());
+            String currentMd5 = Util.getDigestOf(url.openStream());
 
-	    String oldMd5;
-	    File file = getFingerprintFile();
-	    if (!file.exists()) {
-		oldMd5 = "null";
-	    } else {
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		try {
-		    oldMd5 = br.readLine();
-		} finally {
-		    br.close();
-		}
-	    }
-            if (!currentMd5.equals(oldMd5)) {
-            	LOGGER.log(Level.FINE, 
-            			"Differences found in the file {0}. >{1}< != >{2}<",
-            			new Object[] {
-                                    url, oldMd5, currentMd5,
-            			});
-		PrintWriter w = new PrintWriter(new FileOutputStream(file));
-		try {
-		    w.println(currentMd5);
-		} finally {
-		    w.close();
-		}
-                oldMd5 = currentMd5;
+            String oldMd5;
+            File file = getFingerprintFile();
+            if (!file.exists()) {
+                oldMd5 = "null";
+            } else {
+                oldMd5 = new FilePath(file).readToString().trim();
+            }
+            if (!currentMd5.equalsIgnoreCase(oldMd5)) {
+                LOGGER.log(Level.FINE,
+                        "Differences found in the file {0}. >{1}< != >{2}<",
+                        new Object[]{
+                                url, oldMd5, currentMd5,
+                        });
+
+                FileUtils.writeStringToFile(file, currentMd5);
                 job.scheduleBuild(new UrlChangeCause(url));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     public URL getUrl() {
         return url;
     }
