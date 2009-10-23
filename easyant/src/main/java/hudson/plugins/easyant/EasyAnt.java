@@ -6,26 +6,22 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Build;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
-import hudson.model.Project;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * A builder for EasyAnt scripts
@@ -71,10 +67,9 @@ public class EasyAnt extends Builder {
 
 	}
 
-	public boolean perform(Build<?, ?> build, Launcher launcher,
+	@Override
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
-		Project proj = build.getProject();
-
 		ArgumentListBuilder args = new ArgumentListBuilder();
 
 		String execName;
@@ -98,7 +93,7 @@ public class EasyAnt extends Builder {
 		}
 		args.addKeyValuePairs("-D", build.getBuildVariables());
 		args.addTokenized(normalizedTargets);
-		EnvVars env = build.getEnvironment();
+		EnvVars env = build.getEnvironment(listener);
 		if (ai != null)
 			env.put("EASYANT_HOME", ai.getEasyantHome());
 
@@ -117,15 +112,15 @@ public class EasyAnt extends Builder {
 		FilePath rootLauncher = null;
 		if (buildFile != null && buildFile.trim().length() != 0) {
 			String rootBuildScriptReal = Util.replaceMacro(buildFile, env);
-			rootLauncher = new FilePath(proj.getModuleRoot(), new File(
+			rootLauncher = new FilePath(build.getModuleRoot(), new File(
 					rootBuildScriptReal).getParent());
 		} else {
-			rootLauncher = proj.getModuleRoot();
+			rootLauncher = build.getModuleRoot();
 		}
 
 		try {
-			int r = launcher.launch(args.toCommandArray(), env,
-					listener.getLogger(), rootLauncher).join();
+			int r = launcher.launch().cmds(args).envs(env)
+					.stdout(listener).pwd(rootLauncher).join();
 			return r == 0;
 		} catch (IOException e) {
 			Util.displayIOException(e, listener);
@@ -134,13 +129,9 @@ public class EasyAnt extends Builder {
 		}
 	}
 
-	public Descriptor<Builder> getDescriptor() {
-		return DESCRIPTOR;
-	}
-
+	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-	@Extension
 	public static final class DescriptorImpl extends
 			BuildStepDescriptor<Builder> {
 
@@ -159,6 +150,7 @@ public class EasyAnt extends Builder {
 			super(clazz);
 		}
 
+		@Override
 		public String getHelpFile() {
 			return "/plugin/easyant/help.html";
 		}
@@ -180,6 +172,7 @@ public class EasyAnt extends Builder {
 			return true;
 		}
 
+		@Override
 		public EasyAnt newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
 			return (EasyAnt) req.bindJSON(clazz, formData);
@@ -188,32 +181,23 @@ public class EasyAnt extends Builder {
 		/**
 		 * Checks if the specified Hudson EASYANT_HOME is valid.
 		 */
-		public void doCheckEasyAntHome(StaplerRequest req, StaplerResponse rsp)
-				throws IOException, ServletException {
+		public FormValidation doCheckEasyAntHome(@QueryParameter String value) {
+			File f = new File(Util.fixNull(value));
 
-			new FormFieldValidator(req, rsp, true) {
-				public void check() throws IOException, ServletException {
-					File f = getFileParameter("value");
+			if (!f.isDirectory()) {
+				return FormValidation.error(f + " is not a directory");
+			}
 
-					if (!f.isDirectory()) {
-						error(f + " is not a directory");
-						return;
-					}
+			if (!new File(f, "bin").exists()
+					&& !new File(f, "lib").exists()) {
+				return FormValidation.error(f + " doesn't look like an EasyAnt directory");
+			}
 
-					if (!new File(f, "bin").exists()
-							&& !new File(f, "lib").exists()) {
-						error(f + " doesn't look like an EasyAnt directory");
-						return;
-					}
+			if (!new File(f, "bin/easyant").exists()) {
+				return FormValidation.error(f + " doesn't look like an EasyAnt directory");
+			}
 
-					if (!new File(f, "bin/easyant").exists()) {
-						error(f + " doesn't look like an EasyAnt directory");
-						return;
-					}
-
-					ok();
-				}
-			}.process();
+			return FormValidation.ok();
 		}
 
 	}
