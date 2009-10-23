@@ -1,5 +1,6 @@
 package com.mtvi.plateng.hudson.springbeandoc;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
@@ -8,25 +9,27 @@ import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.DirectoryBrowserSupport;
-import hudson.model.Project;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-public class SpringBeanDocArchiver extends Publisher {
+public class SpringBeanDocArchiver extends Notifier {
     /**
      * Path to the Spring Beandoc directory in the workspace.
      */
@@ -49,11 +52,12 @@ public class SpringBeanDocArchiver extends Publisher {
         return new File(project.getRootDir(), "beandoc");
     }
 
+    @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
             throws InterruptedException {
         listener.getLogger().println(Messages.SpringBeanDocArchiver_Publishing());
 
-        FilePath javadoc = build.getParent().getWorkspace().child(beandocDir);
+        FilePath javadoc = build.getWorkspace().child(beandocDir);
         FilePath target = new FilePath(getBeandocDir(build.getParent()));
 
         try {
@@ -76,15 +80,19 @@ public class SpringBeanDocArchiver extends Publisher {
         return true;
     }
 
-    public Action getProjectAction(Project project) {
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
+    @Override
+    public Action getProjectAction(AbstractProject<?, ?> project) {
         return new SpringBeanDocAction(project);
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl)super.getDescriptor();
     }
-
-    public static final Descriptor<Publisher> DESCRIPTOR = new DescriptorImpl();
 
     public static class SpringBeanDocAction implements ProminentProjectAction {
         private final AbstractItem project;
@@ -113,15 +121,16 @@ public class SpringBeanDocArchiver extends Publisher {
             }
         }
 
-        public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException,
+        public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException,
                 ServletException, InterruptedException {
-            new DirectoryBrowserSupport(this, project.getDisplayName() + " javadoc").serveFile(req,
-                    rsp, new FilePath(getBeandocDir(project)), "help.gif", false);
+            return new DirectoryBrowserSupport(this, new FilePath(getBeandocDir(project)),
+                    project.getDisplayName() + " javadoc", "help.gif", false);
         }
     }
 
+    @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        private DescriptorImpl() {
+        public DescriptorImpl() {
             super(SpringBeanDocArchiver.class);
         }
 
@@ -132,9 +141,9 @@ public class SpringBeanDocArchiver extends Publisher {
         /**
          * Performs on-the-fly validation on the file mask wildcard.
          */
-        public void doCheck(StaplerRequest req, StaplerResponse rsp) throws IOException,
-                ServletException {
-            new FormFieldValidator.WorkspaceDirectory(req, rsp).process();
+        public FormValidation doCheck(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
+            FilePath ws = project.getSomeWorkspace();
+            return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();
         }
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
