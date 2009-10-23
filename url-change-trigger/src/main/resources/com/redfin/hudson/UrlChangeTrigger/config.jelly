@@ -4,7 +4,7 @@
 
     See global.jelly for a general discussion about jelly script.
   -->
-  <f:entry title="URL" help="${rootURL}/plugin/url-change-trigger/help-projectConfig.html">
+  <f:entry title="URL" help="/plugin/url-change-trigger/help-projectConfig.html">
     <!--
       ${builder.name} is EL-like (JEXL) expression that calls "builder.getName()" on our builder instance.
       builder is set to null if the project is not configured with HelloWorldBuilder when
@@ -12,5 +12,5 @@
       evaluates to null, and you'll get an empty text box, which is just what we want.
     -->
     <f:textbox name="urlChangeTrigger.url" value="${instance.url}" />
-	</f:entry>
+  </f:entry>
 </j:jelly>

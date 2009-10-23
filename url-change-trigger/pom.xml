@@ -12,4 +12,5 @@
   <description>This plugin allows you to trigger a Hudson build when the content of an URL changes.</description>
   <packaging>hpi</packaging>
   <version>1.2-SNAPSHOT</version>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/URL+Change+Trigger</url>
 </project>

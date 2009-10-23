@@ -21,6 +21,7 @@ import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,7 +127,7 @@ public class UrlChangeTrigger extends Trigger<BuildableItem> {
 		    w.close();
 		}
                 oldMd5 = currentMd5;
-                job.scheduleBuild(new UrlChangeCause());
+                job.scheduleBuild(new UrlChangeCause(url));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
