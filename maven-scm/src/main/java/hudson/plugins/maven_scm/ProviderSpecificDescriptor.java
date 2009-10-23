@@ -21,10 +21,12 @@ public abstract class ProviderSpecificDescriptor extends AbstractMavenSCMDescrip
         return displayName;
     }
 
+    @Override
     public String getHelpFile() {
         return "/plugin/maven-scm/"+ provider +"/help.html";
     }
 
+    @Override
     public String getConfigPage() {
         return getViewPage(clazz, "config-"+provider+".jelly");
     }

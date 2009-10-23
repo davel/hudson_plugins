@@ -1,9 +1,11 @@
 package hudson.plugins.maven_scm.bazaar;
 
+import hudson.Extension;
 import hudson.plugins.maven_scm.ProviderSpecificDescriptor;
 import hudson.plugins.maven_scm.MavenSCM;
 import hudson.plugins.maven_scm.PluginImpl;
 import hudson.scm.SCM;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.apache.maven.scm.provider.bazaar.BazaarScmProvider;
 
@@ -11,7 +13,8 @@ import org.apache.maven.scm.provider.bazaar.BazaarScmProvider;
  * @author Kohsuke Kawaguchi
  */
 public class BazaarDescriptor extends ProviderSpecificDescriptor {
-    public static BazaarDescriptor INSTANCE = new BazaarDescriptor();
+    @Extension
+    public static final BazaarDescriptor INSTANCE = new BazaarDescriptor();
     
     private BazaarDescriptor() {
         super("Bazaar","bazaar");
@@ -23,7 +26,8 @@ public class BazaarDescriptor extends ProviderSpecificDescriptor {
         return scm.scmUrl.substring("scm:bazaar:".length());
     }
 
-    public SCM newInstance(StaplerRequest req) throws FormException {
+    @Override
+    public SCM newInstance(StaplerRequest req, JSONObject formData) throws FormException {
         return new MavenSCM("scm:bazaar:"+req.getParameter("mavenscm.bazaar.url"));
     }
 }

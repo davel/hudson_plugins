@@ -1,7 +1,9 @@
 package hudson.plugins.maven_scm;
 
+import hudson.Extension;
 import hudson.scm.SCMDescriptor;
 import hudson.scm.SCM;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -10,6 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Kohsuke Kawaguchi
  */
 public class GenericMavenSCMDescriptor extends AbstractMavenSCMDescriptor {
+    @Extension
     public static final GenericMavenSCMDescriptor INSTANCE = new GenericMavenSCMDescriptor();
 
     private GenericMavenSCMDescriptor() {
@@ -19,7 +22,8 @@ public class GenericMavenSCMDescriptor extends AbstractMavenSCMDescriptor {
         return "Other Maven SCM";
     }
 
-    public SCM newInstance(StaplerRequest req) throws FormException {
+    @Override
+    public SCM newInstance(StaplerRequest req, JSONObject formData) throws FormException {
         return new MavenSCM(req.getParameter("mavenscm.scmUrl"));
     }
 }

@@ -11,7 +11,6 @@ import hudson.remoting.VirtualChannel;
 import hudson.scm.ChangeLogParser;
 import hudson.scm.SCM;
 import hudson.scm.SCMDescriptor;
-import hudson.scm.SCMS;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -118,12 +117,13 @@ public class MavenSCM extends SCM {
     /**
      * Use the best descriptor depending on our URL.
      */
+    @Override
     public SCMDescriptor<?> getDescriptor() {
         String provider = getProvider();
         if(provider==null)
             return GenericMavenSCMDescriptor.INSTANCE;
 
-        for (SCMDescriptor<?> d : SCMS.SCMS) {
+        for (SCMDescriptor<?> d : SCM.all()) {
             if(d instanceof ProviderSpecificDescriptor
             && ((ProviderSpecificDescriptor)d).provider.equals(provider))
                 return d;
