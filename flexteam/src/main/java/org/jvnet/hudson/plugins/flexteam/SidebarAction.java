@@ -24,9 +24,11 @@
 
 package org.jvnet.hudson.plugins.flexteam;
 
-import hudson.model.Action;
+import hudson.Extension;
+import hudson.model.RootAction;
 
-public class SidebarAction implements Action {
+@Extension
+public class SidebarAction implements RootAction {
 
 	public static final String DISPLAY_NAME = "FlexTeam";
 	public String getDisplayName() {
