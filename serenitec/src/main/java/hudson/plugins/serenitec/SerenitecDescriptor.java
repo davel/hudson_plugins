@@ -8,19 +8,19 @@
  */
 package hudson.plugins.serenitec;
 
+import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-
 import net.sf.json.JSONObject;
 
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.plugins.serenitec.util.ThresholdValidator;
 
@@ -52,27 +52,18 @@ public class SerenitecDescriptor extends BuildStepDescriptor < Publisher >
     }
     /**
      * Check Patterns.
-     * @param request
-     * @param response
      * @throws java.io.IOException
-     * @throws javax.servlet.ServletException
      */
-    public final void doCheckPattern(final StaplerRequest request,
-            final StaplerResponse response) throws IOException, ServletException 
+    public final FormValidation doCheckPattern(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException
     {
-        new FormFieldValidator.WorkspaceFileMask(request, response).process();
+        return FilePath.validateFileMask(project.getSomeWorkspace(),value);
     }
     /**
      * Check Threshold
-     * @param request
-     * @param response
-     * @throws java.io.IOException
-     * @throws javax.servlet.ServletException
      */
-    public final void doCheckThreshold(final StaplerRequest request,
-            final StaplerResponse response) throws IOException, ServletException 
+    public final FormValidation doCheckThreshold(@QueryParameter String value)
     {
-        new ThresholdValidator(request, response).process();
+        return ThresholdValidator.check(value);
     }
     /** {@inheritDoc} */
     @Override

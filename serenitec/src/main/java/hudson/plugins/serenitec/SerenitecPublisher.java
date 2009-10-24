@@ -9,10 +9,10 @@
 package hudson.plugins.serenitec;
 
 
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.plugins.serenitec.parseur.Gettingxml;
 import hudson.plugins.serenitec.parseur.ReportEntry;
@@ -20,7 +20,6 @@ import hudson.plugins.serenitec.parseur.ReportFile;
 import hudson.plugins.serenitec.util.HealthAwarePublisher;
 import hudson.plugins.serenitec.util.HealthReportBuilder;
 import hudson.plugins.serenitec.util.Project;
-import hudson.tasks.Publisher;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,7 @@ public class SerenitecPublisher extends HealthAwarePublisher
     /*
      * Descriptor de notre plugin
      */
+    @Extension
     public static final SerenitecDescriptor SERENITEC_DESCRIPTOR = new SerenitecDescriptor();
 
     /**
@@ -67,14 +67,6 @@ public class SerenitecPublisher extends HealthAwarePublisher
     protected boolean canContinue(final Result result) {
 
         return result != Result.ABORTED;
-    }
-
-    /*
-     * @see hudson.model.Describable#getDescriptor()
-     */
-    public Descriptor<Publisher> getDescriptor() {
-
-        return SERENITEC_DESCRIPTOR;
     }
 
     @Override

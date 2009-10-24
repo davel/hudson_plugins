@@ -8,13 +8,13 @@
  */
 package hudson.plugins.serenitec.util;
 
-import hudson.AbortException;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStep;
-import hudson.tasks.Publisher;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Recorder;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author Ulli Hafner
  */
-public abstract class HealthAwarePublisher extends Publisher
+public abstract class HealthAwarePublisher extends Recorder
 {
 
     /** Annotation threshold to be reached if a build should be considered as unstable. */
@@ -318,6 +318,10 @@ public abstract class HealthAwarePublisher extends Publisher
             }
         }
         return true;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.STEP;
     }
 
     /**

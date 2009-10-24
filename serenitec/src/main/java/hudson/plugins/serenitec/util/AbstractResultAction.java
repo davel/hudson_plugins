@@ -332,7 +332,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
     public final void doGraph(final StaplerRequest request, final StaplerResponse response, final int height) throws IOException {
 
         System.out.println("---doGraph------");
-        if (ChartUtil.awtProblem) {
+        if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
@@ -355,7 +355,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
             throws IOException {
 
         System.out.println("---doGraph------");
-        if (ChartUtil.awtProblem) {
+        if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
@@ -383,7 +383,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
             final int n2, final String titre) throws IOException {
 
         System.out.println("---doGraph------");
-        if (ChartUtil.awtProblem) {
+        if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }
@@ -402,7 +402,7 @@ public abstract class AbstractResultAction<T extends EntriesProvider> implements
     public void doDetailsGraph(StaplerRequest request, StaplerResponse response, String param) throws IOException {
 
         System.out.println("---doRepositoryGraph------");
-        if (ChartUtil.awtProblem) {
+        if (ChartUtil.awtProblemCause != null) {
             response.sendRedirect2(request.getContextPath() + "/images/headless.png");
             return;
         }

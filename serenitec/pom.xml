@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jvnet.hudson.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.226</version>
+        <version>1.319</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -55,11 +55,6 @@
             <version>2.2.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jvnet.localizer</groupId>
-            <artifactId>localizer</artifactId>
-            <version>1.5</version>
-        </dependency>
     </dependencies>
     
     <distributionManagement>
@@ -75,11 +70,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.kohsuke.stapler</groupId>
-                <artifactId>maven-stapler-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-            <plugin>
                 <groupId>org.jvnet.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
                 <configuration>
@@ -89,19 +79,6 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>java.net2</id>
-            <url>http://download.java.net/maven/2/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <reporting>
         <plugins>
             <plugin>

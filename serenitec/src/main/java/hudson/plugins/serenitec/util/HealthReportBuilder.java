@@ -17,6 +17,7 @@ import java.util.List;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.data.category.CategoryDataset;
+import org.jvnet.localizer.Localizable;
 
 /**
  * Creates a health report for integer values based on healthy and unhealthy thresholds.
@@ -119,21 +120,24 @@ public class HealthReportBuilder implements Serializable
             {
                 percentage = 100 - (counter - healthy) * 100 / (unHealthy - healthy);
             }
-            String description;
+            Localizable description;
             if (isLocalizedRelease())
             {
                 if (counter == 1)
                 {
-                    description = reportSingleCount;
+                    description = Messages._HealthReportBuilder_HealthString(
+                            reportSingleCount);
                 }
                 else
                 {
-                    description = String.format(reportMultipleCount, counter);
+                    description = Messages._HealthReportBuilder_HealthString(
+                            String.format(reportMultipleCount, counter));
                 }
             }
             else
             {
-                description = reportName + ": " + Util.combine(counter, itemName) + " found.";
+                description = Messages._HealthReportBuilder_HealthDescription(
+                        reportName, counter + " " + itemName);
             }
             return new HealthReport(percentage, description);
         }
