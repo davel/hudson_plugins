@@ -6,7 +6,6 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import hudson.model.User;
 import hudson.model.UserProperty;
-import hudson.model.UserPropertyDescriptor;
 
 /**
  * 
@@ -30,10 +29,6 @@ public class UserScoreProperty extends UserProperty {
     public UserScoreProperty(double score, boolean participatingInGame) {
         this.score = score;
         this.isNotParticipatingInGame = !participatingInGame;
-    }
-
-    public UserPropertyDescriptor getDescriptor() {
-        return PluginImpl.USER_SCORE_PROPERTY_DESCRIPTOR;
     }
 
     @Exported

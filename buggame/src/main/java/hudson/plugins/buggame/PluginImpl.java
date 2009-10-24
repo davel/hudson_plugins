@@ -2,22 +2,15 @@ package hudson.plugins.buggame;
 
 import hudson.Extension;
 import hudson.Plugin;
-import hudson.model.Hudson;
-import hudson.model.Jobs;
 
 /**
- * Entry point of the CI Game plugin.
+ * Entry point of the Bug Game plugin.
  */
 @Extension
 public class PluginImpl extends Plugin {
 
-    public static final UserScorePropertyDescriptor USER_SCORE_PROPERTY_DESCRIPTOR = new UserScorePropertyDescriptor();
-
     @Override
     public void start() throws Exception {
-        //Publisher.PUBLISHERS.addNotifier(GAME_PUBLISHER_DESCRIPTOR);
-        //UserProperties.LIST.add(USER_SCORE_PROPERTY_DESCRIPTOR);
-        Hudson.getInstance().getActions().add(new LeaderBoardAction());
         /*
          * List<UserInfo> users = Hudson.getInstance().getPeople().users;
          * System.out.println("USERS = " + users.size()); for (UserInfo userInfo :

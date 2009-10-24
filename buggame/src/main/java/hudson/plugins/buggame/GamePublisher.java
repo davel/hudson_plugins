@@ -21,7 +21,8 @@ import hudson.tasks.Recorder;
 
 public class GamePublisher extends Recorder {
 
-	public GameDescriptor getDescriptor() {
+    @Override
+    public GameDescriptor getDescriptor() {
         return (GameDescriptor)super.getDescriptor();
     }
 
