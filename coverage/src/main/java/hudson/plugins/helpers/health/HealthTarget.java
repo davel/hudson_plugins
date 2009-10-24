@@ -59,7 +59,7 @@ public abstract class HealthTarget<M extends HealthMetric<OBSERVABLE>, OBSERVABL
         float unhealthy = this.unhealthy == null ? metric.getWorst() : this.unhealthy;
         return new HealthReport(
                 Math.max(0, Math.min(100, (int) ((result - unhealthy) / (healthy - unhealthy) * 100))),
-                descriptionPrefix + metric.getName() + " (" + result + ")");
+                Messages._HealthTarget_Description(descriptionPrefix, metric.getName(), result));
     }
 
     public Result evaluateStability(OBSERVABLE observable) {

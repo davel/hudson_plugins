@@ -4,7 +4,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
@@ -16,8 +15,6 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Map;
 import java.awt.*;
 
 import hudson.util.*;
@@ -41,7 +38,7 @@ public class GraphHelper {
      * @return Value for property 'graphUnsupported'.
      */
     public static boolean isGraphUnsupported() {
-        return ChartUtil.awtProblem;
+        return ChartUtil.awtProblemCause != null;
     }
 
     public static void redirectWhenGraphUnsupported(StaplerResponse rsp, StaplerRequest req) throws IOException {

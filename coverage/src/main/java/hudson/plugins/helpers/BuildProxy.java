@@ -3,7 +3,6 @@ package hudson.plugins.helpers;
 import hudson.FilePath;
 import hudson.maven.MavenBuildProxy;
 import hudson.util.IOException2;
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -62,7 +61,7 @@ public final class BuildProxy implements Serializable {
                     new FilePath(build.getArtifactsDir()),
                     new FilePath(build.getProject().getRootDir()),
                     new FilePath(build.getRootDir()),
-                    build.getProject().getModuleRoot(),
+                    build.getModuleRoot(),
                     build.getTimestamp());
 
             BuildProxyCallableHelper callableHelper = new BuildProxyCallableHelper(buildProxy, ghostwriter, listener);
@@ -86,7 +85,7 @@ public final class BuildProxy implements Serializable {
         final Ghostwriter.MasterGhostwriter masterGhostwriter = Ghostwriter.MasterGhostwriter.class.cast(ghostwriter);
 
         return masterGhostwriter == null
-                || masterGhostwriter.performFromMaster(build, build.getProject().getModuleRoot(), listener);
+                || masterGhostwriter.performFromMaster(build, build.getModuleRoot(), listener);
     }
 
     /**

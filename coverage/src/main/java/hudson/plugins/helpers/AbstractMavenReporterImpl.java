@@ -30,6 +30,7 @@ public abstract class AbstractMavenReporterImpl extends MavenReporter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean postExecute(MavenBuildProxy build,
                                MavenProject pom,
                                MojoInfo mojo,
@@ -72,6 +73,7 @@ public abstract class AbstractMavenReporterImpl extends MavenReporter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean preExecute(MavenBuildProxy build,
                               MavenProject pom,
                               MojoInfo mojo,

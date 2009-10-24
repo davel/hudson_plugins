@@ -3,6 +3,7 @@ package hudson.plugins.coverage;
 import java.io.File;
 import java.util.Set;
 
+import hudson.Extension;
 import hudson.maven.MavenBuild;
 import hudson.maven.MavenModule;
 import hudson.maven.MavenReporter;
@@ -101,6 +102,7 @@ public class CoverageMavenPublisher extends AbstractMavenReporterImpl {
         return path.replace(File.separatorChar == '/' ? '\\' : '/', File.separatorChar);
     }
 
+    @Override
     public Action getProjectAction(MavenModule module) {
         for (MavenBuild build : module.getBuilds()) {
             if (build.getAction(CoverageBuildIndividualReport.class) != null) {
@@ -110,21 +112,13 @@ public class CoverageMavenPublisher extends AbstractMavenReporterImpl {
         return null;
     }
 
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-    /**
-     * {@inheritDoc}
-     */
-    public MavenReporterDescriptor getDescriptor() {
-        return DESCRIPTOR;
-    }
-
+    @Extension
     public static final class DescriptorImpl extends MavenReporterDescriptor {
 
         /**
          * Do not instantiate DescriptorImpl.
          */
-        private DescriptorImpl() {
+        public DescriptorImpl() {
             super(CoverageMavenPublisher.class);
         }
 
@@ -135,6 +129,7 @@ public class CoverageMavenPublisher extends AbstractMavenReporterImpl {
             return "Publish " + PluginImpl.DISPLAY_NAME;
         }
 
+        @Override
         public MavenReporter newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             ConvertUtils.register(CoverageHealthMetrics.CONVERTER, CoverageHealthMetrics.class);
             return req.bindJSON(CoverageMavenPublisher.class, formData);

@@ -1,5 +1,6 @@
 package hudson.plugins.coverage;
 
+import hudson.Extension;
 import java.util.Set;
 
 import hudson.maven.MavenModule;
@@ -10,7 +11,6 @@ import hudson.plugins.helpers.AbstractPublisherImpl;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.tasks.Publisher;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 
 /**
@@ -32,19 +32,6 @@ public class CoveragePublisher extends AbstractPublisherImpl {
         return targets;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Descriptor<Publisher> getDescriptor() {
-        // see Descriptor javadoc for more about what a descriptor is.
-        return DESCRIPTOR;
-    }
-
-    /**
-     * Descriptor should be singleton.
-     */
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
     protected Ghostwriter newGhostwriter() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
@@ -52,6 +39,7 @@ public class CoveragePublisher extends AbstractPublisherImpl {
     /**
      * Descriptor for {@link CoveragePublisher}.
      */
+    @Extension
     public static final class DescriptorImpl extends Descriptor<Publisher> {
 
         /**
