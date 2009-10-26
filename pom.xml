@@ -250,7 +250,7 @@
     <module>jira</module>
     <module>jmeter</module>
     <module>jmx</module>
-    <module>jmx-invoker</module>
+    <!-- module>jmx-invoker</module  maven-license-plugin causing h.g.o build failure -->
     <module>join</module>
     <module>jprt</module>
     <module>jsunit</module>
