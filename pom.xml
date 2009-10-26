@@ -301,7 +301,7 @@
     <module>seleniumhq</module>
     <module>setenv</module>
     <module>sidebar-link</module>
-    <module>skype</module>
+    <!-- module>skype</module  h.g.o confuses file:libs repo so commenting this -->
     <module>sloccount</module>
     <module>sonar</module>
     <module>sourcemonitor</module>
