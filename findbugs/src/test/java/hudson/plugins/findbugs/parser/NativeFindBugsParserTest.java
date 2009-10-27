@@ -156,7 +156,7 @@ public class NativeFindBugsParserTest extends AbstractEnglishLocaleTest {
         assertEquals(WRONG_NUMBER_OF_WARNINGS_PARSED, 1, module.getNumberOfAnnotations());
 
         FileAnnotation next = module.getAnnotations().iterator().next();
-        assertEquals("Warning has no message.", "Redundant nullcheck of value known to be non-null", next.getMessage());
+        assertEquals("Warning has no message.", "RCN: Redundant nullcheck of previous, which is known to be non-null in hudson.plugins.warnings.WarningsResultBuilder.build(AbstractBuild, JavaProject)", next.getMessage());
     }
 
     /**
