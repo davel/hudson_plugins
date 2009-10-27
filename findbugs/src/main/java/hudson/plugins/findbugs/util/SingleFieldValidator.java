@@ -1,6 +1,6 @@
 package hudson.plugins.findbugs.util;
 
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 
 import java.io.IOException;
 
@@ -28,22 +28,22 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Ulli Hafner
  */
-public abstract class SingleFieldValidator extends FormFieldValidator {
+public abstract class SingleFieldValidator {
+    private final String value;
+
     /**
-     * Creates a new instance of <code>FormValidator</code>.
+     * Creates a new instance of <code>SingleFieldValidator</code>.
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
      */
     public SingleFieldValidator(final StaplerRequest request, final StaplerResponse response) {
-        super(request, response, false);
+        value = request.getParameter("value");
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final void check() throws IOException, ServletException {
-        check(request.getParameter("value"));
+    public final FormValidation check() throws IOException, ServletException {
+        return check(value);
     }
 
     /**
@@ -56,6 +56,6 @@ public abstract class SingleFieldValidator extends FormFieldValidator {
      * @throws ServletException
      *             the servlet exception
      */
-    public abstract void check(final String value) throws IOException, ServletException;
+    public abstract FormValidation check(final String value) throws IOException, ServletException;
 }
 

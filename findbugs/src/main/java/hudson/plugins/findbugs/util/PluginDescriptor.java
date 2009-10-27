@@ -78,8 +78,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param response
      *            Stapler response
      */
-    public final void doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new EncodingValidator(request, response).process();
+    public final FormValidation doCheckDefaultEncoding(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        return new EncodingValidator(request, response).check();
     }
 
     /**
@@ -102,8 +102,8 @@ public abstract class PluginDescriptor extends BuildStepDescriptor<Publisher> {
      * @param response
      *            Stapler response
      */
-    public final void doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
-        new ThresholdValidator(request, response).process();
+    public final FormValidation doCheckThreshold(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+        return new ThresholdValidator(request, response).check();
     }
 
     /**

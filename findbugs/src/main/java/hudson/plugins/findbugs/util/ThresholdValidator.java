@@ -1,5 +1,7 @@
 package hudson.plugins.findbugs.util;
 
+import hudson.util.FormValidation;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -29,22 +31,20 @@ public class ThresholdValidator extends SingleFieldValidator {
 
     /** {@inheritDoc} */
     @Override
-    public void check(final String value) throws IOException, ServletException {
+    public FormValidation check(final String value) throws IOException, ServletException {
         if (!StringUtils.isEmpty(value)) {
             try {
                 int integer = Integer.valueOf(value);
                 if (integer < 0) {
-                    error(Messages.FieldValidator_Error_Threshold());
-                    return;
+                    return FormValidation.error(Messages.FieldValidator_Error_Threshold());
                 }
             }
             catch (NumberFormatException exception) {
-                error(Messages.FieldValidator_Error_Threshold());
-                return;
+                return FormValidation.error(Messages.FieldValidator_Error_Threshold());
             }
         }
 
-        ok();
+        return FormValidation.ok();
     }
 
 

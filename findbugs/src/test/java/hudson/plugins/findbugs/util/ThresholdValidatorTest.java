@@ -2,10 +2,6 @@ package hudson.plugins.findbugs.util;
 
 import static junit.framework.Assert.*;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.junit.Test;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -80,13 +76,6 @@ public class ThresholdValidatorTest extends AbstractValidatorTest {
     /** {@inheritDoc} */
     @Override
     protected SingleFieldValidator createValidator(final StaplerRequest request, final StaplerResponse response) {
-        return new ThresholdValidator(request, response) {
-            /** {@inheritDoc} */
-            @Override
-            public void error(final String message) throws IOException, ServletException {
-                setError();
-            }
-        };
+        return new ThresholdValidator(request, response);
     }
 }
-
