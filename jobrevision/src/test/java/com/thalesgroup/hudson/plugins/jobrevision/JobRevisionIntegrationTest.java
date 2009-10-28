@@ -41,11 +41,12 @@ public class JobRevisionIntegrationTest extends HudsonTestCase {
     public void testEnv() throws Exception {
 
         FreeStyleProject project = createFreeStyleProject();
-        project.addProperty(new JobRevision("3.5"));
+        String confRevision = "3.5";
+        project.addProperty(new JobRevision(confRevision));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         EnvVars envVars = build.getEnvironment(new LogTaskListener(LOGGER, Level.INFO));
         assertBuildStatus(Result.SUCCESS, build);
-        assertEquals("3.5", envVars.get("job.revision"));
+        assertEquals(confRevision, envVars.get(JobRevisionEnvironmentAction.VAR_JOB_REVISION_NAME));
     }
 
 }

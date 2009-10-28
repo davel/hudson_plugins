@@ -23,21 +23,23 @@
 
 package com.thalesgroup.hudson.plugins.jobrevision;
 
-import hudson.model.EnvironmentContributingAction;
-import hudson.model.AbstractBuild;
 import hudson.EnvVars;
+import hudson.model.AbstractBuild;
+import hudson.model.EnvironmentContributingAction;
 
 
 public class JobRevisionEnvironmentAction implements EnvironmentContributingAction {
 
+    public static String VAR_JOB_REVISION_NAME = "JOB_REVISION";
+
     private String revision;
 
-    public JobRevisionEnvironmentAction(String revision){
-        this.revision=revision;
+    public JobRevisionEnvironmentAction(String revision) {
+        this.revision = revision;
     }
 
     public void buildEnvVars(AbstractBuild<?, ?> build, EnvVars env) {
-        env.put("job.revision", revision);
+        env.put(VAR_JOB_REVISION_NAME, revision);
     }
 
     public String getDisplayName() {
@@ -45,10 +47,10 @@ public class JobRevisionEnvironmentAction implements EnvironmentContributingActi
     }
 
     public String getIconFileName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public String getUrlName() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

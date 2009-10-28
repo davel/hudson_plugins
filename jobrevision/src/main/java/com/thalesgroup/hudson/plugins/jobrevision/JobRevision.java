@@ -25,8 +25,8 @@ package com.thalesgroup.hudson.plugins.jobrevision;
 
 import hudson.Extension;
 import hudson.model.*;
-import org.kohsuke.stapler.export.ExportedBean;
 import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
 
 
 @ExportedBean
@@ -61,7 +61,7 @@ public class JobRevision extends JobProperty<AbstractProject<?, ?>> {
 
         public JobRevision newInstance(org.kohsuke.stapler.StaplerRequest req, net.sf.json.JSONObject jsonObject) throws Descriptor.FormException {
             String revision = jsonObject.getString("revision");
-            if ((revision != null) && (revision.trim().length()!=0))
+            if ((revision != null) && (revision.trim().length() != 0))
                 return new JobRevision(revision);
             else
                 return null;
