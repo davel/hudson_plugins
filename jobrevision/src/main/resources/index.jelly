@@ -23,6 +23,6 @@
 *******************************************************************************/
 -->
 <div>
-  This plugin allows you upload using file  protocol the archived artifacts into a shared directory.
-  Only the artifacts of the latest build will be keept. 
+  This plugin allows you to set a revision for the Hudson job.
+  The job revision is available by the JOB_REVISION environment variable.
 </div>
