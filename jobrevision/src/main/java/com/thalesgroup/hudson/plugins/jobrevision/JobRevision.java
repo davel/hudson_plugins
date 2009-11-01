@@ -56,7 +56,7 @@ public class JobRevision extends JobProperty<AbstractProject<?, ?>> {
         }
 
         public String getDisplayName() {
-            return "Revision";
+            return Messages.plugin_DisplayName();
         }
 
         public JobRevision newInstance(org.kohsuke.stapler.StaplerRequest req, net.sf.json.JSONObject jsonObject) throws Descriptor.FormException {
