@@ -23,7 +23,7 @@ public class IrcNotifier {
 
     private static final Logger LOGGER = Logger.getLogger(IrcNotifier.class.getName());
     
-    static final void perform(AbstractBuild build, List<String> channels) {
+    static final void perform(AbstractBuild<?, ?> build, List<String> channels) {
         if (build.getPreviousBuild() != null) {
             // only broadcast change of status
             if(build.getResult() != null && build.getPreviousBuild().getResult() != null){
@@ -42,7 +42,7 @@ public class IrcNotifier {
         }
     }
 
-    private static final void publish(AbstractBuild build, List<String> channels) {
+    private static final void publish(AbstractBuild<?, ?> build, List<String> channels) {
         if (build.getResult() == Result.SUCCESS) {
             reportSuccess(build, channels);
         } else if (build.getResult() == Result.FAILURE) {
@@ -52,7 +52,7 @@ public class IrcNotifier {
         }
     }
 
-    private static void reportFailure(AbstractBuild build, List<String> channels) {
+    private static void reportFailure(AbstractBuild<?, ?> build, List<String> channels) {
         String status = "failed";
         String suspects = calculateSuspectsString(build.getChangeSet());
         IrcPublisher.DESCRIPTOR.bot.sendNotice(channels, build
@@ -64,7 +64,7 @@ public class IrcNotifier {
                 + build.getUrl() + "console)" + (suspects == null ? "" : suspects));
     }
 
-    private static void reportSuccess(AbstractBuild build, List<String> channels) {
+    private static void reportSuccess(AbstractBuild<?, ?> build, List<String> channels) {
         String status = "fixed";
         IrcPublisher.DESCRIPTOR.bot.sendNotice(channels, build
                 .getProject().getName()
@@ -75,7 +75,7 @@ public class IrcNotifier {
                 + build.getUrl() + ")");
     }
 
-    private static void reportUnstability(AbstractBuild build, List<String> channels) {
+    private static void reportUnstability(AbstractBuild<?, ?> build, List<String> channels) {
         String status = "unstable";
         String suspects = calculateSuspectsString(build.getChangeSet());
         IrcPublisher.DESCRIPTOR.bot.sendNotice(channels, build

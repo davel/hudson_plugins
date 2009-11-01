@@ -8,7 +8,6 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
@@ -256,6 +255,7 @@ public class IrcPublisher extends Notifier {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
