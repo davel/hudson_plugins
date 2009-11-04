@@ -1,14 +1,19 @@
 package hudson.plugins.buggame.model;
 
+import java.util.Collection;
+import java.util.NoSuchElementException;
+
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.plugins.buggame.ChallengeProperty;
+import hudson.plugins.buggame.ScoreCardAction;
 import hudson.plugins.buggame.ChallengeProperty.Challenge;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 
 /**
  * An interface to the goal of a challenge.
@@ -27,8 +32,8 @@ public abstract class Goal {
 		this.challenge = Preconditions.checkNotNull(challenge);
 		this.startValue = startValue;
 		this.endValue = endValue;
-		this.startDate = new DateTime(challenge.getStartDate());
-		this.endDate = new DateTime(challenge.getEndDate());
+		this.startDate = challenge.getStartDate();
+		this.endDate = challenge.getEndDate();
 	}
 
 	
@@ -46,8 +51,9 @@ public abstract class Goal {
 	 * 
 	 * @return percentage progress towards the goal
 	 */
-	public double getPercentageProgress() {
-		return (getCurrentScore() / getEndValue()) * 100;
+	public long getPercentageProgress() {
+		long roundedPercentage = Math.round(((getCurrentScore() - getStartValue()) / (getEndValue() - getStartValue())) * 100);
+		return roundedPercentage;
 	}
 	
 	/**
@@ -80,6 +86,12 @@ public abstract class Goal {
 		AbstractBuild<?, ?> build = challenge.getProject().getLastCompletedBuild();
 		AbstractBuild<?, ?> lastBuild = null;
 		
+		/**Add one onto the day, as when people put in time limits, they usually
+		* mean it inclusively: if my goal ends on the 24th, that means all
+		* submissions on the 24th should be included too.
+		*/ 
+		compareDate = compareDate.plusDays(1);
+		
 		while (build != null) {
 			assert (build.getTimestamp().compareTo(build.getPreviousBuild().getTimestamp()) >= 0);
     		DateTime buildTime = new DateTime(build.getTimestamp());
@@ -90,8 +102,60 @@ public abstract class Goal {
     	
 		// We broke when we went over the boundary, so roll back one
 		if (getNewerThanBoundary) { build = lastBuild; }
-		
+				
+		System.err.println("Returning build dated " + build.getTimestampString());
+
     	return build;
+	}
+	
+	protected double getGeneralScore(String goalName, boolean startScoreZero) {
+		AbstractBuild<?, ?> startBuild = getStartBuild();
+		AbstractBuild<?, ?> endBuild = getEndBuild();
+		AbstractBuild<?, ?> build = startBuild;
+		double totalScore = (startScoreZero) ? 0 : getStartValue();
+				
+		while (build != null && build.getActions(ScoreCardAction.class) != null) {
+			ScoreCardAction scoreCardAction;
+			
+			try {
+				scoreCardAction = Iterables.getOnlyElement(build.getActions(ScoreCardAction.class));
+			} catch (NoSuchElementException e) {
+				if (build.equals(endBuild)) { break; }
+				
+				build = build.getNextBuild();
+				
+				continue;
+			}
+			
+			totalScore = totalScore + getBuildScore(build, goalName);
+			
+			// Only break after we've iterated one last time to get this build
+			if (build.equals(endBuild)) { break; }
+			
+			build = build.getNextBuild();
+		}
+				
+		return totalScore;
+	}
+	
+	protected double getBuildScore(AbstractBuild<?,?> build, String goalName) {
+		double returnScore = 0;
+		
+		ScoreCardAction scoreCardAction = Iterables.getOnlyElement(build.getActions(ScoreCardAction.class));
+		ScoreCard scoreCard = scoreCardAction.getScorecard();
+		
+		Collection<Score> scores = scoreCard.getScores();
+		
+		for (Score score : scores) {
+			System.err.println("Checking score for build dated " + build.getTimestampString());
+			System.err.println("Score rule is " + score.getRuleName());
+			if (score.getRuleName().matches(goalName)) {
+				System.err.println("Adding " + score.getValue() + " to total");
+				returnScore = returnScore + score.getValue();
+			}
+		}
+		
+		return returnScore;
 	}
 	
 	@Override

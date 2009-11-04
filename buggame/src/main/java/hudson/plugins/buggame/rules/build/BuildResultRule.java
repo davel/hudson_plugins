@@ -25,6 +25,10 @@ public class BuildResultRule implements Rule {
     public String getName() {
         return "Build result";
     }
+    
+    public String getRuleName() {
+    	return "Build Rule";
+    }
 
     public RuleResult evaluate(AbstractBuild<?, ?> build) {
         Result result = build.getResult();

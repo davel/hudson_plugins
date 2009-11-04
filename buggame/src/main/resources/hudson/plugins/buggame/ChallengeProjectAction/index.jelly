@@ -18,14 +18,31 @@
     <l:main-panel>
         <h1>${it.displayName}</h1>
         
-        <h2>Challenges</h2>
-          <j:forEach var="c" items="${it.challenges}">
+        <h2>Current Challenges</h2>
+          <j:forEach var="c" items="${it.currentChallenges}">
             <h3>Challenge ${c.name} for ${c.reward}</h3>
             
             <j:set var="goal" value="${c.goal}" />
             Goal is to get from ${goal.startValue} to ${goal.endValue}
             
-            <h3 style="float:right">${goal.percentageProgress}% complete</h3>
+            <h3 style="float:right">Score: ${goal.currentScore} / ${goal.percentageProgress}% complete</h3>
+        
+            <script type="text/javascript">
+                var html = progressbar(${goal.percentageProgress});
+                document.write(html);
+            </script>
+          </j:forEach>
+          
+          <hr />
+          
+        <h2>Expired Challenges</h2>
+          <j:forEach var="c" items="${it.expiredChallenges}">
+            <h3>Challenge ${c.name} for ${c.reward}</h3>
+            
+            <j:set var="goal" value="${c.goal}" />
+            Goal is to get from ${goal.startValue} to ${goal.endValue}
+            
+            <h3 style="float:right">Score: ${goal.currentScore} / ${goal.percentageProgress}% complete</h3>
         
             <script type="text/javascript">
                 var html = progressbar(${goal.percentageProgress});

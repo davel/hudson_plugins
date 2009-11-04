@@ -25,6 +25,8 @@ import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.plugins.buggame.goals.BuildGoal;
+import hudson.plugins.buggame.goals.FindBugsGoal;
+import hudson.plugins.buggame.goals.OpenTasksGoal;
 import hudson.plugins.buggame.model.Goal;
 
 public final class ChallengeProperty extends
@@ -48,6 +50,38 @@ JobProperty<AbstractProject<?, ?>> {
 		}
 		
 		return challenges;
+	}
+	
+	public List<Challenge> getCurrentChallenges() {
+		return getCurrentOrExpiredChallenges(true);
+	}
+	
+	public List<Challenge> getExpiredChallenges() {
+		return getCurrentOrExpiredChallenges(false);
+	}
+	
+	public List<Challenge> getCurrentOrExpiredChallenges(boolean current) {
+		List<Challenge> currentChallenges = new ArrayList<Challenge>();
+		List<Challenge> expiredChallenges = new ArrayList<Challenge>();
+		List<Challenge> challenges = getChallenges();
+		DateTime now = new DateTime();
+		
+		for (Challenge c: challenges) {
+			if (c.getEndDate().compareTo(now) < 0) {
+				expiredChallenges.add(c);
+			} else {
+				currentChallenges.add(c);
+			}
+		}
+		
+		System.err.println("Current challenges: " + currentChallenges);
+		System.err.println("Expired challenges: " + expiredChallenges);
+		
+		if (current) {
+			return currentChallenges;
+		} else {
+			return expiredChallenges;
+		}
 	}
 
 
@@ -73,6 +107,8 @@ JobProperty<AbstractProject<?, ?>> {
 		public JobProperty<?> newInstance(StaplerRequest req,
 				JSONObject formData) throws FormException {
 			if (req == null || formData == null) { return null; }
+			
+			System.err.println("Req: " + req + "\n JSON: " + formData);
 			
 			ChallengeProperty tpp = req.bindJSON(
 					ChallengeProperty.class, formData);
@@ -114,6 +150,12 @@ JobProperty<AbstractProject<?, ?>> {
 			if (goalType.equals("buildGoal")) {
 				this.goal = new BuildGoal(this, goalEndValue);
 			}
+			else if (goalType.equals("findBugsGoal")) {
+				this.goal = new FindBugsGoal(this, goalStartValue, goalEndValue);
+			}
+			else if (goalType.equals("tasksGoal")) {
+				this.goal = new OpenTasksGoal(this, goalStartValue, goalEndValue);
+			}
 			else {
 				throw new IllegalArgumentException("Goal unrecognized");
 			}
@@ -127,12 +169,20 @@ JobProperty<AbstractProject<?, ?>> {
 			return name;
 		}
 		
-		public String getStartDate() {
+		public String getStartDateString() {
 			return bigEndianDateParser.print(startDate);
 		}
 
-		public String getEndDate() {
+		public String getEndDateString() {
 			return bigEndianDateParser.print(endDate);
+		}
+		
+		public DateTime getStartDate() {
+			return startDate;
+		}
+		
+		public DateTime getEndDate() {
+			return endDate;
 		}
 		
 		public int getDaysLeft() {

@@ -42,4 +42,16 @@ public class ChallengeProjectAction implements Action {
 
 		return cp.getChallenges();
 	}
+	
+	public List<Challenge> getCurrentChallenges() {
+		ChallengeProperty cp = this.project.getProperty(ChallengeProperty.class);
+
+		return cp.getCurrentChallenges();
+	}
+	
+	public List<Challenge> getExpiredChallenges() {
+		ChallengeProperty cp = this.project.getProperty(ChallengeProperty.class);
+
+		return cp.getExpiredChallenges();
+	}
 }

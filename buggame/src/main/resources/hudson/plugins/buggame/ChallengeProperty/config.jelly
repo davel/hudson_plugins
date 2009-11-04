@@ -6,10 +6,10 @@
           <f:textbox value="${c.name}" />
         </f:entry>
         <f:entry title="Start Date" field="startDate">
-          <f:textbox value="${c.startDate}" />
+          <f:textbox value="${c.startDateString}" />
         </f:entry>
         <f:entry title="End Date" field="endDate">
-          <f:textbox value="${c.endDate}" />
+          <f:textbox value="${c.endDateString}" />
         </f:entry>
                 <f:entry title="Reward" field="reward">
           <f:textbox value="${c.reward}" />
@@ -20,10 +20,13 @@
         <f:entry title="Build Goal End Value" field="goalEndValue">
             <f:textbox value="${c.goal.endValue}" />
         </f:entry>
-        <f:dropdownList name="goalType" title="Choose Goal Type" field="goalType">        
-            <f:dropdownListBlock value="buildGoal" title="Build Goal" />
-            <f:dropdownListBlock value="findbugsGoal" title="FindBugs Goal" />
-        </f:dropdownList> 
+        <f:entry name="goalType" title="Choose Goal Type" field="goalType">
+            <select name="goalType">
+                <option value="buildGoal">Build goal</option>
+                <option value="findBugsGoal">FindBugs goal</option>
+                <option value="tasksGoal">Open tasks goal</option>
+            </select>     
+        </f:entry> 
         <f:entry>
           <div align="right">
             <input type="button" value="${%Delete}" class="repeatable-delete show-if-not-only" style="margin-left: 1em;" />
