@@ -195,7 +195,7 @@ public class MercurialSCM extends SCM implements Serializable {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             // Get the list of changed files.
             ArgumentListBuilder cmd = new ArgumentListBuilder();
-            cmd.add(findHgExe(listener), "incoming", "--style" , tmpFile.getRemote());
+            cmd.add(findHgExe(listener), "fincoming", "--style" , tmpFile.getRemote());
             cmd.add("-r", getBranch());
             joinWithTimeout(
                     launcher.launch().cmds(cmd).stdout(new ForkOutputStream(baos, output)).pwd(workspace).start(),
@@ -321,7 +321,7 @@ public class MercurialSCM extends SCM implements Serializable {
      */
     private boolean update(AbstractBuild<?,?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws InterruptedException, IOException {
         if(clean) {
-            if (launcher.launch().cmds(findHgExe(listener), "update", "-C", ".")
+            if (launcher.launch().cmds(findHgExe(listener), "fupdate", "-C", ".")
                 .envs(build.getEnvironment(listener)).stdout(listener)
                 .pwd(workspace).join() != 0) {
                 listener.error("Failed to clobber local modifications");
@@ -346,7 +346,7 @@ public class MercurialSCM extends SCM implements Serializable {
         int r;
         try {
             ArgumentListBuilder args = new ArgumentListBuilder();
-            args.add(findHgExe(listener),"incoming","--quiet","--bundle","hg.bundle");
+            args.add(findHgExe(listener),"fincoming","--quiet","--bundle","hg.bundle");
 
             String template;
 
@@ -393,13 +393,13 @@ public class MercurialSCM extends SCM implements Serializable {
             // in 0.9.4 apparently it returns 0.
             try {
                 if(launcher.launch()
-                    .cmds(findHgExe(listener),"pull","hg.bundle")
+                    .cmds(findHgExe(listener),"fpull","hg.bundle")
                     .envs(build.getEnvironment(listener)).stdout(listener).pwd(workspace).join()!=0) {
                     listener.error("Failed to pull");
                     return false;
                 }
                 if(launcher.launch()
-                    .cmds(findHgExe(listener),"up","-C", "-r", getBranch())
+                    .cmds(findHgExe(listener),"fup","-C", "-r", getBranch())
                     .envs(build.getEnvironment(listener)).stdout(listener).pwd(workspace).join()!=0) {
                     listener.error("Failed to update");
                     return false;
@@ -470,7 +470,7 @@ public class MercurialSCM extends SCM implements Serializable {
         }
 
         ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add(findHgExe(listener),"clone");
+        args.add(findHgExe(listener),"fclone");
         args.add("-r", getBranch());
         args.add(source,workspace.getRemote());
         try {

@@ -6,7 +6,7 @@
     <version>1.331</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <artifactId>mercurial</artifactId>
+  <artifactId>mercurial-forest</artifactId>
   <version>1.24-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson Mercurial plugin</name>
