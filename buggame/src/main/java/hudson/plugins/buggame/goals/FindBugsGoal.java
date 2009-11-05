@@ -21,5 +21,8 @@ public class FindBugsGoal extends Goal {
 		return "FindBugs goal";
 	}
 	
-	
+	@Override
+    public boolean isClass(String className) {
+    	return (className.equals("findBugsGoal")) ? true : false;
+    }
 }

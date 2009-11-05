@@ -33,5 +33,8 @@ public class OpenTasksGoal extends Goal {
 		return "Open Tasks goal";
 	}
 	
-	
+	@Override
+    public boolean isClass(String className) {
+    	return (className.equals("tasksGoal")) ? true : false;
+    }
 }

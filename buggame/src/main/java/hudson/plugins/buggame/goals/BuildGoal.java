@@ -29,4 +29,9 @@ public class BuildGoal extends Goal {
 	public double getCurrentScore() {
 		return getGeneralScore(goalName, false);
 	}
+
+	@Override
+	public boolean isClass(String className) {
+    	return (className.equals("buildGoal")) ? true : false;
+    }
 }

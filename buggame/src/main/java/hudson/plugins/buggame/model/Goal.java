@@ -158,6 +158,9 @@ public abstract class Goal {
 		return returnScore;
 	}
 	
+	public abstract boolean isClass(String className);
+
+	
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
