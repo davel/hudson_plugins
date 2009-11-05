@@ -341,12 +341,6 @@ public class MercurialSCM extends SCM implements Serializable {
                 return false;
             }
         }
-        FilePath hgBundle = new FilePath(workspace, "hg.bundle");
-
-        // delete the file prior to "hg incoming",
-        // as one user reported that it causes a failure.
-        // The error message was "abort: file 'hg.bundle' already exists"
-        hgBundle.delete();
 
         // calc changelog and create bundle
         FileOutputStream os = new FileOutputStream(changelogFile);
@@ -354,7 +348,7 @@ public class MercurialSCM extends SCM implements Serializable {
         int r;
         try {
             ArgumentListBuilder args = new ArgumentListBuilder();
-            args.add(findHgExe(listener),"fincoming","--quiet","--bundle","hg.bundle");
+            args.add(findHgExe(listener),"fincoming","--quiet");
 
             String template;
 
@@ -396,12 +390,12 @@ public class MercurialSCM extends SCM implements Serializable {
         }
 
         // pull
-        if(r==0 && hgBundle.exists())
+        if(r==0)
             // if incoming didn't fetch anything, it will return 1. That was for 0.9.3.
             // in 0.9.4 apparently it returns 0.
             try {
                 if(launcher.launch()
-                    .cmds(findHgExe(listener),"fpull","hg.bundle")
+                    .cmds(findHgExe(listener),"fpull","-r", getBranch())
                     .envs(build.getEnvironment(listener)).stdout(listener).pwd(workspace).join()!=0) {
                     listener.error("Failed to pull");
                     return false;
@@ -417,8 +411,6 @@ public class MercurialSCM extends SCM implements Serializable {
                 e.printStackTrace(listener.getLogger());
                 return false;
             }
-
-        hgBundle.delete(); // do not leave it in workspace
 
         addTagActionToBuild(build, launcher, workspace, listener);
 
