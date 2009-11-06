@@ -24,9 +24,13 @@
 package com.thalesgroup.hudson.plugins.jobrevision;
 
 import hudson.Extension;
+import hudson.Launcher;
 import hudson.model.*;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 @ExportedBean
@@ -71,8 +75,15 @@ public class JobRevision extends JobProperty<AbstractProject<?, ?>> {
 
     @Override
     public boolean prebuild(hudson.model.AbstractBuild<?, ?> abstractBuild, hudson.model.BuildListener buildListener) {
-
         abstractBuild.addAction(new JobRevisionEnvironmentAction(revision));
+        return true;
+    }
+
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        ArrayList<ParameterValue> parameters = new ArrayList<ParameterValue>();
+        parameters.add(new StringParameterValue(JobRevisionEnvironmentAction.VAR_JOB_REVISION_NAME, revision));
+        build.addAction(new ParametersAction(parameters));
         return true;
     }
 

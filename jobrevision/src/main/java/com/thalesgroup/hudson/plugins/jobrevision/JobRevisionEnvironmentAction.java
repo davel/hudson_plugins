@@ -53,5 +53,5 @@ public class JobRevisionEnvironmentAction implements EnvironmentContributingActi
     public String getUrlName() {
         return "help.html";
     }
-        
+
 }

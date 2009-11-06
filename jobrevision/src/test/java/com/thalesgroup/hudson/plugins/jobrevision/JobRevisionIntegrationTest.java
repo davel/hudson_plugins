@@ -24,14 +24,13 @@
 package com.thalesgroup.hudson.plugins.jobrevision;
 
 import hudson.EnvVars;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.util.LogTaskListener;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 
 
 public class JobRevisionIntegrationTest extends HudsonTestCase {
@@ -44,9 +43,21 @@ public class JobRevisionIntegrationTest extends HudsonTestCase {
         String confRevision = "3.5";
         project.addProperty(new JobRevision(confRevision));
         FreeStyleBuild build = project.scheduleBuild2(0).get();
+
         EnvVars envVars = build.getEnvironment(new LogTaskListener(LOGGER, Level.INFO));
+        //The build status nust be SUCCESS
         assertBuildStatus(Result.SUCCESS, build);
+        //The environment variable JOB_REVISION must be set with the right value
         assertEquals(confRevision, envVars.get(JobRevisionEnvironmentAction.VAR_JOB_REVISION_NAME));
+        //A ParametersAction must be set with the right values
+        ParametersAction parametersAction = build.getAction(ParametersAction.class);
+        List<ParameterValue> paramters = parametersAction.getParameters();
+        assertEquals("Only one  paramter must be set", 1, paramters.size());
+        ParameterValue parameterRevision = paramters.get(0);
+        assertTrue("The parameter must be a StringParameter", parameterRevision instanceof StringParameterValue);
+        StringParameterValue stringParameterValue = (StringParameterValue) parameterRevision;
+        assertEquals("The parameter must have the right name", JobRevisionEnvironmentAction.VAR_JOB_REVISION_NAME, stringParameterValue.getName());
+        assertEquals("The parameter must have the right value", confRevision, stringParameterValue.value);
     }
 
 }
