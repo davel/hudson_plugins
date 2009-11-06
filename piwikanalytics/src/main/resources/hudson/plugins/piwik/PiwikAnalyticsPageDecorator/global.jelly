@@ -1,0 +1,16 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="Piwik Analytics">
+    <f:entry title="${%Site ID}"  help="/plugin/piwikanalytics/siteid.html">
+      <f:textbox field="siteId"/>
+    </f:entry>
+    <f:entry title="${%Piwik Server}"  help="/plugin/piwikanalytics/piwikserver.html">
+      <f:textbox field="piwikServer"/>
+    </f:entry>
+    <f:entry title="${%Piwik Path}"  help="/plugin/piwikanalytics/piwikpath.html">
+      <f:textbox field="piwikPath"/>
+    </f:entry>   
+     <f:entry title="${%Additionnal Download Extensions}"  help="/plugin/piwikanalytics/additionnalDownloadExtensions.html">
+      <f:textbox field="additionnalDownloadExtensions" default="jar|war|ear"/>
+    </f:entry> 
+  </f:section>
+</j:jelly>
