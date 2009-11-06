@@ -11,7 +11,7 @@
   <artifactId>piwikanalytics</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Piwik Analytics Plug-in</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0</version>
   <developers>
   	<developer>
   		<id>cfurmaniak</id>
@@ -37,4 +37,10 @@
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/piwikanalytics-1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/piwikanalytics-1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/piwikanalytics/tags/piwikanalytics-1.0</url>
+  </scm>
 </project>
