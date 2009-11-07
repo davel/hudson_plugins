@@ -12,12 +12,13 @@
   <packaging>hpi</packaging>
   <name>Hudson Piwik Analytics Plug-in</name>
   <version>1.1-SNAPSHOT</version>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Piwik+Analytics+Plugin</url>
   <developers>
   	<developer>
   		<id>cfurmaniak</id>
   		<name>Christophe Furmaniak</name>
   		<email>christophe.furmaniak@gmail.com</email>
-  		<url>http://http://wiki.hudson-ci.org/display/HUDSON/Piwik+Analytics+Plugin</url>
+  		<url>http://722.kalaari.net</url>
   		<roles>
   		</roles>
   	</developer>
