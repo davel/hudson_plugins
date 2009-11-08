@@ -34,7 +34,7 @@
 	   
 	    <select class="setting-input" name="copyarchiver.entry.jobName">
 	      <j:forEach var="inst" items="${descriptor.jobs}">
-	        <f:option selected="${inst.name==e.jobName}">${inst.name}</f:option>
+	        <f:option selected="${inst.name==e.jobStrName}">${inst.name}</f:option>
 	      </j:forEach>
 	    </select>
 	    

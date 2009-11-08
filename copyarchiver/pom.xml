@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>plugin</artifactId>
-      <version>1.328</version>
+      <version>1.332</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
@@ -14,26 +14,28 @@
    <version>0.4.3-SNAPSHOT</version>
    <url>http://wiki.hudson-ci.org/display/HUDSON/CopyArchiver+Plugin</url>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jvnet.hudson.main</groupId>
-         <artifactId>maven-plugin</artifactId>
-      </dependency>
-   </dependencies>
-
-   <developers>
-      <developer>
-         <id>gbois</id>
-         <name>Gregory Boissinot</name>
-      </developer>
-   </developers>
-
    <licenses>
       <license>
          <name>MIT license</name>
          <comments>All source code is under the MIT license.</comments>
       </license>
    </licenses>
+
+   <developers>
+      <developer>
+         <id>gbois</id>
+         <name>Gregory Boissinot</name>
+         <email>gregory.boissinot@gmail.com</email>
+         <timezone>+1</timezone>
+      </developer>
+   </developers>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jvnet.hudson.main</groupId>
+         <artifactId>maven-plugin</artifactId>
+      </dependency>
+   </dependencies>
 
    <build>
       <plugins>
@@ -47,4 +49,3 @@
       </plugins>
    </build>
 </project>
-

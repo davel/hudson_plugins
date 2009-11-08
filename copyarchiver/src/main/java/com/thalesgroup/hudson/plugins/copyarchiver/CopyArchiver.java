@@ -1,22 +1,44 @@
+/*******************************************************************************
+ * Copyright (c) 2009 Thales Corporate Services SAS                             *
+ * Author : Gregory Boissinot                                                   *
+ *                                                                              *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy *
+ * of this software and associated documentation files (the "Software"), to deal*
+ * in the Software without restriction, including without limitation the rights *
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell    *
+ * copies of the Software, and to permit persons to whom the Software is        *
+ * furnished to do so, subject to the following conditions:                     *
+ *                                                                              *
+ * The above copyright notice and this permission notice shall be included in   *
+ * all copies or substantial portions of the Software.                          *
+ *                                                                              *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR   *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  *
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,*
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
+ * THE SOFTWARE.                                                                *
+ *******************************************************************************/
+
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Hudson;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Hudson;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.Serializable;
-import java.io.IOException;
-
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CopyArchiver extends Notifier implements Serializable {
 
@@ -93,7 +115,12 @@ public class CopyArchiver extends Notifier implements Serializable {
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
             req.bindParameters(pub, "copyarchiver.");
-            pub.getArchivedJobList().addAll(req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry."));
+            List<ArchivedJobEntry> archivedJobEntries = req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry.");
+            for (ArchivedJobEntry archivedJobEntry : archivedJobEntries) {
+                AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
+                archivedJobEntry.job = curProj;
+            }
+            pub.getArchivedJobList().addAll(archivedJobEntries);
             return pub;
         }
 
@@ -133,6 +160,18 @@ public class CopyArchiver extends Notifier implements Serializable {
         copyArchiverPublisher.setDatePattern(datePattern);
         copyArchiverPublisher.setFlatten(flatten);
         copyArchiverPublisher.setDeleteShared(true);
+
+        for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
+            if (archivedJobEntry.jobName != null) {
+                AbstractProject proj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
+                if (proj == null) {
+                    archivedJobList.remove(archivedJobEntry);
+                } else {
+                    archivedJobEntry.job = proj;
+                    archivedJobEntry.jobName = null;
+                }
+            }
+        }
         copyArchiverPublisher.setArchivedJobList(archivedJobList);
 
         return copyArchiverPublisher;

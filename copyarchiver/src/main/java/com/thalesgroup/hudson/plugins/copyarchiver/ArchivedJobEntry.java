@@ -23,6 +23,8 @@
 
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
+import hudson.model.AbstractProject;
+
 import java.io.Serializable;
 
 public class ArchivedJobEntry implements Serializable {
@@ -32,16 +34,31 @@ public class ArchivedJobEntry implements Serializable {
     /**
      * The job name
      */
-    public String jobName;
+    public transient String jobName;
+
+    /**
+     * The job object
+     */
+    public AbstractProject job;
 
     /**
      * Pattern to filtering the archived artifact to copy
      */
     public String pattern;
 
-
     /**
      * Pattern for excluding some archived artifact to copy
      */
     public String excludes;
+
+    //Keep backward compatibility with copyarchiver 0.4.2 and less.
+    //Can't use read the usually readResolve() method because all projects  haven't been initialized (within current project)
+    @SuppressWarnings("unused")
+    public String getJobStrName() {
+        if (job != null) {
+            return job.getName();
+        } else {
+            return jobName;
+        }
+    }
 }

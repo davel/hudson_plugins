@@ -22,30 +22,17 @@
  *******************************************************************************/
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
-import static hudson.util.jna.GNUCLibrary.LIBC;
 import hudson.FilePath;
-import hudson.Functions;
-import hudson.Util;
 import hudson.FilePath.FileCallable;
 import hudson.FilePath.TarCompression;
+import hudson.Functions;
+import hudson.Util;
 import hudson.model.Hudson;
 import hudson.remoting.Future;
 import hudson.remoting.Pipe;
 import hudson.remoting.VirtualChannel;
 import hudson.util.IOException2;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import static hudson.util.jna.GNUCLibrary.LIBC;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -54,6 +41,11 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
 import org.apache.tools.tar.TarOutputStream;
+
+import java.io.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class FilePathArchiver implements Serializable {
 

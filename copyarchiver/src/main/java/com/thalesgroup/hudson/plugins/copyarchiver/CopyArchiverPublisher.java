@@ -23,30 +23,24 @@
 
 package com.thalesgroup.hudson.plugins.copyarchiver;
 
-import hudson.AbortException;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.remoting.VirtualChannel;
+import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
+import hudson.*;
 import hudson.model.*;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import net.sf.json.JSONObject;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-
-import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
 
 /**
  * @author Gregory Boissinot
@@ -135,8 +129,14 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
+
             req.bindParameters(pub, "copyarchiver.");
-            pub.getArchivedJobList().addAll(req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry."));
+            List<ArchivedJobEntry> archivedJobEntries = req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry.");
+            for (ArchivedJobEntry archivedJobEntry : archivedJobEntries) {
+                AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
+                archivedJobEntry.job = curProj;
+            }
+            pub.getArchivedJobList().addAll(archivedJobEntries);
             return pub;
         }
 
@@ -151,6 +151,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
             return true;
         }
 
+        @SuppressWarnings("unused")
         public List<AbstractProject> getJobs() {
             return Hudson.getInstance().getItems(AbstractProject.class);
         }
@@ -183,7 +184,6 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         if (build.getResult().equals(Result.UNSTABLE) || build.getResult().equals(Result.SUCCESS)) {
 
             AbstractProject project = build.getProject();
-            final String projectName = project.getName();
 
             Boolean result = false;
             try {
@@ -229,13 +229,24 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                 int numCopied = 0;
 
                 for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
-                    AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
+                    AbstractProject curProj = archivedJobEntry.job;
+                    //Keep backward compatibility with copyarchiver 0.4.2 and less.
+                    //Can't use read the usually readResolve() method because all projects  haven't been initialized (within current project)
+                    if (curProj == null) {
+                        curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
+                    }
+
                     Run run = curProj.getLastSuccessfulBuild();
                     if (run != null) {
-
                         //if the selected project is the current projet, we're using the workspace base directory or SCM module root
-                        if (projectName.equals(archivedJobEntry.jobName)) {
+                        if (project.equals(curProj)) {
                             lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
+                            //curProj.getPublishersList().get(ArtifactArchiver.class).getDescriptor().FormException
+                            //String pattern = ((hudson.tasks.ArtifactArchiver)curProj.getPublishersList().get(hudson.tasks.ArtifactArchiver.class)).getArtifacts();
+                            //curProj.getConfigFile().
+                            //hudson.tasks.ArtifactArchiver
+                            // ArtifactArchiver achiver = (ArtifactArchiver)curProj.getPublishersList().get(ArtifactArchiver.DescriptorImpl.class);
+
                         } else {
                             lastSuccessfulDir = run.getArtifactsDir();
                             lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(lastSuccessfulDir));
