@@ -116,10 +116,6 @@ public class CopyArchiver extends Notifier implements Serializable {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
             req.bindParameters(pub, "copyarchiver.");
             List<ArchivedJobEntry> archivedJobEntries = req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry.");
-            for (ArchivedJobEntry archivedJobEntry : archivedJobEntries) {
-                AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
-                archivedJobEntry.job = curProj;
-            }
             pub.getArchivedJobList().addAll(archivedJobEntries);
             return pub;
         }
@@ -160,18 +156,6 @@ public class CopyArchiver extends Notifier implements Serializable {
         copyArchiverPublisher.setDatePattern(datePattern);
         copyArchiverPublisher.setFlatten(flatten);
         copyArchiverPublisher.setDeleteShared(true);
-
-        for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
-            if (archivedJobEntry.jobName != null) {
-                AbstractProject proj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
-                if (proj == null) {
-                    archivedJobList.remove(archivedJobEntry);
-                } else {
-                    archivedJobEntry.job = proj;
-                    archivedJobEntry.jobName = null;
-                }
-            }
-        }
         copyArchiverPublisher.setArchivedJobList(archivedJobList);
 
         return copyArchiverPublisher;

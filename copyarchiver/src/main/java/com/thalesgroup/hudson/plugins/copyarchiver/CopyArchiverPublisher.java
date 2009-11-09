@@ -129,13 +129,8 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             CopyArchiverPublisher pub = new CopyArchiverPublisher();
-
             req.bindParameters(pub, "copyarchiver.");
             List<ArchivedJobEntry> archivedJobEntries = req.bindParametersToList(ArchivedJobEntry.class, "copyarchiver.entry.");
-            for (ArchivedJobEntry archivedJobEntry : archivedJobEntries) {
-                AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
-                archivedJobEntry.job = curProj;
-            }
             pub.getArchivedJobList().addAll(archivedJobEntries);
             return pub;
         }
@@ -229,13 +224,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                 int numCopied = 0;
 
                 for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
-                    AbstractProject curProj = archivedJobEntry.job;
-                    //Keep backward compatibility with copyarchiver 0.4.2 and less.
-                    //Can't use read the usually readResolve() method because all projects  haven't been initialized (within current project)
-                    if (curProj == null) {
-                        curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
-                    }
-
+                    AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
                     Run run = curProj.getLastSuccessfulBuild();
                     if (run != null) {
                         //if the selected project is the current projet, we're using the workspace base directory or SCM module root
