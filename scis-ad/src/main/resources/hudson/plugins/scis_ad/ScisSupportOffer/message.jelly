@@ -28,7 +28,7 @@ THE SOFTWARE.
       <table width="100%" style="border-spacing:2px; position:relative; top:-40px; height:40px">
         <tr>
           <td style="vertical-align: middle; width:32px">
-            <img src="/plugin/scis-ad/shield.gif"/>
+            <img src="${rootURL}/plugin/scis-ad/shield.gif"/>
           </td>
           <td style="vertical-align: middle; font-weight: bold; font-size: 1.2em;  color: white;">
             ${%blurb}
