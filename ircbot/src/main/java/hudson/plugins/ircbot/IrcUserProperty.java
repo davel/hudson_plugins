@@ -46,14 +46,17 @@ public class IrcUserProperty extends hudson.model.UserProperty {
             super(IrcUserProperty.class);
         }
 
+        @Override
         public String getDisplayName() {
             return "IRC";
         }
 
+        @Override
         public IrcUserProperty newInstance(User user) {
             return new IrcUserProperty(null);
         }
 
+        @Override
         public IrcUserProperty newInstance(StaplerRequest req)
                 throws FormException {
             return new IrcUserProperty(req.getParameter("irc.nick"));
