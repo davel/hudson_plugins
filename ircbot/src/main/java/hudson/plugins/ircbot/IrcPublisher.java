@@ -126,7 +126,7 @@ public class IrcPublisher extends IMPublisher {
     
     // deserialize/migrate old instances
     private Object readResolve() {
-    	if (this.getTargets().length() == 0) {
+    	if (this.getNotificationTargets() == null) {
     		if (this.channels != null) {
     			StringBuilder targets = new StringBuilder();
     			for (String channel : channels) {
@@ -134,6 +134,12 @@ public class IrcPublisher extends IMPublisher {
     			}
     			try {
 					setTargets(targets.toString().trim());
+				} catch (IMMessageTargetConversionException e) {
+					LOGGER.warning(ExceptionHelper.dump(e));
+				}
+    		} else {
+    			try {
+					setTargets("");
 				} catch (IMMessageTargetConversionException e) {
 					LOGGER.warning(ExceptionHelper.dump(e));
 				}
