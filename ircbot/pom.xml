@@ -24,6 +24,17 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
   
+  <build>
+      <plugins>
+        <plugin>
+            <groupId>org.jvnet.hudson.tools</groupId>
+            <artifactId>maven-hpi-plugin</artifactId>
+            <version>1.46</version>
+            <extensions>true</extensions>
+        </plugin>
+      </plugins>
+  </build>
+  
   <dependencies>
      <dependency>
      	<groupId>org.jvnet.hudson.plugins</groupId>
