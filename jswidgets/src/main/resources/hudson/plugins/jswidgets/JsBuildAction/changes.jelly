@@ -9,26 +9,20 @@
     <j:if test="${!html}">
     ${response.setContentType("text/javascript; charset=UTF-8")}
     document.write('</j:if>
-    <div style="background-color: #ffe; border: 1px solid #bbb; width: 450px;">
+    <div style="background-color: #ffe; border: 1px solid #bbb; width: 470px">
     <j:set var="buildURL" value="${baseURL}/${it.build.url}"/>
     <div align="center"><b>${%Hudson ChangeSet for} <a href="${buildURL}">${buildURL}</a></b></div>
     <j:if test="${changeSet.isEmptySet()}">
         <p>${%No changes in this build}.</p>
     </j:if>
     <j:if test="${!changeSet.isEmptySet()}">
-    <table width="100%">
-    <thead>
-    <tr><th align="left">${%Author}</th><th align="left">${%Message}</th><th align="left">${%Affected Paths}</th></tr>
-    </thead>
-    <tbody>
+    <table style="border:none">
     <j:forEach var="changeSetEntry" items="${changeSet}">
-        <tr>
-            <td>${changeSetEntry.author}</td>
-            <td>${changeSetEntry.msgEscaped}</td>
-            <td><span title="${changeSetEntry.affectedPaths.size()} affected"><small>${it.getChangeSetEntries(changeSetEntry)}</small></span></td>
-        </tr>
+        <tr><th><small>${changeSetEntry.msgEscaped}</small></th><th><small>by <i>${changeSetEntry.author}</i></small></th></tr>
+        <j:forEach var="file" items="${it.getChangeSetEntries(changeSetEntry)}">
+            <tr><td colspan="2"><small><tt>${file}</tt></small></td></tr>
+        </j:forEach>
     </j:forEach>
-    </tbody>
     </table>
     </j:if>
     </div>
