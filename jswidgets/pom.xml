@@ -45,7 +45,8 @@
         <dependency>
             <groupId>org.kohsuke.stapler</groupId>
             <artifactId>stapler</artifactId>
-            <version>1.125</version>
+            <version>1.124</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jvnet.hudson</groupId>
