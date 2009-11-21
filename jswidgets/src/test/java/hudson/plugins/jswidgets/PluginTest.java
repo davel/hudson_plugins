@@ -4,6 +4,8 @@
 package hudson.plugins.jswidgets;
 
 import static org.junit.Assert.assertArrayEquals;
+import hudson.model.Hudson;
+import hudson.model.Project;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
@@ -11,10 +13,12 @@ import hudson.scm.ChangeLogSet.Entry;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jvnet.hudson.test.Bug;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.recipes.LocalData;
 import org.xml.sax.SAXException;
@@ -117,6 +121,21 @@ public class PluginTest extends HudsonTestCase {
         testJsBuildAction(buildPath, changesJelly, "#/trunk/foo", nodeName);
     }
 
+    
+    @Bug(4889)
+    @LocalData
+    public void testJsBuildActionWithChangesAfterReloadOfConfiguration() throws IOException, SAXException {
+        final String jobName = "bar";
+        final String jobPath = "/job/" + jobName + "/";
+        final String build3 = jobPath + "1";
+        checkJsWidgetsOnlyOnce(build3);
+        @SuppressWarnings("unchecked")
+        final Project project = Hudson.getInstance().getItemByFullName(jobName, Project.class);
+        project.save();
+        new JsJobAction(project);
+        checkJsWidgetsOnlyOnce(build3);
+    }
+
     @LocalData
     public void testJsBuildActionWithOutChanges() throws IOException, SAXException {
         final String buildPath = "/job/svntest/2";
@@ -134,32 +153,45 @@ public class PluginTest extends HudsonTestCase {
         final String nodeName = "master Hudson node";
         webClient.goTo("/job/bar/build");
         // Sleep 3 seconds to account for fast machines as the build might not be finished during test phase.
-        Thread.sleep(TimeUnit.MILLISECONDS.convert(3, TimeUnit.SECONDS));
+        Thread.sleep(TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS));
         testJsBuildAction(buildPath, changesJelly, changeLogNeedle, nodeName);
     }
-
+    
+    
+    @LocalData
+    public void testJsProjectActionFactory() {
+        @SuppressWarnings("unchecked")
+        final List<Project> projects = Hudson.getInstance().getProjects();
+        assertTrue("Have not projects", projects.size() > 0);
+        @SuppressWarnings("unchecked")
+        final Project firstProject = projects.get(0);
+        new JsProjectActionFactory().createFor(firstProject);
+        new JsProjectActionFactory().createFor(firstProject);
+        assertEquals(1, firstProject.getActions(JsJobAction.class).size());
+    }
+    
     public void testSCMWithoutAffectedFilesImplementation() {
         final Entry entry = new ChangeLogSet.Entry() {
-            
+
             @Override
-            public String getMsg() {                
+            public String getMsg() {
                 return "Jepp";
             }
-            
+
             @Override
             public User getAuthor() {
                 return null;
             }
-            
+
             @Override
             public Collection<String> getAffectedPaths() {
                 return Arrays.asList("/trunk/foo");
             }
         };
         final JsBuildAction buildAction = new JsBuildAction(null);
-        assertArrayEquals(entry.getAffectedPaths().toArray(), buildAction.getChangeSetEntries(entry).toArray());        
+        assertArrayEquals(entry.getAffectedPaths().toArray(), buildAction.getChangeSetEntries(entry).toArray());
     }
-    
+
     /**
      * @param buildPath
      * @param changesJelly
@@ -192,9 +224,9 @@ public class PluginTest extends HudsonTestCase {
         final HtmlPage jobPage = webClient.goTo(objectPath);
         checkXpath(jobPage, "//img[contains(@src,\"" + JsConsts.ICONFILENAME + "\")]");
         checkXpath(jobPage, "//a[contains(@href, \"" + objectPath + "/" + JsConsts.URLNAME + "\")]");
-        final String href = objectPath + "/" + JsConsts.URLNAME + "/";
+        final String href = objectPath + "/" + JsConsts.URLNAME;
         final HtmlPage jsIndexPage = (HtmlPage) jobPage.getAnchorByHref(href).click();
-        checkXpath(jsIndexPage, "//script[@type=\"text/javascript\" and contains(@src, \"" + href + jellyPath + "\")]");
+        checkXpath(jsIndexPage, "//script[@type=\"text/javascript\" and contains(@src, \"" + href + "/" + jellyPath + "\")]");
     }
 
     /**
@@ -246,4 +278,17 @@ public class PluginTest extends HudsonTestCase {
         assertTrue(htmlNeedle + " not found in " + javaScript, javaScript.contains(htmlNeedle));
         assertTrue(javaScript + " does not start with " + JAVA_SCRIPT_NEEDLE, javaScript.startsWith(JAVA_SCRIPT_NEEDLE));
     }
+    /**
+     * Checks that the jsindex.png is only referenced once on the page.
+     * @param build
+     * @throws IOException
+     * @throws SAXException
+     */
+    private void checkJsWidgetsOnlyOnce(final String build) throws IOException, SAXException {
+        final HtmlPage buildPage = webClient.goTo(build);
+        final String body = buildPage.asXml();
+        final String needle = "/plugin/jswidgets/img/jsindex.png";
+        assertEquals(body + " has more than one jsindex.png", body.indexOf(needle), body.lastIndexOf(needle));                
+    }
+
 }
