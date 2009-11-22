@@ -32,7 +32,10 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
+ * Publishes build results to IRC channels.
+ * 
  * @author bruyeron
+ * @author $Author$ (last change)
  * @version $Id$
  */
 public class IrcPublisher extends IMPublisher {
@@ -78,9 +81,9 @@ public class IrcPublisher extends IMPublisher {
     // from IMPublisher:
 	@Override
 	protected String getConfiguredIMId(User user) {
-		IrcUserProperty jabberUserProperty = (IrcUserProperty) user.getProperties().get(IrcUserProperty.DESCRIPTOR);
-		if (jabberUserProperty != null) {
-			return jabberUserProperty.getNick();
+		IrcUserProperty ircUserProperty = (IrcUserProperty) user.getProperties().get(IrcUserProperty.DESCRIPTOR);
+		if (ircUserProperty != null) {
+			return ircUserProperty.getNick();
 		}
 		return null;
 	}
@@ -167,6 +170,8 @@ public class IrcPublisher extends IMPublisher {
         public static final String PARAMETERNAME_NOTIFY_FIXERS = PREFIX + "notifyFixers";
 		public static final String PARAMETERVALUE_STRATEGY_DEFAULT = NotificationStrategy.STATECHANGE_ONLY.getDisplayName();;
 		public static final String[] PARAMETERVALUE_STRATEGY_VALUES = NotificationStrategy.getDisplayNames();
+		public static final String PARAMETERNAME_HUDSON_LOGIN = PREFIX + "hudsonLogin";
+	    public static final String PARAMETERNAME_HUDSON_PASSWORD = PREFIX + "hudsonPassword";
 
 		boolean enabled = false;
 
@@ -184,6 +189,9 @@ public class IrcPublisher extends IMPublisher {
         List<String> channels;
 
         String commandPrefix = null;
+        
+        private String hudsonLogin;
+        private String hudsonPassword;
 
         /**
          */
@@ -226,15 +234,16 @@ public class IrcPublisher extends IMPublisher {
                 }
                 commandPrefix = req.getParameter("irc_publisher.commandPrefix");
                 commandPrefix = Util.fixEmptyAndTrim(commandPrefix);
-                channels = Arrays.asList(req.getParameter(
-                        "irc_publisher.channels").split(" "));
+                channels = Arrays.asList(req.getParameter("irc_publisher.channels").split(" "));
 
+                hudsonLogin = req.getParameter(PARAMETERNAME_HUDSON_LOGIN);
+                hudsonPassword = req.getParameter(PARAMETERNAME_HUDSON_PASSWORD);
+                
                 // try to establish the connection
                 try {
                 	IRCConnectionProvider.setDesc(this);
                 	IRCConnectionProvider.getInstance().currentConnection();
                 } catch (final Exception e) {
-                    //throw new FormException("Unable to create Client: " + ExceptionHelper.dump(e), null);
                 	LOGGER.warning(ExceptionHelper.dump(e));
                 }
             } else {
@@ -366,14 +375,12 @@ public class IrcPublisher extends IMPublisher {
 		}
 		@Override
 		public String getHudsonUserName() {
-			// TODO Auto-generated method stub
-			return null;
+			return this.hudsonLogin;
 		}
 		
 		@Override
 		public String getHudsonPassword() {
-			// TODO Auto-generated method stub
-			return null;
+			return this.hudsonPassword;
 		}
 
 		@Override

@@ -23,16 +23,32 @@
       <version.instant-messaging.plugin>1.3-SNAPSHOT</version.instant-messaging.plugin>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-  
+    
   <build>
-      <plugins>
-        <plugin>
-            <groupId>org.jvnet.hudson.tools</groupId>
-            <artifactId>maven-hpi-plugin</artifactId>
-            <version>1.46</version>
-            <extensions>true</extensions>
-        </plugin>
-      </plugins>
+    <resources>
+      <resource>
+          <directory>src/main/resources</directory>
+          <filtering>true</filtering>
+          <includes>
+              <include>index.jelly</include>
+          </includes>
+      </resource>
+      <resource>
+          <directory>src/main/resources</directory>
+          <filtering>false</filtering>
+          <excludes>
+              <exclude>index.jelly</exclude>
+          </excludes>
+      </resource>
+   </resources>
+   <plugins>
+    <plugin>
+        <groupId>org.jvnet.hudson.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <version>1.46</version>
+        <extensions>true</extensions>
+    </plugin>
+   </plugins>
   </build>
   
   <dependencies>
