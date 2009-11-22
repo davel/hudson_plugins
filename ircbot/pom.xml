@@ -91,12 +91,5 @@
         <email>kutzi@gmx.de</email>
         <timezone>1</timezone>
     </developer>
-    <developer>
-      <id>bruyeron</id>
-      <name>Renaud Bruyeron</name>
-      <email>bruyeron@fullsix.com</email>
-      <organization>FullSIX France</organization>
-      <organizationUrl>http://www.fullsix.fr</organizationUrl>
-    </developer>
   </developers>
 </project>
