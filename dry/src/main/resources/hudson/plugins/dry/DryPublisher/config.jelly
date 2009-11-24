@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+  <f:entry title="${%Duplicate code results}"
+	description="${%description.pattern}">
+	<f:textbox name="pattern" value="${instance.pattern}"
+		checkUrl="'descriptorByName/DryPublisher/checkPattern?value='+escape(this.value)" />
+  </f:entry>
+  <f:advanced>
+    <u:thresholds id="dry"/>
+    <u:defaultEncoding id="dry"/>
+    <u:trend id="dry"/>
+  </f:advanced>
+</j:jelly>
