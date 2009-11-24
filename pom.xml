@@ -38,7 +38,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.jvnet.hudson.main</groupId>
@@ -182,6 +182,8 @@
   <modules>
     <module>accurev</module>
     <module>active-directory</module>
+    <module>analysis-core</module>
+    <module>analysis-test</module>
     <module>audit-trail</module>
     <module>backup</module>
     <module>batch-task</module>
@@ -364,5 +366,5 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-  
+
 </project>
