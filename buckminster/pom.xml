@@ -14,4 +14,11 @@
 
   <description>Integrates Eclipse Buckminster as a builder in Hudson</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Buckminster+PlugIn</url>
+  <developers>
+  	<developer>
+  		<id>jutzig</id>
+  		<name>Johannes Utzig</name>
+  		<email>mail@jutzig.de </email>
+  	</developer>
+  </developers>
 </project>
