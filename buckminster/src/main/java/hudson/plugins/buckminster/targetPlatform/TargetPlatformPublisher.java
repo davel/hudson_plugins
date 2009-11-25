@@ -116,8 +116,10 @@ public class TargetPlatformPublisher extends ArtifactArchiver implements
 		reference.setName(targetPlatformName);
 		reference.setFullName(project.getFullName() + "/" + targetPlatformName);
 		if (project.getLastSuccessfulBuild() != null) {
+			//windows paths need to be converted to unix paths
+			//see: https://hudson.dev.java.net/issues/show_bug.cgi?id=4947
 			String fullPath = project.getLastSuccessfulBuild()
-					.getArtifactsDir().getAbsolutePath()
+					.getArtifactsDir().getAbsoluteFile().toURI().getPath()
 					+ TARGET_PLATFORM_DIRECTORY;
 			reference.setPath(fullPath);
 		}

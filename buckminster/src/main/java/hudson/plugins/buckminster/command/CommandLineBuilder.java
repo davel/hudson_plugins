@@ -167,7 +167,17 @@ public class CommandLineBuilder {
 		while(matcher.find()){
 			if(matcher.group(1)!=null){
 				if(properties.containsKey(matcher.group(1))){
-					string = string.replace(matcher.group(0), properties.get(matcher.group(1)));
+					String replacement = null;
+					if(matcher.group(1).equalsIgnoreCase("WORKSPACE")){
+						//special treatment for the workspace variable because the path has to be transformed into a unix path
+						//see: https://hudson.dev.java.net/issues/show_bug.cgi?id=4947
+						replacement = new File(properties.get("WORKSPACE")).toURI().getPath();
+					}
+					else{
+						replacement = properties.get(matcher.group(1));
+					}
+					string = string.replace(matcher.group(0), replacement);
+					
 				}
 			}
 		}
