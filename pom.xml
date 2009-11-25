@@ -259,6 +259,8 @@
     <module>jswidgets</module>
     <module>jwsdp-sqe</module>
     <module>kagemai</module>
+	<module>lastFailureVersionColumn</module>
+	<module>lastSuccessVersionColumn</module>
     <module>locked-files-report</module>
     <module>locks-and-latches</module>
     <module>mantis</module>
