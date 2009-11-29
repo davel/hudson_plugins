@@ -19,7 +19,7 @@
 		</developer>
 	</developers>
 	
-	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!</url>
+	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!+Plugin</url>
 
 	<groupId>net.hurstfrost.hudson</groupId>
 	<artifactId>speaks</artifactId>
