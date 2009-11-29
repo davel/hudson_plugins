@@ -21,7 +21,6 @@
 	
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!+Plugin</url>
 
-	<groupId>net.hurstfrost.hudson</groupId>
 	<artifactId>speaks</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
