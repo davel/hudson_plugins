@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form">
+	<f:section title="Hudson Speaks">
+		<f:entry title="${%Announcement template}" help="/plugin/speaks/help-globalConfig-template.html" field="announcementTemplate">
+		     <f:textarea />
+		</f:entry>
+		<f:entry title="" field="testPhrase">
+		     <f:textbox value="Testing 1, 2, 3." name="testPhrase" />
+		</f:entry>
+    	<f:validateButton method="testSpeech" title="${%Test speech}" with="testPhrase" />
+	</f:section>
+</j:jelly>

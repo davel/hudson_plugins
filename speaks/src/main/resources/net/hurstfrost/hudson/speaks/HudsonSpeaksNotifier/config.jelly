@@ -1,0 +1,5 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${%Announcement template}" description="${%description}" field="projectTemplate">
+		<f:textarea name="speaks_projectTemplate" value="${instance.projectTemplate}"/>
+	</f:entry>
+</j:jelly>

@@ -1,0 +1,24 @@
+<div>
+A template of the announcement you want Hudson to make. This template will be executed as a Jelly script, so you need to escape any characters that you don't want to be interpreted as XML (for &lt; use '&amp;lt;').<p />
+The default value is:<br />
+<pre>&lt;j:choose>
+&lt;j:when test="${build.result!='SUCCESS' || build.project.lastBuild.result!='SUCCESS'}">
+Your attention please. Project ${build.project.name}, build number ${build.number}: ${build.result} in ${duration}.
+&lt;j:if test="${build.result!='SUCCESS'}"> Get fixing those bugs team!&lt;/j:if>
+&lt;/j:when>
+&lt;j:otherwise>&lt;!-- Say nothing -->&lt;/j:otherwise>
+&lt;/j:choose>
+</pre>
+You may use any of these variables in your template:
+<ul>
+<li><span style="font-family:monospace">${build}</span> - the current build (a <span style="font-family:monospace">hudson.model.AbstractBuild</span>)</li>
+<li><span style="font-family:monospace">${duration}</span> - the formatted duration of the build (e.g. '1 minute 3 seconds')</li>
+</ul>
+Here are some examples of how to use these objects:
+<ul>
+<li><span style="font-family:monospace">${build.project}</span> - the project this build is for (a <span style="font-family:monospace">hudson.model.AbstractProject</span>)</li>
+<li><span style="font-family:monospace">${build.project.name}</span> - the name of the project this build is for</li>
+<li><span style="font-family:monospace">${build.result}</span> - the result of this build (a <span style="font-family:monospace">hudson.model.Result</span>) e.g. 'SUCCESS' or 'FAILURE'</li>
+<li><span style="font-family:monospace">${build.project.lastBuild.result}</span> - the result of the previous build</li>
+</ul>
+</div>
