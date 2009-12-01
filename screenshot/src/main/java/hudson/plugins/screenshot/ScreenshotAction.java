@@ -45,6 +45,8 @@ public class ScreenshotAction implements Action {
 			throws Exception {
 		byte[] bytes = channel.call(new CreateScreenshot());
 		ServletOutputStream sos = rsp.getOutputStream();
+		rsp.setContentType("image/png");
+		rsp.setContentLength(bytes.length);
 		sos.write(bytes);
 		sos.flush();
 		sos.close();
