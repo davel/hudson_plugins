@@ -21,7 +21,7 @@
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!+Plugin</url>
 
 	<artifactId>speaks</artifactId>
-	<version>0.1.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Hudson Speaks! Plugin</name>
 
@@ -66,10 +66,4 @@
 			<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/cmu_us_kal.jar</systemPath>
 		</dependency>-->
 	</dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/speaks-0.1.1</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/speaks-0.1.1</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/speaks/tags/speaks-0.1.1</url>
-  </scm>
 </project>
