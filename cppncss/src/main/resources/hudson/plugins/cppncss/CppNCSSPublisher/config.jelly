@@ -1,0 +1,28 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:bh="/lib/health">
+    <f:entry title="CppNCSS xml report pattern"
+             description="
+             This is a file name pattern that can be used to locate the CppNCSS xml report files
+             (for example with Maven2 use &lt;b&gt;**/target/cppncss-raw-report.xml&lt;/b&gt;).
+           The path is relative to &lt;a href='ws/'&gt;the module root&lt;/a&gt; unless
+           you are using Subversion as SCM and have configured multiple modules, in which case it is
+           relative to the workspace root.&lt;br/&gt;
+           CppNCSS must be configured to generate XML reports for this plugin to function.
+           ">
+        <f:textbox name="cppncss.reportFilenamePattern" value="${instance.reportFilenamePattern}"/>
+    </f:entry>
+    <f:entry title="Function CCN violation threshold"
+             description="If the Cyclomatic Complexity Number of a function larger than this number, it will be counted on the trend chart.">
+        <f:textbox name="cppncss.functionCcnViolationThreshold" value="${instance.functionCcnViolationThreshold}"/>
+    </f:entry>
+    <f:entry title="Function Ncss violation threshold"
+             description="If the Non Commenting Source Statements of a function larger than this number, it will be counted on the trend chart.">
+        <f:textbox name="cppncss.functionNcssViolationThreshold" value="${instance.functionNcssViolationThreshold}"/>
+    </f:entry>
+    <f:entry title="Health Reports">
+        <f:repeatable var="targets" varStatus="instStatus" items="${instance.targets}">
+            <bh:row name="cppncss.targets" value="${targets}" metrics="${descriptor.metrics}" firstRow="false"
+                    healthyDescription="Healthy threshold" unhealthyDescription="UnHealthy threshold" unstableDescription="Unstable threshold" failDescription="Fail threshold" failNewDescription="Number of new violations that make build fail threshold"/>
+        </f:repeatable>
+    </f:entry>
+</j:jelly>

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<cppncss>
+  <measure type="Function">
+    <labels>
+      <label>Nr.</label>
+      <label>NCSS</label>
+      <label>CCN</label>
+    </labels>
+    <item name="create_statistics_observer__r() at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:110">
+      <value>1</value>
+      <value>13</value>
+      <value>2</value>
+    </item>
+    <item name="statistics_callback__r( statistics_observer_t*, const notify_event_t*, int ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:68">
+      <value>2</value>
+      <value>10</value>
+      <value>3</value>
+    </item>
+    <item name="statistics_alloc__r( statistics_observer_t*, const notify_event_t*, int ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:29">
+      <value>3</value>
+      <value>8</value>
+      <value>4</value>
+    </item>
+    <item name="statistics_dealloc__r( statistics_observer_t*, const notify_event_t*, int ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:51">
+      <value>4</value>
+      <value>8</value>
+      <value>4</value>
+    </item>
+    <item name="get_statistics_current_interface_rtp_session_number__r( statistics_observer_t*, int ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:95">
+      <value>5</value>
+      <value>7</value>
+      <value>3</value>
+    </item>
+    <item name="create_event_observer_r( event_callback_fptr, int ) at D:\wen1\workspace\0033\src\lib\eventobserver.c:23">
+      <value>6</value>
+      <value>6</value>
+      <value>1</value>
+    </item>
+    <item name="get_statistics_current_rtp_session_number__r( statistics_observer_t* ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:86">
+      <value>7</value>
+      <value>3</value>
+      <value>1</value>
+    </item>
+    <item name="free_event_observer_r( event_observer_t* ) at D:\wen1\workspace\0033\src\lib\eventobserver.c:35">
+      <value>8</value>
+      <value>2</value>
+      <value>1</value>
+    </item>
+    <item name="free_statistics_observer__r( event_observer_t* ) at D:\wen1\workspace\0033\src\lib\statisticsobserver.c:24">
+      <value>9</value>
+      <value>2</value>
+      <value>1</value>
+    </item>
+    <average label="NCSS" value="6.5555553"/>
+    <average label="CCN" value="2.2222223"/>
+  </measure>
+  <measure type="File">
+    <labels>
+      <label>Nr.</label>
+      <label>NCSS</label>
+      <label>CCN</label>
+      <label>Functions</label>
+    </labels>
+    <item name="D:\wen1\workspace\0033\src\lib\statisticsobserver.c">
+      <value>1</value>
+      <value>51</value>
+      <value>18</value>
+      <value>7</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\export\portmanager.h">
+      <value>2</value>
+      <value>18</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\include\monitorobserver.h">
+      <value>3</value>
+      <value>13</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\export\eventobserver.h">
+      <value>4</value>
+      <value>12</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\include\statisticsobserver.h">
+      <value>5</value>
+      <value>11</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\include\hashtable.h">
+      <value>6</value>
+      <value>10</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\lib\eventobserver.c">
+      <value>7</value>
+      <value>8</value>
+      <value>2</value>
+      <value>2</value>
+    </item>
+    <item name="D:\wen1\workspace\0033\src\include\portallocator.h">
+      <value>8</value>
+      <value>6</value>
+      <value>0</value>
+      <value>0</value>
+    </item>
+	 <item name="D:\wen1\workspace\0033\src\include\portallocator1.h">
+      <value>9</value>
+      <value>6</value>
+      <value>2</value>
+      <value>4</value>
+    </item>
+    <average label="NCSS" value="16.125"/>
+    <average label="CCN" value="2.5"/>
+    <average label="Functions" value="1.125"/>
+    <sum label="NCSS" value="129"/>
+    <sum label="CCN" value="20"/>
+    <sum label="Functions" value="9"/>
+  </measure>
+</cppncss>

@@ -1,0 +1,73 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+   
+   <j:if test="${it.fileName != null}">
+    <h1>Function Results: ${it.fileName.substring(0,it.fileName.lastIndexOf(".")).substring(it.fileName.substring(0,it.fileName.lastIndexOf(".")).lastIndexOf(".")+1) + it.fileName.substring(it.fileName.lastIndexOf("."))}</h1>
+
+	<table border="1px" class="pane sortable">
+        <j:set var="ncsstotall" value="0"/>
+        <j:set var="ccntotall" value="0"/>
+        <j:set var="fcount" value="0"/>
+        <tbody>
+            <j:forEach var="r" items="${it.results.functionResults}">
+                <j:if test="${r.name.replace(':','.').replace('\','.').replace('/','.').contains(it.fileName)}">
+                	<j:set var="ncsstotall" value="${ncsstotall + r.ncss}"/>
+                	<j:set var="ccntotall" value="${ccntotall + r.ccn}"/>
+                	<j:set var="fcount" value="${fcount + 1}"/>
+	                <tr>
+	                    <th align="left">${r.name.substring(0,r.name.indexOf(')') + 1)}</th>
+	                    <td align="right">${r.ncss}</td>
+	                    <td align="right">${r.ccn}</td>
+	                </tr>
+                </j:if>
+            </j:forEach>
+        </tbody>
+        <thead>
+            <tr>
+                <th>Function</th>
+                <th title="Non-commenting Source Statements">NCSS</th>
+                <th title="Cyclomatic Complexity Number">CCN</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th align="left">Totals ${fcount}</th>
+                <th align="right">${ncsstotall}</th>
+                <th align="right">${ccntotall}</th>
+            </tr>
+        </tfoot>
+    </table>
+   </j:if>
+    
+   <j:if test="${it.fileName == null}">
+    <h1>File Results</h1>
+    <table border="1px" class="pane sortable">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th title="Function count">Functions</th>
+                <th title="Non-commenting Source Statements">NCSS</th>
+                <th title="Cyclomatic Complexity Number">CCN</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th align="left">Totals ${size(it.results.fileResults)}</th>
+                <th align="right">${it.totals.fileTotal.functions}</th>
+                <th align="right">${it.totals.fileTotal.ncss}</th>
+                <th align="right">${it.totals.fileTotal.ccn}</th>
+            </tr>
+        </tfoot>
+        <tbody>
+            <j:forEach var="r" items="${it.results.fileResults}">
+                <tr>
+                    <th align="left"><a href="${r.name.replace(':','.').replace('\','.').replace('/','.')}">${r.name}</a></th>
+                    <td align="right">${r.functions}</td>
+                    <td align="right">${r.ncss}</td>
+                    <td align="right">${r.ccn}</td>
+                </tr>
+            </j:forEach>
+        </tbody>
+    </table>
+   </j:if>
+</j:jelly>

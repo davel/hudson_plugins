@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jvnet.hudson.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.318</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>cppncss</artifactId>
+    <packaging>hpi</packaging>
+    <version>1.0-beta-3</version>
+    <name>Hudson CppNCSS plugin</name>
+    <url>http://wiki.hudson-ci.org/display/HUDSON/CPPNCSS+Plugin</url>
+    <build>
+      <plugins>
+	  <plugin>
+        <groupId>org.jvnet.hudson.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <version>1.9</version>
+        <extensions>true</extensions>
+      </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>javancss-maven-plugin</artifactId>
+          <version>2.0-beta-2</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+    <dependencies>
+      <dependency>
+        <groupId>org.jvnet.hudson.main</groupId>
+        <artifactId>maven-plugin</artifactId>
+      </dependency>
+    </dependencies>
+</project>
