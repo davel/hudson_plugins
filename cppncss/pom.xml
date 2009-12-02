@@ -10,17 +10,19 @@
 
     <artifactId>cppncss</artifactId>
     <packaging>hpi</packaging>
-    <version>1.0-beta-4-SNAPSHOT</version>
+    <version>1.0-beta-3</version>
     <name>Hudson CppNCSS plugin</name>
     <url>http://wiki.hudson-ci.org/display/HUDSON/CPPNCSS+Plugin</url>
     <build>
       <plugins>
+<!--
 	  <plugin>
         <groupId>org.jvnet.hudson.tools</groupId>
         <artifactId>maven-hpi-plugin</artifactId>
         <version>1.9</version>
         <extensions>true</extensions>
       </plugin>
+-->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>javancss-maven-plugin</artifactId>
@@ -49,4 +51,10 @@
       <email>shaohua-holy.wen@nsn.com</email>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/cppncss-1.0-beta-3</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/cppncss-1.0-beta-3</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/cppncss/tags/cppncss-1.0-beta-3</url>
+  </scm>
 </project>
