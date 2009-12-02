@@ -11,4 +11,5 @@
   <artifactId>webtestpresenter</artifactId>
   <packaging>hpi</packaging>
   <version>0.23-SNAPSHOT</version>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/WebTest+Presenter+Plugin</url>
 </project>
