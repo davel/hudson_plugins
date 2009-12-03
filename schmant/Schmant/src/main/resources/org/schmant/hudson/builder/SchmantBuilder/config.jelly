@@ -1,0 +1,41 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This jelly script is used for per-project configuration.
+
+    See global.jelly for a general discussion about jelly script.
+  -->
+  <f:entry title="Script file" help="${rootUrl}/plugin/Schmant/help-pc-scriptFile.html">
+    <f:textbox field="scriptFile" />
+  </f:entry>
+  <f:entry title="Variables" help="${rootUrl}/plugin/Schmant/help-pc-variables.html">
+    <f:textarea field="variables"/>
+  </f:entry>
+  <f:entry title="Script arguments" help="${rootUrl}/plugin/Schmant/help-pc-scriptArguments.html">
+    <f:textbox field="scriptArguments"/>
+  </f:entry>
+  <f:advanced>
+    <f:entry title="System properties" help="${rootUrl}/plugin/Schmant/help-pc-systemProperties.html">
+      <f:textarea field="systemProperties"/>
+    </f:entry>
+    <f:entry title="Verbosity">
+      <select class="setting-input" name="verbosity">
+        <f:option selected="${instance.getVerbosity() == 'Info'}">Info</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Trace'}">Trace</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Debug'}">Debug</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Info'}">Info</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Warnings'}">Warnings</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Errors'}">Errors</f:option>
+        <f:option selected="${instance.getVerbosity() == 'Off'}">Off</f:option>
+      </select>
+    </f:entry>
+    <f:entry title="Task package path" help="${rootUrl}/plugin/Schmant/help-pc-taskPackagePath.html">
+      <f:textbox field="taskPackagePath"/>
+    </f:entry>
+    <f:entry title="Script engine name" help="${rootUrl}/plugin/Schmant/help-pc-scriptEngineName.html">
+      <f:textbox field="scriptEngineName"/>
+    </f:entry>
+    <f:entry title="Additional classpath" help="${rootUrl}/plugin/Schmant/help-pc-additionalClasspath.html">
+      <f:textbox field="additionalClasspath"/>
+    </f:entry>
+  </f:advanced>
+</j:jelly>
