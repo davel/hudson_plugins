@@ -57,8 +57,8 @@
   </build> -->  
 
   <scm>
-    <developerConnection>scm:svn:https://localhost:10443/schmant_hudson_plugin/trunk</developerConnection>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/Schmant</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/schmant</developerConnection>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/schmant</connection>
     <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/Schmant</url>
   </scm>
 </project>
