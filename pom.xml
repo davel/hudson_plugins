@@ -31,7 +31,7 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
+      <dependency><!-- if a plugin wants to depend on the maven plugin, choose the right version automatically -->
         <groupId>org.jvnet.hudson.main</groupId>
         <artifactId>maven-plugin</artifactId>
         <version>1.336</version>
