@@ -8,7 +8,7 @@
 
   <groupId>org.schmant.hudson</groupId>
   <artifactId>Schmant</artifactId>
-  <version>1.0.10</version>
+  <version>1.0.11-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson Schmant plugin</name>
   <description>Plugin for running Schmant scripts.</description>
@@ -57,8 +57,8 @@
   </build> -->  
 
   <scm>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/Schmant-1.0.10</developerConnection>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/Schmant-1.0.10</connection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/Schmant/tags/Schmant-1.0.10</url>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/schmant</developerConnection>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/schmant</connection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/Schmant</url>
   </scm>
 </project>
