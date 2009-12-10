@@ -16,6 +16,7 @@ import hudson.scm.SCM;
 import hudson.scm.SCMDescriptor;
 import org.apache.commons.lang.StringUtils;
 import java.text.SimpleDateFormat;
+import org.apache.commons.io.IOUtils;
 
 public class FSSCM extends SCM {
 
@@ -84,22 +85,52 @@ public class FSSCM extends SCM {
 	@Override
 	public boolean checkout(AbstractBuild build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) 
 	throws IOException, InterruptedException {
-		
+				
 		long start = System.currentTimeMillis();
 		PrintStream log = launcher.getListener().getLogger();
 		log.println("FSSCM.checkout " + path + " to " + workspace);
 		Boolean b = Boolean.TRUE;
+
+		AllowDeleteList allowDeleteList = new AllowDeleteList(build.getProject().getRootDir());
 		
 		if ( clearWorkspace ) {
 			log.println("FSSCM.clearWorkspace...");
 			workspace.deleteRecursive();
 			b = workspace.act(new RemoteCopyDir(path));
 			
+			// save the list of existing files
+			Set<String> existingFiles = workspace.act(new RemoteListDir());
+			allowDeleteList.setList(existingFiles);
+			allowDeleteList.save();
+			
 		// not clearWorkspace
 		} else {
+			// we will only delete a file if it is listed in the allowDeleteList
+			// ie. we will only delete a file if it is copied by us
+			if ( allowDeleteList.fileExists() ) {
+				allowDeleteList.load();
+			} else {
+				// watch list save file doesn't exist
+				// we will assuem all existing files are under watch 
+				// ie. everything can be deleted 
+				Set<String> existingFiles = workspace.act(new RemoteListDir());
+				allowDeleteList.setList(existingFiles);
+			}
+			
 			RemoteFolderDiff.CheckOut callable = new RemoteFolderDiff.CheckOut();
-			setupRemoteFolderDiff(callable, build.getProject());
+			setupRemoteFolderDiff(callable, build.getProject(), allowDeleteList.getList());
 			List<FolderDiff.Entry> list = workspace.act(callable);
+			
+			// maintain the watch list
+			for(FolderDiff.Entry entry : list) {
+				if ( FolderDiff.Entry.Type.DELETED.equals(entry.getType()) ) {
+					allowDeleteList.remove(entry.getFilename());
+				} else {
+					// added or modified
+					allowDeleteList.add(entry.getFilename());
+				}
+			}
+			allowDeleteList.save();
 			
 			// raw log
 			String str = callable.getLog();
@@ -140,8 +171,21 @@ public class FSSCM extends SCM {
 		PrintStream log = launcher.getListener().getLogger();
 		log.println("FSSCM.pollChange: " + path);
 		
+		AllowDeleteList allowDeleteList = new AllowDeleteList(project.getRootDir());
+		// we will only delete a file if it is listed in the allowDeleteList
+		// ie. we will only delete a file if it is copied by us
+		if ( allowDeleteList.fileExists() ) {
+			allowDeleteList.load();
+		} else {
+			// watch list save file doesn't exist
+			// we will assuem all existing files are under watch 
+			// ie. everything can be deleted 
+			Set<String> existingFiles = workspace.act(new RemoteListDir());
+			allowDeleteList.setList(existingFiles);
+		}
+		
 		RemoteFolderDiff.PollChange callable = new RemoteFolderDiff.PollChange();
-		setupRemoteFolderDiff(callable, project);
+		setupRemoteFolderDiff(callable, project, allowDeleteList.getList());
 		
 		boolean changed = workspace.act(callable);
 		String str = callable.getLog();
@@ -152,7 +196,7 @@ public class FSSCM extends SCM {
 		return changed;
 	}
 	
-	private void setupRemoteFolderDiff(RemoteFolderDiff diff, AbstractProject project) {
+	private void setupRemoteFolderDiff(RemoteFolderDiff diff, AbstractProject project, Set<String> allowDeleteList) {
 		Run lastBuild = project.getLastBuild();
 		if ( null == lastBuild ) {
 			diff.setLastBuildTime(0);
@@ -173,6 +217,8 @@ public class FSSCM extends SCM {
 			if ( includeFilter ) diff.setIncludeFilter(filters);
 			else diff.setExcludeFilter(filters);
 		}		
+		
+		diff.setAllowDeleteList(allowDeleteList);
 	}
 		
 	protected static String formatDurration(long diff) {
@@ -187,13 +233,13 @@ public class FSSCM extends SCM {
 		}
 	}
 	
-	// don't know why, we can't use @Extension, otherwise, we will have two FSSCM in main page
+	// we use PluginImpl, if we use annonation in here, end-up we will show two plugins in the project page
 	// @Extension
     public static final class DescriptorImpl extends SCMDescriptor<FSSCM>
     {
         public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
             	
-        private DescriptorImpl() {
+        public DescriptorImpl() {
         	super(FSSCM.class, null);
             load();
         }

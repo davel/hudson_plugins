@@ -22,5 +22,4 @@ public class RemoteCopyDir implements FileCallable<Boolean> {
 		FileUtils.copyDirectory(new File(sourceDir), workspace);
 		return Boolean.TRUE;
 	}
-
 }

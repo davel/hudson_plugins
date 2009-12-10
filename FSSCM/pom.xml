@@ -5,11 +5,11 @@
   <artifactId>FSSCM</artifactId>
   <packaging>hpi</packaging>
   <name>File System SCM</name>
-  <version>0.99</version>
+  <version>1.5</version>
   
   <properties>
     <!-- which version of Hudson is this plugin built against? -->
-    <hudson.version>1.293</hudson.version>
+    <hudson.version>1.310</hudson.version>
   </properties>
 
   <dependencies>

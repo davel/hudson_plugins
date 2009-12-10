@@ -25,6 +25,7 @@ public class FolderDiff {
 	private boolean filterEnabled;
 	private boolean includeFilter;
 	private String[] filters;
+	private Set<String> allowDeleteList;
 	
 	public FolderDiff() {
 		filterEnabled = false;
@@ -50,6 +51,10 @@ public class FolderDiff {
 		this.filters = filters;		
 	}
 	
+	public void setAllowDeleteList(Set<String> allowDeleteList) {
+		this.allowDeleteList = allowDeleteList;
+	}
+	
 	/*
 	public boolean isModifiedSince(long time) {
 		//if ( hasNewOrModifiedFiles(time) ) return true;
@@ -61,9 +66,13 @@ public class FolderDiff {
 	/**
 	 * <p>For each file in the source folder
 	 * <ul>
-	 *   <li>if file is not in destination, this is a new file</p>
-	 *   <li>if the destination file exists but is old, this is a modified file</p>
+	 *   <li>if file is not in destination, this is a new file</li>
+	 *   <li>if the destination file exists but is old, this is a modified file</li>
 	 * </ul>
+	 * 
+	 * <p>Note: the time parameter (1st param) is basically not used in the code. 
+	 * On Windows, the lastModifiedDate will not be updated when you copy a file to the source folder, 
+	 * until we have a way to get the "real" lastModifiedDate on Windows, we won't use this "time" field</p>
 	 * 
 	 * @param time should be the last build time, to improve performance, we will list all files modified after "time" and check with destination
 	 * @param breakOnceFound to improve performance, we will return once we found the 1st new or modified file
@@ -77,7 +86,9 @@ public class FolderDiff {
 		
 		IOFileFilter dirFilter = HiddenFileFilter.VISIBLE;
 		AndFileFilter fileFilter = new AndFileFilter();
-		//fileFilter.addFileFilter(new AgeFileFilter(time, false /* accept newer */));
+		// AgeFileFilter is base on lastModifiedDate, but if you copy a file on Windows, the lastModifiedDate is not changed
+		// only the creation date is updated, so we can't use the following AgeFileFiilter
+		// fileFilter.addFileFilter(new AgeFileFilter(time, false /* accept newer */));
 		fileFilter.addFileFilter(HiddenFileFilter.VISIBLE);
 		if ( filterEnabled && null != filters && filters.length > 0 ) {
 			WildcardFileFilter wcf = new WildcardFileFilter(filters, IOCase.INSENSITIVE);
@@ -121,8 +132,12 @@ public class FolderDiff {
 	/**
 	 * <p>For each file in the destination folder
 	 * <ul>
-	 *   <li>if file is not in source, this file was deleted in the source</p>
+	 *   <li>if file is not in source, and it is in the allowDeleteList, this file will be deleted in the source</li>
 	 * </ul>
+	 * 
+	 * <p>Note: the time parameter (1st param) is basically not used in the code. 
+	 * On Windows, the lastModifiedDate will not be updated when you copy a file to the source folder, 
+	 * until we have a way to get the "real" lastModifiedDate on Windows, we won't use this "time" field</p>
 	 * 
 	 * @param time should be the last build time, to improve performance, we will list all files modified after "time" and check with source
 	 * @param breakOnceFound to improve performance, we will return once we found the 1st new or modified file
@@ -136,7 +151,9 @@ public class FolderDiff {
 		
 		IOFileFilter dirFilter = HiddenFileFilter.VISIBLE;
 		AndFileFilter fileFilter = new AndFileFilter();
-		fileFilter.addFileFilter(new AgeFileFilter(time, true /* accept older */));
+		// AgeFileFilter is base on lastModifiedDate, but if you copy a file on Windows, the lastModifiedDate is not changed
+		// only the creation date is updated, so we can't use the following AgeFileFiilter
+		//fileFilter.addFileFilter(new AgeFileFilter(time, true /* accept older */));
 		fileFilter.addFileFilter(HiddenFileFilter.VISIBLE);
 		if ( filterEnabled && null != filters && filters.length > 0 ) {
 			WildcardFileFilter wcf = new WildcardFileFilter(filters, IOCase.INSENSITIVE);
@@ -153,7 +170,7 @@ public class FolderDiff {
 			try {
 				String relativeName = getRelativeName(file.getAbsolutePath(), dst.getAbsolutePath());
 				File tmp = new File(src, relativeName);
-				if ( !tmp.exists() ) {
+				if ( !tmp.exists() && (null == allowDeleteList || allowDeleteList.contains(relativeName)) ) {
 					log("Deleted file: " + relativeName);
 					list.add(new Entry(relativeName, Entry.Type.DELETED));
 					if ( breakOnceFound ) return list;
