@@ -10,7 +10,7 @@
   <artifactId>buckminster</artifactId>
   <packaging>hpi</packaging>
   <name>Buckminster</name>
-  <version>0.9.3</version>
+  <version>0.9.4-SNAPSHOT</version>
 
   <description>Integrates Eclipse Buckminster as a builder in Hudson</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Buckminster+PlugIn</url>
@@ -21,10 +21,4 @@
   		<email>mail@jutzig.de </email>
   	</developer>
   </developers>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/buckminster-0.9.3</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/buckminster-0.9.3</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/tags/buckminster-0.9.3</url>
-  </scm>
 </project>
