@@ -2,6 +2,7 @@ package hudson.plugins.buckminster.command;
 
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
+import hudson.model.JDK;
 import hudson.plugins.buckminster.EclipseInstallation;
 
 import java.io.File;
@@ -57,7 +58,13 @@ public class CommandLineBuilder {
 		List<String> commandList = new ArrayList<String>();
 
 		// VM Options
-		commandList.add("java");
+		JDK jdk = build.getProject().getJDK();
+		//if none is configured, hope it is in the PATH
+		if(jdk==null)
+			commandList.add("java");
+		//otherwise use the configured one
+		else
+			commandList.add(jdk.getBinDir().getAbsolutePath()+"/java");
 		
 		Map properties = addJVMProperties(build, listener, commandList);
 
