@@ -3,7 +3,7 @@
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="var" path="M2_REPO/org/jvnet/hudson/main/hudson-core/1.335/hudson-core-1.335.jar" sourcepath="M2_REPO/org/jvnet/hudson/main/hudson-core/1.335/hudson-core-1.335-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jvnet/hudson/main/hudson-core/1.337/hudson-core-1.337.jar" sourcepath="M2_REPO/org/jvnet/hudson/main/hudson-core/1.335/hudson-core-1.335-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/kohsuke/stapler/json-lib/2.1/json-lib-2.1-jdk15.jar" sourcepath="M2_REPO/org/kohsuke/stapler/json-lib/2.1/json-lib-2.1-jdk15-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/kohsuke/stapler/stapler/1.100/stapler-1.100.jar" sourcepath="M2_REPO/org/kohsuke/stapler/stapler/1.100/stapler-1.100-sources.jar"/>
