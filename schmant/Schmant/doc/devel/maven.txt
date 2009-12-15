@@ -1,0 +1,18 @@
+Some useful commands:
+
+Prerequisites:
+* Set JAVA_HOME
+* Go to root dir of Schmant project in this workspace.
+
+Clean and compile:
+==================
+$ mvn -o clean compile
+
+Package:
+========
+$ mvn package
+The Schmant.hpi file ends up in the target directory.
+
+Publish:
+========
+See http://wiki.hudson-ci.org/display/HUDSON/Hosting+plugins
