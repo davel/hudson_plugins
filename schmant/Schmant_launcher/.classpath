@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="M2_REPO/org/jvnet/hudson/main/hudson-core/1.335/hudson-core-1.335.jar" sourcepath="M2_REPO/org/jvnet/hudson/main/hudson-core/1.335/hudson-core-1.335-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/kohsuke/stapler/stapler/1.125/stapler-1.125.jar" sourcepath="M2_REPO/org/kohsuke/stapler/stapler/1.125/stapler-1.125-sources.jar"/>
-	<classpathentry kind="lib" path="/Schmant_resources/optlib/schmant-1.0.1.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
