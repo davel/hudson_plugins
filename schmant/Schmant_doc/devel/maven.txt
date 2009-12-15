@@ -10,10 +10,6 @@ $ mvn -o clean compile
 
 Package:
 ========
-Before:
- * Export Jar for the Schmant_launcher project using the jardesc file in that
-   project's root directory.
-   
 $ mvn package
 The Schmant.hpi file ends up in the target directory.
 

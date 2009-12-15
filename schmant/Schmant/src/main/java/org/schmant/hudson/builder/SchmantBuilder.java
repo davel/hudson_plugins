@@ -4,21 +4,19 @@ import hudson.Launcher;
 import hudson.model.Build;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
-import hudson.model.FreeStyleProject;
+import hudson.model.TaskListener;
 import hudson.tasks.Builder;
+import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.script.ScriptException;
 import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
@@ -27,11 +25,15 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.schmant.hudson.util.SchmantHomeClassLoader;
 
 public final class SchmantBuilder extends Builder
 {
 	public static final SchmantBuilderDescriptor DESCRIPTOR = new SchmantBuilderDescriptor();
+
+	// The JAVA_HOME environment variable
+	private static final String JAVA_HOME = "JAVA_HOME";
+	private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+	private static final String SCHMANT_LAUNCHER_CLASS = "org.schmant.Launcher";
 
 	private final String m_scriptFile;
 	private final String m_systemProperties;
@@ -112,82 +114,166 @@ public final class SchmantBuilder extends Builder
 		return ok;
 	}
 
-	private Method findLauncherMethod(Class<?> c)
+	private String getJavaCommand(Build<?, ?> build, TaskListener log) throws IOException, InterruptedException
 	{
-		for (Method m : c.getMethods())
+		String javaHome = build.getEnvironment(log).get(JAVA_HOME);
+		if (javaHome == null)
 		{
-			if ("launch".equals(m.getName()))
-			{
-				return m;
-			}
+			throw new RuntimeException("The " + JAVA_HOME + " environment variable is not set. Check the Hudson configuration");
 		}
-		throw new RuntimeException("Did not find \"launch\" method on " + c + " class");
+		File javaHomef = new File(javaHome);
+		File javaf = new File(javaHomef, "bin/java");
+		if (javaf.exists() && javaf.isFile())
+		{
+			return javaf.getAbsolutePath();
+		}
+
+		File javaexef = new File(javaHomef, "bin/java.exe");
+		if (!javaexef.exists() && javaexef.isFile())
+		{
+			throw new RuntimeException("Neither of the " + javaf + " or " + javaexef + " files exist. Check Hudson's JAVA_HOME configuration");
+		}
+		return javaexef.getAbsolutePath();
 	}
 
-	private Properties getProperties(String text) throws IOException
+	private String createClasspath(File schmantHome)
 	{
-		Properties res = new Properties();
-		if (text != null)
-		{
-			res.load(new StringReader(text));
-		}
-		return res;
-	}
-
-	private Map<String, Object> createLauncherSettings(File schmantHome, Build<?, ?> build, BuildListener listener) throws IOException
-	{
-		Map<String, Object> res = new HashMap<String, Object>();
-		File scriptFile = new File(m_scriptFile);
-		if (!scriptFile.isAbsolute())
-		{
-			// Make this file relative to the workspace directory
-			// Must take a detour around Object, otherwise the compiler does not
-			// think that the cast will work.
-			Object o = build.getParent();
-			scriptFile = new File(((FreeStyleProject) o).getSomeWorkspace().getRemote() + File.separator + scriptFile.getPath());
-		}
-		res.put("scriptFile", scriptFile);
-		res.put("buildListener", listener);
-		res.put("schmantHome", schmantHome);
-		res.put("systemProperties", getProperties(m_systemProperties));
-		res.put("variables", getProperties(m_variables));
-		res.put("scriptArguments", m_scriptArguments);
-		res.put("taskPackagePath", m_taskPackagePath);
-		res.put("scriptEngineName", m_scriptEngineName);
-		res.put("verbosity", m_verbosity);
-		res.put("buildVariables", build.getBuildVariables());
-		res.put("build", build);
-		return res;
-	}
-
-	private String createAdditionalClasspath(Build<?, ?> build)
-	{
-		// Have to make a detour around Object to get the compiler to accept
-		// the cast.
-		File workspaceRoot = new File(((FreeStyleProject) ((Object) build.getParent())).getSomeWorkspace().getRemote());
+		StringBuilder sb = new StringBuilder();
 		if (m_additionalClasspath != null)
 		{
-			StringBuilder res = new StringBuilder();
-			String[] entries = m_additionalClasspath.split("\\Q" + File.pathSeparator + "\\E");
-			for (String entry : entries)
+			sb.append(m_additionalClasspath).append(PATH_SEPARATOR);
+		}
+
+		// Add all Jar files in schmantHome/lib to the classpath
+		// Assume that schmantHome is an absolute path
+		File lib = new File(schmantHome, "lib");
+		File[] jarFiles = lib.listFiles(new FilenameFilter() {
+
+			public boolean accept(File dir, String name)
 			{
-				File f = new File(entry);
-				if (f.isAbsolute())
-				{
-					res.append(entry).append(File.pathSeparatorChar);
-				}
-				else
-				{
-					// Relative paths are relative to the workspace directory.
-					res.append(new File(workspaceRoot, entry).getAbsolutePath()).append(File.pathSeparatorChar);
-				}
+				return name.toLowerCase().endsWith(".jar");
 			}
-			return res.toString();
+		});
+
+		for (File jarFile : jarFiles)
+		{
+			sb.append(jarFile.getPath()).append(PATH_SEPARATOR);
+		}
+		return sb.toString();
+	}
+
+	private Map<String, String> getProperties(String text) throws IOException
+	{
+		Properties props = new Properties();
+		if (text != null)
+		{
+			props.load(new StringReader(text));
+		}
+		HashMap<String, String> res = new HashMap<String, String>(props.size());
+		for (Map.Entry<Object, Object> prop : props.entrySet())
+		{
+			res.put((String) prop.getKey(), (String) prop.getValue());
+		}
+		return res;
+	}
+
+	private void addVerbosity(ArgumentListBuilder al)
+	{
+		if ("Warnings".equals(m_verbosity))
+		{
+			al.add("-q");
+		}
+		else if ("Errors".equals(m_verbosity))
+		{
+			al.add("-q").add("-q");
+		}
+		else if ("Debug".equals(m_verbosity))
+		{
+			al.add("-v");
+		}
+		else if ("Trace".equals(m_verbosity))
+		{
+			al.add("-v").add("-v");
+		}
+		else if ("Info".equals(m_verbosity))
+		{
+			// Ignore
 		}
 		else
 		{
-			return null;
+			throw new RuntimeException("Invalid verbosity level: " + m_verbosity);
 		}
+	}
+
+	private Map<String, String> createVariables(Build<?, ?> build)
+	{
+		Map<String, String> res = new HashMap<String, String>();
+		res.put("buildNumber", "" + build.getNumber());
+		res.put("buildId", build.getId());
+		res.put("jobName", build.getParent().getName());
+		res.put("buildTag", "hudson-" + build.getParent().getName() + "-" + build.getNumber());
+		res.put("executorNumber", Integer.toString(build.getExecutor().getNumber()));
+		res.put("workspace", build.getWorkspace().getRemote());
+		return res;
+	}
+
+	private ArgumentListBuilder createArgumentListBuilder(Build<?, ?> build, BuildListener listener, File schmantHome) throws IOException, InterruptedException
+	{
+		ArgumentListBuilder res = new ArgumentListBuilder();
+		res.add(getJavaCommand(build, listener));
+		res.add("-cp", createClasspath(schmantHome));
+
+		if (m_systemProperties != null)
+		{
+			res.addKeyValuePairs("-D", getProperties(m_systemProperties));
+		}
+
+		res.add(SCHMANT_LAUNCHER_CLASS);
+
+		res.add("-sh", schmantHome.getPath());
+
+		if ((m_taskPackagePath != null) && (m_taskPackagePath.length() > 0))
+		{
+			res.add("-t", m_taskPackagePath);
+		}
+
+		if ((m_scriptEngineName != null) && (m_scriptEngineName.length() > 0))
+		{
+			res.add("--script-engine", m_scriptEngineName);
+		}
+
+		if ((m_verbosity != null) && (m_verbosity.length() > 0) && !"Info".equals(m_verbosity))
+		{
+			addVerbosity(res);
+		}
+
+		// Create standard variables
+		Map<String, String> variables = createVariables(build);
+		if (m_variables != null)
+		{
+			// Set new variables and maybe override standard variables with
+			// values set in the configuration
+			variables.putAll(getProperties(m_variables));
+		}
+		res.addKeyValuePairs("-p", variables);
+
+		res.add(m_scriptFile);
+
+		if ((m_scriptArguments != null) && (m_scriptArguments.length() > 0))
+		{
+			res.addTokenized(m_scriptArguments);
+		}
+		return res;
+	}
+
+	private Launcher.ProcStarter createLauncher(Build<?, ?> build, BuildListener listener, File schmantHome) throws IOException, InterruptedException
+	{
+		Launcher l = build.getWorkspace().createLauncher(listener);
+		Launcher.ProcStarter res = l.launch();
+		res.cmds(createArgumentListBuilder(build, listener, schmantHome));
+		res.stdout(listener);
+		res.pwd(build.getWorkspace());
+		return res;
 	}
 
 	public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException
@@ -200,87 +286,17 @@ public final class SchmantBuilder extends Builder
 		File schmantHome = new File(DESCRIPTOR.getSchmantHome());
 		listener.getLogger().println("Schmant home: " + schmantHome);
 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		try
-		{
-			SchmantHomeClassLoader shcl = null;
-			try
-			{
-				InputStream is = SchmantBuilder.class.getResourceAsStream("hudsonSchmantLauncher.jar");
-				try
-				{
-					if (is == null)
-					{
-						throw new IOException("Cannot find the hudsonSchmantLauncher.jar file. (It should be in the Schmant plugin Jar.)");
-					}
-					shcl = new SchmantHomeClassLoader(cl, schmantHome, createAdditionalClasspath(build), is);
-				}
-				finally
-				{
-					if (is != null)
-					{
-						is.close();
-					}
-				}
-				Thread.currentThread().setContextClassLoader(shcl);
+		Launcher.ProcStarter ps = createLauncher(build, listener, schmantHome);
+		int exitCode = ps.join();
 
-				Map<String, Object> settings = createLauncherSettings(schmantHome, build, listener);
-
-				Class<?> launcherClass = shcl.loadClass("org.schmant.hudson.launcher.SchmantLauncher");
-				Method launcherMethod = findLauncherMethod(launcherClass);
-				Object o = launcherClass.newInstance();
-				try
-				{
-					launcherMethod.invoke(o, settings);
-				}
-				catch (InvocationTargetException e)
-				{
-					Throwable cause = e.getCause();
-					if ((cause != null) && (cause instanceof Exception))
-					{
-						throw (Exception) cause;
-					}
-					else
-					{
-						throw e;
-					}
-				}
-				return true;
-			}
-			finally
-			{
-				if (shcl != null)
-				{
-					shcl.close();
-				}
-			}
-		}
-		catch (IOException e)
+		if (exitCode != 0)
 		{
-			throw e;
-		}
-		catch (InterruptedException e)
-		{
-			throw e;
-		}
-		catch (ScriptException e)
-		{
-			e.printStackTrace(listener.fatalError(e.getMessage()));
+			listener.fatalError("The Schmant process exited with error code " + exitCode);
 			return false;
 		}
-		catch (RuntimeException e)
+		else
 		{
-			e.printStackTrace(listener.fatalError(e.getMessage()));
-			return false;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(listener.fatalError(e.getMessage()));
-			return false;
-		}
-		finally
-		{
-			Thread.currentThread().setContextClassLoader(cl);
+			return true;
 		}
 	}
 
