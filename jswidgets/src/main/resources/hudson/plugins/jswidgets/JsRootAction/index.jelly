@@ -10,8 +10,8 @@
             <j:set var="jsrunsURL" value="${baseURL}${it.urlName}/runs/"/>
             <p>${%Copy this snippet to a HTML page to include via Javascript.}</p>
             <p>${%Use optional count to restrict the number of items.}</p>
-            <p><tt>&amp;lt;script type="text/javascript" src="${jsrunsURL}[?count=N]"/&amp;gt;</tt></p>
-            <script type="text/javascript" src="${jsrunsURL}?count=5"/>
+            <p><tt>&amp;lt;script type="text/javascript" src="${jsrunsURL}[?count=N]"&amp;gt;&amp;lt;/script&amp;gt;</tt></p>
+            <script type="text/javascript" src="${jsrunsURL}?count=5"></script>
             <h3>${%Build History HTML}</h3>
             <j:set var="jsrunsURL" value="${jsrunsURL}?html=true"/>
             <p>${%Copy this snippet to a HTML page to include via IFRAME.}</p>

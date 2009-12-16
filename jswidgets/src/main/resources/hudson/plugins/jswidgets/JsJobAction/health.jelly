@@ -36,6 +36,6 @@ document.write('</j:if>
                     </j:forEach>
                 </tbody>
             </table>
-            <div><small>${it.getJobDescription()}</small></div>
+            <div><small>${it.getJobDescription(!html)}</small></div>
         </div><j:if test="${!html}">');</j:if>
 </j:jelly>

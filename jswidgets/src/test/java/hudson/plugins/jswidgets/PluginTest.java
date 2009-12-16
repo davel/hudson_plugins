@@ -136,6 +136,15 @@ public class PluginTest extends HudsonTestCase {
         checkJsWidgetsOnlyOnce(build3);
     }
 
+    @Bug(5106)
+    @LocalData
+    public void testJsBuildActionWithAnApostroph() throws IOException, SAXException {
+        webClient.setJavaScriptEnabled(false); // TODO webClient chokes on the jshealth javascript right now
+        final String relative = "/job/bar/" + JsConsts.URLNAME + "/health/";
+        checkHtmlOutput("job with '3' builds", relative);
+        checkJavaScriptOutput("job with \\'3\\' builds", relative);
+    }
+    
     @LocalData
     public void testJsBuildActionWithOutChanges() throws IOException, SAXException {
         final String buildPath = "/job/svntest/2";

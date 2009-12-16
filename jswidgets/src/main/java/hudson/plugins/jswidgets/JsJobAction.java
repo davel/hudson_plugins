@@ -52,12 +52,14 @@ public class JsJobAction extends JsBaseAction {
     }
 
     /**
-     * Returns the description of the job without line feeds as this will break the Javascript output.
+     * Returns the description of the job without line feeds and ' as this will break the Javascript output.
      * 
+     * @param escapeApostroph escape apostroph (used by javascript-rendering).
      * @return the description in one line.
      */
-    public String getJobDescription() {
-        return project.getDescription().replace("\n", "").replace("\r", "");
+    public String getJobDescription(boolean escapeApostroph) {       
+        final String description = project.getDescription().replace("\n", "").replace("\r", "");
+        return escapeApostroph ? description.replace("'", "\\'") : description;
     }
 
 }

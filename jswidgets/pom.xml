@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jvnet.hudson.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.334</version><!-- which version of Hudson is this plugin built against? -->
+        <version>1.335</version><!-- which version of Hudson is this plugin built against? -->
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -35,17 +35,12 @@
             <id>m.g.o-public</id>
             <url>http://maven.glassfish.org/content/groups/public/</url>
         </pluginRepository>
-        <!-- checkstyle 5.0 maven plugin -->
-        <pluginRepository>
-            <id>maven.atlassian.com</id>
-            <url>https://maven.atlassian.com/content/groups/public/</url>
-        </pluginRepository>
     </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>org.kohsuke.stapler</groupId>
             <artifactId>stapler</artifactId>
-            <version>1.124</version>
+            <version>1.125</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -130,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.3-atlassian-1</version>
+                <version>2.4</version>
                 <configuration>
                     <enableRulesSummary>false</enableRulesSummary>
                     <configLocation>${basedir}/src/conf/checkstyle-ruleset.xml</configLocation>
