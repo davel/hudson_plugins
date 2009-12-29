@@ -10,11 +10,18 @@
     <packaging>hpi</packaging>
     <artifactId>serenitec</artifactId>
     <name>Hudson Serenitec Plugin.</name>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.15-SNAPSHOT</version>
     <description>Execute the Serenitec refactoring solution on your project and
     generate reports on its activities.
     </description>
     <url>http://wiki.hudson-ci.org/display/HUDSON/Serenitec+Plugin</url>
+    <developers>
+      <developer>
+        <id>gbossert</id>
+        <name>Georges Bossert</name>
+        <email>gbossert@gmail.com</email>
+      </developer>
+    </developers>
     <licenses>
         <license>
             <name>BSD Style</name>
