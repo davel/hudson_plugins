@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.319</version>
+    <version>1.324</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -13,6 +13,12 @@
   <name>Hudson kagemai plugin</name>
   <description>Integrates Hudson to Kagemai</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Kagemai+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>yamkazu</id>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
