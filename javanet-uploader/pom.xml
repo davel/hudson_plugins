@@ -12,7 +12,13 @@
   <name>Hudson java.net uploader plugin</name>
   <version>1.7-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/java.net+uploader+Plugin</url>
-  
+  <developers>
+    <developer>
+      <id>kohsuke</id>
+      <name>Kohsuke Kawaguchi</name>
+    </developer>
+  </developers>
+
   <dependencies>
     <dependency>
       <groupId>javanettasks</groupId>
