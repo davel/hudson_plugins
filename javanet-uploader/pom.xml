@@ -10,7 +10,7 @@
   <artifactId>javanet-uploader</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson java.net uploader plugin</name>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.7</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/java.net+uploader+Plugin</url>
   <developers>
     <developer>
@@ -26,4 +26,10 @@
       <version>1.0.25</version>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/javanet-uploader-1.7</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/javanet-uploader-1.7</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/javanet-uploader-1.7</url>
+  </scm>
 </project>
