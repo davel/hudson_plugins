@@ -10,7 +10,7 @@
   <artifactId>javanet</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson java.net plugin</name>
-  <version>1.3</version>
+  <version>1.4-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/java.net+Plugin</url>
   <developers>
     <developer>
@@ -40,10 +40,4 @@
       I get copies of jars that are already in hudson-core.
     -->
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/javanet-1.3</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/javanet-1.3</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/javanet/tags/javanet-1.3</url>
-  </scm>
 </project>
