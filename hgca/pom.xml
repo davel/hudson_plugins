@@ -29,31 +29,4 @@
       <email>andrew.bayer@gmail.com</email>
     </developer>
   </developers>
-
-  <dependencies>
-  </dependencies>
-  
-  <build>
-    <!--
-      Since new versions need to overwrite old versions, it's better
-      not to have version number in the .hpi file name.
-    -->
-    <finalName>${project.artifactId}</finalName>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <scm>
-    <connection>scm:svn:https://guest@shttps://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/hgca</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/hgca</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/hgca</url>
-  </scm>
-
 </project>

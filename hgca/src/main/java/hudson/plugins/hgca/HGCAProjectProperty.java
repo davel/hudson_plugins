@@ -121,7 +121,7 @@ public final class HGCAProjectProperty extends JobProperty<AbstractProject<?,?>>
         @Override
         public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             JSONObject toBind;
-            System.err.println(formData.toString());
+
             // annoBlock contains the pairs in per-project configuration, but they're not in a block like 
             // that for global configuration.
             if (formData.has("annoBlock"))
