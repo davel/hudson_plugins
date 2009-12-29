@@ -3,14 +3,22 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.319</version>
+    <version>1.324</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
+
   <groupId>com.progress.hudson</groupId>
   <artifactId>schedule-failed-builds</artifactId>
   <name>Retry Failed Builds</name>
-  <description>This plugin allows you to trigger a Hudson n minutes after a build failed.</description>
+  <description>This plugin allows you to trigger a build N minutes after a build failed.</description>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Retry+Failed+Builds+Plugin</url>
   <packaging>hpi</packaging>
   <version>1.1-SNAPSHOT</version>
+
+  <developers>
+    <developer>
+      <id>sfritz</id>
+      <name>Stefan Fritz</name>
+    </developer>
+  </developers>
 </project>
