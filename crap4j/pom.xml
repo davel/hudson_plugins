@@ -13,6 +13,12 @@
   <version>0.7-SNAPSHOT</version>
   <name>Hudson Crap4J plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Crap4J+Plugin</url>
+  <developers>
+    <developer>
+      <id>dlindner</id>
+      <name>Daniel Lindner</name>
+    </developer>
+  </developers>
   
   <dependencies>
     <dependency>
