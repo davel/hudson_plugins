@@ -13,4 +13,9 @@
   <packaging>hpi</packaging>
   <version>1.2-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/URL+Change+Trigger</url>
+  <developers>
+    <developer>
+      <id>dfabulich</id>
+    </developer>
+  </developers>
 </project>
