@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
@@ -13,15 +12,15 @@
 
   <groupId>hudson.plugins.bamboo</groupId>
   <artifactId>bamboo-notifier</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
   <name>Bamboo Notifier</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Bamboo+Notifier</url>
 
   <scm>
-    <connection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/bamboo-notifier</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/bamboo-notifier</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/bamboo-notifier</url>
+    <connection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/bamboo-notifier-1.0</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/bamboo-notifier-1.0</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/bamboo-notifier/tags/bamboo-notifier-1.0</url>
   </scm>
 
   <properties>
