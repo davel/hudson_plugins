@@ -12,15 +12,15 @@
 
   <groupId>hudson.plugins.bamboo</groupId>
   <artifactId>bamboo-notifier</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Bamboo Notifier</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Bamboo+Notifier</url>
 
   <scm>
-    <connection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/bamboo-notifier-1.0</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/bamboo-notifier-1.0</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/bamboo-notifier/tags/bamboo-notifier-1.0</url>
+    <connection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/bamboo-notifier</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/bamboo-notifier</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/bamboo-notifier</url>
   </scm>
 
   <properties>
