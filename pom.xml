@@ -180,6 +180,12 @@
   </build>
 
   <modules>
+    <!-- #2819: uses private repo, licensing questions: <module>codeviation</module> -->
+    <!--module>coverage</module--><!-- not ready for release yet -->
+    <!--module>drools/drools</module-->
+    <!-- module>jmx-invoker</module  maven-license-plugin causing h.g.o build failure -->
+    <!-- module>skype</module  h.g.o confuses file:libs repo so commenting this -->
+    <!--module>subversion</module-->
     <module>accurev</module>
     <module>active-directory</module>
     <module>analysis-core</module>
@@ -202,9 +208,7 @@
     <module>cmakebuilder</module>
     <module>cmvc</module>
     <module>codeplex</module>
-    <!-- #2819: uses private repo, licensing questions: <module>codeviation</module> -->
     <module>cobertura</module>
-    <!--module>coverage</module--><!-- not ready for release yet -->
     <module>cppunit</module>
     <module>crap4j</module>
     <module>crowd</module>
@@ -214,7 +218,6 @@
     <module>description-setter</module>
     <module>disk-usage</module>
     <module>doclinks</module>
-    <!--module>drools/drools</module-->
     <module>dry</module>
     <module>easyant</module>
     <module>ec2</module>
@@ -252,15 +255,14 @@
     <module>jira</module>
     <module>jmeter</module>
     <module>jmx</module>
-    <!-- module>jmx-invoker</module  maven-license-plugin causing h.g.o build failure -->
     <module>join</module>
     <module>jprt</module>
     <module>jsunit</module>
     <module>jswidgets</module>
     <module>jwsdp-sqe</module>
     <module>kagemai</module>
-	<module>lastfailureversioncolumn</module>
-	<module>lastsuccessversioncolumn</module>
+    <module>lastfailureversioncolumn</module>
+    <module>lastsuccessversioncolumn</module>
     <module>locked-files-report</module>
     <module>locks-and-latches</module>
     <module>mantis</module>
@@ -305,13 +307,11 @@
     <module>seleniumhq</module>
     <module>setenv</module>
     <module>sidebar-link</module>
-    <!-- module>skype</module  h.g.o confuses file:libs repo so commenting this -->
     <module>sloccount</module>
     <module>sonar</module>
     <module>sourcemonitor</module>
     <module>ssh-slaves</module>
     <module>sfee</module>
-    <!--module>subversion</module-->
     <module>svncompat13</module>
     <module>svncompat14</module>
     <module>svn-tag</module>
@@ -336,6 +336,7 @@
     <module>wsclean</module>
     <module>xunit</module>
     <module>xvnc</module>
+    <module>downstream-buildview</module>
   </modules>
 
   <properties>
