@@ -10,7 +10,7 @@
   
   <artifactId>crap4j</artifactId>
   <packaging>hpi</packaging>
-  <version>0.7</version>
+  <version>0.8-SNAPSHOT</version>
   <name>Hudson Crap4J plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Crap4J+Plugin</url>
   <developers>
@@ -34,10 +34,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/crap4j-0.7</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/crap4j-0.7</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/tags/crap4j-0.7</url>
-  </scm>
 </project>
