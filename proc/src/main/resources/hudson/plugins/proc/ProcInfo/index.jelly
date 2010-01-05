@@ -6,7 +6,7 @@
             </form>
             <h1>Process Info</h1>
             <ul>
-              <li>Process ${it}</li>
+              <li>Process ${it.getInfo()}</li>
             </ul>
 		</l:main-panel>
 	</l:layout>

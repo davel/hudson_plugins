@@ -1,26 +1,18 @@
 package hudson.plugins.proc;
 
-import hudson.model.Action;
-import hudson.model.Run;
-import hudson.util.ProcessTree;
 import hudson.util.ProcessTree.OSProcess;
-import hudson.EnvVars;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-
-import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpRedirect;
+import org.kohsuke.stapler.HttpResponse;
+
+import java.util.List;
 
 /**
  * @author Jitendra Kotamraju
  */
 public class ProcInfo {
-    private OSProcess proc;
+    protected OSProcess proc;
 
-    ProcInfo(OSProcess proc) {
+    protected ProcInfo(OSProcess proc) {
         this.proc = proc;
     }
 
@@ -29,23 +21,19 @@ public class ProcInfo {
         return new HttpRedirect("..");
     }
 
-    @Override
-    public String toString() {
-        if (isJavaProc()) {
-System.out.println("Java Process="+proc.getArguments());
-            return new JavaProcInfo(proc).jstack();
-        }
-        return proc.getPid()+""+proc.getArguments();
+    // Is it a Java Process ? Crude way of checking - just checks whether
+    // the first argument contains "java"
+    private static boolean isJavaProc(OSProcess proc) {
+        List<String> args = proc.getArguments();
+        return args.size() > 0 && args.get(0).contains("java");
     }
 
-    // Is this a Java Process ?
-    private boolean isJavaProc() {
-        for(String arg : proc.getArguments()) {
-            if (arg.contains("java")) {
-                return true;
-            }
-        }
-        return false;
+    public String getInfo() {
+        return proc.getPid()+" - "+proc.getArguments();
+    }
+
+    static ProcInfo getProcInfo(OSProcess proc) {
+        return isJavaProc(proc) ? new JavaProcInfo(proc) : new ProcInfo(proc);
     }
 
 }

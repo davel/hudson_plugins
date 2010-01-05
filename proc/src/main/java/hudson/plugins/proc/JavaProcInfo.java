@@ -11,28 +11,46 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.management.ThreadInfo;
-import java.util.Set;
-import java.util.Properties;
+import java.util.*;
 
 import hudson.util.ProcessTree.OSProcess;
 
 /**
+ * Gives Java process info for e.g stack, system properties
+ *
  * @author Jitendra Kotamraju
  */
-public class JavaProcInfo {
-    private OSProcess proc;
+public class JavaProcInfo extends ProcInfo {
 
     JavaProcInfo(OSProcess proc) {
-        this.proc = proc;
+        super(proc);
     }
 
-    String jstack() {
-        StringBuilder strBuilder = new StringBuilder();
+    // returns the system properties for the process
+    public Properties getSystemProperties() {
+        VirtualMachine vm = null;
         try {
-            VirtualMachine vm = VirtualMachine.attach(""+proc.getPid());
+            vm = VirtualMachine.attach("" + proc.getPid());
+            return vm.getSystemProperties();
+        } catch (Exception ioe) {
+            return new Properties();
+        } finally {
+            if (vm != null) {
+                try {
+                    vm.detach();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+    }
 
-            Properties props = vm.getSystemProperties();
-            strBuilder.append(props);
+    // returns the java stack for the process
+    public List<ThreadInfo> jstack() {
+        List<ThreadInfo> tiList = new ArrayList<ThreadInfo>();
+        VirtualMachine vm = null;
+        try {
+            vm = VirtualMachine.attach("" + proc.getPid());
 
             String connectorAddr = vm.getAgentProperties().getProperty(
                     "com.sun.management.jmxremote.localConnectorAddress");
@@ -49,23 +67,26 @@ public class JavaProcInfo {
             MBeanServerConnection mbsc = connector.getMBeanServerConnection();
             ObjectName objName = new ObjectName(ManagementFactory.THREAD_MXBEAN_NAME);
             Set<ObjectName> mbeans = mbsc.queryNames(objName, null);
-            for(ObjectName name : mbeans) {
+            for (ObjectName name : mbeans) {
                 ThreadMXBean threadBean = ManagementFactory.newPlatformMXBeanProxy(
                         mbsc, name.toString(), ThreadMXBean.class);
                 long threadIds[] = threadBean.getAllThreadIds();
-                for(long threadId : threadIds) {
-                    ThreadInfo threadInfo = threadBean.getThreadInfo(threadId, Integer.MAX_VALUE);
-                    for(StackTraceElement elem : threadInfo.getStackTrace()) {
-                        strBuilder.append(elem.toString());
-                        strBuilder.append("\n");
-                    }
-                    strBuilder.append("\n");
+                for (long threadId : threadIds) {
+                    tiList.add(threadBean.getThreadInfo(threadId, Integer.MAX_VALUE));
                 }
             }
         } catch (Exception e) {
-            return e.toString();
+            e.printStackTrace();
+        } finally {
+            if (vm != null) {
+                try {
+                    vm.detach();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
         }
-        return strBuilder.toString();
+        return tiList;
     }
 
 }

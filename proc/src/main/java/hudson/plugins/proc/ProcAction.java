@@ -32,7 +32,7 @@ public class ProcAction implements Action {
 
     public Object getDynamic(String id) {
         ProcessTree.OSProcess osp = ProcessTree.get().get(Integer.parseInt(id));
-        return new ProcInfo(osp);
+        return ProcInfo.getProcInfo(osp);
     }
 
     // returns the list of processes for a build
