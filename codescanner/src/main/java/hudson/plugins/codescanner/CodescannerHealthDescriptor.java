@@ -13,7 +13,7 @@ import org.jvnet.localizer.Localizable;
  */
 public class CodescannerHealthDescriptor extends AbstractHealthDescriptor {
     /** Unique ID of this class. */
-    private static final long serialVersionUID = -3404826986876607396L;
+    private static final long serialVersionUID = -3404826986876607397L;
 
     /**
      * Creates a new instance of {@link CodescannerHealthDescriptor} based on the

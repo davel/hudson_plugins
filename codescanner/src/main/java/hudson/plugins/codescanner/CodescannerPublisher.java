@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -36,19 +35,15 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 // CHECKSTYLE:COUPLING-OFF
 public class CodescannerPublisher extends HealthAwarePublisher {
-    /** Unique ID of this class. */
-    private static final long serialVersionUID = -5936973521277401764L;
 
+    /** Unique ID of this class. */
+    private static final long serialVersionUID = -5936973521277401765L;
     /** Descriptor of this publisher. */
     @Extension
     public static final CodescannerDescriptor CODESCANNER_DESCRIPTOR = new CodescannerDescriptor();
 
-    /** Ant file-set pattern of files to work with. */
-    private final String pattern;
-    /** Ant file-set pattern of files to include to report. */
-    private final String includePattern;
-    /** Ant file-set pattern of files to exclude from report. */
-    private final String excludePattern;
+    public String sourcecodedir;
+    public String executable;
 
     /**
      * Creates a new instance of <code>WarningPublisher</code>.
@@ -74,18 +69,8 @@ public class CodescannerPublisher extends HealthAwarePublisher {
      * @param thresholdLimit
      *            determines which warning priorities should be considered when
      *            evaluating the build stability and health
-     * @param pattern
-     *            Ant file-set pattern that defines the files to scan for
-     * @param includePattern
-     *            Ant file-set pattern of files to include in report
-     * @param excludePattern
-     *            Ant file-set pattern of files to exclude from report
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
-     * @param canRunOnFailed
-     *            determines whether the plug-in can run for failed builds, too
-     * @param canScanConsole
-     *            Determines whether the console should be scanned.
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -93,13 +78,12 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     public CodescannerPublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy, final String thresholdLimit,
-            final String pattern, final String includePattern, final String excludePattern,
-            final String defaultEncoding) {
+            final String defaultEncoding, final String sourcecodedir, final String executable) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, thresholdLimit, "UTF-8", "WARNINGS");
-        this.pattern = pattern;
-        this.includePattern = StringUtils.stripToNull(includePattern);
-        this.excludePattern = StringUtils.stripToNull(excludePattern);
+                healthy, unHealthy, thresholdLimit, "UTF-8", "CODESCANNER");
+
+        this.sourcecodedir = sourcecodedir;
+        this.executable = executable;
     }
     // CHECKSTYLE:ON
 
@@ -114,33 +98,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
         return this;
     }
 
-    /**
-     * Returns the Ant file-set pattern of files to work with.
-     *
-     * @return Ant file-set pattern of files to work with
-     */
-    public String getPattern() {
-        return pattern;
-    }
-
-    /**
-     * Returns the Ant file-set pattern of files to include in report.
-     *
-     * @return Ant file-set pattern of files to include in report
-     */
-    public String getIncludePattern() {
-        return includePattern;
-    }
-
-    /**
-     * Returns the Ant file-set pattern of files to exclude from report.
-     *
-     * @return Ant file-set pattern of files to exclude from report
-     */
-    public String getExcludePattern() {
-        return excludePattern;
-    }
-
     /** {@inheritDoc} */
     @Override
     public Action getProjectAction(final AbstractProject<?, ?> project) {
@@ -150,11 +107,10 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     /** {@inheritDoc} */
     @Override
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
-        final String codescanner = "Carbide.c++\\plugins\\com.nokia.carbide.cpp.codescanner_1.4.0.v200911050858_60\\Tools\\codescanner.exe";
-        final String cmd = "cmd /C H:\\" + codescanner + " H:\\sf\\app\\organizer\\";
+
+        final String cmd = "cmd /C " + executable + " " + sourcecodedir;
         logger.log(cmd);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
 
         ParserResult project;
         project = new ParserResult(build.getProject().getWorkspace());
@@ -162,8 +118,41 @@ public class CodescannerPublisher extends HealthAwarePublisher {
         try {
             Launcher laucher = new LocalLauncher(TaskListener.NULL);
             Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getProject().getWorkspace());
-//            logger.log(out.toString());
-            int exitCode = proc.join();
+
+            Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
+
+            LineIterator iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
+            while (iterator.hasNext()) {
+                String nextline = iterator.nextLine();
+                Matcher matcher = pattern.matcher(nextline);
+                logger.log(nextline);
+                while (matcher.find()) {
+
+                    String fileName = matcher.group(1);
+                    int line = Integer.parseInt(matcher.group(2));
+                    String category = matcher.group(3);
+                    String shorts = matcher.group(4);
+                    String prio = matcher.group(5);
+                    String types = matcher.group(6);
+                    String message = matcher.group(7);
+
+
+                    Priority priority = Priority.HIGH;
+                    if ("medium".equalsIgnoreCase(prio)) {
+                        priority = Priority.NORMAL;
+                    } else if ("high".equalsIgnoreCase(prio)) {
+                        priority = Priority.HIGH;
+                    } else if ("low".equalsIgnoreCase(prio)) {
+                        priority = Priority.LOW;
+                    }
+
+                    project.addAnnotation(new Warning(fileName, line, types, category, message, priority));
+
+                }
+            }
+            iterator.close();
+            project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
+
         } catch (IOException e) {
             e.printStackTrace();
             logger.log("IOException!");
@@ -172,41 +161,13 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             e.printStackTrace();
             logger.log("InterruptedException!");
             project.addErrorMessage("InterruptedException");
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.log("General Exception!");
+            project.addErrorMessage("General Exception");
         }
 
-        Pattern patterrrr = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
-        LineIterator iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
-        while (iterator.hasNext()) {
-            String testss = iterator.nextLine();
-            Matcher matcher = patterrrr.matcher(testss);
-            logger.log(testss);
-            while (matcher.find()) {
-                Priority priority = Priority.HIGH;
-                            
-                String fileName = matcher.group(1);
-                int line = Integer.parseInt(matcher.group(2));
-                String category = matcher.group(3);
-                String shorts = matcher.group(4); 
-                String prio = matcher.group(5);
-                String types = matcher.group(6);
-                String message = matcher.group(7);
-        
-
-                if ("medium".equalsIgnoreCase(prio)) {
-                    priority = Priority.NORMAL;
-                } else if ("high".equalsIgnoreCase(prio)) {
-                    priority = Priority.HIGH;
-                } else if ("low".equalsIgnoreCase(prio)) {
-                    priority = Priority.LOW;
-                }
-
-                    project.addAnnotation(new Warning(fileName, line,types, category, message, priority));
-
-            }
-        }
-        iterator.close();
-
-        project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
+        BuildResult hi = new BuildResult(build,getDefaultEncoding());
         CodescannerResult result = new CodescannerResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new CodescannerResultAction(build, this, result));
 

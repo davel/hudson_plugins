@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public class CodescannerResult extends BuildResult {
     /** Unique identifier of this class. */
-    private static final long serialVersionUID = -137460587767210578L;
+    private static final long serialVersionUID = -137460587767210579L;
 
     /**
      * Creates a new instance of {@link CodescannerResult}.

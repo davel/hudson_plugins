@@ -1,7 +1,15 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
+  <f:entry title="${%Source Code Directory}" help="directory">
+  <f:textbox field="sourcecodedir" id="sourcecodedir" default="H:\sf\app\organizer"/>
+   </f:entry>
+<f:entry title="${%CodeScanner Executable}" help="executable">
+  <f:textbox field="executable" id="executable" default="H:\Carbide.c++\plugins\com.nokia.carbide.cpp.codescanner_1.4.0.v200911050858_60\Tools\codescanner.exe"/>
+</f:entry>
+<f:advanced>
   <f:entry>
     <u:thresholds id="codescanner"/>
     <u:trend id="codescanner"/>
   </f:entry>
+  </f:advanced>
 </j:jelly>

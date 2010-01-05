@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  */
 public class CodescannerResultAction extends AbstractResultAction<CodescannerResult> {
     /** Unique identifier of this class. */
-    private static final long serialVersionUID = -5329651349674842873L;
+    private static final long serialVersionUID = -5329651349674842874L;
 
     /**
      * Creates a new instance of <code>CodescannerResultAction</code>.

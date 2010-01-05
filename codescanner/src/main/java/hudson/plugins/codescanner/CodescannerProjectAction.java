@@ -12,7 +12,7 @@ import hudson.plugins.analysis.core.AbstractProjectAction;
  */
 public class CodescannerProjectAction extends AbstractProjectAction<CodescannerResultAction> {
     /** Unique identifier of this class. */
-    private static final long serialVersionUID = -654316141132780561L;
+    private static final long serialVersionUID = -654316141132780562L;
 
     /**
      * Instantiates a new find bugs project action.
