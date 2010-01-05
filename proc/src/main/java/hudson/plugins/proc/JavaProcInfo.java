@@ -1,5 +1,8 @@
 package hudson.plugins.proc;
 
+import com.sun.tools.attach.AgentInitializationException;
+import com.sun.tools.attach.AgentLoadException;
+import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 
 import javax.management.remote.JMXServiceURL;
@@ -8,6 +11,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.lang.management.ThreadInfo;
@@ -27,13 +31,11 @@ public class JavaProcInfo extends ProcInfo {
     }
 
     // returns the system properties for the process
-    public Properties getSystemProperties() {
+    public Properties getSystemProperties() throws Exception {
         VirtualMachine vm = null;
         try {
             vm = VirtualMachine.attach("" + proc.getPid());
             return vm.getSystemProperties();
-        } catch (Exception ioe) {
-            return new Properties();
         } finally {
             if (vm != null) {
                 try {
@@ -46,7 +48,7 @@ public class JavaProcInfo extends ProcInfo {
     }
 
     // returns the java stack for the process
-    public List<ThreadInfo> jstack() {
+    public List<ThreadInfo> jstack() throws Exception {
         List<ThreadInfo> tiList = new ArrayList<ThreadInfo>();
         VirtualMachine vm = null;
         try {
@@ -75,8 +77,6 @@ public class JavaProcInfo extends ProcInfo {
                     tiList.add(threadBean.getThreadInfo(threadId, Integer.MAX_VALUE));
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             if (vm != null) {
                 try {
