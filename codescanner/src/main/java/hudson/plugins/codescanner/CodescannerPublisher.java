@@ -167,7 +167,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             project.addErrorMessage("General Exception");
         }
 
-        BuildResult hi = new BuildResult(build,getDefaultEncoding());
         CodescannerResult result = new CodescannerResultBuilder().build(build, project, getDefaultEncoding());
         build.getActions().add(new CodescannerResultAction(build, this, result));
 
