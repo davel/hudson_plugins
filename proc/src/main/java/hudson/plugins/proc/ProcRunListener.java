@@ -1,5 +1,6 @@
 package hudson.plugins.proc;
 
+import hudson.model.AbstractBuild;
 import hudson.model.listeners.RunListener;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -24,7 +25,8 @@ public class ProcRunListener extends RunListener<Run> {
     }
 
     public void onStarted(Run run, TaskListener listener) {
-        run.addAction(new ProcAction(run));
+        if (run instanceof AbstractBuild)
+            run.addAction(new ProcAction((AbstractBuild) run));
     }
 
     public void onCompleted(Run run, TaskListener listener) {
