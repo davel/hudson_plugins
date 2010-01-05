@@ -1,10 +1,14 @@
 package hudson.plugins.proc;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.Run;
+import hudson.remoting.Callable;
 import hudson.util.ProcessTree;
 import hudson.EnvVars;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,9 +16,9 @@ import java.util.ArrayList;
  * @author Jitendra Kotamraju
  */
 public class ProcAction implements Action {
-    private Run run;
+    private AbstractBuild run;
 
-    ProcAction(Run run) {
+    ProcAction(AbstractBuild run) {
         this.run = run;
     }
 
@@ -30,7 +34,7 @@ public class ProcAction implements Action {
         return "proc";
     }
 
-    public Object getDynamic(String id) {
+    public ProcInfo getDynamic(String id) {
         ProcessTree.OSProcess osp = ProcessTree.get().get(Integer.parseInt(id));
         return ProcInfo.getProcInfo(osp);
     }
