@@ -1,7 +1,0 @@
-Started by user anonymous
-[workspace] $ cmd /c call C:\TEMP\hudson5112567138946843800.bat
-
-D:\wen1\workspace35\hudson\plugins\cppncss\work\jobs\holy_test\workspace>cp D:\wen1\workspace35\hudson\plugins\cppncss\src\test\resources\hudson\plugins\cppncss\cppncss-reports\first-report\first-report-cppncss.xml cppncss.xml  
-
-D:\wen1\workspace35\hudson\plugins\cppncss\work\jobs\holy_test\workspace>exit 0 
-Finished: SUCCESS
