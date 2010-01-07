@@ -20,7 +20,9 @@ import hudson.tasks.Publisher;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +43,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     /** Descriptor of this publisher. */
     @Extension
     public static final CodescannerDescriptor CODESCANNER_DESCRIPTOR = new CodescannerDescriptor();
-
     public String sourcecodedir;
     public String executable;
 
@@ -82,7 +83,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
                 healthy, unHealthy, thresholdLimit, "UTF-8", "CODESCANNER");
 
-            this.sourcecodedir = sourcecodedir;
+        this.sourcecodedir = sourcecodedir;
         this.executable = executable;
     }
     // CHECKSTYLE:ON
@@ -108,20 +109,25 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     @Override
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
 
-        final String cmd = "cmd /C " + executable + " " + sourcecodedir;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         ParserResult project;
         project = new ParserResult(build.getProject().getWorkspace());
 
         try {
-            Launcher laucher = new LocalLauncher(TaskListener.NULL);
-            
-            Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getProject().getWorkspace());
-            int status = proc.join();
-            
+            LineIterator iterator = null;
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
-            LineIterator iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
+
+            if (executable != null) {
+                Launcher laucher = new LocalLauncher(TaskListener.NULL);
+                final String cmd = "cmd /C " + executable + " " + sourcecodedir;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getProject().getWorkspace());
+                int status = proc.join();
+                iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
+            } else {
+                String path = build.getWorkspace().getName() + "output.xml";
+                FileReader reader = new FileReader(path);
+                iterator = IOUtils.lineIterator(reader);
+            }
 
             while (iterator.hasNext()) {
                 Matcher matcher = pattern.matcher(iterator.nextLine());
