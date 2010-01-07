@@ -82,7 +82,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
                 healthy, unHealthy, thresholdLimit, "UTF-8", "CODESCANNER");
 
-        this.sourcecodedir = sourcecodedir;
+            this.sourcecodedir = sourcecodedir;
         this.executable = executable;
     }
     // CHECKSTYLE:ON
@@ -109,7 +109,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
 
         final String cmd = "cmd /C " + executable + " " + sourcecodedir;
-        logger.log(cmd);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         ParserResult project;
@@ -117,15 +116,15 @@ public class CodescannerPublisher extends HealthAwarePublisher {
 
         try {
             Launcher laucher = new LocalLauncher(TaskListener.NULL);
+            
             Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getProject().getWorkspace());
-
+            int status = proc.join();
+            
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
-
             LineIterator iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
+
             while (iterator.hasNext()) {
-                String nextline = iterator.nextLine();
-                Matcher matcher = pattern.matcher(nextline);
-                logger.log(nextline);
+                Matcher matcher = pattern.matcher(iterator.nextLine());
                 while (matcher.find()) {
 
                     String fileName = matcher.group(1);
@@ -135,7 +134,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                     String prio = matcher.group(5);
                     String types = matcher.group(6);
                     String message = matcher.group(7);
-
 
                     Priority priority = Priority.HIGH;
                     if ("medium".equalsIgnoreCase(prio)) {
@@ -147,7 +145,6 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                     }
 
                     project.addAnnotation(new Warning(fileName, line, types, category, message, priority));
-
                 }
             }
             iterator.close();
