@@ -9,7 +9,7 @@
 
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>staf</artifactId>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Software Testing Automation Framework (STAF) Plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/STAF+-+STAX+Plugin</url>

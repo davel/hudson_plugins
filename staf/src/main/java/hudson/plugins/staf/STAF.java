@@ -48,6 +48,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+/**
+ * Defines the STAF build step
+ */
 public class STAF extends Builder {
 
     /** Identifies {@link STAFInstallation} to be used. */
@@ -152,7 +155,6 @@ public class STAF extends Builder {
         args.add(getService());
 
         // add all of the request parameters
-
         String lRequests = Util.replaceMacro(env.expand(getRequest()), varResolver);
         args.addTokenized(lRequests.replaceAll("[\t\r\n]+", " "));
 

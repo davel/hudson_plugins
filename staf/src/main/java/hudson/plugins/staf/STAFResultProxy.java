@@ -27,6 +27,12 @@ package hudson.plugins.staf;
 import com.ibm.staf.STAFResult;
 import java.io.Serializable;
 
+/**
+ * The use of any STAFResult in the Hudson JVM causes the JSTAF library
+ * to attempt to load the STAF jni libraries.  We only want the
+ * JSTAF libraries loaded in our launched JVMs, so we use this object
+ * to proxy any results in those JVMs back to the runtime in Hudson.
+ */
 public class STAFResultProxy implements Serializable {
 
     final int rc;

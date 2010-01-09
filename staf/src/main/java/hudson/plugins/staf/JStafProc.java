@@ -41,6 +41,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+/**
+ * JStafProx helps in the creation of a JVM with all of the correct STAF
+ * requirements for using the JSTAF libraries.  These are the correct
+ * PATH and LD_LIBRARY_PATHs, the correct jni libraries, etc.
+ *
+ * This than then be used to execute Callable methods inside of that
+ * launched JVM.
+ */
 public class JStafProc {
 
     private Launcher launcher;
@@ -75,7 +83,7 @@ public class JStafProc {
     }
 
     /**
-     * Starts a new priviledge-escalated environment, execute a closure, and shut it down.
+     * Starts a new environment with required STAF parameters, execute a closure, and shut it down.
      */
     public <V,T extends Throwable> V execute(final Callable<V, T> closure) throws T, IOException, InterruptedException {
         VirtualChannel ch = start();
@@ -109,6 +117,9 @@ public class JStafProc {
 
         String[] cmdArray = args.toCommandArray();
 
+        // a fix recently went in to Hudson to remove the requirement for a
+        // wrapping class.  When that version is released, this should be changed
+        // to use launcher passed in on the constructor
         return new JStafLocalLauncher(listener).launchChannel(
                 cmdArray,
                 listener.getLogger(),

@@ -53,7 +53,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +62,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
+/**
+ * The build step for STAX jobs.  Runs the job in a STAF enabled
+ * JVM, and passes the results back.
+ */
 public class STAX extends Builder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -114,7 +117,7 @@ public class STAX extends Builder implements Serializable {
     /**
      * STAF execution job debug.  Set to true when debugging,
      * as stepping through jstaf calls is not possible, as it runs in
-     * a separate process.
+     * a separate process.  Probaby a better way to do this.
      */
     private static final boolean debug = false;
 
@@ -260,7 +263,7 @@ public class STAX extends Builder implements Serializable {
         }
 
         if(!xmlFile.exists()) {
-            listener.fatalError("Unable to find stax file at " + xmlFile);
+            listener.fatalError(ResourceBundleHolder.get(STAX.class).format("XMLFileNotFound", xmlFile));
             return false;
         }
 
@@ -271,6 +274,7 @@ public class STAX extends Builder implements Serializable {
         try {
             String message;
 
+            // do a test to make sure the whole STAX job is going to be valid
             String jobRequest = createTestStaxJobRequest(env, varResolver, xmlFile,
                 jobName);
 
@@ -281,6 +285,7 @@ public class STAX extends Builder implements Serializable {
 
             if(!parseResult(result, listener)) return false;
 
+            // Submit the job.  Job is submitted in a paused (HOLD) state
             jobRequest = createStaxJobRequest(env, varResolver, xmlFile,
                 jobName);
 
@@ -299,6 +304,7 @@ public class STAX extends Builder implements Serializable {
             message = ResourceBundleHolder.get(STAX.class).format("MonitoringJob", jobId);
             listener.getLogger().println(message);
 
+            // ok, now start monitoring the job, which also releases it from the HOLD
             result = startJobMonitoring(jstafProc, listener, jobId);
 
             if(!parseResult(result, listener)) return false;
@@ -306,6 +312,8 @@ public class STAX extends Builder implements Serializable {
             message = ResourceBundleHolder.get(STAX.class).format("JobComplete", jobId);
             listener.getLogger().println(message);
 
+            // so, our results should old the testcases map, with counts for
+            // successes and failures
             Object testResults = result.getResultObj();
 
             if(testResults instanceof Map) {
@@ -364,7 +372,7 @@ public class STAX extends Builder implements Serializable {
             public STAFResultProxy call() throws IOException {
                 PrintStream out = listener.getLogger();
 
-                out.println("Executing stax job with request [" + request +"]");
+                out.println(ResourceBundleHolder.get(STAX.class).format("ExecutingStaxJob", request));
 
                 try {
                     if(debug) out.println("Getting staf handle");
@@ -403,7 +411,7 @@ public class STAX extends Builder implements Serializable {
 
                 boolean continueMonitoring = true;
 
-                out.println("Starting Job Monitoring");
+                out.println(ResourceBundleHolder.get(STAX.class).format("MonitoringStaxJob"));
 
                 // map of test cases, with success / fail results
                 Map<String, int[]> testcaseResults = new HashMap<String, int[]>();

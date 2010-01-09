@@ -54,10 +54,6 @@ import org.kohsuke.stapler.QueryParameter;
  *
  * <p>To use a {@link STAF} build step, it is mandatory to define a installation:
  * No default installations can be assumed.</p>
- *
- *
- * @author Greg Smith
- * @version 1.0
  */
 public class STAFInstallation extends ToolInstallation implements NodeSpecific<STAFInstallation>, EnvironmentSpecific<STAFInstallation> {
 
@@ -117,6 +113,9 @@ public class STAFInstallation extends ToolInstallation implements NodeSpecific<S
     public String getLibraryDir() {
         String librariesLocation;
 
+        // an install on Windows puts all of the .dlls into the
+        // bin directory.  But on Mac/Linux, the .so / .jnilib files
+        // are put in the lib directory
         if(Hudson.isWindows()) {
             librariesLocation = "\\bin";
         }
@@ -144,6 +143,8 @@ public class STAFInstallation extends ToolInstallation implements NodeSpecific<S
     private File getJStafJarFile() {
         String jarFileName;
 
+        // As with the libraries, for some reason the STAF installer
+        // puts the jars in different places between Win / Mac / Linux
         if(Hudson.isWindows()) {
             jarFileName = WINDOWS_JSTAF_PATH;
         }
