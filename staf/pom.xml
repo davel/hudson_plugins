@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jvnet.hudson.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.339</version><!-- which version of Hudson is this plugin built against? -->
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.jvnet.hudson.plugins</groupId>
+  <artifactId>staf</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>hpi</packaging>
+  <name>Software Testing Automation Framework (STAF) Plugin</name>
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.codehaus.mojo</groupId>
+  			<artifactId>apt-maven-plugin</artifactId>
+  			<version>1.0-alpha-3</version>
+  			<configuration>
+  			</configuration>
+  		</plugin>
+  	 <plugin>
+  	  <groupId>org.apache.maven.plugins</groupId>
+  	  <artifactId>maven-compiler-plugin</artifactId>
+  	  <version>2.0.2</version>
+  	  <configuration>
+  	   <showDeprecation>true</showDeprecation>
+  	  </configuration>
+  	 </plugin>
+  	</plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+  		<groupId>net.sf.staf</groupId>
+  		<artifactId>jstaf</artifactId>
+  		<version>3.3.2</version>
+  	</dependency>
+  </dependencies>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>smithgcovert</id>
+      <name>Gregory Covert Smith</name>
+      <email>covert@mighty.sytes.net</email>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
+</project>
+
