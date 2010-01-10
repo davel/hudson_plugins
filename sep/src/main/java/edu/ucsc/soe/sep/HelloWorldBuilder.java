@@ -1,4 +1,4 @@
-package edu.ucsc.sep;
+package edu.ucsc.soe.sep;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.util.FormValidation;

@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="Sep">
+
+    <!--<st:include it="${it.project}" page="sidepanel.jelly" />-->
+
+    <l:header>
+        <!-- Do nothing -->
+    </l:header>
+
+    <l:main-panel>
+        <h1>${it.displayName}</h1>
+    </l:main-panel>
+    </l:layout>
+</j:jelly>

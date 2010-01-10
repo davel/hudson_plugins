@@ -1,4 +1,4 @@
-package edu.ucsc.sep;
+package edu.ucsc.soe.sep;
 
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class SepPublisher extends Recorder {
     @Override
     public boolean needsToRunAfterFinalized() {
-        return super.needsToRunAfterFinalized();
+        return false;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class SepPublisher extends Recorder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
                            BuildListener listener)
             throws InterruptedException, IOException {
-        return super.perform(build, launcher, listener);
+        return true;
     }
 
     @Override

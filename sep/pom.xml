@@ -7,7 +7,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>edu.ucsc.sep</groupId>
+  <groupId>edu.ucsc.soe.sep</groupId>
   <artifactId>sep</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>

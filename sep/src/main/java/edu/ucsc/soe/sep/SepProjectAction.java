@@ -1,4 +1,4 @@
-package edu.ucsc.sep;
+package edu.ucsc.soe.sep;
 
 import hudson.model.Action;
 
@@ -9,11 +9,11 @@ import hudson.model.Action;
  */
 public class SepProjectAction implements Action {
     public String getIconFileName() {
-        return null;
+        return "BLAH.png";
     }
 
     public String getDisplayName() {
-        return "SEP";
+        return "Sep";
     }
 
     public String getUrlName() {
