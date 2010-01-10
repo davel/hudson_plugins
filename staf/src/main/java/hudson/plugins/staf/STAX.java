@@ -769,8 +769,6 @@ public class STAX extends Builder implements Serializable {
         }
 
         return request.toString();
-        //STAFResult executeResult = fHandle.submit2(
-        //    fStaxMachineName, fStaxServiceName, request.toString());
     }
 
     private String createTestStaxJobRequest(EnvVars env, VariableResolver<String> varResolver, FilePath xmlFile,
