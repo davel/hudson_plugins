@@ -8,6 +8,7 @@ import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 
@@ -17,7 +18,15 @@ import java.io.IOException;
  * Date: Jan 9, 2010
  * Time: 5:08:08 PM
  */
-public class SepPublisher extends Recorder {
+public class SepRecorder extends Recorder {
+    private final String url;
+
+    @DataBoundConstructor
+    public SepRecorder(String url) {
+        System.out.println("Got url " + url);
+        this.url = url;
+    }
+
     @Override
     public boolean needsToRunAfterFinalized() {
         return false;
@@ -37,10 +46,15 @@ public class SepPublisher extends Recorder {
 
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new SepProjectAction();
+        return new SepProjectAction(project, this);
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.STEP;
+    }
+
+    public String getUrl() {
+        System.out.println("Sending back url " + url);
+        return this.url;
     }
 }

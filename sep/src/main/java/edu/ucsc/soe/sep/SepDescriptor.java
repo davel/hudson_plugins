@@ -12,12 +12,11 @@ import org.kohsuke.stapler.StaplerRequest;
  * User: cflewis
  * Date: Jan 9, 2010
  * Time: 5:38:11 PM
- * To change this template use File | Settings | File Templates.
  */
 @Extension
 public class SepDescriptor extends BuildStepDescriptor<Publisher> {
     public SepDescriptor() {
-        super(SepPublisher.class);
+        super(SepRecorder.class);
     }
 
     @Override
@@ -33,6 +32,6 @@ public class SepDescriptor extends BuildStepDescriptor<Publisher> {
     @Override
     public Publisher newInstance(StaplerRequest req, JSONObject formData)
             throws hudson.model.Descriptor.FormException {
-        return new SepPublisher();
+        return req.bindJSON(SepRecorder.class,  formData);
     }
 }
