@@ -117,6 +117,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
 
             if (executable != null) {
+                logger.log("Starting coderunner...");
                 Launcher laucher = new LocalLauncher(TaskListener.NULL);
                 final String cmd = "cmd /C " + executable + " " + sourcecodedir;
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,7 +125,9 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                 int status = proc.join();
                 iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
             } else {
+                logger.log("Using precreated result file...");
                 String path = build.getWorkspace().getName() + "output.xml";
+                logger.log(path);
                 FileReader reader = new FileReader(path);
                 iterator = IOUtils.lineIterator(reader);
             }
