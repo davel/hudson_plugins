@@ -116,6 +116,8 @@ public class PViewLinkAction implements Action, AccessControlled {
 	public boolean isIsTree() {
 		
 		StaplerRequest req = Stapler.getCurrentRequest();
+		System.out.println(req.getOriginalRequestURI());
+		System.out.println(getStepInViewUrl(req));
         if(req!=null && 
         		(req.getOriginalRequestURI().startsWith(getStepInViewUrl(req)) 
         				|| req.getOriginalRequestURI().startsWith(getStepInViewRoot(req)) )){
@@ -211,6 +213,11 @@ public class PViewLinkAction implements Action, AccessControlled {
 	
 	@SuppressWarnings("unchecked")
 	public List<AbstractProject> getJobs() {
+		return getJobs(null,null);
+	}
+	
+	public List<AbstractProject> getJobs(StaplerRequest req, StaplerResponse rsp) {
+		StaplerRequest mReq = (req == null ? Stapler.getCurrentRequest() : req);
 		List<AbstractProject> jobList = new ArrayList<AbstractProject>();
 		List<AbstractProject> iList = Hudson.getInstance().getItems(AbstractProject.class);
 	   String splitChar = "-";
@@ -219,15 +226,15 @@ public class PViewLinkAction implements Action, AccessControlled {
 		} 
 		
 		if (isIsTree()){
-			StaplerRequest req = Stapler.getCurrentRequest();
-			if (req.getOriginalRequestURI().startsWith(getStepInViewRoot(req))){
+			if (mReq.getOriginalRequestURI().startsWith(getStepInViewRoot(mReq))){
 				for (AbstractProject abstractProject : iList) {
 					if  (!abstractProject.getName().contains(splitChar)){
 						jobList.add(abstractProject);
 					}
 				}	
 			} else {
-				String startMatcher = getProjectMatcher();
+				String startMatcher = getProjectMatcher(mReq);
+				
 				for (AbstractProject abstractProject : iList) {
 					if  (abstractProject.getName().startsWith(startMatcher)){
 						jobList.add(abstractProject);
@@ -255,11 +262,19 @@ public class PViewLinkAction implements Action, AccessControlled {
 	}
 
 	public String getProjectMatcher() {
-		StaplerRequest req = Stapler.getCurrentRequest();
-		if ( ! req.getOriginalRequestURI().startsWith(getStepInViewUrl(req) + "/")){
+		return getProjectMatcher(Stapler.getCurrentRequest());
+	}
+	public String getProjectMatcher(StaplerRequest req) {
+		String orgUri= req.getOriginalRequestURI();
+		
+		if (orgUri.substring(orgUri.lastIndexOf("/")).startsWith("/rss")) {
+			orgUri = orgUri.substring(0,orgUri.lastIndexOf("/") +1);
+		}
+		if ( ! orgUri.startsWith(getStepInViewUrl(req) + "/")){
 			return "";
 		}
-		String matchPoint = req.getOriginalRequestURI().substring((getStepInViewUrl(req) + "/").length(),req.getOriginalRequestURI().length() -1);
+		String matchPoint = orgUri.substring((getStepInViewUrl(req) + "/").length(),orgUri.length() -1);
+		System.out.println(matchPoint);
 		return matchPoint;
 	}
 
@@ -314,15 +329,20 @@ public class PViewLinkAction implements Action, AccessControlled {
 
 
     public void doRssAll( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
-        rss(req, rsp, " all builds", getBuilds());
+    	System.out.println("rssAll");
+        rss(req, rsp, " all builds", getBuilds(req, rsp));
     }
 
     public void doRssFailed( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
-        rss(req, rsp, " failed builds", getBuilds().failureOnly());
+        rss(req, rsp, " failed builds", getBuilds(req, rsp).failureOnly());
     }
     
     public RunList getBuilds() {
-        return new RunList(getJobs());
+    	return getBuilds(null,null);
+    }
+    
+    private RunList getBuilds(StaplerRequest req, StaplerResponse rsp){
+        return new RunList(getJobs(req, rsp));
     }
 
     private void rss(StaplerRequest req, StaplerResponse rsp, String suffix, RunList runs) throws IOException, ServletException {
@@ -332,16 +352,14 @@ public class PViewLinkAction implements Action, AccessControlled {
 
     public void doRssLatest( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
         List<Run<?,?>> lastBuilds = new ArrayList<Run<?,?>>();
-        Pattern pat = getUserPattern();
-        for (TopLevelItem item : Hudson.getInstance().getItems()) {
-            if (item instanceof Job) {
-                Job<?,?> job = (Job<?,?>) item;
-                if (pat.matcher(job.getName()).matches()){
-                	Run<?,?> lb = job.getLastBuild();
-                	if(lb!=null)    lastBuilds.add(lb);
-                }
-            }
-        }
+
+    	List<AbstractProject> list = getJobs(req, rsp);
+
+    	for (AbstractProject project: list){
+    		Run<?,?> lb = project.getLastBuild();
+        	if(lb!=null)    lastBuilds.add(lb);
+    		
+    	}
         RSS.forwardToRss(getDisplayName()+" last builds only", getUrlName(),
             lastBuilds, Run.FEED_ADAPTER_LATEST, req, rsp );
     }
