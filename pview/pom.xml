@@ -44,6 +44,13 @@
 	</dependency>
 	</dependencies>
 	</dependencyManagement>
+	<developers>
+		<developer>
+			<id>tspengler</id>
+			<name>Thomas Spengler</name>
+			<email>tom@fspengler.de</email>
+		</developer>
+	</developers>
 
 	<scm>
 		<connection>scm:svn:https://guest@hudson.dev.java.net/svn/hudson/trunk/hudson/plugins/pview</connection>
