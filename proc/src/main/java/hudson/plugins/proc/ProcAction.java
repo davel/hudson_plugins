@@ -35,7 +35,7 @@ public class ProcAction implements Action {
 
     public ProcInfo getDynamic(String id) throws IOException, InterruptedException {
         ProcessTree.OSProcess osp = getProcessTree().get(Integer.parseInt(id));
-        return ProcInfo.getProcInfo(osp);
+        return ProcInfo.getProcInfo(run, osp);
     }
 
     // returns the list of processes for a build
@@ -56,6 +56,8 @@ public class ProcAction implements Action {
         return run.getBuiltOn().getChannel().call(new ProcessTreeTask());
     }
 
+    // Keep it static inner class, otherwise ProcessAction needs to be
+    // specified as Serializable
     private static class ProcessTreeTask implements Callable<ProcessTree, RuntimeException> {
         public ProcessTree call() {
             return ProcessTree.get();

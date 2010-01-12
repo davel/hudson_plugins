@@ -1,6 +1,7 @@
 package hudson.plugins.proc;
 
 import hudson.util.ProcessTree.OSProcess;
+import hudson.model.AbstractBuild;
 import org.kohsuke.stapler.HttpRedirect;
 import org.kohsuke.stapler.HttpResponse;
 
@@ -10,9 +11,11 @@ import java.util.List;
  * @author Jitendra Kotamraju
  */
 public class ProcInfo {
-    protected OSProcess proc;
+    protected final AbstractBuild run;
+    protected final OSProcess proc;
 
-    protected ProcInfo(OSProcess proc) {
+    protected ProcInfo(AbstractBuild run, OSProcess proc) {
+        this.run = run;
         this.proc = proc;
     }
 
@@ -32,8 +35,8 @@ public class ProcInfo {
         return proc.getPid()+" - "+proc.getArguments();
     }
 
-    static ProcInfo getProcInfo(OSProcess proc) {
-        return isJavaProc(proc) ? new JavaProcInfo(proc) : new ProcInfo(proc);
+    static ProcInfo getProcInfo(AbstractBuild run, OSProcess proc) {
+        return isJavaProc(proc) ? new JavaProcInfo(run, proc) : new ProcInfo(run, proc);
     }
 
 }
