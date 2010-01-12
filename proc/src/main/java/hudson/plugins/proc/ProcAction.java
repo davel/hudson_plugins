@@ -53,13 +53,13 @@ public class ProcAction implements Action {
     // Returned object may be the remote ProcessTree(running on slave) which
     // is serialized and created on this jvm
     private ProcessTree getProcessTree() throws IOException, InterruptedException {
-        return run.getBuiltOn().getChannel().call(
-            new Callable<ProcessTree, RuntimeException>() {
-                public ProcessTree call() {
-                    return ProcessTree.get();
-                }
-            }
-        );
+        return run.getBuiltOn().getChannel().call(new ProcessTreeTask());
+    }
+
+    private static class ProcessTreeTask implements Callable<ProcessTree, RuntimeException> {
+        public ProcessTree call() {
+            return ProcessTree.get();
+        }
     }
 
 }
