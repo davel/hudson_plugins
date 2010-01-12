@@ -196,14 +196,17 @@ public class PViewLinkAction implements Action, AccessControlled {
 			}
 		} else {
 			for (AbstractProject abstractProject : iList) {
-				int posOfMatcher = abstractProject.getName().indexOf(splitChar);
-				if (posOfMatcher > -1) {
-					String abString = abstractProject.getName().substring(0, posOfMatcher);
-					if (dirSet.containsKey(abString)){
-						dirSet.get(abString).addOne();
-					} else {
-						DirEntry de =new DirEntry(abString, abString );
-						dirSet.put(abString, de);
+				if  ((pat == null || pat.matcher(abstractProject.getName()).matches() )
+						&& abstractProject.getName().startsWith(startMatcher)) {
+					int posOfMatcher = abstractProject.getName().indexOf(splitChar);
+					if (posOfMatcher > -1) {
+						String abString = abstractProject.getName().substring(0, posOfMatcher);
+						if (dirSet.containsKey(abString)){
+							dirSet.get(abString).addOne();
+						} else {
+							DirEntry de =new DirEntry(abString, abString );
+							dirSet.put(abString, de);
+						}
 					}
 				}
 			}
