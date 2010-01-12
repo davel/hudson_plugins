@@ -1,0 +1,11 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:section title="Filtered View">
+    <f:entry title="Filter Regex" >
+	    <f:textbox name="pView.regex" value="${descriptor.regex}"
+        checkUrl="'${rootURL}/jobProperty/PViewProjectProperty/regexCheck?value='+escape(this.value)" />
+	</f:entry>
+		<f:entry title="${%Character where to cut projectNames into parts for tree views}">
+		<f:textbox name="pView.treeSplitChar" value="${descriptor.treeSplitChar}"/>
+	</f:entry>
+  </f:section>
+</j:jelly>

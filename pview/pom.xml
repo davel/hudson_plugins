@@ -10,14 +10,14 @@
 	<description>This plugin provides every user the possibility to create its own view</description>
 	<properties>
 		<!-- which version of Hudson is this plugin built against? -->
-		<hudson.version>1.328</hudson.version>
+		<hudson.version>1.334</hudson.version>
 	</properties>
 
 	<parent>
 		<groupId>org.jvnet.hudson.plugins</groupId>
 		<artifactId>plugin</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.328</version>
+		<version>1.334</version>
 	</parent>
 
 	<dependencies>

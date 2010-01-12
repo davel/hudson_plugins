@@ -3,7 +3,6 @@ package de.fspengler.hudson.pview;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Hudson;
-import hudson.model.Job;
 import hudson.model.RSS;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
@@ -116,8 +115,6 @@ public class PViewLinkAction implements Action, AccessControlled {
 	public boolean isIsTree() {
 		
 		StaplerRequest req = Stapler.getCurrentRequest();
-		System.out.println(req.getOriginalRequestURI());
-		System.out.println(getStepInViewUrl(req));
         if(req!=null && 
         		(req.getOriginalRequestURI().startsWith(getStepInViewUrl(req)) 
         				|| req.getOriginalRequestURI().startsWith(getStepInViewRoot(req)) )){
@@ -169,6 +166,7 @@ public class PViewLinkAction implements Action, AccessControlled {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Collection<DirEntry> getSubDirs(){
 		String splitChar = "-";
 		if (getUserProp() != null ) {		
@@ -178,9 +176,11 @@ public class PViewLinkAction implements Action, AccessControlled {
 		SortedMap<String,DirEntry> dirSet = new TreeMap<String,DirEntry>();
 		String startMatcher = getProjectMatcher();
 		int lenMatcher = startMatcher.length();
+		Pattern pat=getFreePattern(Stapler.getCurrentRequest());
 		if (lenMatcher > 0) {
 			for (AbstractProject abstractProject : iList) {
-				if  (abstractProject.getName().startsWith(startMatcher)) {
+				if  ((pat == null || pat.matcher(abstractProject.getName()).matches() )
+						&& abstractProject.getName().startsWith(startMatcher)) {
 					int posOfMatcher = abstractProject.getName().indexOf(splitChar, lenMatcher + 1);
 					if (posOfMatcher > -1) {
 						String abString = abstractProject.getName().substring(lenMatcher+1, posOfMatcher);
@@ -216,6 +216,7 @@ public class PViewLinkAction implements Action, AccessControlled {
 		return getJobs(null,null);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<AbstractProject> getJobs(StaplerRequest req, StaplerResponse rsp) {
 		StaplerRequest mReq = (req == null ? Stapler.getCurrentRequest() : req);
 		List<AbstractProject> jobList = new ArrayList<AbstractProject>();
@@ -225,19 +226,36 @@ public class PViewLinkAction implements Action, AccessControlled {
 			splitChar = getUserProp().getTreeSplitChar();
 		} 
 		
+		//Step in
 		if (isIsTree()){
+			// RootStep in
 			if (mReq.getOriginalRequestURI().startsWith(getStepInViewRoot(mReq))){
-				for (AbstractProject abstractProject : iList) {
-					if  (!abstractProject.getName().contains(splitChar)){
-						jobList.add(abstractProject);
+				Pattern pat = getFreePattern(mReq);
+				if (pat != null && !pat.pattern().equals(".*")) {
+					for (AbstractProject<?, ?> abstractProject : iList) {
+						if (pat.matcher(abstractProject.getName()).matches()){
+							jobList.add(abstractProject);
+						}
 					}
-				}	
+				} else {
+					for (AbstractProject<?, ?> abstractProject : iList) {
+						if  (!abstractProject.getName().contains(splitChar)){
+							jobList.add(abstractProject);
+						}
+					}
+				}
 			} else {
 				String startMatcher = getProjectMatcher(mReq);
-				
-				for (AbstractProject abstractProject : iList) {
+				Pattern pat = getFreePattern(mReq);
+				for (AbstractProject<?, ?> abstractProject : iList) {
 					if  (abstractProject.getName().startsWith(startMatcher)){
-						jobList.add(abstractProject);
+						if (pat != null){
+							if (pat.matcher(abstractProject.getName()).matches()){
+								jobList.add(abstractProject);
+							}
+						} else {
+							jobList.add(abstractProject);
+						}
 						int stepInNumberJobs = 30;
 						if (getUserProp() != null) {
 							stepInNumberJobs = getUserProp().getStepInNumberJobs(); 
@@ -250,7 +268,8 @@ public class PViewLinkAction implements Action, AccessControlled {
 				}	
 			}
 		} else {
-			Pattern pat = getUserPattern();
+			// ListView
+			Pattern pat = getUserPattern(mReq);
 		
 			for (AbstractProject abstractProject : iList) {
 				if  (pat.matcher(abstractProject.getName()).matches()){
@@ -259,6 +278,34 @@ public class PViewLinkAction implements Action, AccessControlled {
 			}
 		}
 		return jobList;
+	}
+
+	private Pattern getFreePattern(StaplerRequest req) {
+		Pattern pat = null;
+		
+		if (req.hasParameter("match") && req.getParameter("match").length() > 0){
+			pat = Pattern.compile(req.getParameter("match"));
+		}
+		return pat;
+		
+	}
+	
+	public String getNicePattern(){
+		Pattern pat =getFreePattern(Stapler.getCurrentRequest());
+		if (pat != null){
+			return pat.pattern();
+		} else {
+			return ".*";
+		}
+	}
+
+	public String getNiceUserPattern(){
+		Pattern pat =getUserPattern(Stapler.getCurrentRequest());
+		if (pat != null){
+			return pat.pattern();
+		} else {
+			return ".*";
+		}
 	}
 
 	public String getProjectMatcher() {
@@ -274,17 +321,19 @@ public class PViewLinkAction implements Action, AccessControlled {
 			return "";
 		}
 		String matchPoint = orgUri.substring((getStepInViewUrl(req) + "/").length(),orgUri.length() -1);
-		System.out.println(matchPoint);
 		return matchPoint;
 	}
 
-	private Pattern getUserPattern() {
+	private Pattern getUserPattern(StaplerRequest req) {
+		Pattern pat = getFreePattern(req);
+		if (pat != null){
+			return pat;
+		}
 		UserPersonalViewProperty up = getUserProp();
-		Pattern pat;
 		if (up != null){
 		 pat = Pattern.compile(getUserProp().getPViewExpression());
 		} else {
-			pat = Pattern.compile(".*");
+			pat = Pattern.compile(PViewProjectProperty.DESCRIPTOR.getRegex());
 		}
 		return pat;
 	}
@@ -329,8 +378,7 @@ public class PViewLinkAction implements Action, AccessControlled {
 
 
     public void doRssAll( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
-    	System.out.println("rssAll");
-        rss(req, rsp, " all builds", getBuilds(req, rsp));
+    	rss(req, rsp, " all builds", getBuilds(req, rsp));
     }
 
     public void doRssFailed( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
@@ -350,7 +398,8 @@ public class PViewLinkAction implements Action, AccessControlled {
             runs.newBuilds(), Run.FEED_ADAPTER, req, rsp );
     }
 
-    public void doRssLatest( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
+    @SuppressWarnings("unchecked")
+	public void doRssLatest( StaplerRequest req, StaplerResponse rsp ) throws IOException, ServletException {
         List<Run<?,?>> lastBuilds = new ArrayList<Run<?,?>>();
 
     	List<AbstractProject> list = getJobs(req, rsp);

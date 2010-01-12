@@ -127,6 +127,12 @@ public class UserPersonalViewProperty extends UserProperty implements Describabl
 	
     @Exported
     public String getPViewExpression() {
+    	if (pViewExpression == null){
+    		return  PViewProjectProperty.DESCRIPTOR.getRegex();
+    	}
+    	if (pViewExpression.length() == 0){
+    		return  PViewProjectProperty.DESCRIPTOR.getRegex();
+    	}
         return pViewExpression;
     }
 
@@ -255,7 +261,7 @@ public class UserPersonalViewProperty extends UserProperty implements Describabl
 
 	private void checkEmptyTreeChar() {
 		if (this.treeSplitChar == null || this.treeSplitChar.length() == 0){
-        	this.treeSplitChar = "-";
+        	this.treeSplitChar = PViewProjectProperty.DESCRIPTOR.getTreeSplitChar();
         }
 	}
 

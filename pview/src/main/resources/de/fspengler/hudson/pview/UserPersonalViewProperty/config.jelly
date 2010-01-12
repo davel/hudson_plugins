@@ -3,7 +3,8 @@
 		<l:task icon="images/24x24/up.gif" href="${rootURL}/pview" title="${%Personal View}" />
 	</f:entry>
 	<f:entry title="${%Regexp which Jobs to show}">
-		<f:textbox name="pview.pViewExpression" value="${instance.pViewExpression}"/>
+		<f:textbox name="pview.pViewExpression" value="${instance.pViewExpression}" 
+        checkUrl="'${rootURL}/jobProperty/PViewProjectProperty/regexCheck?value='+escape(this.value)" />
 	</f:entry>
 	<f:entry title="${%Character where to cut projectNames into parts for tree views}">
 		<f:textbox name="pview.treeSplitChar" value="${instance.treeSplitChar}"/>

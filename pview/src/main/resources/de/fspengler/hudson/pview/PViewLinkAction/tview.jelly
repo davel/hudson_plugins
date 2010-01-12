@@ -1,15 +1,28 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <l:pane title="tree" id="tview">
 		<j:if test="${it.hasUp}" >
+		<td class="pane" align="left" >
+		<table>
 		<tr><th align="left" >
-    		<a href="${rootURL}/pview/${it.treeParent}" > <img src="${imagesURL}/24x24/up.gif" > </img>UP </a>   
-    		<a href="${rootURL}/pview/siView/${it.projectMatcher}/" > <img src="${imagesURL}/24x24/next.gif" > </img>${it.projectMatcher}</a>
-    		</th></tr>
+    		<a href="${rootURL}/pview/${it.treeParent}?match=${it.nicePattern}" > <img src="${imagesURL}/24x24/up.gif" > </img>UP </a>
+    	</th><th>  
+    		<a href="${rootURL}/pview/siView/${it.projectMatcher}/?match=${it.nicePattern}" > <img src="${imagesURL}/24x24/next.gif" > </img>${it.projectMatcher}</a>
+    	</th>
+    	</tr>
+    	</table>
+    	</td>
     	</j:if>
+    	<tr><td class="pane" align="left" >
+    	<form method="get" ><input type="text" name="match" size="20" value="${it.nicePattern}"></input><input type="submit" value="Filter It" ></input></form>
+    	</td></tr>
     	<j:forEach var="dirset" items="${it.subDirs}" >
-    	<tr><th class="pane" align="left"  >
-    		<a href="${rootURL}/pview/siView/${dirset.link}/" ><img src="${imagesURL}/24x24/folder.gif" ></img>${dirset.link} ( ${dirset.counter} Project(s) )</a>
-    		</th></tr>
+    	<tr><td class="pane" align="left" >
+    		<a href="${rootURL}/pview/siView/${dirset.link}/?match=${it.nicePattern}" ><img src="${imagesURL}/24x24/folder.gif" ></img>${dirset.link} ( ${dirset.counter} Project(s) )</a>
+    		</td></tr>
     	</j:forEach>
+    	
     </l:pane>
+    
+    <br></br>
+    
 </j:jelly>

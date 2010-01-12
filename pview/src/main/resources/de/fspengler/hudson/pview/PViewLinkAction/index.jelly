@@ -26,15 +26,14 @@
     </j:if>
     </l:side-panel>
     <l:main-panel>
-    
-    <j:if test="${!it.user}">
-	    	<h1>Only useful for when you are logged in</h1>
-    </j:if>
     	<j:if test="${it.isTreeNE}">
     		<st:include page="tview.jelly"/>
+    	</j:if>
+    	<j:if test="${it.isList}">
+    		<form method="get" ><input type="text" name="match" size="20" value="${it.niceUserPattern}"></input><input type="submit" value="Filter It" ></input></form>
     		<br></br>
     	</j:if>
-        <!-- view tab bar -->
+    	<!-- view tab bar -->
         <l:tabBar>
           <l:tab name="Filtered ListView" active="${it.isList}" href="${rootURL}/pview" />
           <l:tab name="Step in View" active="${it.isTree}" href="${rootURL}/pview/rootSiView" />
