@@ -8,7 +8,6 @@ import hudson.util.ProcessTree;
 import hudson.EnvVars;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -34,21 +33,33 @@ public class ProcAction implements Action {
         return "proc";
     }
 
-    public ProcInfo getDynamic(String id) {
-        ProcessTree.OSProcess osp = ProcessTree.get().get(Integer.parseInt(id));
+    public ProcInfo getDynamic(String id) throws IOException, InterruptedException {
+        ProcessTree.OSProcess osp = getProcessTree().get(Integer.parseInt(id));
         return ProcInfo.getProcInfo(osp);
     }
 
     // returns the list of processes for a build
-    public List<ProcessTree.OSProcess> getProcesses() {
+    public List<ProcessTree.OSProcess> getProcesses() throws IOException, InterruptedException {
         List<ProcessTree.OSProcess> procs = new ArrayList<ProcessTree.OSProcess>();
         EnvVars vars = run.getCharacteristicEnvVars();
-        for(ProcessTree.OSProcess osp : ProcessTree.get()) {
+        for(ProcessTree.OSProcess osp : getProcessTree()) {
             if (osp.hasMatchingEnvVars(vars)) {
                 procs.add(osp);
             }
         }
         return procs;
+    }
+
+    // Returned object may be the remote ProcessTree(running on slave) which
+    // is serialized and created on this jvm
+    private ProcessTree getProcessTree() throws IOException, InterruptedException {
+        return run.getBuiltOn().getChannel().call(
+            new Callable<ProcessTree, RuntimeException>() {
+                public ProcessTree call() {
+                    return ProcessTree.get();
+                }
+            }
+        );
     }
 
 }
