@@ -176,6 +176,17 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>hudson.udp</name>
+              <value>33849</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
