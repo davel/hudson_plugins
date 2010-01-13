@@ -110,23 +110,23 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
 
         ParserResult project;
-        project = new ParserResult(build.getProject().getWorkspace());
+        project = new ParserResult(build.getWorkspace());
 
         try {
             LineIterator iterator = null;
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
 
-            if (executable != null) {
+            if (!executable.equalsIgnoreCase("")) {
                 logger.log("Starting coderunner...");
                 Launcher laucher = new LocalLauncher(TaskListener.NULL);
                 final String cmd = "cmd /C " + executable + " " + sourcecodedir;
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getProject().getWorkspace());
-                int status = proc.join();
+                Proc proc = laucher.launch(cmd, build.getEnvVars(), out, build.getWorkspace());
+                proc.join();
                 iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
             } else {
-                logger.log("Using precreated result file...");
-                String path = build.getWorkspace().getName() + "output.xml";
+                logger.log("Using precreated result file from:");
+                String path = build.getWorkspace() + "/output.txt";
                 logger.log(path);
                 FileReader reader = new FileReader(path);
                 iterator = IOUtils.lineIterator(reader);
@@ -157,7 +157,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                 }
             }
             iterator.close();
-            project = build.getProject().getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
+            project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
 
         } catch (IOException e) {
             e.printStackTrace();
