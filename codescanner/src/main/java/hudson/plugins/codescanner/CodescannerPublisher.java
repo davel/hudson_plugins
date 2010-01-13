@@ -117,7 +117,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
 
             if (!executable.equalsIgnoreCase("")) {
-                logger.log("Starting coderunner...");
+                logger.log("Starting codescanner...");
                 Launcher laucher = new LocalLauncher(TaskListener.NULL);
                 final String cmd = "cmd /C " + executable + " " + sourcecodedir;
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
