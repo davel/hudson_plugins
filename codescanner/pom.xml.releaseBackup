@@ -10,7 +10,7 @@
   <artifactId>codescanner</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Codescanner Plug-in</name>
-  <version>1.0-snapshot</version>
+  <version>0.8-SNAPSHOT</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/CodeScanner+Plugin</url>
   <description>This plug-in reads the Symbian Codescanner output and generates reports,
     trends and a lot more</description>
