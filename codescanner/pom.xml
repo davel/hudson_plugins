@@ -10,7 +10,7 @@
   <artifactId>codescanner</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Codescanner Plug-in</name>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/CodeScanner+Plugin</url>
   <description>This plug-in reads the Symbian Codescanner output and generates reports,
     trends and a lot more</description>
@@ -160,5 +160,11 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/codescanner-0.8</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/codescanner-0.8</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/codescanner-0.8</url>
+  </scm>
 </project>
 
