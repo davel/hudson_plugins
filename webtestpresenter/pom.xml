@@ -10,7 +10,7 @@
   <name>WebTest Presenter plugin</name>
   <artifactId>webtestpresenter</artifactId>
   <packaging>hpi</packaging>
-  <version>0.23-SNAPSHOT</version>
+  <version>0.23</version>
   <url>http://wiki.hudson-ci.org/display/HUDSON/WebTest+Presenter+Plugin</url>
   <developers>
     <developer>
@@ -18,4 +18,10 @@
       <name>Adam Ambrose</name>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/webtestpresenter-0.23</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/webtestpresenter-0.23</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/webtestpresenter-0.23</url>
+  </scm>
 </project>
