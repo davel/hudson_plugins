@@ -126,7 +126,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                 iterator = IOUtils.lineIterator(new ByteArrayInputStream(out.toByteArray()), "UTF-8");
             } else {
                 logger.log("Using precreated result file from:");
-                String path = build.getWorkspace() + "/output.txt";
+                String path = build.getWorkspace() + "\\output.txt";
                 logger.log(path);
                 FileReader reader = new FileReader(path);
                 iterator = IOUtils.lineIterator(reader);
