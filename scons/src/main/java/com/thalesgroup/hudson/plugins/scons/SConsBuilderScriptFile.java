@@ -27,8 +27,10 @@ import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.*;
-import hudson.tasks.BuildStepDescriptor;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Hudson;
 import hudson.tasks.Builder;
 import hudson.tools.ToolInstallation;
 import hudson.util.ArgumentListBuilder;
@@ -76,21 +78,8 @@ public class SConsBuilderScriptFile extends SConsAbstractBuilder {
         EnvVars env = build.getEnvironment(listener);
         VariableResolver<String> varResolver = build.getBuildVariableResolver();
 
-        SConsInstallation sconsInstallation = getSconsInstallation();
-        if (sconsInstallation == null) {
-            args.add("scons");
-        }
-        else {
-            sconsInstallation = sconsInstallation.forNode(Computer.currentComputer().getNode(), listener);
-            sconsInstallation = sconsInstallation.forEnvironment(env);
-
-            String sconsExecutable = sconsInstallation.getSconsExecutable(launcher);
-            if (sconsExecutable == null) {
-                listener.fatalError("No Scons Executable");
-                return false;
-            }
-            args.add(sconsExecutable);
-        }
+        //Build the scons executable and fill in the args buffer
+        if (buildSconsExecutable(launcher, listener, args, env)) return false;
 
 
         String normalizedOptions = getOptions().replaceAll("[\t\r\n]+", " ");
@@ -152,7 +141,12 @@ public class SConsBuilderScriptFile extends SConsAbstractBuilder {
     @Extension
     public static final SConsBuilderScriptFileDescriptor DESCRIPTOR = new SConsBuilderScriptFileDescriptor();
 
-    public static class SConsBuilderScriptFileDescriptor extends BuildStepDescriptor<Builder> {
+    public SConsBuilderDescriptor getDescritor() {
+        return DESCRIPTOR;
+    }
+
+
+    public static class SConsBuilderScriptFileDescriptor extends SConsBuilderDescriptor {
 
         public SConsBuilderScriptFileDescriptor() {
             load();
@@ -164,30 +158,7 @@ public class SConsBuilderScriptFile extends SConsAbstractBuilder {
 
         @Override
         public String getDisplayName() {
-            return "Invoke scons script";
-        }
-
-        public SConsInstallation[] getInstallations() {
-            return Hudson.getInstance().getDescriptorByType(SConsInstallation.DescriptorImpl.class).getInstallations();
-        }
-
-        /**
-         * Returns the {@link SConsInstallation.DescriptorImpl} instance.
-         */
-        public SConsInstallation.DescriptorImpl getToolDescriptor() {
-            return ToolInstallation.all().get(SConsInstallation.DescriptorImpl.class);
-        }
-
-        /**
-         * Checks for fields
-         */
-        public FormValidation doCheckService(@QueryParameter String value) {
-            return FormValidation.ok();
-        }
-
-        @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
+            return Messages.scons_scriptFile_displayName();
         }
 
         @Override

@@ -23,10 +23,17 @@
 
 package com.thalesgroup.hudson.plugins.scons;
 
+import hudson.EnvVars;
+import hudson.Launcher;
+import hudson.model.BuildListener;
+import hudson.model.Computer;
 import hudson.tasks.Builder;
+import hudson.util.ArgumentListBuilder;
+
+import java.io.IOException;
 
 
-public class SConsAbstractBuilder extends Builder {
+public abstract class SConsAbstractBuilder extends Builder {
 
 
     private final String sconsName;
@@ -60,4 +67,35 @@ public class SConsAbstractBuilder extends Builder {
     public String getTargets() {
         return targets;
     }
+
+    protected boolean buildSconsExecutable(Launcher launcher, BuildListener listener, ArgumentListBuilder args, EnvVars env) throws IOException, InterruptedException {
+        SConsInstallation sconsInstallation = getSconsInstallation();
+        if (sconsInstallation == null) {
+            args.add("scons");
+        } else {
+            sconsInstallation = sconsInstallation.forNode(Computer.currentComputer().getNode(), listener);
+            sconsInstallation = sconsInstallation.forEnvironment(env);
+
+            String sconsExecutable = sconsInstallation.getSconsExecutable(launcher);
+            if (sconsExecutable == null) {
+                listener.fatalError(Messages.scons_NoSconsExecutable());
+                return true;
+            }
+            args.add(sconsExecutable);
+        }
+        return false;
+    }
+
+
+    protected SConsInstallation getSconsInstallation() {
+        for (SConsInstallation installation : getDescritor().getInstallations()) {
+            if (getSconsName() != null && installation.getName().equals(getSconsName())) {
+                return installation;
+            }
+        }
+        return null;
+    }
+
+    public abstract SConsBuilderDescriptor getDescritor();
 }
+

@@ -25,7 +25,6 @@ package com.thalesgroup.hudson.plugins.scons;
 
 import hudson.*;
 import hudson.model.EnvironmentSpecific;
-import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.remoting.Callable;

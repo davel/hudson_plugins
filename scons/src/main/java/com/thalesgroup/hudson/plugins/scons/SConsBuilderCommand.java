@@ -24,13 +24,15 @@
 package com.thalesgroup.hudson.plugins.scons;
 
 import hudson.*;
-import hudson.model.*;
-import hudson.tasks.BuildStepDescriptor;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
 import hudson.tasks.Builder;
 import hudson.tools.ToolInstallation;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
+import org.jvnet.localizer.ResourceBundleHolder;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -51,37 +53,14 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
     }
 
 
-    public SConsInstallation getSconsInstallation() {
-        for (SConsInstallation installation : DESCRIPTOR.getInstallations()) {
-            if (getSconsName() != null && installation.getName().equals(getSconsName())) {
-                return installation;
-            }
-        }
-        return null;
-    }
-
-
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 
         ArgumentListBuilder args = new ArgumentListBuilder();
         EnvVars env = build.getEnvironment(listener);
 
-        SConsInstallation sconsInstallation = getSconsInstallation();
-        if (sconsInstallation == null) {
-            args.add("scons");
-        }
-        else {
-            sconsInstallation = sconsInstallation.forNode(Computer.currentComputer().getNode(), listener);
-            sconsInstallation = sconsInstallation.forEnvironment(env);
-
-            String sconsExecutable = sconsInstallation.getSconsExecutable(launcher);
-            if (sconsExecutable == null) {
-                listener.fatalError("No Scons Executable");
-                return false;
-            }
-            args.add(sconsExecutable);
-        }
+        //Build the scons executable and fill in the args buffer
+        if (buildSconsExecutable(launcher, listener, args, env)) return false;
 
 
         String normalizedOptions = getOptions().replaceAll("[\t\r\n]+", " ");
@@ -96,7 +75,7 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
         tempDir.createNewFile();
 
 
-        FilePath dynamicSconsFile = build.getModuleRoot().createTextTempFile("scons",  ".generated", getCommandScript());
+        FilePath dynamicSconsFile = build.getModuleRoot().createTextTempFile("scons", ".generated", getCommandScript());
 
 
         args.add("-f");
@@ -129,7 +108,7 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
             return r == 0;
         } catch (IOException e) {
             Util.displayIOException(e, listener);
-            e.printStackTrace(listener.fatalError("command execution failed"));
+            e.printStackTrace(listener.fatalError(Messages.scons_commandExecutionFailed()));
             return false;
         }
     }
@@ -138,7 +117,12 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
     @Extension
     public static final SConsBuilderCommandDescriptor DESCRIPTOR = new SConsBuilderCommandDescriptor();
 
-    public static class SConsBuilderCommandDescriptor extends BuildStepDescriptor<Builder> {
+    public SConsBuilderDescriptor getDescritor() {
+        return DESCRIPTOR;
+    }
+
+
+    public static class SConsBuilderCommandDescriptor extends SConsBuilderDescriptor {
 
         public SConsBuilderCommandDescriptor() {
             load();
@@ -150,30 +134,7 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
 
         @Override
         public String getDisplayName() {
-            return "Provide your scons content";
-        }
-
-        public SConsInstallation[] getInstallations() {
-            return Hudson.getInstance().getDescriptorByType(SConsInstallation.DescriptorImpl.class).getInstallations();
-        }
-
-        /**
-         * Returns the {@link SConsInstallation.DescriptorImpl} instance.
-         */
-        public SConsInstallation.DescriptorImpl getToolDescriptor() {
-            return ToolInstallation.all().get(SConsInstallation.DescriptorImpl.class);
-        }
-
-        /**
-         * Checks for fields
-         */
-        public FormValidation doCheckService(@QueryParameter String value) {
-            return FormValidation.ok();
-        }
-
-        @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
+            return Messages.scons_builderCommand_displayName();
         }
 
         @Override
