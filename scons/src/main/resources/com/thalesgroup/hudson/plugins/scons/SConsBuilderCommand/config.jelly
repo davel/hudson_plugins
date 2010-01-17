@@ -21,31 +21,37 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
-
 -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:section title="Scons">
-    <f:entry title="SCons installation"
-      description="List of SCons installations on this system">
-      <f:repeatable var="inst" items="${descriptor.installations}">
-        <table width="100%">
-          
-	  	  <f:entry title="name">
-            <f:textbox name="scons.name" value="${inst.name}" />
-          </f:entry>
 
-          <f:entry title="SCons Executable Path">
-            <f:textbox name="scons.executablePath" value="${inst.executablePath}" />
-           </f:entry>
-          
-          <f:entry title="">
-            <div align="right">
-              <f:repeatableDeleteButton />
-            </div>
-          </f:entry>
-        </table>
-      </f:repeatable>
-    </f:entry>
-  </f:section>
+    <j:if test="${!empty(descriptor.installations)}">
+        <f:entry title="${%SCons installation}" field="sconsName">
+            <select name="scons.sconsName" class="setting-input" field="">
+                <j:forEach var="installation" items="${descriptor.installations}">
+                    <f:option selected="${installation.name==instance.sconsName}" value="${installation.name}">
+                        ${installation.name}
+                    </f:option>
+                </j:forEach>
+            </select>
+        </f:entry>
+    </j:if>
+
+     <f:entry title="Options" field="options">
+       <f:expandableTextbox name="scons.options" value="${instance.options}" />
+     </f:entry>
+
+     <f:entry title="Variables" field="variables">
+       <f:expandableTextbox name="scons.variables" value="${instance.variables}" />
+     </f:entry>
+
+     <f:entry title="Targets" field="targets">
+       <f:expandableTextbox name="scons.targets" value="${instance.targets}" />
+     </f:entry>
+
+     <f:entry title="SCons script content" field="commandScript">
+       <f:textarea name="scons.commandScript" value="${instance.commandScript}" />
+     </f:entry>
+
+  
 </j:jelly>
