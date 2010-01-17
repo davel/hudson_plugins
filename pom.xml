@@ -229,6 +229,7 @@
     <module>description-setter</module>
     <module>disk-usage</module>
     <module>doclinks</module>
+    <module>downstream-ext</module>
     <module>dry</module>
     <module>easyant</module>
     <module>ec2</module>
