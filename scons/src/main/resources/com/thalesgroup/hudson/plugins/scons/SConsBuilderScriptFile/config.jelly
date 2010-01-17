@@ -28,6 +28,7 @@
     <j:if test="${!empty(descriptor.installations)}">
         <f:entry title="${%SCons installation}" field="sconsName">
             <select name="scons.sconsName" class="setting-input" field="">
+               <option>(Default)</option>               
                 <j:forEach var="installation" items="${descriptor.installations}">
                     <f:option selected="${installation.name==instance.sconsName}" value="${installation.name}">
                         ${installation.name}

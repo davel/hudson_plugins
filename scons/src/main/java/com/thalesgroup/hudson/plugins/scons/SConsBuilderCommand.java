@@ -69,19 +69,19 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
 
         SConsInstallation sconsInstallation = getSconsInstallation();
         if (sconsInstallation == null) {
-            listener.fatalError("NoInstallationSet");
-            return false;
+            args.add("scons");
         }
+        else {
+            sconsInstallation = sconsInstallation.forNode(Computer.currentComputer().getNode(), listener);
+            sconsInstallation = sconsInstallation.forEnvironment(env);
 
-        sconsInstallation = sconsInstallation.forNode(Computer.currentComputer().getNode(), listener);
-        sconsInstallation = sconsInstallation.forEnvironment(env);
-
-        String sconsExecutable = sconsInstallation.getSconsExecutable(launcher);
-        if (sconsExecutable == null) {
-            listener.fatalError("NoStafExecutable");
-            return false;
+            String sconsExecutable = sconsInstallation.getSconsExecutable(launcher);
+            if (sconsExecutable == null) {
+                listener.fatalError("No Scons Executable");
+                return false;
+            }
+            args.add(sconsExecutable);
         }
-        args.add(sconsExecutable);
 
 
         String normalizedOptions = getOptions().replaceAll("[\t\r\n]+", " ");
@@ -96,7 +96,7 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
         tempDir.createNewFile();
 
 
-        FilePath dynamicSconsFile = build.getModuleRoot().createTextTempFile("scons", getCommandScript(), ".generated");
+        FilePath dynamicSconsFile = build.getModuleRoot().createTextTempFile("scons",  ".generated", getCommandScript());
 
 
         args.add("-f");
