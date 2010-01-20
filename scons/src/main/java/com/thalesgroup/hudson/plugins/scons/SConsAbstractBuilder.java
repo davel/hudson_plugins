@@ -44,12 +44,14 @@ public abstract class SConsAbstractBuilder extends Builder {
 
     private final String targets;
 
+    private final String rootSconsscriptDirectory;
 
-    public SConsAbstractBuilder(String sconsName, String options, String variables, String targets) {
+    protected SConsAbstractBuilder(String sconsName, String options, String variables, String targets, String rootSconsscriptDirectory) {
         this.sconsName = sconsName;
         this.options = options;
         this.variables = variables;
         this.targets = targets;
+        this.rootSconsscriptDirectory = rootSconsscriptDirectory;
     }
 
     public String getSconsName() {
@@ -66,6 +68,10 @@ public abstract class SConsAbstractBuilder extends Builder {
 
     public String getTargets() {
         return targets;
+    }
+
+    public String getRootSconsscriptDirectory() {
+        return rootSconsscriptDirectory;
     }
 
     protected boolean buildSconsExecutable(Launcher launcher, BuildListener listener, ArgumentListBuilder args, EnvVars env) throws IOException, InterruptedException {

@@ -50,6 +50,10 @@
        <f:expandableTextbox name="scons.targets" value="${instance.targets}" />
      </f:entry>
 
+     <f:entry title="SConscript root directory" field="rootSconsscriptDirectory">
+       <f:textbox name="scons.rootSconsscriptDirectory" value="${instance.rootSconsscriptDirectory}" />
+     </f:entry>
+
      <f:entry title="SCons script content" field="commandScript">
        <f:textarea name="scons.commandScript" value="${instance.commandScript}" />
      </f:entry>

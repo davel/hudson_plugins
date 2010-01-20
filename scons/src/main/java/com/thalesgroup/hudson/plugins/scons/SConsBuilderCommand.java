@@ -25,19 +25,13 @@ package com.thalesgroup.hudson.plugins.scons;
 
 import hudson.*;
 import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.Builder;
-import hudson.tools.ToolInstallation;
 import hudson.util.ArgumentListBuilder;
-import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
-import org.jvnet.localizer.ResourceBundleHolder;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import java.io.File;
 import java.io.IOException;
 
 
@@ -47,8 +41,8 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
     private final String commandScript;
 
     @DataBoundConstructor
-    public SConsBuilderCommand(String sconsName, String options, String variables, String targets, String commandScript) {
-        super(sconsName, options, variables, targets);
+    public SConsBuilderCommand(String sconsName, String options, String variables, String targets, String rootSconsscriptDirectory, String commandScript) {
+        super(sconsName, options, variables, targets, rootSconsscriptDirectory);
         this.commandScript = commandScript;
     }
 
@@ -71,16 +65,24 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
             args.addTokenized(normalizedOptions);
         }
 
-        File tempDir = Util.createTempDir();
-        tempDir.createNewFile();
 
+        //Determines the rootDirectory
+        String normalizedRootSconsscriptDirectory = getRootSconsscriptDirectory().replaceAll("[\t\r\n]+", " ");
+        FilePath rootSconsscriptFilePath = build.getModuleRoot();
+        if (normalizedRootSconsscriptDirectory != null && normalizedRootSconsscriptDirectory.trim().length() != 0) {
+            normalizedRootSconsscriptDirectory = Util.replaceMacro(normalizedRootSconsscriptDirectory, build.getEnvironment(listener));
+            rootSconsscriptFilePath = new FilePath(rootSconsscriptFilePath, normalizedRootSconsscriptDirectory);
+        }
 
-        FilePath dynamicSconsFile = build.getModuleRoot().createTextTempFile("scons", ".generated", getCommandScript());
-
-
+        FilePath dynamicSconsFile = rootSconsscriptFilePath.createTextTempFile("scons", ".generated", getCommandScript());
         args.add("-f");
         args.add(dynamicSconsFile.getName());
 
+
+        if (normalizedRootSconsscriptDirectory != null && normalizedRootSconsscriptDirectory.trim().length() != 0) {
+            args.add("-C");
+            args.add(normalizedRootSconsscriptDirectory);
+        }
 
         if (normalizedFileVariables != null && normalizedFileVariables.trim().length() != 0) {
             args.addTokenized(normalizedFileVariables);
@@ -110,6 +112,9 @@ public class SConsBuilderCommand extends SConsAbstractBuilder {
             Util.displayIOException(e, listener);
             e.printStackTrace(listener.fatalError(Messages.scons_commandExecutionFailed()));
             return false;
+        }
+        finally{
+            dynamicSconsFile.delete();
         }
     }
 

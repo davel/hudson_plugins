@@ -44,18 +44,15 @@ import java.io.IOException;
  */
 public class SConsBuilderScriptFile extends SConsAbstractBuilder {
 
-    private final String rootSconsscriptDirectory;
-
     private final String sconsscript;
 
     @DataBoundConstructor
     public SConsBuilderScriptFile(String sconsName, String options, String variables, String targets, String rootSconsscriptDirectory, String sconsscript) {
-        super(sconsName, options, variables, targets);
-        this.rootSconsscriptDirectory = rootSconsscriptDirectory;
+        super(sconsName, options, variables, targets, rootSconsscriptDirectory);
         this.sconsscript = sconsscript;
     }
 
-
+    
     public SConsInstallation getSconsInstallation() {
         for (SConsInstallation installation : DESCRIPTOR.getInstallations()) {
             if (getSconsName() != null && installation.getName().equals(getSconsName())) {
@@ -160,10 +157,6 @@ public class SConsBuilderScriptFile extends SConsAbstractBuilder {
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             return req.bindJSON(SConsBuilderScriptFile.class, formData);
         }
-    }
-
-    public String getRootSconsscriptDirectory() {
-        return rootSconsscriptDirectory;
     }
 
     public String getSconsscript() {

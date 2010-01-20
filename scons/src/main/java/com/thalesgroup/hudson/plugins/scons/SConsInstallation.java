@@ -27,6 +27,7 @@ import hudson.*;
 import hudson.model.EnvironmentSpecific;
 import hudson.model.Node;
 import hudson.model.TaskListener;
+import hudson.model.Hudson;
 import hudson.remoting.Callable;
 import hudson.slaves.NodeSpecific;
 import hudson.tools.ToolDescriptor;
@@ -66,7 +67,7 @@ public final class SConsInstallation extends ToolInstallation implements NodeSpe
         return launcher.getChannel().call(new Callable<String, IOException>() {
             public String call() throws IOException {
                 // Get where the exec should be, then make sure it exists
-                File execFileName = new File(Util.replaceMacro(getHome(), EnvVars.masterEnvVars), "scons");
+                File execFileName = new File(Util.replaceMacro(getHome(), EnvVars.masterEnvVars));
 
                 if (execFileName.exists()) {
                     return execFileName.getPath();
@@ -107,18 +108,18 @@ public final class SConsInstallation extends ToolInstallation implements NodeSpe
          * Checks if the installation folder is valid.
          */
         public FormValidation doCheckHome(@QueryParameter File value) {
-            /*
+
             if (!Hudson.getInstance().hasPermission(Hudson.ADMINISTER))
                 return FormValidation.ok();
 
             if (value.getPath().equals("")) {
-                return FormValidation.error(ResourceBundleHolder.get(SConsInstallation.class).format("InstallationFolderMustBeSet"));
+                return FormValidation.error(Messages.scons_InstallationFolderMustBeSet());
             }
 
-            if (!value.isDirectory()) {
-                return FormValidation.error(ResourceBundleHolder.get(SConsInstallation.class).format("NotAFolder", value));
+            if (!value.isFile()) {
+                return FormValidation.error(Messages.scons_NotAFile());
             }
-            */
+
             return FormValidation.ok();
         }
     }
