@@ -4,6 +4,6 @@
     When submitted, it will be passed to the corresponding constructor parameter.
   -->
   <f:entry title="URL to Sep install" field="url">
-    <f:textbox field="${instance.url}" value="${instance.url}" />
+    <f:textbox value="${instance.url}" />
   </f:entry>
 </j:jelly>
