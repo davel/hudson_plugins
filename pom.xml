@@ -229,6 +229,7 @@
     <module>description-setter</module>
     <module>disk-usage</module>
     <module>doclinks</module>
+    <module>downstream-buildview</module>
     <module>downstream-ext</module>
     <module>dry</module>
     <module>easyant</module>
@@ -287,6 +288,7 @@
     <module>mysql-auth</module>
     <module>nant</module>
     <module>naginator</module>
+    <module>nested-view</module>
     <module>network-monitor</module>
     <module>next-build-number</module>
     <module>nunit</module>
@@ -348,7 +350,6 @@
     <module>wsclean</module>
     <module>xunit</module>
     <module>xvnc</module>
-    <module>downstream-buildview</module>
   </modules>
 
   <properties>
