@@ -11,7 +11,7 @@
 
 	<artifactId>jsunit</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.4-SNAPSHOT</version>
+	<version>0.4</version>
 	<name>Hudson JSUnit plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/JSUnit+Plugin</url>
 
@@ -31,4 +31,10 @@
          <version>0.4</version>
       </dependency>
 	</dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/jsunit-0.4</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/jsunit-0.4</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/jsunit-0.4</url>
+  </scm>
 </project>
