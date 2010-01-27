@@ -19,11 +19,6 @@ public class ProcInfo {
         this.proc = proc;
     }
 
-    public HttpResponse doKill() {
-        proc.kill();
-        return new HttpRedirect("..");
-    }
-
     // Is it a Java Process ? Crude way of checking - just checks whether
     // the first argument contains "java"
     private static boolean isJavaProc(OSProcess proc) {

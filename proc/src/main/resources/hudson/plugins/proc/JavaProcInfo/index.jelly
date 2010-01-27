@@ -1,10 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
 	<l:layout title="Remote API">
 		<l:main-panel>
-            <form method="post" action="kill" style="float:right">
-                <f:submit value="Kill" />
-            </form>
-
             <h1>System Properties</h1>
             <table>
               <j:forEach items="${it.getSystemProperties().entrySet()}" var="i">
