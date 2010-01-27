@@ -1,0 +1,19 @@
+ 												------
+ 												Introduction
+ 												------
+ 												Stig Kleppe-J¿rgensen
+ 												------
+ 												January 20 2010
+ 												------
+
+
+Introduction
+~~~~~~~~~~~~
+
+  The Hudson plugin provides:
+  
+  * a Job property to configure the Jira URL.
+
+  * a post build action that posts the build's and previous failed build's Jira issues to the Jira plugin
+
+  []

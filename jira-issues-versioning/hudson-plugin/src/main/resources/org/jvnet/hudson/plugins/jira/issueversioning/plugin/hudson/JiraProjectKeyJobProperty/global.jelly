@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:section title="Jira Hudson Integration">
+		<f:entry title="Jira Project key pattern">
+			<f:textbox field="projectKeyPattern" />
+		</f:entry>
+		<f:entry title="Jira Issue key pattern">
+			<f:textbox field="issueKeyPattern" />
+		</f:entry>
+		<f:entry title="Jira base URL to post Hudson build id to when a build and its issue indexing is finished">
+			<f:textbox field="jiraBaseUrl" />
+		</f:entry>
+	</f:section>
+</j:jelly>

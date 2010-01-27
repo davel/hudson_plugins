@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atlassian-plugin name="${pom.name}" key="${atlassian.plugin.key}" system="false" pluginsVersion="2">
+	<plugin-info>
+		<description>${pom.description}</description>
+		<vendor name="${pom.organization.name}" url="${pom.organization.url}" />
+		<version>${pom.version}</version>
+		<application-version min="4.0" max="4.0"/>
+	</plugin-info>
+
+	<!-- R E S T   R E S O U R C E S -->
+	<rest key="release-for-build" path="/build-release" version="1.0"
+	      description="Gets the build to release for." />
+
+	<component-import key="issueManager" interface="com.atlassian.jira.issue.IssueManager"/>
+	<component-import key="cacheManager" interface="com.atlassian.jira.issue.cache.CacheManager"/>
+	<component-import key="fieldManager" interface="com.atlassian.jira.issue.fields.FieldManager"/>
+	<component-import key="issueIndexManager" interface="com.atlassian.jira.issue.index.IssueIndexManager"/>
+	<component-import key="versionManager" interface="com.atlassian.jira.project.version.VersionManager"/>
+
+	<component key="versionAssociationCreator" name="Default version association creator"
+	           class="org.jvnet.hudson.plugins.jira.issueversioning.plugin.jira.rest.DefaultVersionAssociationCreator">
+		<interface>org.jvnet.hudson.plugins.jira.issueversioning.plugin.jira.rest.VersionAssociationCreator</interface>
+	</component>
+
+</atlassian-plugin>

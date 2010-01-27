@@ -1,0 +1,5 @@
+<div>
+	<!-- TODO rewrite this description -->
+	This plugin features a Job property, Issue indexer and a new REST API to integration Hudson with Portlets and Tab
+	Panels of <a href="http://www.atlassian.com/software/jira">Atlassian Jira</a>.
+</div>

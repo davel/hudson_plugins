@@ -1,0 +1,5 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:entry title="${descriptor.displayName}" help="${rootURL}/plugin/hudson-jiraapi-plugin/help.html">
+		<f:textbox field="key" />
+	</f:entry>
+</j:jelly>

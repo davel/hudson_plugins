@@ -1,0 +1,16 @@
+ 												------
+ 												Introduction
+ 												------
+ 												Stig Kleppe-J¿rgensen
+ 												------
+ 												January 27 2010
+ 												------
+
+
+Introduction
+~~~~~~~~~~~~
+
+  The Jira plugin takes the list of issues received from Hudson builds and adds the finished issues to a version
+  automatically.
+
+  []

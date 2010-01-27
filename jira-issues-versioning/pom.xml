@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jvnet.hudson.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.341</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>jira-issues-versioning</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>remoting-domain</module>
+		<module>hudson-plugin</module>
+		<module>jira-plugin</module>
+	</modules>
+
+	<name>Hudson JIRA issues automatic versioning plugins</name>
+	<description>
+		For projects where there is no real planning of which issues should be in a release or not, these plugins can be
+		used to automatically collect issues into a JIRA version for a release build. Typical for these projects are
+		a relatively rapid release cycle where the goal is to complete as many issues as possible for each release.
+
+		The general idea is that the Hudson plugin should NOT be used in continuous integration builds, but in release
+		builds that are triggered manually when a release should be made, like mvn release:prepare release:perform. Then all
+		the JIRA issues present in the change logs since the last release will be collected and sent to the JIRA plugin.
+
+		Th JIRA plugin finds all the "finished" issues from the received list of issues and puts the release version on
+		them, and in the end releases the version.
+	</description>
+	<url>http://CHANGE-THIS</url>
+	<inceptionYear>2009</inceptionYear>
+	<organization>
+		<name>CHANGE-THIS</name>
+		<url>CHANGE-THIS</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:svn:http://CHANGE-THIS</connection>
+		<developerConnection>scm:svn:http://CHANGE-THIS</developerConnection>
+		<url>http://CHANGE-THIS</url>
+	</scm>
+	<issueManagement>
+		<system>JIRA</system>
+		<!-- TODO use the Hudson Jira plugin's Jira component? -->
+		<url>http://CHANGE-THIS/browse/JIRAHUDSON</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>http://CHANGE-THIS</url>
+		<!-- What is this? Can this be used -->
+		<notifiers>
+			<notifier>
+				<type>mail</type>
+				<configuration>
+					<address>CHANGETHIS@something</address>
+				</configuration>
+			</notifier>
+		</notifiers>
+	</ciManagement>
+	<distributionManagement>
+		<site>
+			<id>autoissueversion.website</id>
+			<url>dav:http://CHANGE-THIS</url>
+		</site>
+	</distributionManagement>
+
+	<properties>
+		<project.jdk.revision>1.5</project.jdk.revision>
+		<hudsonVersion>1.341</hudsonVersion>
+		<atlassianJiraVersion>4.0</atlassianJiraVersion>
+		<stagingSiteURL>dav:http://CHANGE-THIS
+		</stagingSiteURL>
+		<jiraDownloadBaseUrl>
+			http://CHANGE-THIS
+		</jiraDownloadBaseUrl>
+		<hudsonDownloadBaseUrl>
+			http://CHANGE-THIS
+		</hudsonDownloadBaseUrl>
+		<pmd.ruleset.location>http://CHANGE-THIS
+		</pmd.ruleset.location>
+		<checkstyle.config.location>
+			http://CHANGE-THIS
+		</checkstyle.config.location>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>0.9.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock.modules</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock.api</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.2</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- preparation goals need to be at least install otherwise the release process fails -->
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<preparationGoals>clean install</preparationGoals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>powermock-repo</id>
+			<url>http://powermock.googlecode.com/svn/repo/</url>
+		</repository>
+	</repositories>
+	<developers>
+		<developer>
+			<id>stigkj</id>
+			<name>Stig Kleppe-Jørgensen</name>
+			<url>http://CHANGE-THIS</url>
+			<organization>NOS</organization>
+			<email>from.hudson@nisgits.net</email>
+			<organizationUrl>http://CHANGE-THIS</organizationUrl>
+			<timezone>+1</timezone>
+			<roles>
+				<role>Developer??</role>
+			</roles>
+		</developer>
+	</developers>
+</project>
