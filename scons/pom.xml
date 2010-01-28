@@ -9,7 +9,7 @@
   </parent>
   
   <artifactId>scons</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <packaging>hpi</packaging>
   <name>Hudson SCons plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/SCons+Plugin</url>
@@ -33,4 +33,10 @@
       </developer>
    </developers>
 
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/scons-0.2</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/scons-0.2</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/scons-0.2</url>
+  </scm>
 </project>
