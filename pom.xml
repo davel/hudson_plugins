@@ -201,6 +201,7 @@
     <module>active-directory</module>
     <module>analysis-core</module>
     <module>analysis-collector</module>
+    <module>analysis-pom</module>
     <module>analysis-test</module>
     <module>audit-trail</module>
     <module>backup</module>
