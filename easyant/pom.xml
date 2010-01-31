@@ -13,4 +13,10 @@
   <packaging>hpi</packaging>
   <name>Hudson EasyAnt plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/EasyAnt+Plugin</url>
+  <developers>
+    <developer>
+      <id>jboudart</id>
+      <name>Jean Louis Boudart</name>
+    </developer>
+  </developers>
 </project>
