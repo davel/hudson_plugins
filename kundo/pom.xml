@@ -13,4 +13,10 @@
 	<version>0.2-SNAPSHOT</version>
 	<name>Hudson Kundo plugin</name>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/Kundo+Plugin</url>
+	<developers>
+		<developer>
+			<id>ben_leedham</id>
+			<name>Ben Leedham</name>
+		</developer>
+	</developers>
 </project>
