@@ -1,9 +1,8 @@
 <!--
-
     Copyright (c) 2008, MTV Networks
-
 -->
-
 <div>
-  This plugin resolves user email addresses from an LDAP server.
+  This plugin resolves user email addresses from an LDAP directory.
+  It is not needed if Hudson uses LDAP as its authentication source and user records
+  have a standard "mail" attribute.
 </div>

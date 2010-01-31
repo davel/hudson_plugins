@@ -19,6 +19,13 @@
 	<packaging>hpi</packaging>
 	<version>0.6-SNAPSHOT</version>
 
+	<developers>
+	    <developer>
+		<id>justinedelson</id>
+		<name>Justin Edelson</name>
+	    </developer>
+	</developers>
+
 	<dependencies>
         <dependency>
             <groupId>com.mtvi.plateng</groupId>
