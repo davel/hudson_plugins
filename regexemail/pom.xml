@@ -19,6 +19,13 @@
 	<packaging>hpi</packaging>
 	<version>0.3-SNAPSHOT</version>
 
+	<developers>
+	    <developer>
+		<id>justinedelson</id>
+		<name>Justin Edelson</name>
+	    </developer>
+	</developers>
+
 	<build>
 		<defaultGoal>package</defaultGoal>
 		<plugins>
