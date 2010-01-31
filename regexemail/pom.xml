@@ -17,7 +17,7 @@
 	<groupId>com.mtvi.plateng.hudson</groupId>
 	<artifactId>regexemail</artifactId>
 	<packaging>hpi</packaging>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 
 	<developers>
 	    <developer>
@@ -68,4 +68,10 @@
 		</plugins>
 	</build>
 
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/regexemail-0.3</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/regexemail-0.3</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/regexemail-0.3</url>
+  </scm>
 </project>
