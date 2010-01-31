@@ -12,4 +12,10 @@
   <version>1.3-SNAPSHOT</version>
   <name>Hudson JavaTest report plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/JavaTest+Report+Plugin</url>
+  <developers>
+    <developer>
+      <id>ramapulavarthi</id>
+      <name>Rama Pulavarthi</name>
+    </developer>
+  </developers>
 </project>
