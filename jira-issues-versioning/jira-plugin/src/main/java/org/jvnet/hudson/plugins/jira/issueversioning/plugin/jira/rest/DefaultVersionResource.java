@@ -25,7 +25,6 @@ public class DefaultVersionResource {
 	@AnonymousAllowed
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response associateWithIssues(Project project) {
-		System.out.println("###############################");
 		versionAssociationCreator.associateFor(project);
 
 		return Response.ok().build();
