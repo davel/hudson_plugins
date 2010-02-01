@@ -23,6 +23,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.jvnet.hudson.plugins.jira.issueversioning.domain.api.model.rest.Build;
+import org.jvnet.hudson.plugins.jira.issueversioning.domain.api.model.rest.Project;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
@@ -51,7 +53,7 @@ public class DefaultVersionResourceTest {
 	@Test
 	public void should_return_ok_with_correct_url() throws Exception {
 		Project project = createProject();
-		final VersionResource versionResource = TestPortProvider.createProxy(VersionResource.class);
+		final DefaultVersionResource versionResource = TestPortProvider.createProxy(DefaultVersionResource.class);
 		Response response = versionResource.associateWithIssues(project);
 
 		Mockito.verify(versionAssociationCreator).associateFor(project);
@@ -61,7 +63,8 @@ public class DefaultVersionResourceTest {
 	@Test
 	public void should_return_404_with_url_pointing_to_nonexisting_resource() throws Exception {
 		Project project = createProject();
-		final VersionResource versionResource = TestPortProvider.createProxy(VersionResource.class, "/should_get_404");
+		final DefaultVersionResource versionResource =
+				TestPortProvider.createProxy(DefaultVersionResource.class, "/should_get_404");
 		Response response = versionResource.associateWithIssues(project);
 
 		assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
