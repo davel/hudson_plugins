@@ -21,6 +21,8 @@ import com.atlassian.jira.project.version.VersionManager;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.hudson.plugins.jira.issueversioning.domain.api.model.rest.Build;
+import org.jvnet.hudson.plugins.jira.issueversioning.domain.api.model.rest.Project;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
