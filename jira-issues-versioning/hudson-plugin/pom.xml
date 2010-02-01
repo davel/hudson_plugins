@@ -10,7 +10,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>hudson-plugin</artifactId>
-	<version>${parent.pom.version}</version>
 	<packaging>hpi</packaging>
 
 	<name>Hudson plugin</name>

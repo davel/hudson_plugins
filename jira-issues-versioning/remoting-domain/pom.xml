@@ -9,7 +9,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>remoting-domain</artifactId>
-	<version>${parent.pom.version}</version>
 
 	<name>Domain remoting code</name>
 	<description>Library providing the remoting domain code.</description>

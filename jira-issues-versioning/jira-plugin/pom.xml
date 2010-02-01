@@ -10,7 +10,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>jira-plugin</artifactId>
-	<version>${parent.pom.version}</version>
 	<packaging>bundle</packaging>
 
 	<name>Jira plugin</name>
