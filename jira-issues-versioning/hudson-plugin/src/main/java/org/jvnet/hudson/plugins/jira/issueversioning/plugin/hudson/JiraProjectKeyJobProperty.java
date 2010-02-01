@@ -145,7 +145,7 @@ Comparable<JiraProjectKeyJobProperty> {
 		 * {@inheritDoc}
 		 */
 		public String getDisplayName() {
-			return Messages.getJiraKeyPropertyDisplayName();
+			return Messages.JiraKeyProperty_DisplayName();
 		}
 
 		/**

@@ -93,7 +93,7 @@ public class JiraIssueIndexerRecorder extends Recorder {
 		 */
 		@Override
 		public String getDisplayName() {
-			return Messages.getJiraIssueIndexerDisplayName();
+			return Messages.JiraIssueIndexer_DisplayName();
 		}
 
 		/**
