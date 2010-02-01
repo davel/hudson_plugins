@@ -40,8 +40,6 @@
 			<groupId>org.jvnet.hudson.plugins</groupId>
 			<artifactId>remoting-domain</artifactId>
 			<version>${pom.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
