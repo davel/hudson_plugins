@@ -28,6 +28,7 @@ import org.jvnet.hudson.plugins.jira.issueversioning.domain.api.model.rest.Proje
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit test for {@link DefaultVersionResource}
@@ -39,7 +40,7 @@ public class DefaultVersionResourceTest {
 
 	@Before
 	public void startContainer() throws Exception {
-		versionAssociationCreator = createMock();
+		versionAssociationCreator = mock(DefaultVersionAssociationCreator.class);
 
 	 	Dispatcher dispatcher = EmbeddedContainer.start().getDispatcher();
 		dispatcher.getRegistry().addSingletonResource(new DefaultVersionResource(versionAssociationCreator));
@@ -86,10 +87,6 @@ public class DefaultVersionResourceTest {
 
 		assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 		assertEquals("basic", response.getContentAsString());
-	}
-
-	private DefaultVersionAssociationCreator createMock() {
-		return Mockito.mock(DefaultVersionAssociationCreator.class);
 	}
 
 	private byte[] bytesForProjectInstance(final Project project) throws JAXBException {
