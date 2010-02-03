@@ -117,7 +117,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             Pattern pattern = Pattern.compile("([^\\(]+)\\(([0-9]+)\\) : (?:(info|warning|error|note))?: ([a-zA-Z0-9]+): (?:(low|medium|high))?: ([a-zA-Z0-9]+): (.*)");
 
             if (!executable.equalsIgnoreCase("")) {
-                logger.log("Starting codescanner...");
+                logger.log("Starting CodeScanner...");
                 Launcher laucher = new LocalLauncher(TaskListener.NULL);
                 final String cmd = "cmd /C " + executable + " " + sourcecodedir;
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -152,13 +152,10 @@ public class CodescannerPublisher extends HealthAwarePublisher {
                     } else if ("low".equalsIgnoreCase(prio)) {
                         priority = Priority.LOW;
                     }
-
                     project.addAnnotation(new Warning(fileName, line, types, category, message, priority));
                 }
             }
             iterator.close();
-            project = build.getWorkspace().act(new AnnotationsClassifier(project, getDefaultEncoding()));
-
         } catch (IOException e) {
             e.printStackTrace();
             logger.log("IOException!");
