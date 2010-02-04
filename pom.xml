@@ -270,6 +270,7 @@
     <module>jira</module>
     <module>jmeter</module>
     <module>jmx</module>
+    <module>jobConfigHistory</module>
     <module>join</module>
     <module>jprt</module>
     <module>jsunit</module>
