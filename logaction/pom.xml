@@ -5,7 +5,7 @@
   <artifactId>hudson-logaction-plugin</artifactId>
   <packaging>hpi</packaging>
   <name>Hudson Centralized Job(Re)Action</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   
   <parent>
         <groupId>org.jvnet.hudson.plugins</groupId>
@@ -28,8 +28,8 @@ but this is centralized configured</description>
     </developer>
   </developers>
   <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.1</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.1</developerConnection>
-    <url>https://svn.dev.java.net/svn/hudson/tags/hudson-logaction-plugin-1.1</url>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</developerConnection>
+    <url>https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/logaction</url>
   </scm>
 </project>
