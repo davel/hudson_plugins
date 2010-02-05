@@ -2,15 +2,15 @@
   <f:section title="${%LogAction}">
       <f:entry title="">
           <f:checkbox name="logaction.enabled" checked="${descriptor.enabled}" />
-          ${%This Plugin is working}
+          ${%Plugin enabled}
       </f:entry>
-       <f:entry title="restart on failure">
+      <f:entry title="${%Restart on failure}">
           <f:checkbox name="logaction.restartEnabled" checked="${descriptor.restartEnabled}" />
-          ${%This Restart is occurs on Pattern in joboutput}
+          ${%Restart job if this pattern occurs in job console output}
           <f:textbox name="logaction.restartPattern" value="${descriptor.restartPattern}"/>
-          ${%This Restart sets folowing description}
+          ${%This restart sets the following description}
           <f:textbox name="logaction.restartDescription" value="${descriptor.restartDescription}"/>
-          ${%This Restart has following delay}
+          ${%This restart has the following delay}
           <f:textbox name="logaction.restartDelay" value="${descriptor.restartDelay}"/>
       </f:entry>
   </f:section>
