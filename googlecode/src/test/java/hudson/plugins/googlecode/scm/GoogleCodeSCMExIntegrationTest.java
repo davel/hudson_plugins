@@ -18,7 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class GoogleCodeSCMExTest extends HudsonTestCase {
+public class GoogleCodeSCMExIntegrationTest extends HudsonTestCase {
 
     /**
      * Asserts that google code SCM works with Matrix projects.

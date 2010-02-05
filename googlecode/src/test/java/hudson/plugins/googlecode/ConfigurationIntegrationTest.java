@@ -9,7 +9,7 @@ import org.jvnet.hudson.test.HudsonTestCase;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 
-public class ConfigurationTest extends HudsonTestCase {
+public class ConfigurationIntegrationTest extends HudsonTestCase {
     /**
      * Asserts that configuration works
      * @throws Exception thrown if problem

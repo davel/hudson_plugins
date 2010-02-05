@@ -5,7 +5,7 @@ import hudson.plugins.googlecode.GoogleCodeProjectProperty;
 
 import org.jvnet.hudson.test.HudsonTestCase;
 
-public class GoogleCodeSCMTest extends HudsonTestCase {
+public class GoogleCodeSCMIntegrationTest extends HudsonTestCase {
 
     /**
      * Asserts that google code SCM works with Matrix projects.
