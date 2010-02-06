@@ -69,7 +69,7 @@ public class GoogleCodeSCMExIntegrationTest extends HudsonTestCase {
         getGoogleCodeHtmlInput(form).click();  
         form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
         
-        assertThat(((GoogleCodeSCMEx) project.getScm()).getLocations()[0].getURL(), is("http://leetdev3da.googlecode.com/svn/tags/tag")); 
+        assertThat(((GoogleCodeSCMEx) project.getScm()).getLocations()[0].getURL(), is("https://leetdev3da.googlecode.com/svn/tags/tag")); 
     }
   
     /**

@@ -17,7 +17,7 @@ public class GoogleCodeSCMExTest {
         assertThat(scm.getLocations().length, is(1));
         ModuleLocation location = scm.getLocations()[0];
         assertThat(location.getLocalDir(), is("."));
-        assertThat(location.getURL(), is("http://leetdev3da.googlecode.com/svn/trunk"));
+        assertThat(location.getURL(), is("https://leetdev3da.googlecode.com/svn/trunk"));
     }
 
 }

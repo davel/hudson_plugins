@@ -113,7 +113,7 @@ public class GoogleCodeSCMUpgraderTest {
         GoogleCodeSCMEx scmCopy = new GoogleCodeSCMUpgrader().copy(scm, property);
         assertThat(scmCopy.getLocations().length, is(1));
         ModuleLocation location = scmCopy.getLocations()[0];
-        assertThat(location.getURL(), is("http://mockito.googlecode.com/svn/trunk"));
+        assertThat(location.getURL(), is("https://mockito.googlecode.com/svn/trunk"));
         assertThat(location.getLocalDir(), is("."));
     }
 }

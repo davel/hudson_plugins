@@ -32,6 +32,6 @@ public class GoogleCodeProjectPropertyTest {
     @Test
     public void testGetSubversionRootUrl() {
         GoogleCodeProjectProperty property = new GoogleCodeProjectProperty("http://code.google.com/p/project");
-        assertEquals("http://project.googlecode.com/svn/", property.getSubversionRootUrl());
+        assertEquals("https://project.googlecode.com/svn/", property.getSubversionRootUrl());
     }    
 }

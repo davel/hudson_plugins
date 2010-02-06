@@ -66,7 +66,7 @@ public final class GoogleCodeProjectProperty extends JobProperty<AbstractProject
      * @return string containing a Subversion URL
      */
     public String getSubversionRootUrl() {
-        return "http://" + getProjectName() + ".googlecode.com/svn/";
+        return "https://" + getProjectName() + ".googlecode.com/svn/";
     }
 
     @Extension
