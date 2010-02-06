@@ -30,7 +30,7 @@ import java.util.Map;
  * When a build is performed, the {@link #perform(Build, Launcher, BuildListener)} method
  * will be invoked. 
  *
- * @author Kohsuke Kawaguchi
+ * @author admc
  */
 public class WindmillBuilder extends Builder {
 
@@ -85,9 +85,8 @@ public class WindmillBuilder extends Builder {
 
     public String buildCommand(){
 
-        String theBrowser = browser;
-        if (theBrowser.equals("")){
-            theBrowser = "firefox";
+        if (browser.equals("")){
+            browser = "firefox";
         }
 
         String runner = "";
