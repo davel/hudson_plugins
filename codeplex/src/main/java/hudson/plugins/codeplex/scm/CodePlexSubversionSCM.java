@@ -45,7 +45,9 @@ public class CodePlexSubversionSCM extends SubversionSCM {
     @Extension
     public static class DescriptorImpl extends SubversionSCM.DescriptorImpl {
 
-        public DescriptorImpl() {
+        public static final String DISPLAY_NAME = "CodePlex (automatic configuration using subversion)";
+
+		public DescriptorImpl() {
             super(CodePlexSubversionSCM.class, CodePlexSubversionBrowser.class);       
         }
         
@@ -68,7 +70,7 @@ public class CodePlexSubversionSCM extends SubversionSCM {
 
         @Override
         public String getDisplayName() {
-            return "CodePlex (automatic configuration)";
+            return DISPLAY_NAME;
         }
     }
 }

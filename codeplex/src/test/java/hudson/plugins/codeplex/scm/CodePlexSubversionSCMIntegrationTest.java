@@ -112,13 +112,13 @@ public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
     	for (HtmlInput input: form.getInputsByName("scm")) {
     		for (DomNode node : input.getParentNode().getChildren()) {
     			if (node.getNodeName().equals("label")) {
-    				if (node.getTextContent().toLowerCase().contains("codeplex")) {
+    				if (node.getTextContent().equals(CodePlexSubversionSCM.DescriptorImpl.DISPLAY_NAME)) {
     					return input;
     				}
     			}
     		}
     	}
-    	fail("No HTML input tag found for Codeplex SCM");
+    	fail("No HTML input tag found for " + CodePlexSubversionSCM.DescriptorImpl.DISPLAY_NAME);
     	throw new RuntimeException();
     }
 }
