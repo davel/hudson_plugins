@@ -14,8 +14,10 @@ import org.jvnet.hudson.test.HudsonTestCase;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebAssert;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
@@ -40,7 +42,7 @@ public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
         WebClient client = new WebClient();
         HtmlForm form = client.getPage(project, "configure").getFormByName("config");
         form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
-        form.getInputsByName("scm").get(0).click(); // 
+        getCodeplexHtmlInput(form).click(); // 
         form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
         
         assertThat(project.getScm(), notNullValue());
@@ -58,7 +60,7 @@ public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
         HtmlForm form = client.getPage(project, "configure").getFormByName("config");
         form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
         form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
-        form.getInputsByName("scm").get(0).click(); // 
+        getCodeplexHtmlInput(form).click(); // 
         form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
         
         assertThat(((CodePlexSubversionSCM) project.getScm()).getLocations()[0].getURL(), is("https://rawr.svn.codeplex.com/svn/tags/tag")); 
@@ -75,7 +77,7 @@ public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
         HtmlForm form = client.getPage(project, "configure").getFormByName("config");
         form.getInputByName("codeplex.projectName").setValueAttribute("rawr");
         form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
-        form.getInputsByName("scm").get(0).click(); // 
+        getCodeplexHtmlInput(form).click(); // 
         form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
         
         assertEquals("SVN Directory is incorrect", "tags/tag", ((CodePlexSubversionSCM) project.getScm()).getDirectory());
@@ -99,9 +101,24 @@ public class CodePlexSubversionSCMIntegrationTest extends HudsonTestCase {
             WebClient client = new WebClient();
             HtmlForm form = client.getPage(project, "configure").getFormByName("config");
             form.getInputByName("codeplex.svnRemoteDirectory").setValueAttribute("tags/tag");
-            form.getInputsByName("scm").get(0).click(); // 
+            getCodeplexHtmlInput(form).click(); // 
             form.submit((HtmlButton)last(form.getHtmlElementsByTagName("button")));
         } catch (FailingHttpStatusCodeException e) {            
         }
+    }
+
+
+    private HtmlInput getCodeplexHtmlInput(HtmlForm form) {
+    	for (HtmlInput input: form.getInputsByName("scm")) {
+    		for (DomNode node : input.getParentNode().getChildren()) {
+    			if (node.getNodeName().equals("label")) {
+    				if (node.getTextContent().toLowerCase().contains("codeplex")) {
+    					return input;
+    				}
+    			}
+    		}
+    	}
+    	fail("No HTML input tag found for Codeplex SCM");
+    	throw new RuntimeException();
     }
 }
