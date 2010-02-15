@@ -61,6 +61,7 @@ public class SecretBuildWrapper extends BuildWrapper {
 
         // XXX why doesn't /startUpload/ work automatically? Stapler diagnostics page claims it will...
         public void doStartUpload(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+            rsp.setContentType("text/html");
             req.getView(SecretBuildWrapper.class, "startUpload.jelly").forward(req, rsp);
         }
 
