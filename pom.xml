@@ -337,6 +337,7 @@
     <module>testabilityexplorer</module>
     <module>text-finder</module>
     <module>tfs</module>
+    <module>toolenv</module>
     <module>trac</module>
     <module>translation</module>
     <module>twitter</module>
