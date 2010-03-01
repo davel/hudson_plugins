@@ -25,6 +25,10 @@ package com.thalesgroup.hudson.plugins.copyarchiver;
 
 import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
 import hudson.*;
+import hudson.matrix.MatrixConfiguration;
+import hudson.matrix.MatrixProject;
+import hudson.matrix.MatrixRun;
+import hudson.matrix.MatrixBuild;
 import hudson.model.*;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -61,6 +65,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
     private List<ArchivedJobEntry> archivedJobList = new ArrayList<ArchivedJobEntry>();
 
+        @SuppressWarnings("unused")
     public String getSharedDirectoryPath() {
         return sharedDirectoryPath;
     }
@@ -69,10 +74,12 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         this.sharedDirectoryPath = sharedDirectoryPath;
     }
 
+    @SuppressWarnings("unused")
     public boolean getUseTimestamp() {
         return useTimestamp;
     }
 
+        @SuppressWarnings("unused")
     public boolean getFlatten() {
         return flatten;
     }
@@ -93,6 +100,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         this.archivedJobList = archivedJobList;
     }
 
+        @SuppressWarnings("unused")
     public String getDatePattern() {
         return datePattern;
     }
@@ -101,6 +109,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         this.datePattern = datePattern;
     }
 
+        @SuppressWarnings("unused")
     public boolean getDeleteShared() {
         return deleteShared;
     }
@@ -123,7 +132,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
         @Override
         public String getDisplayName() {
-            return "Aggregate the archived artifacts";
+            return Messages.copyArchiver_displayName();
         }
 
         @Override
@@ -167,7 +176,6 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
             return FormValidation.ok();
         }
-
     }
 
 
@@ -178,11 +186,9 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
         if (build.getResult().equals(Result.UNSTABLE) || build.getResult().equals(Result.SUCCESS)) {
 
-            AbstractProject project = build.getProject();
+            final AbstractProject project = build.getProject();
 
-            Boolean result = false;
             try {
-
                 if (useTimestamp) {
                     if (datePattern == null || datePattern.trim().length() == 0) {
                         build.setResult(Result.FAILURE);
@@ -191,8 +197,8 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                 }
 
                 final FilePath destDirFilePath = new FilePath(build.getWorkspace().getChannel(), filterField(build, listener, sharedDirectoryPath));
-
-                result = build.getWorkspace().act(new FilePath.FileCallable<Boolean>() {
+                final boolean isMatrixExcutorProject = MatrixConfiguration.class.isAssignableFrom(project.getClass());
+                Boolean result = build.getWorkspace().act(new FilePath.FileCallable<Boolean>() {
                     public Boolean invoke(File f, VirtualChannel channel) throws IOException {
 
                         try {
@@ -202,8 +208,18 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                             if (!destDirFilePath.isDirectory())
                                 destDirFilePath.mkdirs();
 
-                            if (deleteShared)
-                                destDirFilePath.deleteRecursive();
+                            if (deleteShared) {
+
+                                if (isMatrixExcutorProject) {
+                                    CopyArchiverLogger.log(listener, "[WARNING] - The type of the current job is matrix project");
+                                    CopyArchiverLogger.log(listener, "[WARNING] - In this special case, the delete operation is not supported.");
+                                    CopyArchiverLogger.log(listener, "[WARNING] - Checking 'Delete the shared directory.' option has no effect.");
+                                    CopyArchiverLogger.log(listener, "[WARNING] - Uncheck 'Delete the shared directory.' option and manaed the shared directory in an other way.");
+                                    return true;
+                                } else {
+                                    destDirFilePath.deleteRecursive();
+                                }
+                            }
 
                             return true;
                         }
@@ -219,30 +235,33 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                     return false;
                 }
 
-                File lastSuccessfulDir = null;
                 FilePathArchiver lastSuccessfulDirFilePathArchiver = null;
                 int numCopied = 0;
 
                 for (ArchivedJobEntry archivedJobEntry : archivedJobList) {
-                    AbstractProject curProj = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
-                    Run run = curProj.getLastSuccessfulBuild();
-                    if (run != null) {
-                        //if the selected project is the current projet, we're using the workspace base directory or SCM module root
-                        if (project.equals(curProj)) {
-                            lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
-                            //curProj.getPublishersList().get(ArtifactArchiver.class).getDescriptor().FormException
-                            //String pattern = ((hudson.tasks.ArtifactArchiver)curProj.getPublishersList().get(hudson.tasks.ArtifactArchiver.class)).getArtifacts();
-                            //curProj.getConfigFile().
-                            //hudson.tasks.ArtifactArchiver
-                            // ArtifactArchiver achiver = (ArtifactArchiver)curProj.getPublishersList().get(ArtifactArchiver.DescriptorImpl.class);
+                    AbstractProject selectedProject = (AbstractProject) Hudson.getInstance().getItem(archivedJobEntry.jobName);
 
-                        } else {
-                            lastSuccessfulDir = run.getArtifactsDir();
-                            lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(lastSuccessfulDir));
-                        }
-                    } else {
-                        //If it is the first build
+                    if (isSameProject(project, selectedProject)) {
                         lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
+                    } else {
+                        File lastSuccessfulDir;
+                        if (MatrixProject.class.isAssignableFrom(selectedProject.getClass())) {
+                            MatrixProject matrixProject = (MatrixProject) selectedProject;
+                            MatrixBuild matrixBuild = matrixProject.getLastSuccessfulBuild();
+                            if (matrixBuild == null) {
+                                CopyArchiverLogger.log(listener, "The selected project has never built. No copy will be proceded.");
+                                return true;
+                            }
+                            lastSuccessfulDir = matrixBuild.getArtifactsDir();
+                        } else {
+                            Run run = selectedProject.getLastSuccessfulBuild();
+                            if (run == null) {
+                                CopyArchiverLogger.log(listener, "The selected has never built. No copy will be proceded.");
+                                return true;
+                            }
+                            lastSuccessfulDir = run.getArtifactsDir();
+                        }
+                        lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(launcher.getChannel(), lastSuccessfulDir.getAbsolutePath()));
                     }
 
                     //Copy
@@ -264,6 +283,26 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         }
 
         return true;
+
+    }
+
+    private boolean isSameProject(AbstractProject executorProject, AbstractProject selectedProject) {
+        boolean matrixSelected = MatrixProject.class.isAssignableFrom(selectedProject.getClass());
+        boolean matrixExecutor = MatrixConfiguration.class.isAssignableFrom(executorProject.getClass());
+
+        if (matrixExecutor && !matrixSelected) {
+            return false;
+        }
+
+        if (matrixExecutor && matrixSelected) {
+            return (executorProject.getParent()).equals(selectedProject);
+        }
+
+        if (!matrixExecutor && matrixSelected) {
+            return false;
+        }
+
+        return selectedProject.equals(executorProject);
 
     }
 
