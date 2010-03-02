@@ -25,10 +25,9 @@ package com.thalesgroup.hudson.plugins.copyarchiver;
 
 import com.thalesgroup.hudson.plugins.copyarchiver.util.CopyArchiverLogger;
 import hudson.*;
+import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixConfiguration;
 import hudson.matrix.MatrixProject;
-import hudson.matrix.MatrixRun;
-import hudson.matrix.MatrixBuild;
 import hudson.model.*;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -65,7 +64,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
     private List<ArchivedJobEntry> archivedJobList = new ArrayList<ArchivedJobEntry>();
 
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public String getSharedDirectoryPath() {
         return sharedDirectoryPath;
     }
@@ -79,7 +78,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         return useTimestamp;
     }
 
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public boolean getFlatten() {
         return flatten;
     }
@@ -100,7 +99,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         this.archivedJobList = archivedJobList;
     }
 
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public String getDatePattern() {
         return datePattern;
     }
@@ -109,7 +108,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
         this.datePattern = datePattern;
     }
 
-        @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public boolean getDeleteShared() {
         return deleteShared;
     }
@@ -196,7 +195,7 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                     }
                 }
 
-                final FilePath destDirFilePath = new FilePath(build.getWorkspace().getChannel(), filterField(build, listener, sharedDirectoryPath));
+                final FilePath destDirFilePath = new FilePath(new File(filterField(build, listener, sharedDirectoryPath)));
                 final boolean isMatrixExcutorProject = MatrixConfiguration.class.isAssignableFrom(project.getClass());
                 Boolean result = build.getWorkspace().act(new FilePath.FileCallable<Boolean>() {
                     public Boolean invoke(File f, VirtualChannel channel) throws IOException {
