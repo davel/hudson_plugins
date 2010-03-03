@@ -12,4 +12,15 @@
   <version>1.7-SNAPSHOT</version>
   <name>nabaztag</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Nabaztag+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>stephannoske</id>
+      <name>Stephan Noske</name>
+    </developer>
+    <developer>
+      <id>ericlemerdy</id>
+      <name>Eric Le Merdy</name>
+    </developer>
+  </developers>
 </project>
