@@ -10,7 +10,14 @@
 
   <artifactId>ncover</artifactId>
   <packaging>hpi</packaging>
-  <version>0.2.7-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <name>NCover plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/NCover+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>mcrooney</id>
+      <name>Michael Rooney</name>
+    </developer>
+  </developers>
 </project>
