@@ -28,6 +28,7 @@ import hudson.*;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixConfiguration;
 import hudson.matrix.MatrixProject;
+import hudson.matrix.MatrixRun;
 import hudson.model.*;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -204,8 +205,6 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
                             CopyArchiverLogger.log(listener, "Copying archived artifacts in the shared directory '" + destDirFilePath + "'.");
 
-                            if (!destDirFilePath.isDirectory())
-                                destDirFilePath.mkdirs();
 
                             if (deleteShared) {
 
@@ -219,6 +218,9 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                                     destDirFilePath.deleteRecursive();
                                 }
                             }
+
+                            if (!destDirFilePath.isDirectory())
+                                destDirFilePath.mkdirs();
 
                             return true;
                         }
@@ -242,6 +244,9 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
 
                     if (isSameProject(project, selectedProject)) {
                         lastSuccessfulDirFilePathArchiver = new FilePathArchiver(build.getWorkspace());
+                        //Copy
+                        numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
+
                     } else {
                         File lastSuccessfulDir;
                         if (MatrixProject.class.isAssignableFrom(selectedProject.getClass())) {
@@ -251,20 +256,29 @@ public class CopyArchiverPublisher extends Notifier implements Serializable {
                                 CopyArchiverLogger.log(listener, "The selected project has never built. No copy will be proceded.");
                                 return true;
                             }
-                            lastSuccessfulDir = matrixBuild.getArtifactsDir();
+                            List<MatrixRun> runs = matrixBuild.getRuns();
+                            for (MatrixRun run : runs) {
+                                lastSuccessfulDir = run.getArtifactsDir();
+                                lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(launcher.getChannel(), lastSuccessfulDir.getAbsolutePath()));
+                                //Copy
+                                numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
+                            }
+                            //lastSuccessfulDir = matrixBuild.getArtifactsDir();
+
                         } else {
                             Run run = selectedProject.getLastSuccessfulBuild();
                             if (run == null) {
                                 CopyArchiverLogger.log(listener, "The selected has never built. No copy will be proceded.");
                                 return true;
+
                             }
                             lastSuccessfulDir = run.getArtifactsDir();
+                            lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(launcher.getChannel(), lastSuccessfulDir.getAbsolutePath()));
+                            //Copy
+                            numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
                         }
-                        lastSuccessfulDirFilePathArchiver = new FilePathArchiver(new FilePath(launcher.getChannel(), lastSuccessfulDir.getAbsolutePath()));
-                    }
 
-                    //Copy
-                    numCopied += lastSuccessfulDirFilePathArchiver.copyRecursiveTo(flatten, filterField(build, listener, archivedJobEntry.pattern), filterField(build, listener, archivedJobEntry.excludes), destDirFilePath);
+                    }
 
                 }
                 CopyArchiverLogger.log(listener, "'" + numCopied + "' artifacts have been copied.");
