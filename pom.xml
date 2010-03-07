@@ -268,7 +268,6 @@
     <module>javanet-uploader</module>
     <module>javanet-trigger-installer</module>
     <module>jira</module>
-    <module>jmeter</module>
     <module>jmx</module>
     <module>jobConfigHistory</module>
     <module>join</module>
