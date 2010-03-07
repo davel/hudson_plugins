@@ -222,6 +222,7 @@
     <module>cmvc</module>
     <module>codeplex</module>
     <module>cobertura</module>
+    <module>copyartifact</module>
     <module>cppunit</module>
     <module>crap4j</module>
     <module>crowd</module>
