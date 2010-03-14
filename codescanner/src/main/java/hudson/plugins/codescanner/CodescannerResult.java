@@ -1,6 +1,7 @@
 package hudson.plugins.codescanner; // NOPMD
 
 import hudson.model.AbstractBuild;
+import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ParserResult;
 import hudson.plugins.analysis.core.ResultAction;
@@ -28,8 +29,7 @@ public class CodescannerResult extends BuildResult {
      * @param result
      *            the parsed result with all annotations
      */
-    public CodescannerResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result) {
+    public CodescannerResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result) {
         super(build, defaultEncoding, result);
     }
 
@@ -42,12 +42,12 @@ public class CodescannerResult extends BuildResult {
      *            the default encoding to be used when reading and parsing files
      * @param result
      *            the parsed result with all annotations
-     * @param previous
-     *            the result of the previous build
+     * @param history
+     *            the plug-in history
      */
-    public CodescannerResult(final AbstractBuild<?, ?> build, final String defaultEncoding,
-            final ParserResult result, final CodescannerResult previous) {
-        super(build, defaultEncoding, result, previous);
+    protected CodescannerResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final ParserResult result,
+            final BuildHistory history) {
+        super(build, defaultEncoding, result, history);
     }
 
     /** {@inheritDoc} */
@@ -67,40 +67,8 @@ public class CodescannerResult extends BuildResult {
 
     /** {@inheritDoc} */
     @Override
-    public String getDetails() {
-        String message = ResultSummary.createDeltaMessage(this);
-        if (getNumberOfAnnotations() == 0 && getDelta() == 0) {
-            message += "<li>" + Messages.Codescanner_ResultAction_NoWarningsSince(getZeroWarningsSinceBuild()) + "</li>";
-            message += createHighScoreMessage();
-        }
-        return message;
-    }
-
-
-    /**
-     * Creates a highscore message.
-     *
-     * @return a highscore message
-     */
-    private String createHighScoreMessage() {
-        if (isNewZeroWarningsHighScore()) {
-            long days = getDays(getZeroWarningsHighScore());
-            if (days == 1) {
-                return "<li>" + Messages.Codescanner_ResultAction_OneHighScore() + "</li>";
-            }
-            else {
-                return "<li>" + Messages.Codescanner_ResultAction_MultipleHighScore(days) + "</li>";
-            }
-        }
-        else {
-            long days = getDays(getHighScoreGap());
-            if (days == 1) {
-                return "<li>" + Messages.Codescanner_ResultAction_OneNoHighScore() + "</li>";
-            }
-            else {
-                return "<li>" + Messages.Codescanner_ResultAction_MultipleNoHighScore(days) + "</li>";
-            }
-        }
+    protected String createDeltaMessage() {
+        return ResultSummary.createDeltaMessage(this);
     }
 
     /** {@inheritDoc} */

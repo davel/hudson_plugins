@@ -2,14 +2,13 @@ package hudson.plugins.codescanner;
 
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.Launcher.LocalLauncher;
 import hudson.Proc;
+import hudson.Launcher.LocalLauncher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.core.AnnotationsClassifier;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.HealthAwarePublisher;
 import hudson.plugins.analysis.core.ParserResult;
@@ -22,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +70,10 @@ public class CodescannerPublisher extends HealthAwarePublisher {
      *            evaluating the build stability and health
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
+     * @param useDeltaValues
+     *            determines whether the absolute annotations delta or the
+     *            actual annotations set difference should be used to evaluate
+     *            the build stability
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -79,9 +81,10 @@ public class CodescannerPublisher extends HealthAwarePublisher {
     public CodescannerPublisher(final String threshold, final String newThreshold,
             final String failureThreshold, final String newFailureThreshold,
             final String healthy, final String unHealthy, final String thresholdLimit,
-            final String defaultEncoding, final String sourcecodedir, final String executable) {
+            final String defaultEncoding, final String sourcecodedir, final String executable,
+            final boolean useDeltaValues) {
         super(threshold, newThreshold, failureThreshold, newFailureThreshold,
-                healthy, unHealthy, thresholdLimit, "UTF-8", "CODESCANNER");
+                healthy, unHealthy, thresholdLimit, "UTF-8", useDeltaValues, "CODESCANNER");
 
         this.sourcecodedir = sourcecodedir;
         this.executable = executable;
@@ -170,7 +173,7 @@ public class CodescannerPublisher extends HealthAwarePublisher {
             project.addErrorMessage("General Exception");
         }
 
-        CodescannerResult result = new CodescannerResultBuilder().build(build, project, getDefaultEncoding());
+        CodescannerResult result = new CodescannerResult(build, getDefaultEncoding(), project);
         build.getActions().add(new CodescannerResultAction(build, this, result));
 
         return result;

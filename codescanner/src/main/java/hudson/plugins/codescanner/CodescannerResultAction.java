@@ -5,8 +5,6 @@ import hudson.plugins.analysis.core.AbstractResultAction;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.PluginDescriptor;
 
-import java.util.NoSuchElementException;
-
 /**
  * Controls the live cycle of the warnings results. This action persists the
  * results of the warnings analysis of a build and displays the results on the
@@ -57,21 +55,6 @@ public class CodescannerResultAction extends AbstractResultAction<CodescannerRes
     @Override
     protected PluginDescriptor getDescriptor() {
         return CodescannerPublisher.CODESCANNER_DESCRIPTOR;
-    }
-
-    /**
-     * Gets the warnings result of the previous build.
-     *
-     * @return the warnings result of the previous build.
-     * @throws NoSuchElementException
-     *             if there is no previous build for this action
-     */
-    public CodescannerResultAction getPreviousResultAction() {
-        AbstractResultAction<CodescannerResult> previousBuild = getPreviousBuild();
-        if (previousBuild instanceof CodescannerResultAction) {
-            return (CodescannerResultAction)previousBuild;
-        }
-        throw new NoSuchElementException("There is no previous build for action " + this);
     }
 
     /** {@inheritDoc} */
