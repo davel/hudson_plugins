@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cv:response xmlns:cv="http://www.clearvision-cm.com/ucm4svn/name_space/cv">
+    <cv:status cv:success="true">ok</cv:status>
+    <cv:changeset>
+        <cv:component>
+            <cv:id>1</cv:id>
+            <cv:name>test1</cv:name>
+            <cv:svn_changeset>
+                <diff>
+                    <paths/>
+                </diff>
+            </cv:svn_changeset>
+        </cv:component>
+    </cv:changeset>
+</cv:response>

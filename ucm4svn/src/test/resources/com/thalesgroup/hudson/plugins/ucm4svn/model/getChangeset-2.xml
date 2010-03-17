@@ -1,0 +1,24 @@
+<cv:response xmlns:cv="http://www.clearvision-cm.com/ucm4svn/name_space/cv">
+    <cv:status cv:success="true">ok</cv:status>
+    <cv:changeset>
+        <cv:component>
+            <cv:id>1</cv:id>
+            <cv:name>test1</cv:name>
+            <cv:svn_changeset>
+                <diff>
+                    <paths>
+                        <path item="added" kind="file" props="none">
+                            http://vmo56/ucm4svn/test1_1/branches/activities/without_jira_8/bidon2_8/New Folder/toto.txt
+                        </path>
+                        <path item="added" kind="dir" props="none">
+                            http://vmo56/ucm4svn/test1_1/branches/activities/without_jira_8/bidon2_8/New Folder
+                        </path>
+                        <path item="modified" kind="file" props="none">
+                            http://vmo56/ucm4svn/test1_1/branches/activities/without_jira_8/bidon2_8/bonjour.txt
+                        </path>
+                    </paths>
+                </diff>
+            </cv:svn_changeset>
+        </cv:component>
+    </cv:changeset>
+</cv:response>

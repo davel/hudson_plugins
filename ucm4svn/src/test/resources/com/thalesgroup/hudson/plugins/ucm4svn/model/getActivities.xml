@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cv:response xmlns:cv="http://www.clearvision-cm.com/ucm4svn/name_space/cv">
+    <cv:status cv:success="true">ok</cv:status>
+    <cv:activities>
+        <cv:activity>
+            <cv:id>7</cv:id>
+            <cv:name>bidon</cv:name>
+        </cv:activity>
+        <cv:activity>
+            <cv:id>8</cv:id>
+            <cv:name>bidon2</cv:name>
+        </cv:activity>
+    </cv:activities>
+</cv:response>

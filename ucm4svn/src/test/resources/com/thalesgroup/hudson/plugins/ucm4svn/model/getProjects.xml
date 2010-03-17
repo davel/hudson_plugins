@@ -1,0 +1,37 @@
+<cv:response xmlns:cv="http://www.clearvision-cm.com/ucm4svn/name_space/cv">
+    <cv:status cv:success="true">ok</cv:status>
+    <cv:projects>
+        <cv:project>
+            <cv:id>8</cv:id>
+            <cv:name>without_jira</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>7</cv:id>
+            <cv:name>CD_v1</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>6</cv:id>
+            <cv:name>AB_v1</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>5</cv:id>
+            <cv:name>dae1_v1</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>4</cv:id>
+            <cv:name>demo project</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>3</cv:id>
+            <cv:name>programme2</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>2</cv:id>
+            <cv:name>programme1</cv:name>
+        </cv:project>
+        <cv:project>
+            <cv:id>1</cv:id>
+            <cv:name>project1</cv:name>
+        </cv:project>
+    </cv:projects>
+</cv:response>

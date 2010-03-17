@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cv:response xmlns:cv="http://www.clearvision-cm.com/ucm4svn/name_space/cv">
+    <cv:status cv:success="true">ok</cv:status>
+    <cv:checkout_commands>
+        <cv:checkout_command>svn co &quot;http://vmo56/ucm4svn/test1_1/branches/projects/project1_1&quot; &quot;project1_1/test1&quot;</cv:checkout_command>
+    </cv:checkout_commands>
+</cv:response>
