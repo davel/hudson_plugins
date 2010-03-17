@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.clearvision-cm.com/ucm4svn/name_space/cv" xmlns:cvschema="http://www.clearvision-cm.com/ucm4svn/name_space/cv" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="response">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element minOccurs="1" maxOccurs="1" ref="cvschema:status"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:token"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:projects"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:components"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:recommended_baselines"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:baselines"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:activities"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:urls"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:changeset"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:checkout_commands"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="status">
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:attribute default="false" name="success" type="xsd:string"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="token" type="xsd:string"/>
+	<xsd:element name="projects">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="1">
+				<xsd:element ref="cvschema:project"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="project">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:id"/>
+				<xsd:element minOccurs="0" maxOccurs="1" ref="cvschema:name"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="id" type="xsd:string"/>
+	<xsd:element name="name" type="xsd:string"/>
+	<xsd:element name="description" type="xsd:string"/>
+	<xsd:element name="components">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="1">
+				<xsd:element ref="cvschema:component"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="component">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:id"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:name"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:access"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:svn_changeset"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="access" type="xsd:string"/>
+	<xsd:element name="recommended_baselines">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="1">
+				<xsd:element ref="cvschema:recommended_baseline"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="recommended_baseline">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:component"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:baseline"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="baseline">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:id"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:name"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:status"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="baselines">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:baseline"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="activities">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:activity"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="activity">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="1" minOccurs="0">
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:id"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:name"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:description"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:status"/>
+				<xsd:element maxOccurs="1" minOccurs="0" ref="cvschema:assignments"/>
+				<xsd:element maxOccurs="1" minOccurs="0" name="project" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="assignments">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:username"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="username" type="xsd:string"/>
+	<xsd:element name="urls">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:url"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="url" type="xsd:string"/>
+	<xsd:element name="changeset">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:component"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="svn_changeset">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##any" processContents="lax"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="checkout_commands">
+		<xsd:complexType>
+			<xsd:sequence maxOccurs="unbounded" minOccurs="0">
+				<xsd:element ref="cvschema:checkout_command"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="checkout_command" type="xsd:string"/>
+</xsd:schema>
