@@ -161,10 +161,5 @@
     </plugins>
   </reporting>
 
-  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/codescanner-0.11</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/codescanner-0.11</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/tags/codescanner-0.11</url>
-  </scm>
 </project>
 
