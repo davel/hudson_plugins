@@ -7,14 +7,19 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * @author Johannes Utzig
- *
+ * 
+ *@deprecated as of 0.9.4 (20.03.2010). Use {@link BuckminsterInstallation}
+ *             instead
+ * 
  */
+@Deprecated
 public class EclipseInstallation {
-	
-	private final String name,home,version,params;
+
+	private final String name, home, version, params;
 
 	@DataBoundConstructor
-	public EclipseInstallation(String name, String version, String home, String params) {
+	public EclipseInstallation(String name, String version, String home,
+			String params) {
 		super();
 		this.name = name;
 		this.home = home;
@@ -37,5 +42,6 @@ public class EclipseInstallation {
 	public String getVersion() {
 		return version;
 	}
+
 
 }

@@ -14,7 +14,7 @@
    <f:entry title="${%Buckminster Installation}">
     <select class="setting-input" name="eclipse.installationName">
       <!--option value="">(Default)</option-->
-      <j:forEach var="inst" items="${descriptor.installations}">
+      <j:forEach var="inst" items="${descriptor.buckminsterInstallations}">
         <f:option selected="${inst.name==instance.getInstallation().name}">${inst.name}</f:option>
       </j:forEach>
     </select>

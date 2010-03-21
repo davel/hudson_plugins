@@ -1,15 +1,26 @@
 package hudson.plugins.buckminster.command;
 
+import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
+import hudson.model.Computer;
+import hudson.model.Hudson;
 import hudson.model.JDK;
-import hudson.plugins.buckminster.EclipseInstallation;
+import hudson.model.Node;
+import hudson.model.TaskListener;
+import hudson.plugins.buckminster.BuckminsterInstallation;
+import hudson.plugins.buckminster.EclipseBuckminsterBuilder;
+import hudson.plugins.buckminster.install.BuckminsterInstallable;
+import hudson.plugins.buckminster.install.BuckminsterInstallable.Feature;
+import hudson.plugins.buckminster.install.BuckminsterInstallable.Repository;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +35,12 @@ import java.util.regex.Pattern;
  *
  */
 public class CommandLineBuilder {
-	private EclipseInstallation installation;
+	private BuckminsterInstallation installation;
 	private String commands;
 	private String logLevel;
 	private String additionalParams;
 	
-	public CommandLineBuilder(EclipseInstallation installation,
+	public CommandLineBuilder(BuckminsterInstallation installation,
 			String commands, String logLevel, String additionalParams) {
 		super();
 		this.installation = installation;
@@ -59,12 +70,22 @@ public class CommandLineBuilder {
 
 		// VM Options
 		JDK jdk = build.getProject().getJDK();
+		if(jdk!=null)
+		{
+	        jdk= jdk.forNode(Computer.currentComputer().getNode(), listener);
+	        jdk = jdk.forEnvironment(build.getEnvironment(listener));
+		}
+
 		//if none is configured, hope it is in the PATH
 		if(jdk==null)
 			commandList.add("java");
 		//otherwise use the configured one
 		else
-			commandList.add(jdk.getBinDir().getAbsolutePath()+"/java");
+		{
+			File javaBinDir = jdk.getBinDir();
+			File javaExecutable = new File(javaBinDir,"java");
+			commandList.add(javaExecutable.getCanonicalPath());
+		}
 		
 		Map properties = addJVMProperties(build, listener, commandList);
 
@@ -85,7 +106,7 @@ public class CommandLineBuilder {
 		return commandList;
 	}
 
-	public EclipseInstallation getInstallation() {
+	public BuckminsterInstallation getInstallation() {
 		return installation;
 	}
 
@@ -201,19 +222,53 @@ public class CommandLineBuilder {
 	 * 
 	 * @return the guess for the startup jar, or <code>null</code> if none was
 	 *         found
+	 * @throws IOException 
 	 * @see EclipseBuckminsterBuilder#getEclipseHome()
 	 */
-	private String findEquinoxLauncher() {
+	private String findEquinoxLauncher() throws IOException {
 		//TODO: make this behave in master/slave scenario
 		File pluginDir = new File(getInstallation().getHome() + "/plugins");
+		if(!pluginDir.exists())
+			throw new FileNotFoundException("No 'plugins' directory has been found in "+installation.getHome());
 		File[] plugins = pluginDir.listFiles();
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].getName()
 					.startsWith("org.eclipse.equinox.launcher_")) {
-				return "plugins/" + plugins[i].getName();
+				return plugins[i].getAbsolutePath();
 
 			}
 		}
-		return null;
+		throw new FileNotFoundException("No equinox launcher jar has been found in "+pluginDir.getCanonicalPath());
+	}
+	
+	public static String createInstallScript(BuckminsterInstallable installable, FilePath toolDir, Node node, TaskListener log) throws MalformedURLException, IOException, InterruptedException
+	{
+		FilePath directorDir = toolDir.child("director");
+		String directorDirPath = directorDir.absolutize().toURI().toURL().getFile();
+		FilePath buckyDir = toolDir.child("buckminster");
+		String buckyDirPath = buckyDir.absolutize().toURI().toURL().getFile();
+		JDK jdk = Hudson.getInstance().getJDKs().get(0);
+		jdk = jdk.forNode(node, log);
+		jdk = jdk.forEnvironment(Computer.currentComputer().getEnvironment());
+		File javaBinDir = jdk.getBinDir(); 
+		File javaExecutable = new File(javaBinDir,"java");
+		//TODO: put IU to JSON
+		String command = "{0}/director -vm {1} -r \"{2}\" -d \"{3}\" -p Buckminster -i \"{4}\"";
+		command = MessageFormat.format(command, directorDirPath, javaExecutable.getCanonicalPath(),installable.repositoryURL, buckyDirPath, installable.iu);
+		StringBuilder builder = new StringBuilder(command);
+		for (Repository repo : installable.repositories) {
+
+			for (Feature feature : repo.features) {
+				builder.append("\n");
+				command = "{0}/buckminster -vm {1} install {2} {3}";
+				command = MessageFormat.format(command, buckyDirPath,javaExecutable.getCanonicalPath(), repo.url,feature.id);
+				builder.append(command);
+				builder.append("\n");
+				command = "echo \"Installed Feature {0} from {1}\"";
+				command = MessageFormat.format(command, feature.id, repo.url);
+				builder.append(command);
+			}
+		}
+		return builder.toString();
 	}
 }
