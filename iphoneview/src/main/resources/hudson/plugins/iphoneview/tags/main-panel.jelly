@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define">
+    <j:if test="${app.isQuietingDown()}">
+        <div id='shutdown-msg'>${%Hudson is going to shut down}</div>
+    </j:if>
+    <d:invokeBody />
+</j:jelly>

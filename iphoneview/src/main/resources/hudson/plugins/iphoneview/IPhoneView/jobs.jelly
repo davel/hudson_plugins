@@ -1,0 +1,38 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:t="/lib/hudson">
+
+    <div id="home" class="current">
+
+        <div class="toolbar">
+            <h1>Hudson</h1>
+            <a class="button cube" href="#about">About</a>
+        </div>
+
+        <j:choose>
+            <j:when test="${empty(items)}">
+                <div>
+                    ${%description}
+                </div>
+            </j:when>
+
+            <j:otherwise>
+                <ul class="form">
+                    <j:forEach var="job" items="${items}" varStatus="status">
+                        <j:set var="lsBuild" value="${job.lastBuild}"/>
+                        <j:set var="buildHealth" value="${job.buildHealth}"/>
+                        <li class="arrow">
+                            <a href="#job_${status.index}">
+                                <img src="${resURL}/images/${iconSize}/${job.iconColor.image}" width="${iconWidth}" height="${iconHeight}" />
+                                <img src="${rootURL}${buildHealth.getIconUrl(iconSize)}" width="${iconWidth}" height="${iconHeight}" />
+                                ${job.displayName}
+                            </a>
+                        </li>
+                    </j:forEach>
+                </ul>
+            </j:otherwise>
+
+        </j:choose>
+
+    </div>
+
+</j:jelly>

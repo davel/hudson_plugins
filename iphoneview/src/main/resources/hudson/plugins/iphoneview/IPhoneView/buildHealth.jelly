@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:set var="healthReports" value="${job.buildHealthReports}"/>
+    <j:if test="${!empty(healthReports)}">
+        <ul class="form">
+            <j:forEach var="rpt" items="${healthReports}">
+                <li><img src="${rootURL}${rpt.getIconUrl(iconSize)}" width="${iconWidth}" height="${iconHeight}" />${rpt.localizableDescription}</li>
+            </j:forEach>
+        </ul>
+    </j:if>
+</j:jelly>

@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+    <div id="about">
+        <div class="toolbar">
+            <h1>About</h1>
+            <a class="button back" href="#">${%Back}</a>
+        </div>
+        <p>
+            Hudson iPhoneView Plugin  ver. 0.1<br /><br /><br />
+            Powered by jQTouch Version 1.0 beta
+        </p>    
+    </div>
+
+</j:jelly>

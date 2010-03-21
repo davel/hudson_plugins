@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:t="/lib/hudson">
+
+    <j:forEach var="job" items="${items}" varStatus="status">
+        <j:set var="buildHealth" value="${job.buildHealth}"/>
+        <div id="job_${status.index}">
+            <div class="toolbar">
+                <h1>${job.displayName}</h1>
+                <a class="button back" href="#">${%Back}</a>
+            </div>
+            <st:include page="description.jelly" />
+            <st:include page="buildHealth.jelly" />
+            <st:include page="trend.jelly" />
+            <st:include page="permalinks.jelly" />
+            <st:include page="builds.jelly" />
+        </div>
+    </j:forEach>
+
+</j:jelly>

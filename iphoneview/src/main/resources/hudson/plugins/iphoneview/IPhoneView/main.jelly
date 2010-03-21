@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+    <st:include page="about.jelly" />
+    <st:include page="jobs.jelly" />
+    <st:include page="job.jelly" />
+
+</j:jelly>

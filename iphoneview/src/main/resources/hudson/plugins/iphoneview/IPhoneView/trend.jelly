@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:t="/lib/hudson">
+    <j:if test="${it.hasJobTestResult(job.name)}" >
+        <ul class="rounded">
+            <li><div style="text-align: center;"><img src="job/${h.encode(job.name)}/test/trend" width="90%" /></div></li>
+        </ul>
+    </j:if>
+</j:jelly>
