@@ -14,6 +14,10 @@
     <name>Hudson Gerrit plugin</name>
     <url>http://wiki.hudson-ci.org/display/HUDSON/Gerrit+Plugin</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
     <developers>
         <developer>
             <id>jyrkiput</id>
