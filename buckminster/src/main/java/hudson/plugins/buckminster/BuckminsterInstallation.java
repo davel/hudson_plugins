@@ -14,6 +14,7 @@ import hudson.model.DownloadService.Downloadable;
 import hudson.plugins.buckminster.command.CommandLineBuilder;
 import hudson.plugins.buckminster.install.BuckminsterInstallable;
 import hudson.plugins.buckminster.install.BuckminsterInstallable.BuckminsterInstallableList;
+import hudson.plugins.buckminster.util.ReadDelegatingTextFile;
 import hudson.slaves.NodeSpecific;
 import hudson.tools.DownloadFromUrlInstaller;
 import hudson.tools.ToolDescriptor;
@@ -134,7 +135,6 @@ public class BuckminsterInstallation extends ToolInstallation implements Environ
 	        BuckminsterInstallable inst = (BuckminsterInstallable) getInstallable();
 	        String command = CommandLineBuilder.createInstallScript(inst, director, node, log);
 	        FilePath script = buckminsterDir.createTextTempFile("hudson", ".sh", command);
-	        
 	        try {
 	            String[] cmd = {"sh", "-e", script.getRemote()};
 	            int r = node.createLauncher(log).launch().cmds(cmd).stdout(log).pwd(buckminsterDir).join();
@@ -162,21 +162,18 @@ public class BuckminsterInstallation extends ToolInstallation implements Environ
 			}
 
 			
-			//this is for testing only
-//			@Override
-//			protected Downloadable createDownloadable() {
-//				return new Downloadable(getId()) {
-//					@Override
-//					public String getUrl() {
-//						return "file://home/joe/workspaceHudson2/buckminster/test.json";
-//					}
-//					
-//				    public TextFile getDataFile() {
-//				    	File f = new File("/home/joe/workspaceHudson2/buckminster/test.json");
-//				        return new TextFile(f);
-//				    }
-//				};
-//			}
+			@Override
+			protected Downloadable createDownloadable() {
+				return new Downloadable(getId()) {
+					
+				    public TextFile getDataFile() {
+				    	//use a delagating text file to allow user to override the server json with a custom one.
+				    	TextFile updateFile = super.getDataFile();
+				    	TextFile userOverride = new TextFile(new File(Hudson.getInstance().getRootDir(),"userContent/buckminster/buckminster.json"));
+				        return new ReadDelegatingTextFile(updateFile, userOverride);
+				    }
+				};
+			}
 			@Override
 			public List<? extends Installable> getInstallables()
 					throws IOException {

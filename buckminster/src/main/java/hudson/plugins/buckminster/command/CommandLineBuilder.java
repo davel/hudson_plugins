@@ -247,21 +247,28 @@ public class CommandLineBuilder {
 		String directorDirPath = directorDir.absolutize().toURI().toURL().getFile();
 		FilePath buckyDir = toolDir.child("buckminster");
 		String buckyDirPath = buckyDir.absolutize().toURI().toURL().getFile();
-		JDK jdk = Hudson.getInstance().getJDKs().get(0);
-		jdk = jdk.forNode(node, log);
-		jdk = jdk.forEnvironment(Computer.currentComputer().getEnvironment());
-		File javaBinDir = jdk.getBinDir(); 
-		File javaExecutable = new File(javaBinDir,"java");
+		List<JDK> jdks = Hudson.getInstance().getJDKs();
+		String vmArgument = "";
+		if(jdks!=null && jdks.size()>0)
+		{
+			JDK jdk = Hudson.getInstance().getJDKs().get(0);
+			jdk = jdk.forNode(node, log);
+			jdk = jdk.forEnvironment(Computer.currentComputer().getEnvironment());
+			File javaBinDir = jdk.getBinDir(); 
+			File javaExecutable = new File(javaBinDir,"java");
+			vmArgument = "-vm "+"\""+javaExecutable.getCanonicalPath()+"\"";
+		}
+
 		//TODO: put IU to JSON
-		String command = "{0}/director -vm {1} -r \"{2}\" -d \"{3}\" -p Buckminster -i \"{4}\"";
-		command = MessageFormat.format(command, directorDirPath, javaExecutable.getCanonicalPath(),installable.repositoryURL, buckyDirPath, installable.iu);
+		String command = "{0}/director {1} -r \"{2}\" -d \"{3}\" -p Buckminster -i \"{4}\"";
+		command = MessageFormat.format(command, directorDirPath,vmArgument ,installable.repositoryURL, buckyDirPath, installable.iu);
 		StringBuilder builder = new StringBuilder(command);
 		for (Repository repo : installable.repositories) {
 
 			for (Feature feature : repo.features) {
 				builder.append("\n");
-				command = "{0}/buckminster -vm {1} install {2} {3}";
-				command = MessageFormat.format(command, buckyDirPath,javaExecutable.getCanonicalPath(), repo.url,feature.id);
+				command = "{0}/buckminster {1} install {2} {3}";
+				command = MessageFormat.format(command, buckyDirPath,vmArgument, repo.url,feature.id);
 				builder.append(command);
 				builder.append("\n");
 				command = "echo \"Installed Feature {0} from {1}\"";
