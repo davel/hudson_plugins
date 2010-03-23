@@ -9,7 +9,7 @@
 
   <artifactId>nabaztag</artifactId>
   <packaging>hpi</packaging>
-  <version>1.9-SNAPSHOT</version>
+  <version>1.9</version>
   <name>nabaztag</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Nabaztag+Plugin</url>
 
@@ -23,4 +23,10 @@
       <name>Eric Le Merdy</name>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/nabaztag-1.9</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/nabaztag-1.9</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/nabaztag-1.9</url>
+  </scm>
 </project>
