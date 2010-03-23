@@ -11,11 +11,10 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.FormValidation;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -23,9 +22,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
+import javax.servlet.ServletException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -34,8 +37,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -48,15 +53,16 @@ public class NabatzagPublisher extends Notifier {
 		public String nabatzagToken = "";
 		public String nabatzagSerial = "";
 		public String nabatzagUrl = "http://api.nabaztag.com/vl/FR/api.jsp";
-		public String nabatzagVoice = "lea22s";
+		public String nabatzagVoice = "UK-Penelope";
 		public String nabatzagFAILDpos = "posright=8&posleft=8&ears=ok";
 		public String nabatzagSUSSCEEDpos = "posright=0&posleft=0&ears=ok";
 		public String nabatzagBUILDEDpos = "posright=4&posleft=12&ears=ok";
-		public String nabatzagFailTTS = "Build Failed in Hudson ${projectName} ${buildNumber}";
-		public String nabatzagSuccessTTS = "Build was successfull in Hudson ${projectName} ${buildNumber}";
-		public String nabatzagRecoverTTS = "Hudson Build is back to normal ${projectName} ${buildNumber}";
-		public String nabatzagBuildTTS = "Hudson is about to build ${projectName} ${buildNumber}";
+		public String nabatzagFailTTS = "Failure of build \"${buildNumber}\" in project \"${projectName}\".";
+		public String nabatzagSuccessTTS = "Success of build \"${buildNumber}\" in project \"${projectName}\".";
+		public String nabatzagRecoverTTS = "Project \"${projectName}\" recovered at build \"${buildNumber}\".";
+		public String nabatzagBuildTTS = "Build \"${buildNumber}\" of project \"${projectName}\" has started.";
 		public boolean reportOnSucess = false;
+		public boolean notifyOnBuildStart = false;
 	
 		protected DescriptorImpl() {
 		    super(NabatzagPublisher.class);
@@ -75,13 +81,13 @@ public class NabatzagPublisher extends Notifier {
 		    nabatzagSerial = req.getParameter("nabatzagSerial");
 		    nabatzagUrl = req.getParameter("nabatzagUrl");
 		    nabatzagToken = req.getParameter("nabatzagToken");
-		    String reportOnSuccessParameter = req.getParameter("reportOnSucess");
-		    reportOnSucess = reportOnSuccessParameter != null && reportOnSuccessParameter.equals("on");
+		    reportOnSucess = "on".equals(req.getParameter("reportOnSucess"));
 			nabatzagFailTTS = req.getParameter("nabatzagFailTTS");
 			nabatzagSuccessTTS = req.getParameter("nabatzagSuccessTTS");
 			nabatzagRecoverTTS = req.getParameter("nabatzagRecoverTTS");
 			nabatzagBuildTTS = req.getParameter("nabatzagBuildTTS");
-	
+			notifyOnBuildStart = "on".equals(req.getParameter("nabatzagNotifyOnBuildStart"));
+
 		    save();
 		    return super.configure(req, json);
 		}
@@ -104,10 +110,6 @@ public class NabatzagPublisher extends Notifier {
 		}
 	
 		public String getNabatzagSerial() {
-		    return nabatzagSerial;
-		}
-	
-		public String getNabatzagSN() {
 		    return nabatzagSerial;
 		}
 	
@@ -159,10 +161,6 @@ public class NabatzagPublisher extends Notifier {
 		    this.nabatzagSerial = nabatzagSerial;
 		}
 	
-		public void setNabatzagSN(final String nabatzagSN) {
-		    this.nabatzagSerial = nabatzagSN;
-		}
-	
 		public void setNabatzagSuccessTTS(final String nabatzagSuccessTTS) {
 		    this.nabatzagSuccessTTS = nabatzagSuccessTTS;
 		}
@@ -195,6 +193,36 @@ public class NabatzagPublisher extends Notifier {
 		    this.reportOnSucess = reportOnSucess;
 		}
 
+		public boolean isNotifyOnBuildStart() {
+			return notifyOnBuildStart;
+		}
+
+		public void setNotifyOnBuildStart(boolean notifyOnBuildStart) {
+			this.notifyOnBuildStart = notifyOnBuildStart;
+		}
+
+		public FormValidation doTestCredentials(@QueryParameter String nabatzagSerial, @QueryParameter String nabatzagToken)
+				throws IOException, ServletException {
+			String requestString = buildRequestWithAWakeUpAction(nabatzagSerial, nabatzagToken);
+			log.finest(" sending nabatztag request : " + requestString);
+			URLConnection cnx = ProxyConfiguration.open(new URL(requestString));
+			cnx.connect();
+			InputStream inputStream = cnx.getInputStream();
+			String result = IOUtils.toString(inputStream);
+			log.finest("API call result : " + result);
+			Map<String, String> messages = parseAndExtractMessages(result);
+			if (messages.containsKey("COMMANDSENT")) {
+				return FormValidation.ok("Credentials are valid and your rabbit is awake.");
+			}
+			if (messages.containsKey("NOGOODTOKENORSERIAL")) {
+				return FormValidation.error(messages.get("NOGOODTOKENORSERIAL"));
+			}
+			if (messages.containsKey("NOGOODSERIAL")) {
+				return FormValidation.error(messages.get("NOGOODSERIAL"));
+			}
+			return FormValidation.error("Unexpected API result: " + messages.toString());
+		}
+
     }
 
     /**
@@ -211,32 +239,39 @@ public class NabatzagPublisher extends Notifier {
     	super();
     }
 
-    /**
-     * @param message
-     * @param earpos
-     * @return
-     */
-    private String buildRequest(final String message, final String earpos) {
-		final StringBuffer buf = new StringBuffer();
-		buf.append(DESCRIPTOR.getNabatzagUrl() + "?");
-		buf.append("sn=" + DESCRIPTOR.getNabatzagSN());
+    private String buildRequestWithAMessageAVoiceAndSomeEarPosition(final String message, final String earpos) {
+		final StringBuilder buf = buildFirstCommonRequest(DESCRIPTOR.getNabatzagSerial(), DESCRIPTOR.getNabatzagToken());
+		buf.append("tts=").append(message);
 		buf.append("&");
-		buf.append("token=" + DESCRIPTOR.getNabatzagToken());
+		buf.append("voice=").append(DESCRIPTOR.getNabatzagVoice());
 		buf.append("&");
-		buf.append("tts=" + message);
-		buf.append("&");
-		buf.append("voice=" + DESCRIPTOR.getNabatzagVoice());
-		buf.append("&");
-		buf.append("" + earpos);
-		
+		buf.append(StringUtils.defaultString(earpos));
 		return buf.toString();
     }
 
-    @Override
+	private static StringBuilder buildFirstCommonRequest(String serialNumber, String token) {
+		final StringBuilder buf = new StringBuilder();
+		buf.append(DESCRIPTOR.getNabatzagUrl()).append("?");
+		buf.append("sn=").append(serialNumber);
+		buf.append("&");
+		buf.append("token=").append(token);
+		buf.append("&");
+		return buf;
+	}
+	
+	protected static String buildRequestWithAWakeUpAction(String serialNumber, String token) {
+		final StringBuilder buf = buildFirstCommonRequest(serialNumber, token);
+		buf.append("action=14");
+		return buf.toString();
+	}
+
+	@Override
     public boolean prebuild(final AbstractBuild<?, ?> build, BuildListener listener) {
-        String msg = DESCRIPTOR.getNabatzagBuildTTS();
-        log.finest("Nabaztag Build BEGIN");
-        sendRequest(msg, DESCRIPTOR.getNabatzagBUILDEDpos(), build, listener);
+    	if (DESCRIPTOR.isNotifyOnBuildStart()) {
+	    	String msg = DESCRIPTOR.getNabatzagBuildTTS();
+	        log.finest("Nabaztag Build BEGIN");
+	        sendRequest(msg, DESCRIPTOR.getNabatzagBUILDEDpos(), build, listener);
+    	}
         return true;
     }
 
@@ -272,7 +307,7 @@ public class NabatzagPublisher extends Notifier {
 				log.finest("Nabaztag Build SUCCESS");
 			    sendRequest(msg, DESCRIPTOR.getNabatzagSUSSCEEDpos(), build, listener);
 			} else {
-				listener.getLogger().println("User has choosed not to be notified of success, notification has not been sent.");
+				listener.getLogger().println("User has choosen not to be notified of success, notification has not been sent.");
 			}
 		} else {
 			listener.getLogger().println("Build result not handled by Nabaztag notifier, notification has not been sent.");
@@ -286,8 +321,7 @@ public class NabatzagPublisher extends Notifier {
     }
 
     private boolean isSNAndTokenDefined() {
-    	return DESCRIPTOR.nabatzagSerial != null && DESCRIPTOR.nabatzagSerial.length() > 0
-    		&& DESCRIPTOR.nabatzagToken != null && DESCRIPTOR.nabatzagToken.length() > 0;
+    	return StringUtils.isNotBlank(DESCRIPTOR.nabatzagSerial) && StringUtils.isNotBlank(DESCRIPTOR.nabatzagSerial);
 	}
 
 	/**
@@ -306,22 +340,17 @@ public class NabatzagPublisher extends Notifier {
     	String urlEncodedMessage = null;
 	    URLConnection cnx = null;
 	    InputStream inputStream = null;
-	    BufferedReader bufferedReader = null;
 	    try {
 	    	urlEncodedMessage = URLEncoder.encode(substituedMessage, "UTF-8");
-			String requestString = buildRequest(urlEncodedMessage, earpos);
+			String requestString = buildRequestWithAMessageAVoiceAndSomeEarPosition(urlEncodedMessage, earpos);
 			log.finest(" sending nabatztag request : " + requestString);
 	    	cnx = ProxyConfiguration.open(new URL(requestString));
 	    	cnx.connect();
 	    	inputStream = cnx.getInputStream();
-	    	bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-	    	StringBuilder result = new StringBuilder();
-	        String strLine;
-			while ((strLine = bufferedReader.readLine()) != null) {
-				result.append(strLine);
-			}
+	    	String result = IOUtils.toString(inputStream);
 			log.finest("API call result : " + result.toString());
-			analyseResult(result.toString(), listener);
+			analyseResult(result.toString(), listener,
+					new ArrayList<String>(Arrays.asList(new String[]{"EARPOSITIONSENT","POSITIONEAR","TTSSENT"})));
 	    } catch (UnsupportedEncodingException notFatal) {
 	    	log.log(Level.WARNING, "URL is malformed.", notFatal);
 			listener.error("Unable to url encode the Nabaztag message.");
@@ -332,42 +361,57 @@ public class NabatzagPublisher extends Notifier {
 	    	log.log(Level.WARNING, "IOException while reading API call result.", notImportant);
 			listener.error("Nabaztag has not been successfully notified.");
 		} finally {
-			if (bufferedReader != null)
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-			    	log.log(Level.WARNING, "IOException while closing API connection.", e);
-				}
-			if (inputStream != null)
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					log.log(Level.WARNING, "IOException while closing API connection.", e);
-				}
+			IOUtils.closeQuietly(inputStream);
 	    }
     }
 
-	private void analyseResult(String string, BuildListener listener) {
-		List<String> expectedCommands = new ArrayList<String>(3);
-		expectedCommands.add("EARPOSITIONSENT");
-		expectedCommands.add("POSITIONEAR");
-		expectedCommands.add("TTSSENT");
+	protected void analyseResult(String contentResult, BuildListener listener, List<String> expectedCommands) {
 		List<String> unExpectedCommands = new ArrayList<String>();
-		
+		for (String message : parseAndExtractMessages(contentResult).keySet()) {
+			if (expectedCommands.contains(message)) {
+				expectedCommands.remove(message);
+			} else {
+				unExpectedCommands.add(message);
+			}
+		}
+
+		boolean success = true;
+		StringBuilder out = new StringBuilder();
+		if (!expectedCommands.isEmpty()) {
+			success = false;
+			out.append("Following expected confirmations has not been received: ");
+			out.append(expectedCommands);
+			out.append("\n");
+		}
+		if (!unExpectedCommands.isEmpty()) {
+			success = false;
+			out.append("Following unexpected messages has been received: ");
+			out.append(unExpectedCommands);
+			out.append(". ");
+		}
+		if (success) {
+			listener.getLogger().println("Nabaztag has been successfully notified.");
+		} else {
+			listener.getLogger().println("Nabaztag has not been successfully notified: ");
+			listener.getLogger().println(out);
+		}
+	}
+	
+	private static Map<String, String> parseAndExtractMessages(String contentResult) {
+		Map<String, String> messages = new HashMap<String, String>();
+		String currentElementText = null;
 		XMLStreamReader xmlStreamReader;
 		try {
-			xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(string));
+			xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(contentResult));
 			while (xmlStreamReader.hasNext()) {
 				int next = xmlStreamReader.next();
 				if (next == XMLStreamConstants.START_ELEMENT) {
 					String currentElement = xmlStreamReader.getName().getLocalPart();
 					if (currentElement.equals("message")) {
-						String elementText = xmlStreamReader.getElementText();
-						if (expectedCommands.contains(elementText)) {
-							expectedCommands.remove(elementText);
-						} else {
-							unExpectedCommands.add(elementText);
-						}
+						currentElementText = xmlStreamReader.getElementText();
+						messages.put(currentElementText, "");
+					} else if (currentElement.equals("comment")) {
+						messages.put(currentElementText, xmlStreamReader.getElementText());
 					}
 				}
 			}
@@ -376,27 +420,7 @@ public class NabatzagPublisher extends Notifier {
 		} catch (FactoryConfigurationError e) {
 	    	log.log(Level.WARNING, "Unable to create xml parser to read xml result.", e);
 		}
-
-		boolean success = true;
-		StringBuilder out = new StringBuilder();
-		if (expectedCommands.size() > 0) {
-			success = false;
-			out.append("Following expected confirmations has not been received: ");
-			out.append(expectedCommands.toString());
-			out.append("\n");
-		}
-		if (unExpectedCommands.size() > 0) {
-			success = false;
-			out.append("Following unexpected messages has been received: ");
-			out.append(unExpectedCommands.toString());
-			out.append(". ");
-		}
-		if (success) {
-			listener.getLogger().println("Nabaztag has been successfully notified.");
-		} else {
-			listener.getLogger().println("Nabaztag has not been successfully notified: ");
-			listener.getLogger().println(out.toString());
-		}
+		return messages;
 	}
 
 }
