@@ -3,13 +3,13 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.319</version>
+    <version>1.352</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>nabaztag</artifactId>
   <packaging>hpi</packaging>
-  <version>1.8-SNAPSHOT</version>
+  <version>1.8</version>
   <name>nabaztag</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Nabaztag+Plugin</url>
 
@@ -23,4 +23,10 @@
       <name>Eric Le Merdy</name>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/nabaztag-1.8</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/nabaztag-1.8</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/nabaztag-1.8</url>
+  </scm>
 </project>
