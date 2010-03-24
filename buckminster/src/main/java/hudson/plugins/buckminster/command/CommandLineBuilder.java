@@ -98,7 +98,7 @@ public class CommandLineBuilder {
 			}
 			else
 			{
-				String message = "The configured JDK \"{0}\"points to \"{1}\" but no executable exists. Defaulting to \"java\"";
+				String message = "The configured JDK \"{0}\" points to \"{1}\" but no executable exists. Defaulting to \"java\"";
 				message = MessageFormat.format(message, jdk.getName(),jdk.getHome());
 				listener.error(message);
 				commandList.add("java");
