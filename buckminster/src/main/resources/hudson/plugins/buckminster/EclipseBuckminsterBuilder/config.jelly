@@ -43,8 +43,20 @@
     -->
     <f:textarea name="eclipse.commands" value="${instance.getCommands()}" />
    </f:entry>
+   <f:entry title="${%Script File}" field="userCommand" help="${rootURL}/plugin/buckminster/help-customCommand.html">
+       <f:textbox  name="userCommand"  value="${instance.getUserCommand()}" />
+   </f:entry>
    <f:section title="Advanced Options">
     <f:advanced>
+       	<f:entry title="${%Change Workspace}" help="${rootURL}/plugin/buckminster/help-customWorkspace.html">
+    		<f:textbox name="userWorkspace" value="${instance.getUserWorkspace()}" />
+   		 </f:entry>
+   		<f:entry title="${%Change Output Dir}" help="${rootURL}/plugin/buckminster/help-customOutput.html">
+    		<f:textbox name="userOutput" value="${instance.getUserOutput()}" />
+   		 </f:entry>
+     	  <f:entry title="${%Change Temp Dir}" help="${rootURL}/plugin/buckminster/help-customTemp.html">
+    		<f:textbox name="userTemp" value="${instance.getUserTemp()}" />
+   		 </f:entry>
  		 <f:entry title="${%JVM Arguments}" help="${rootURL}/plugin/buckminster/help-jobVMArgs.html">
     		<f:textarea name="eclipse.params" value="${instance.getParams()}" />
    		 </f:entry>

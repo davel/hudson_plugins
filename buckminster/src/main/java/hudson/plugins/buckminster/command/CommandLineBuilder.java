@@ -39,14 +39,26 @@ public class CommandLineBuilder {
 	private String commands;
 	private String logLevel;
 	private String additionalParams;
+	private File hudsonWorkspaceRoot;
+	private String userWorkspace;
+	private String userTemp;
+	private String userOutput;
+	private String userCommandFile;
 	
+
 	public CommandLineBuilder(BuckminsterInstallation installation,
-			String commands, String logLevel, String additionalParams) {
+			String commands, String logLevel, String additionalParams,
+			String userWorkspace, String userTemp, String userOutput,
+			String userCommandFile) {
 		super();
 		this.installation = installation;
 		this.commands = commands;
 		this.logLevel = logLevel;
 		this.additionalParams = additionalParams;
+		this.userWorkspace = userWorkspace;
+		this.userTemp = userTemp;
+		this.userOutput = userOutput;
+		this.userCommandFile = userCommandFile;
 	}
 
 	/**
@@ -58,16 +70,12 @@ public class CommandLineBuilder {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("unchecked")
 	public List<String> buildCommands(AbstractBuild<?,?> build, BuildListener listener)
 			throws MalformedURLException, IOException, InterruptedException{
 
-		// the file listing all the commands since buckminster doesn't accept
-		// several commands as programm arguments
-		String commandsPath = build.getRootDir().getAbsolutePath()
-				+ "/commands.txt";
-		List<String> commandList = new ArrayList<String>();
 
+		List<String> commandList = new ArrayList<String>();
+		hudsonWorkspaceRoot = new File(build.getWorkspace().absolutize().toURI().getPath());
 		// VM Options
 		JDK jdk = build.getProject().getJDK();
 		if(jdk!=null)
@@ -87,10 +95,13 @@ public class CommandLineBuilder {
 			commandList.add(javaExecutable.getCanonicalPath());
 		}
 		
-		Map properties = addJVMProperties(build, listener, commandList);
-
+		Map<String, String> properties = new HashMap<String, String>(build.getEnvironment(listener));
+		properties.putAll(build.getBuildVariables());
 		
-		addStarterParameters(build, commandList);
+		addJVMProperties(commandList, properties);
+		String commandsPath = getCommandFilePath(build, properties);
+		
+		addStarterParameters(build, commandList, properties);
 
 
 		 commandList.add("--loglevel");
@@ -100,10 +111,24 @@ public class CommandLineBuilder {
 		commandList.add("-S");
 		commandList.add(commandsPath);
 
-
-		writeCommandFile(commandsPath, properties);
-
+		//only write out commands if the user did not specify a custom command file
+		if(userCommandFile==null || userCommandFile.length()==0)
+		{
+			writeCommandFile(commandsPath, properties);
+		}
 		return commandList;
+	}
+
+	private String getCommandFilePath(AbstractBuild<?, ?> build,
+			Map<String, String> properties) {
+		// the file listing all the commands since buckminster doesn't accept
+		// several commands as programm arguments
+		if(userCommandFile==null || userCommandFile.length()==0)
+		{
+			return new File(build.getRootDir(),"commands.txt").getAbsolutePath();
+		}
+		return expandProperties(userCommandFile, properties);
+
 	}
 
 	public BuckminsterInstallation getInstallation() {
@@ -122,7 +147,7 @@ public class CommandLineBuilder {
 		return additionalParams;
 	}
 
-	private void writeCommandFile(String commandsPath, Map properties)
+	private void writeCommandFile(String commandsPath, Map<String, String> properties)
 			throws IOException {
 		PrintWriter writer = null;
 		try {
@@ -139,7 +164,7 @@ public class CommandLineBuilder {
 		}
 	}
 
-	private void addStarterParameters(AbstractBuild<?,?> build, List<String> commandList)
+	private void addStarterParameters(AbstractBuild<?,?> build, List<String> commandList, Map<String, String> properties)
 			throws IOException, InterruptedException {
 		commandList.add("-jar");
 		commandList.add(findEquinoxLauncher());
@@ -150,22 +175,28 @@ public class CommandLineBuilder {
 
 		// set the workspace to the hudson workspace
 		commandList.add("-data");
-		String workspace = null;
 	
-		workspace = build.getWorkspace().toURI().getPath();
+		String workspace = getDataPath(build, properties);
 
 		commandList.add(workspace);
 	}
 
-	private Map addJVMProperties(AbstractBuild<?,?> build, BuildListener listener,
-			List<String> commandList) throws IOException, InterruptedException {
+	private String getDataPath(AbstractBuild<?, ?> build,
+			Map<String, String> properties) throws IOException, InterruptedException {
+		if(userWorkspace==null || userWorkspace.length()==0)
+		{
+			return hudsonWorkspaceRoot.getAbsolutePath();
+		}
+		return expandProperties(userWorkspace, properties);
+	}
+
+	private void addJVMProperties(List<String> commandList, Map<String, String> properties) throws IOException, InterruptedException {
 		//temp and output root
-		commandList.add("-Dbuckminster.output.root="+ build.getWorkspace().absolutize().toURI().getPath()+"/buckminster.output");
-		commandList.add("-Dbuckminster.temp.root="+ build.getWorkspace().absolutize().toURI().getPath()+"/buckminster.temp");
+		commandList.add(MessageFormat.format("-Dbuckminster.output.root={0}",getOutputDir(properties)));
+		commandList.add(MessageFormat.format("-Dbuckminster.temp.root={0}",getTempDir(properties)));
 		String params = getInstallation().getParams();
 		String[] globalVMParams = params.split("[\n\r]+");
-		Map properties = new HashMap(build.getEnvironment(listener));
-		properties.putAll(build.getBuildVariables());
+
 		for (int i = 0; i < globalVMParams.length; i++) {
 			if(globalVMParams[i].trim().length()>0)
 				commandList.add(expandProperties(globalVMParams[i],properties));
@@ -186,7 +217,22 @@ public class CommandLineBuilder {
 				}
 			}
 		}
-		return properties;
+	}
+
+	private Object getTempDir(Map<String, String> properties) {
+		if(userTemp==null || userTemp.length()==0)
+		{
+			return new File(hudsonWorkspaceRoot,"buckminster.temp").getAbsolutePath();
+		}
+		return new File(hudsonWorkspaceRoot,expandProperties(userTemp, properties)).getAbsolutePath();
+	}
+
+	private String getOutputDir(Map<String, String> properties) {
+		if(userOutput==null || userOutput.length()==0)
+		{
+			return new File(hudsonWorkspaceRoot,"buckminster.output").getAbsolutePath();
+		}
+		return new File(hudsonWorkspaceRoot,expandProperties(userOutput, properties)).getAbsolutePath();
 	}
 
 	private String expandProperties(String string, Map<String, String> properties) {
@@ -244,9 +290,9 @@ public class CommandLineBuilder {
 	public static String createInstallScript(BuckminsterInstallable installable, FilePath toolDir, Node node, TaskListener log) throws MalformedURLException, IOException, InterruptedException
 	{
 		FilePath directorDir = toolDir.child("director");
-		String directorDirPath = directorDir.absolutize().toURI().toURL().getFile();
+		String directorDirPath = directorDir.absolutize().toURI().getPath();
 		FilePath buckyDir = toolDir.child("buckminster");
-		String buckyDirPath = buckyDir.absolutize().toURI().toURL().getFile();
+		String buckyDirPath = buckyDir.absolutize().toURI().getPath();
 		List<JDK> jdks = Hudson.getInstance().getJDKs();
 		String vmArgument = "";
 		if(jdks!=null && jdks.size()>0)

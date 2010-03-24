@@ -2,6 +2,7 @@ package hudson.plugins.buckminster;
 
 import hudson.CopyOnWrite;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Proc;
 import hudson.matrix.MatrixProject;
@@ -36,7 +37,9 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -59,15 +62,19 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class EclipseBuckminsterBuilder extends Builder {
 
-	private final String installationName, commands, logLevel, params, targetPlatformName;
+	private final String installationName, commands, logLevel, params, targetPlatformName, userTemp, userOutput, userCommand, userWorkspace;
 
 	@DataBoundConstructor
-	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel, String params, String targetPlatformName) {
+	public EclipseBuckminsterBuilder(String installationName, String commands, String logLevel, String params, String targetPlatformName, String userTemp, String userOutput, String userCommand, String userWorkspace) {
 		this.installationName = installationName;
 		this.commands = commands;
 		this.logLevel = logLevel;
 		this.params = params;
 		this.targetPlatformName = targetPlatformName;
+		this.userTemp = userTemp;
+		this.userOutput = userOutput;
+		this.userCommand = userCommand;
+		this.userWorkspace = userWorkspace;
 	}
 
 	/**
@@ -83,6 +90,10 @@ public class EclipseBuckminsterBuilder extends Builder {
 	
 	public String getParams() {
 		return params;
+	}
+	
+	public String getUserWorkspace() {
+		return userWorkspace;
 	}
 
 	public String getLogLevel(){
@@ -106,6 +117,18 @@ public class EclipseBuckminsterBuilder extends Builder {
 		return null;
 	}
 	
+	public String getUserTemp() {
+		return userTemp;
+	}
+
+	public String getUserOutput() {
+		return userOutput;
+	}
+
+	public String getUserCommand() {
+		return userCommand;
+	}
+
 	public TargetPlatformReference getTargetPlatform() {
 		for (TargetPlatformReference reference : DESCRIPTOR.getTargetPlatforms()) {
 			if (targetPlatformName != null
@@ -140,7 +163,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 			if(targetPlatform!=null && targetPlatform.getPath()!=null){
 				modifiedCommands = "setpref targetPlatformPath=\""+targetPlatform.getPath()+"\"" +"\n" + modifiedCommands;
 			}
-			CommandLineBuilder cmdBuilder = new CommandLineBuilder(installation,modifiedCommands,getLogLevel(),getParams());
+			CommandLineBuilder cmdBuilder = new CommandLineBuilder(installation,modifiedCommands,getLogLevel(),getParams(),getUserWorkspace(),getUserTemp(),getUserOutput(), getUserCommand());
 			List<String> buildCommands = cmdBuilder.buildCommands(build,listener);
 			listener.getLogger().println("Commandline: ");
 			for (Iterator iterator = buildCommands.iterator(); iterator.hasNext();) {
@@ -149,7 +172,7 @@ public class EclipseBuckminsterBuilder extends Builder {
 				listener.getLogger().print(" ");
 				
 			}
-			Proc proc = launcher.launch().cmds(buildCommands).stdout(listener).start();
+			Proc proc = launcher.launch().pwd(build.getWorkspace()).cmds(buildCommands).stdout(listener).start();
 			return proc.join()==0;
 
 		} 
@@ -287,7 +310,18 @@ public class EclipseBuckminsterBuilder extends Builder {
 
 			return FormValidation.ok();
 		}
-
+		
+        /**
+         * Performs on-the-fly validation on the file mask wildcard.
+         */
+        public FormValidation doCheckUserCommand(@AncestorInPath AbstractProject<?,?> project, @QueryParameter String value) throws IOException {
+            FilePath path = project.getSomeWorkspace();
+            if(path==null)
+            	//we tried, but we couldn't get a workspace
+            	FormValidation.ok();
+        	return path.validateRelativePath(value, true, true);
+        }
+		
 
 		/**
 		 * This human readable name is used in the configuration screen.
