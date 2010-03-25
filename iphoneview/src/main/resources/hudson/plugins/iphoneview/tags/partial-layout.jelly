@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define">
+
+    <st:header name="Expires" value="0" />
+    <st:contentType value="text/html;charset=UTF-8" />
+    <j:set var="rootURL" value="${request.contextPath}" />
+    <j:set var="resURL"  value="${rootURL}${h.resourcePath}" />
+    <j:set var="jqtURL"  value="${resURL}/plugin/iphoneview/scripts/jqt" />
+    <j:set var="cssURL"  value="${resURL}/plugin/iphoneview/css" />
+    <j:set var="imagesURL"  value="${resURL}/plugin/iphoneview/images" />
+    <j:new var="h" className="hudson.Functions" />
+    <j:set var="iconSize" value="16x16" />
+    <j:set var="iconWidth" value="16" />
+    <j:set var="iconHeight" value="16" />
+
+    <d:invokeBody />
+
+</j:jelly>

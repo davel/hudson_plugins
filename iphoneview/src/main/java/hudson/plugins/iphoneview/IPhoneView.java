@@ -1,7 +1,8 @@
 package hudson.plugins.iphoneview;
 
 import hudson.Extension;
-import hudson.model.Job;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.ViewDescriptor;
@@ -13,23 +14,35 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  * @author Seiji Sogabe
  */
-public class IPhoneView extends ListView {
+public class IPhoneView<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>  extends ListView {
 
     @DataBoundConstructor
-    public IPhoneView(String name) {
+    public IPhoneView(final String name) {
         super(name);
     }
 
-    public boolean hasJobTestResult(String name) {
-        TopLevelItem item = getJob(name);
-        if (item == null || !(item instanceof Job<?, ?>)) {
-            throw new IllegalArgumentException("failed to get Job.");
-        }
-        TestResultProjectAction action =  ((Job<?, ?>) item).getAction(TestResultProjectAction.class);
+    public boolean hasJobTestResult(final String name) {
+        final P project = getProject(name);
+        final TestResultProjectAction action =  project.getAction(TestResultProjectAction.class);
         if (action == null) {
             return false;
         }
         return action.getLastTestResultAction().getPreviousResult() != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public IPhoneJob<P, B> getIPhoneJob(final String name) {
+        final P project = getProject(name);
+        return new IPhoneJob<P, B>(project);
+    }
+
+    @SuppressWarnings("unchecked")
+    private P getProject(final String name) {
+        final TopLevelItem item = getJob(name);
+        if (item == null || !(AbstractProject.class.isAssignableFrom(item.getClass()))) {
+            throw new IllegalArgumentException("failed to get Job.");
+        }
+        return (P) item;
     }
 
     @Extension

@@ -1,20 +1,12 @@
 <?jelly escape-by-default='true'?>
 <st:compress xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:iphone="/hudson/plugins/iphoneview/tags" >
 
-    <j:if test="${request.servletPath=='/'}">
-        <st:header name="X-Hudson" value="${servletContext.getAttribute('version')}" />
-        <j:if test="${app.tcpSlaveAgentListener!=null}">
-            <st:header name="X-Hudson-CLI-Port" value="${app.tcpSlaveAgentListener.port}" />
-        </j:if>
-    </j:if>
-    <j:new var="h" className="hudson.Functions" />
-    <j:set var="iconSize" value="16x16" />
-    <j:set var="iconWidth" value="16" />
-    <j:set var="iconHeight" value="16" />
     <iphone:layout title="${it.viewName}">
         <iphone:main-panel>
             <j:set var="items" value="${it.items}"/>
-            <st:include page="main.jelly" />
+            <st:include page="about.jelly" />
+            <st:include page="jobs.jelly" />
+            <st:include page="job.jelly" />
         </iphone:main-panel>
     </iphone:layout>
     

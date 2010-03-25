@@ -61,7 +61,23 @@
                     <argLine>-javaagent:"${settings.localRepository}"/mockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <locales>ja</locales>
+                    <inputEncoding>UTF-8</inputEncoding>
+                    <outputEncoding>UTF-8</outputEncoding>
+                </configuration>
+            </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>jp.ddo.bacons</groupId>
+                <artifactId>check-rules</artifactId>
+                <version>0.1</version>
+            </extension>
+        </extensions>
     </build>
 
     <reporting>
@@ -77,6 +93,36 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <includeFilterFile>default/findbugs/include_filter.xml</includeFilterFile>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <xmlOutput>true</xmlOutput>
+                    <effort>Max</effort>
+                    <onlyAnalyze>hudson.plugins.iphoneview</onlyAnalyze>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <consoleOutput>false</consoleOutput>
+                    <configLocation>default/checkstyle/checkstyle.xml</configLocation>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
@@ -95,4 +141,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>bacons.ddo.jp repository</id>
+            <url>http://bacons.ddo.jp/maven2/</url>
+        </repository>
+    </repositories>
+
 </project>

@@ -1,5 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+
     <j:set var="lsBuild" value="${job.lastBuild}"/>
     <j:if test="${lsBuild != null}" >
         <j:set var="from" value="${lsBuild.number - 4}"/>
@@ -15,7 +16,7 @@
                         <j:if test="${b.changeSet.iterator().hasNext()}">
                             <j:set var="hadChanges" value="${true}"/>
                         </j:if>
-                        <li class="forward">
+                        <li>
                             <img src="${resURL}/images/${iconSize}/${b.iconColor.image}" width="${iconWidth}" height="${iconHeight}" />
                             ${b.displayName}
                             <i:formatDate value="${b.timestamp.time}" type="both" dateStyle="medium" timeStyle="short"/>

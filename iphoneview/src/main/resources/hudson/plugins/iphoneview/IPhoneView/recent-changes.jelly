@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:t="/lib/hudson">
+
+    <ul class="form">
+        <li class="arrow">
+            <a href="iPhoneJob/${h.encode(job.name)}/changelogs">
+                <img src="${resURL}/images/${iconSize}/document_edit.gif" width="${iconWidth}" height="${iconHeight}"  />${%Recent Changes}
+            </a>
+        </li>
+    </ul>
+    
+</j:jelly>

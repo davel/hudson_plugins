@@ -1,0 +1,39 @@
+<?jelly escape-by-default='true'?>
+<st:compress xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:iphone="/hudson/plugins/iphoneview/tags"  xmlns:i="jelly:fmt">
+
+    <iphone:partial-layout>
+        <iphone:main-panel>
+            <div>
+                <div class="toolbar">
+                    <h1>${%Recent Changes} - ${it.displayName}</h1>
+                    <a class="button back" href="#">${%Job}</a>
+                </div>
+                <j:set var="builds" value="${it.getChangedBuilds(5)}" />
+                <j:choose>
+                    <j:when test="${empty(builds)}">
+                        <ul class="form">
+                            <li>${%No builds.}</li>
+                        </ul>
+                    </j:when>
+                    <j:otherwise>
+                        <j:forEach var="build" items="${builds}">
+                            <j:set var="entries" value="${build.changeSet.iterator()}" />
+                            <ul class="form">
+                                <li>
+                                    <img src="${resURL}/images/${iconSize}/${build.iconColor.image}" width="${iconWidth}" height="${iconHeight}" />
+                                    #${build.number} (<i:formatDate value="${build.timestamp.time}" type="both" dateStyle="medium" timeStyle="medium"/>)
+                                </li>
+                                <j:forEach var="entry" items="${entries}" >
+                                    <li>${entry.revision} - ${entry.author}<br/>
+                                        <pre class="log">${entry.msg}</pre>
+                                    </li>
+                                </j:forEach>
+                            </ul>
+                        </j:forEach>
+                    </j:otherwise>
+                </j:choose>
+            </div>
+        </iphone:main-panel>
+    </iphone:partial-layout>
+
+</st:compress>

@@ -14,12 +14,18 @@ import org.jvnet.hudson.test.HudsonTestCase;
  */
 public class IPhoneViewTest extends HudsonTestCase {
 
+    private IPhoneView view;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        view = new IPhoneView("iPhone");
+    }
+
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
     public void testHasJobTestResult_NoJobs() throws Exception {
-
-        final IPhoneView view = new IPhoneView("iPhone");
 
         new Expectations(view) {
 
@@ -40,8 +46,6 @@ public class IPhoneViewTest extends HudsonTestCase {
      * Test of hasJobTestResult method, of class IPhoneView.
      */
     public void testHasJobTestResult_NotJob() throws Exception {
-
-        final IPhoneView view = new IPhoneView("iPhone");
 
         new Expectations(view) {
 
@@ -65,8 +69,6 @@ public class IPhoneViewTest extends HudsonTestCase {
      */
     public void testHasJobTestResult_NoActions() throws Exception {
 
-        final IPhoneView view = new IPhoneView("iPhone");
-
         new Expectations(view) {
 
             FreeStyleProject mockFreeStyleProject;
@@ -89,8 +91,6 @@ public class IPhoneViewTest extends HudsonTestCase {
      * Test of hasJobTestResult method, of class IPhoneView.
      */
     public void testHasJobTestResult_NoPreviousResult() throws Exception {
-
-        final IPhoneView view = new IPhoneView("iPhone");
 
         new Expectations(view) {
 
@@ -122,8 +122,6 @@ public class IPhoneViewTest extends HudsonTestCase {
      * Test of hasJobTestResult method, of class IPhoneView.
      */
     public void testHasJobTestResult_NotNullPreviousResult() throws Exception {
-
-        final IPhoneView view = new IPhoneView("iPhone");
 
         new Expectations(view) {
 

@@ -18,7 +18,6 @@
             <j:otherwise>
                 <ul class="form">
                     <j:forEach var="job" items="${items}" varStatus="status">
-                        <j:set var="lsBuild" value="${job.lastBuild}"/>
                         <j:set var="buildHealth" value="${job.buildHealth}"/>
                         <li class="arrow">
                             <a href="#job_${status.index}">
