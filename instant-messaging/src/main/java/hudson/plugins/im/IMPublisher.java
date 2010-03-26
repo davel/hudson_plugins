@@ -396,6 +396,7 @@ public abstract class IMPublisher extends Notifier implements BuildStep
                 }
                 else {
                     sb.append(entry.getMsg().substring(0, newline));
+                    sb.append(" [ ... ]");
                 }
 			}
 		}
