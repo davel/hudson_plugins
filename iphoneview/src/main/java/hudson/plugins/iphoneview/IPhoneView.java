@@ -30,7 +30,6 @@ public class IPhoneView<P extends AbstractProject<P, B>, B extends AbstractBuild
         return action.getLastTestResultAction().getPreviousResult() != null;
     }
 
-    @SuppressWarnings("unchecked")
     public IPhoneJob<P, B> getIPhoneJob(final String name) {
         final P project = getProject(name);
         return new IPhoneJob<P, B>(project);
