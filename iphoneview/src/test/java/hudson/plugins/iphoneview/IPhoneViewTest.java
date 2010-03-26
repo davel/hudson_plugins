@@ -1,6 +1,9 @@
 package hudson.plugins.iphoneview;
 
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
+import hudson.model.TopLevelItem;
 import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
@@ -12,14 +15,14 @@ import org.jvnet.hudson.test.HudsonTestCase;
  * 
  * @author Seiji Sogabe
  */
-public class IPhoneViewTest extends HudsonTestCase {
+public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>  extends HudsonTestCase {
 
-    private IPhoneView view;
+    private IPhoneView<P, B> view;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        view = new IPhoneView("iPhone");
+        view = new IPhoneView<P, B>("iPhone");
     }
 
     /**
@@ -90,12 +93,36 @@ public class IPhoneViewTest extends HudsonTestCase {
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    public void testHasJobTestResult_InvalidJob() throws Exception {
+
+        new Expectations(view) {
+
+            FreeStyleProject mockFreeStyleProject;
+                TopLevelItem item;
+            {
+                view.getJob(anyString);
+                returns(item);
+            }
+        };
+
+        try {
+            boolean result = view.hasJobTestResult("job");
+        } catch (IllegalArgumentException e) {
+            // ok
+        }
+    }
+
+    /**
+     * Test of hasJobTestResult method, of class IPhoneView.
+     */
     public void testHasJobTestResult_NoPreviousResult() throws Exception {
 
         new Expectations(view) {
 
             FreeStyleProject mockFreeStyleProject;
+
             TestResultProjectAction mockTestResultProjectAction;
+
             AbstractTestResultAction mockTestResultAction;
 
             {
@@ -126,7 +153,9 @@ public class IPhoneViewTest extends HudsonTestCase {
         new Expectations(view) {
 
             FreeStyleProject mockFreeStyleProject;
+
             TestResultProjectAction mockTestResultProjectAction;
+
             TestResultAction mockTestResultAction;
 
             {
@@ -147,5 +176,24 @@ public class IPhoneViewTest extends HudsonTestCase {
         boolean result = view.hasJobTestResult("job");
 
         assertTrue(result);
+    }
+
+    /**
+     * Test of getIPhoneJob method, of class IPhoneView.
+     */
+    public void testGetIPhoneJob() throws Exception {
+
+        new Expectations(view) {
+
+            FreeStyleProject mockFreeStyleProject;
+
+            {
+                view.getJob(anyString);
+                returns(mockFreeStyleProject);
+            }
+        };
+
+        IPhoneJob<P, B> job = view.getIPhoneJob("job");
+        assertNotNull(job);
     }
 }
