@@ -8,26 +8,29 @@ import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.tasks.test.TestResultProjectAction;
 import mockit.Expectations;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.junit.Test;
+import org.junit.Before;
+
+import static org.junit.Assert.*;
 
 /**
  * Test for {@link IPhoneView}
  * 
  * @author Seiji Sogabe
  */
-public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>  extends HudsonTestCase {
+public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>  {
 
     private IPhoneView<P, B> view;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        view = new IPhoneView<P, B>("iPhone");
+    @Before
+    public void setUp() throws Exception {
+        view = new IPhoneViewObject<P, B>("iPhone");
     }
 
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_NoJobs() throws Exception {
 
         new Expectations(view) {
@@ -48,6 +51,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_NotJob() throws Exception {
 
         new Expectations(view) {
@@ -70,6 +74,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_NoActions() throws Exception {
 
         new Expectations(view) {
@@ -93,12 +98,15 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_InvalidJob() throws Exception {
 
         new Expectations(view) {
 
             FreeStyleProject mockFreeStyleProject;
-                TopLevelItem item;
+
+            TopLevelItem item;
+
             {
                 view.getJob(anyString);
                 returns(item);
@@ -115,6 +123,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_NoPreviousResult() throws Exception {
 
         new Expectations(view) {
@@ -148,6 +157,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
+    @Test
     public void testHasJobTestResult_NotNullPreviousResult() throws Exception {
 
         new Expectations(view) {
@@ -181,6 +191,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of getIPhoneJob method, of class IPhoneView.
      */
+    @Test
     public void testGetIPhoneJob() throws Exception {
 
         new Expectations(view) {
@@ -195,5 +206,18 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
 
         IPhoneJob<P, B> job = view.getIPhoneJob("job");
         assertNotNull(job);
+    }
+
+    public static class IPhoneViewObject<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>
+             extends IPhoneView<P, B> {
+
+        public IPhoneViewObject(String name) {
+            super(name);
+        }
+
+        @Override
+        protected void initColumns() {
+            // do nothing
+        }
     }
 }
