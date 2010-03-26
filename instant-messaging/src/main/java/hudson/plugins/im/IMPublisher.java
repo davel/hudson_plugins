@@ -386,7 +386,17 @@ public abstract class IMPublisher extends Notifier implements BuildStep
 				if (hasManyChangeSets) {
 					sb.append("* ");
 				}
-				sb.append(entry.getAuthor()).append(": ").append(entry.getMsg());
+				sb.append(entry.getAuthor());
+                sb.append(": ");
+                
+                int newline = entry.getMsg().indexOf('\n');
+
+                if (newline == -1) {
+                    sb.append(entry.getMsg());
+                }
+                else {
+                    sb.append(entry.getMsg().substring(0, newline));
+                }
 			}
 		}
 		final String msg = sb.toString();
