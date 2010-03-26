@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  * 
  * @author Seiji Sogabe
  */
-public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>  {
+public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>     {
 
     private IPhoneView<P, B> view;
 
@@ -30,7 +30,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testHasJobTestResult_NoJobs() throws Exception {
 
         new Expectations(view) {
@@ -41,34 +41,7 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
             }
         };
 
-        try {
-            view.hasJobTestResult("job");
-        } catch (IllegalArgumentException e) {
-            //
-        }
-    }
-
-    /**
-     * Test of hasJobTestResult method, of class IPhoneView.
-     */
-    @Test
-    public void testHasJobTestResult_NotJob() throws Exception {
-
-        new Expectations(view) {
-
-            FreeStyleProject mockFreeStyleProject;
-
-            {
-                view.getJob(anyString);
-                returns(mockFreeStyleProject);
-            }
-        };
-
-        try {
-            view.hasJobTestResult("job");
-        } catch (IllegalArgumentException e) {
-            //
-        }
+        view.hasJobTestResult("job");
     }
 
     /**
@@ -98,26 +71,22 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
     /**
      * Test of hasJobTestResult method, of class IPhoneView.
      */
-    @Test
-    public void testHasJobTestResult_InvalidJob() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testHasJobTestResult_NotJob() throws Exception {
 
         new Expectations(view) {
 
             FreeStyleProject mockFreeStyleProject;
 
-            TopLevelItem item;
+            TopLevelItem notJob;
 
             {
                 view.getJob(anyString);
-                returns(item);
+                returns(notJob);
             }
         };
 
-        try {
-            boolean result = view.hasJobTestResult("job");
-        } catch (IllegalArgumentException e) {
-            // ok
-        }
+        boolean result = view.hasJobTestResult("job");
     }
 
     /**
@@ -208,8 +177,27 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
         assertNotNull(job);
     }
 
+    /**
+     * Test of getIPhoneJob method, of class IPhoneView.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetIPhoneJob_NotJob() throws Exception {
+
+        new Expectations(view) {
+
+            TopLevelItem notJob;
+
+            {
+                view.getJob(anyString);
+                returns(notJob);
+            }
+        };
+
+        IPhoneJob<P, B> job = view.getIPhoneJob("job");
+    }
+
     public static class IPhoneViewObject<P extends AbstractProject<P, B>, B extends AbstractBuild<P, B>>
-             extends IPhoneView<P, B> {
+                extends IPhoneView<P, B> {
 
         public IPhoneViewObject(String name) {
             super(name);
