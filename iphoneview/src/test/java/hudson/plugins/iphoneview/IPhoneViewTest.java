@@ -76,8 +76,6 @@ public class IPhoneViewTest<P extends AbstractProject<P, B>, B extends AbstractB
 
         new Expectations(view) {
 
-            FreeStyleProject mockFreeStyleProject;
-
             TopLevelItem notJob;
 
             {
