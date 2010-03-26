@@ -1,11 +1,12 @@
 <?jelly escape-by-default='true'?>
 <st:compress xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:iphone="/hudson/plugins/iphoneview/tags"  xmlns:i="jelly:fmt">
 
+    <j:set var="job" value="${it.job}" />
     <iphone:partial-layout>
         <iphone:main-panel>
             <div>
                 <div class="toolbar">
-                    <h1>${%Recent Changes} - ${it.displayName}</h1>
+                    <h1>${%Recent Changes} - ${job.displayName}</h1>
                     <a class="button back" href="#">${%Job}</a>
                 </div>
                 <j:set var="builds" value="${it.getChangedBuilds(5)}" />

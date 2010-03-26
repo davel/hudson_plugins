@@ -32,8 +32,8 @@ public class IPhoneJob<P extends AbstractProject<P, B>, B extends AbstractBuild<
         return Collections.unmodifiableList(builds);
     }
 
-    public String getDisplayName() {
-        return project.getDisplayName();
+    public P getJob() {
+        return project;
     }
 
 }
